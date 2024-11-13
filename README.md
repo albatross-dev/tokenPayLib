@@ -1,38 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## How to install
 
-## Getting Started
+run all the following commands in the root of your project.
 
-First, run the development server:
+the library will be at the following position:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+project-root/
+│
+├── src/
+│   └── tokenPayLib/  <-- the submodule will live here
+└── other project files
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+to install the library, run the following command:
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```bash
+git submodule add https://github.com/albatross-dev/tokenPayLib.git src/tokenPayLib
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Commit the Submodule Configuration
+```bash
+git add .gitmodules src/tokenPayLib
+git commit -m "Add tokenPayLib as a submodule in src/"
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Push Changes to the Main Project Repository
+```bash
+git push origin main
+```
