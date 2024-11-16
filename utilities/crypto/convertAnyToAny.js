@@ -65,7 +65,7 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
     const swapRouterContract = getContract({
       client: client,
       chain: chain,
-      address: (exchangeType===EXCHANGE_TYPE_INTERNAL?uniswapAddresses:uniswapAddresses)[chain.id].router,
+      address: (exchangeType===EXCHANGE_TYPE_INTERNAL?uniswapAddresses:uniswapAddressesPublic)[chain.id].router,
       abi: (exchangeType===EXCHANGE_TYPE_INTERNAL?SwapRouterAbi:CustomRouterAbi),
     });
 
@@ -85,7 +85,7 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
       contract: tokenContract,
       method: "approve",
       params: [
-        (exchangeType===EXCHANGE_TYPE_INTERNAL?uniswapAddresses:uniswapAddresses)[chain.id].router, // Router Address
+        (exchangeType===EXCHANGE_TYPE_INTERNAL?uniswapAddresses:uniswapAddressesPublic)[chain.id].router, // Router Address
         BigInt(amount),
       ],
     });
@@ -145,7 +145,6 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
             path[1][1],
             BigInt(0)
           ],
-          maxFeePerGas: 250000
         });
       }else{
         const exactInputParams = {
@@ -172,7 +171,6 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
             path[1][3],
             BigInt(0)
           ],
-          maxFeePerGas: 250000
         });
       }
     }
