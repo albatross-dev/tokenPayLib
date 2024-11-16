@@ -33,9 +33,9 @@ export const chainsBridge = [
   { chainId: 1,name: "Ethereum", chain: ethereum, logo: ETHEREUM_LOGO },
   { chainId: 10,name: "Optimism", chain: optimism, logo: OPTIMISM_LOGO },
   { chainId: 42161,name: "Arbitrum", chain: arbitrum, logo: ARBITRUM_LOGO },
-  //{ chainId: 8453,name: "Base", chain: base, logo: BASE_LOGO },
+  { chainId: 8453,name: "Base", chain: base, logo: BASE_LOGO },
   //{ chainId: 43114,name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
-  { chainId: 56,name: "BSC", chain: bsc, logo: BSC_LOGO },
+  //{ chainId: 56,name: "BSC", chain: bsc, logo: BSC_LOGO },
 ];
 
 
