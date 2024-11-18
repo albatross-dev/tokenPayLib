@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, Fragment } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useActiveWalletChain, useSwitchActiveWalletChain, useIsAutoConnecting } from "thirdweb/react";
@@ -51,6 +52,19 @@ const chainsPublic = [
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
+/**
+ * ChainSelector component allows users to select a blockchain network from a dropdown menu.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.checkoutSession - The current checkout session object.
+ * @param {Object} [props.chain=null] - The currently active chain object.
+ * @param {Array} [props.chainList=(exchangeType === EXCHANGE_TYPE_EXTERNAL ? chainsPublic : chains)] - The list of available chains to select from.
+ * @param {boolean} [props.returnOnly=false] - If true, the component will only return the selected chain without switching.
+ * @param {Function} [props.onChain] - Callback function to handle chain selection.
+ *
+ * @returns {JSX.Element} The ChainSelector component.
+ */
 export default function ChainSelector({checkoutSession, chain=null, chainList=(exchangeType === EXCHANGE_TYPE_EXTERNAL?chainsPublic:chains), returnOnly=false, onChain}) {
   console.log("exchangeType", process.env.NEXT_PUBLIC_EXCHANGE_TYPE, EXCHANGE_TYPE_INTERNAL);
   const [activeChainDetails, setActiveChainDetails] = useState(chain);
