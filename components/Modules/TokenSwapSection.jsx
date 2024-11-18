@@ -41,7 +41,7 @@ import { useEffect, useState } from "react";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
-export default function CrossChainSection() {
+export default function TokenSwapSection() {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
