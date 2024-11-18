@@ -25,6 +25,7 @@ import currencies, {
 const tokenyByChain = {
   [polygon.id]: {
     chain: polygon,
+    spokePool: "0x9295ee1d8C5b022Be115A2AD3c30C72E34e7F096",
     tokens: [
       {
         symbol: "USDC",

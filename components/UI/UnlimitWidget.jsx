@@ -17,6 +17,11 @@ const UnlimitWidget = () => {
       displayMode: "embedded",
       nodeSelector: "#crypto-widget-container", // The ID of the container div
       walletAddress: account.address,
+      walletLock: true,
+      defaultCrypto:{
+        currency: "USDC",
+        amount: 1000
+      },
       styles: {
         type: "light",
         primaryBackground: "#ffffff"

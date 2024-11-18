@@ -51,9 +51,9 @@ const chainsPublic = [
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
-export default function ChainSelector({checkoutSession, chainList=(exchangeType === EXCHANGE_TYPE_EXTERNAL?chainsPublic:chains)}) {
+export default function ChainSelector({checkoutSession, chain=null, chainList=(exchangeType === EXCHANGE_TYPE_EXTERNAL?chainsPublic:chains), returnOnly=false, onChain}) {
   console.log("exchangeType", process.env.NEXT_PUBLIC_EXCHANGE_TYPE, EXCHANGE_TYPE_INTERNAL);
-  const [activeChainDetails, setActiveChainDetails] = useState(null);
+  const [activeChainDetails, setActiveChainDetails] = useState(chain);
   const switchChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
   const walletChain = useActiveWalletChain();
@@ -79,7 +79,7 @@ export default function ChainSelector({checkoutSession, chainList=(exchangeType 
               )}
             </>
           ) : (
-            <span>{t("loading")}</span>
+            <span>{returnOnly?t("select"):t("loading")}</span>
           )}
         </div>
         <BiChevronDown className="h-6 w-6 text-gray-700" /> {/* Chevron Icon */}
@@ -89,7 +89,15 @@ export default function ChainSelector({checkoutSession, chainList=(exchangeType 
           <MenuItem key={chain.name} as={Fragment}>
             <button
               className={`hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm ${checkoutSession?.router?.chainId === chain.chainId ? 'font-bold' : ''}`}
-              onClick={() => switchChain(chain.chain)}
+              onClick={() => {
+                if (chain.chainId !== walletChain.id && !returnOnly) {
+                  switchChain(chain.chain);
+                }
+                if (onChain) {
+                  setActiveChainDetails(chain);
+                  onChain(chain);
+                }
+              }}
             >
               <Image src={chain.logo} alt={chain.name} className="h-6 w-6 mr-2" />
               <span>{chain.name}</span>
