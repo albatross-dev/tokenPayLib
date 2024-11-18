@@ -1,9 +1,23 @@
+
 import React, { useState, Fragment } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
 import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 
+/**
+ * TokenSelector component allows users to select a token from a dropdown menu.
+ * It includes a search functionality to filter tokens by name or id.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.tokens - An object containing token data, where keys are token IDs and values are token details.
+ * @param {Object} props.selectedToken - The currently selected token object.
+ * @param {Function} props.onSelect - Callback function to handle token selection.
+ * @param {string} [props.selectText] - Text to display when no token is selected.
+ * @param {React.ReactNode} [props.displayContent] - Custom content to display in the button when no token is selected.
+ * @returns {JSX.Element} The TokenSelector component.
+ */
 export default function TokenSelector({
   tokens,
   selectedToken,

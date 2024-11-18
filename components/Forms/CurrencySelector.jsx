@@ -1,3 +1,4 @@
+
 import React, { useState, Fragment } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
@@ -5,6 +6,17 @@ import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 import { useFormContext, Controller } from "react-hook-form";
 
+/**
+ * CurrencySelector component allows users to select a currency from a dropdown menu.
+ * It supports searching and filtering currencies by their symbol or code.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.name - The name of the form field.
+ * @param {Array} props.currencies - The list of available currencies.
+ * @param {Object} props.control - The control object from react-hook-form.
+ * @returns {JSX.Element} The CurrencySelector component.
+ */
 export default function CurrencySelector({ name, currencies, control }) {
   const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState("");
