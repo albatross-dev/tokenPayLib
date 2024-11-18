@@ -62,6 +62,7 @@ const ExchangeModal = ({ show, closeModal, token, handleExchange, maxAmount, che
                 onChange={(e) => setAmount(Number(e.target.value))}
                 max={maxAmount}
               />
+              <div className="font-bold text-sm ">{t("fees")}</div>
 
               <div className="mt-4 flex justify-between">
                 <button

@@ -191,6 +191,8 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
 
   console.log("convertAnyToAny", token, amount, account, success, error, chain, target);
 
+  console.log("swap router contract address", ((exchangeType===EXCHANGE_TYPE_INTERNAL||internal)?uniswapAddresses:uniswapAddressesPublic)[chain.id].router)
+
   try {
     const swapRouterContract = getContract({
       client: client,
@@ -252,7 +254,7 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
         amountOutMinimum: 0,
       };
 
-      console.log("exactInputParams", exactInputParams, swapRouterContract)
+      console.log("exactInputParams", exactInputParams)
 
       exactInputCall = prepareContractCall({
         contract: swapRouterContract,
@@ -260,47 +262,51 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
         params: [exactInputParams],
       });
     }else{
-      if(path.length === 3){
+      if(path[1].length === 3){
         const exactInputParams = {
           amountIn: BigInt(amount),
-          tokenIn: path[0],
-          tokenOut: path[2],
-          poolFee: path[1],
-          amountOutMinimum: 0,
+          tokenIn: path[1][0],
+          tokenOut: path[1][2],
+          poolFee: path[1][1],
+          amountOutMinimum: BigInt(0),
         };
+
+        console.log("swapExactInputSingle", exactInputParams, swapRouterContract);
   
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputSingle",
           params: [
             BigInt(amount),
-            path[0],
-            path[2],
-            path[1],
+            path[1][0],
+            path[1][2],
+            path[1][1],
             BigInt(0)
           ],
         });
       }else{
         const exactInputParams = {
           amountIn: BigInt(amount),
-          tokenIn: path[0],
-          tokenInBetween: path[2],
-          tokenOut: path[4],
-          poolFee0: path[1],
-          poolFee1: path[3],
-          amountOutMinimum: 0,
+          tokenIn: path[1][0],
+          tokenInBetween: path[1][2],
+          tokenOut: path[1][4],
+          poolFee0: path[1][1],
+          poolFee1: path[1][3],
+          amountOutMinimum: BigInt(0),
         };
+
+        console.log("swapExactInputMulti", exactInputParams);
   
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputMulti",
           params: [
             BigInt(amount),
-            path[0],
-            path[2],
-            path[4],
-            path[1],
-            path[3],
+            path[1][0],
+            path[1][2],
+            path[1][4],
+            path[1][1],
+            path[1][3],
             BigInt(0)
           ],
         });
@@ -313,6 +319,8 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
       account,
       transaction: exactInputCall,
     });
+
+    console.log("res", res);
 
     success();
   } catch (e) {

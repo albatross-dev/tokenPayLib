@@ -8,9 +8,9 @@ export default function ConvertStateButton({ onClick, state, children }) {
   return (
     <button
       className="text-xs text-gray-700 flex flex-row items-center gap-2 bg-gray-100 rounded-full p-1"
-      onClick={()=>{
+      onClick={(e)=>{
         if (state !== "processing") {
-          onClick();
+          onClick(e);
         }
       }}
     >
