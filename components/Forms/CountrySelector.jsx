@@ -33,6 +33,19 @@ export const SupportedCountries = {
 /**
  * CountrySelector component renders a dropdown menu for selecting a country.
  * 
+ * important! included this in the _app.js
+
+import countriesISO from 'i18n-iso-countries';
+
+// Register a locale (e.g., English)
+import enLocale from "i18n-iso-countries/langs/en.json";
+import deLocale from "i18n-iso-countries/langs/de.json";
+import frLocale from "i18n-iso-countries/langs/fr.json";
+
+countriesISO.registerLocale(enLocale); // Register the language you need
+countriesISO.registerLocale(deLocale); // Register the language you need
+countriesISO.registerLocale(frLocale); // Register the language you need
+ * 
  * @param {Object} props - The component props.
  * @param {Object} props.countries - The list of countries to display in the dropdown.
  * @param {Object|string} props.selectedCountry - The currently selected country or its ISO code.
@@ -56,6 +69,8 @@ export default function CountrySelector({
     selectedCountry = countries[selectedCountry];
   }
 
+  console.log("selectedcountry", countriesISO.getName("US","en"), countriesISO.getName("GB", "de"),"GB", "de");
+
   function select(country) {
     if (onlyIso) {
       onSelect(country || ""); // Send null if no country is selected
@@ -69,6 +84,7 @@ export default function CountrySelector({
     <div className="inline-flex justify-start items-center w-full rounded-md border border-gray-200 px-2 py-2 bg-gray-50 text-sm font-medium text-gray-500">
       <div className="mr-2">{selectedCountry?.flag}</div>
       <div>{countriesISO.getName(selectedCountry?.iso, i18n.language)}</div>
+     
       <div></div>
     </div>
   ) : (
