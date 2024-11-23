@@ -18,20 +18,6 @@ export const ALL_COUNTRIES_N = {
     
     iso:  "DE",
   },
-  US: {
-    name: "United States",
-    flag: "🇺🇸",
-    restrictions: false,
-    
-    iso: "US",
-  },
-  PS: {
-    name: "State of Palestine",
-    flag: "🇵🇸",
-    restrictions: false,
-    
-    iso: "PS",
-  },
   AF: {
     name: "Afghanistan",
     flag: "🇦🇫",
@@ -1264,6 +1250,13 @@ export const ALL_COUNTRIES_N = {
     restrictions: false,
     
     iso: "GB",
+  },
+  US: {
+    name: "United States",
+    flag: "🇺🇸",
+    restrictions: false,
+
+    iso: "US",
   },
   UY: {
     name: "Uruguay",
