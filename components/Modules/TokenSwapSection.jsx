@@ -38,6 +38,7 @@ import convertAnyToAny, {
   uniswapAddresses,
 } from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
 import { useEffect, useState } from "react";
+import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
@@ -63,6 +64,7 @@ export default function TokenSwapSection() {
   const [showExchangeAnyModal, setShowExchangeAnyModal] = useState(false);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
   const [inputError, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 
   useEffect(() => {
@@ -210,6 +212,7 @@ export default function TokenSwapSection() {
             fetchBalances();
             setAmount(0);
           }, 1000);
+          setShowSuccessModal(true);
         },
         (error) => {
           console.error("Error converting to EUROE", error);
@@ -224,6 +227,7 @@ export default function TokenSwapSection() {
         selectedTargetToken
       );
       setExchangeState("normal");
+      
     }
 
   // handle exchanges from the modals
@@ -241,6 +245,7 @@ export default function TokenSwapSection() {
         setTimeout(() => {
           fetchBalances();
         }, 1000);
+        setShowSuccessModal(true);
       },
       (error) => {
         console.error("Error converting to EUROE", error);
@@ -268,6 +273,14 @@ export default function TokenSwapSection() {
 
   return (
     <div>
+
+      <UniversalModal
+        isOpen={showSuccessModal}
+        type={MODAL_TYPE_SUCCESS}
+        title={t("exchange_success_title")}
+        message={t("exchange_success_message")}
+        closeModal={() => setShowSuccessModal(false)}/>
+
       <ExchangeModal
         show={showExchangeModal}
         closeModal={() => setShowExchangeModal(false)}

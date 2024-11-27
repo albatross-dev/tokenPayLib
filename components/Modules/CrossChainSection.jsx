@@ -16,6 +16,7 @@ import { client } from "@/pages/_app";
 import getChainById from "@/tokenPayLib/utilities/crypto/getChainById";
 import MiniLoader from "../UI/MiniLoader";
 import BridgeModalUniversal from "../Modals/BridgeModalUniversal";
+import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 
 const CrossChainSection = () => {
   const { t } = useTranslation("common");
@@ -33,10 +34,11 @@ const CrossChainSection = () => {
   const [balanceOfStableLoading, setBalanceOfStableLoading] = useState(false);
   const [balanceOfStableData, setBalanceOfStableData] = useState(0);
   const [selectedChain, setSelectedChain] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  useEffect(()=>{
-    console.log("loading",loading);
-  },[loading]);
+  useEffect(() => {
+    console.log("loading", loading);
+  }, [loading]);
 
   useEffect(() => {
     fetchStableBalance();
@@ -65,6 +67,13 @@ const CrossChainSection = () => {
 
   return (
     <div className="cross-chain-section">
+      <UniversalModal
+        isOpen={showSuccessModal}
+        type={MODAL_TYPE_SUCCESS}
+        title={t("exchange_success_title")}
+        message={t("exchange_success_message")}
+        closeModal={() => setShowSuccessModal(false)}
+      />
       <BridgeModalUniversal
         show={showBridgeModal}
         closeModal={() => setShowBridgeModal(false)}
@@ -88,6 +97,7 @@ const CrossChainSection = () => {
           setTimeout(() => {
             fetchStableBalance();
           }, 1000);
+          setShowSuccessModal(true);
         }}
       />
       <div className="bg-gray-100 p-4 my-4 rounded-lg">
@@ -101,18 +111,18 @@ const CrossChainSection = () => {
       <div className="flex mt-4 flex-row items-center justify-between bg-gray-100 rounded-lg p-4">
         <div className="text-xl font-bold">Ihr USDC Guthaben</div>
         <div className="flex flex-row gap-2">
-        <div className="font-bold text-xl">
-          {balanceOfStableLoading ? (
-            <MiniLoader></MiniLoader>
-          ) : (
-            formatCrypto(balanceOfStableData,6,6)
-          )}
-        </div>
-        <Image
-          src={LogoByShortName["USDC"]}
-          className="h-8 w-8"
-          alt="USDC Logo"
-        />
+          <div className="font-bold text-xl">
+            {balanceOfStableLoading ? (
+              <MiniLoader></MiniLoader>
+            ) : (
+              formatCrypto(balanceOfStableData, 6, 6)
+            )}
+          </div>
+          <Image
+            src={LogoByShortName["USDC"]}
+            className="h-8 w-8"
+            alt="USDC Logo"
+          />
         </div>
       </div>
       <div className="mt-4">{t("target_chain")}</div>
