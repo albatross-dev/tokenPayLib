@@ -41,8 +41,8 @@ export default function SimpleList({children, columns, collection, loader, stand
   };
 
   return (
-    <div>
-      <div className="flex flex flex-col md:flex-row items-start gap-2 md:gap-8 mt-8 mb-4 bg-white rounded-md w-full md:max-w-screen-lg">
+    <div className="w-full flex flex-col">
+      <div className="flex flex-1 flex-row md:flex-row items-start gap-2 md:gap-8 mt-8 mb-4 bg-white rounded-md w-full">
         <DatePicker onDateChange={handleDateChange} minDate="2021-01-01" />
         {children}
       </div>

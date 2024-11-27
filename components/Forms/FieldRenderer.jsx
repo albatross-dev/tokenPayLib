@@ -24,6 +24,7 @@ const FieldRenderer = ({
   style="vertical",
   alwaysEditable = false,
   parentName = "", // Parent name for correct nested structure
+  arrayItemIndex = null,
 }) => {
 
   const methods = useFormContext();
@@ -33,8 +34,13 @@ const FieldRenderer = ({
       {fields.map((field, index) => {
         // Generate a unique field key
         const fieldName = parentName
-          ? `${parentName}.${field.name ? field.name : index}`
+          ? `${parentName}.${arrayItemIndex}.${field.name ? field.name : index}`
           : field.name;
+
+          methods.register(fieldName);
+
+
+        console.log("register", fieldName);
 
         // check if is visible field by checking if field.visible is a function and then run it
         if (field.visible && typeof field.visible === "function") {
@@ -47,7 +53,11 @@ const FieldRenderer = ({
         let parsedRequired = false;
         if (field.required) {
           if (typeof field.required === "function") {
-            parsedRequired = field.required(methods); // Execute the function with methods
+            if(arrayItemIndex !== null){
+              parsedRequired = field.required(methods, arrayItemIndex); // Execute the function with methods
+            }else{
+              parsedRequired = field.required(methods); // Execute the function with methods
+            }
           } else {
             parsedRequired = field.required; // Otherwise, it's a boolean
           }
@@ -184,6 +194,8 @@ const ArrayField = ({
   methods,
   parentName, // Pass parentName for array fields
 }) => {
+  const arrayFieldName = parentName ? `${parentName}.${field.name}` : field.name;
+
   const {
     fields: arrayFields,
     append,
@@ -191,7 +203,7 @@ const ArrayField = ({
     replace
   } = useFieldArray({
     control: methods.control,
-    name: parentName ? `${parentName}.${field.name}` : field.name, // Map to the correct field array name
+    name: arrayFieldName, // Map to the correct field array name
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -205,7 +217,7 @@ const ArrayField = ({
     if(!loaded && arrayFields.length>0){
       // await half a second before reloading
       setTimeout(() => {
-        const currentValues = methods.getValues(parentName ? `${parentName}.${field.name}` : field.name);
+        const currentValues = methods.getValues(arrayFieldName);
         methods.reset({ ...methods.getValues(), [field.name]: currentValues });
         setLoaded(true);
       }, 500);
@@ -260,7 +272,8 @@ const ArrayField = ({
           <FieldRenderer
             fields={field.fields} // Render child fields recursively
             alwaysEditable={isAdding && index === (arrayFields.length-1)} // is isAdding and last field then editable
-            parentName={`${parentName}.${field.name}[${index}]`} // Pass the parent name with the index for unique field names
+            parentName={arrayFieldName} // Pass the parent name with the index for unique field names
+            arrayItemIndex={index}
           />
 
           {/* Remove Button */}
