@@ -235,6 +235,7 @@ const ArrayField = ({
   }, [arrayFields]); // Depend on initialItemAdded and arrayFields
 
   function getDefaultItem() {
+    console.log("getDefaultItem", field.fields);
     return field.fields.reduce((acc, childField) => {
       acc[childField.name] = ""; // Each child field starts with an empty value
       return acc;
@@ -256,7 +257,9 @@ const ArrayField = ({
 
   const addNewItem = () => {
     // Default values for each new item
+    console.log("add new item")
     const defaultItem = getDefaultItem();
+    console.log("defaultItem", defaultItem);
     append(defaultItem);
     setIsAdding(true);
   };
