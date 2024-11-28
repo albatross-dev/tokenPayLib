@@ -7,10 +7,11 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_WETH",
+        "internalType": "contract V3SpokePoolInterface",
+        "name": "_spokePool",
         "type": "address"
-      }
+      },
+      { "internalType": "address", "name": "_WETH", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -37,23 +38,44 @@
   {
     "inputs": [],
     "name": "WETH",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "depositor", "type": "address" },
+      { "internalType": "address", "name": "recipient", "type": "address" },
+      { "internalType": "address", "name": "inputToken", "type": "address" },
+      { "internalType": "address", "name": "outputToken", "type": "address" },
+      { "internalType": "uint256", "name": "inputAmount", "type": "uint256" },
+      { "internalType": "uint256", "name": "outputAmount", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "destinationChainId",
+        "type": "uint256"
+      },
       {
         "internalType": "address",
-        "name": "wallet",
+        "name": "exclusiveRelayer",
         "type": "address"
+      },
+      { "internalType": "uint32", "name": "quoteTimestamp", "type": "uint32" },
+      { "internalType": "uint32", "name": "fillDeadline", "type": "uint32" },
+      {
+        "internalType": "uint32",
+        "name": "exclusivityDeadline",
+        "type": "uint32"
       }
+    ],
+    "name": "bridge",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "wallet", "type": "address" }
     ],
     "name": "changeDestinationWallet",
     "outputs": [],
@@ -61,14 +83,52 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "uint256", "name": "fee", "type": "uint256" }],
+    "name": "changeFeeBaseBridge",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "fee", "type": "uint256" }],
+    "name": "changeFeeBaseSwap",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "fee", "type": "uint256" }],
+    "name": "changeFeeBaseTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "fee", "type": "uint256" },
+      { "internalType": "address", "name": "wallet", "type": "address" }
     ],
-    "name": "changeFeeBase",
+    "name": "changeIndividualFeeBaseBridge",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "fee", "type": "uint256" },
+      { "internalType": "address", "name": "wallet", "type": "address" }
+    ],
+    "name": "changeIndividualFeeBaseSwap",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "fee", "type": "uint256" },
+      { "internalType": "address", "name": "wallet", "type": "address" }
+    ],
+    "name": "changeIndividualFeeBaseTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -76,39 +136,62 @@
   {
     "inputs": [],
     "name": "getDestinationWallet",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getFeeBase",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+    "name": "getFeeBaseBridge",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFeeBaseSwap",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFeeBaseTransfer",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "wallet", "type": "address" }
     ],
+    "name": "getIndividualFeeBaseBridge",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "wallet", "type": "address" }
+    ],
+    "name": "getIndividualFeeBaseSwap",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "wallet", "type": "address" }
+    ],
+    "name": "getIndividualFeeBaseTransfer",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -128,98 +211,21 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amountIn",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenIn",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenInBetween",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenOut",
-        "type": "address"
-      },
-      {
-        "internalType": "uint24",
-        "name": "poolFee0",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint24",
-        "name": "poolFee1",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amountOutMinimum",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "address", "name": "token", "type": "address" },
+      { "internalType": "address", "name": "recipient", "type": "address" }
     ],
-    "name": "swapExactInputMulti",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "amountOut",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amountIn",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenIn",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenOut",
-        "type": "address"
-      },
-      {
-        "internalType": "uint24",
-        "name": "poolFee",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amountOutMinimum",
-        "type": "uint256"
-      }
-    ],
-    "name": "swapExactInputSingle",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "amountOut",
-        "type": "uint256"
-      }
-    ],
+    "name": "simpleTransfer",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "swapRouter",
+    "name": "spokePool",
     "outputs": [
       {
-        "internalType": "contract ISwapRouter",
+        "internalType": "contract V3SpokePoolInterface",
         "name": "",
         "type": "address"
       }
@@ -229,30 +235,69 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+      { "internalType": "address", "name": "tokenIn", "type": "address" },
       {
         "internalType": "address",
-        "name": "newOwner",
+        "name": "tokenInBetween",
         "type": "address"
+      },
+      { "internalType": "address", "name": "tokenOut", "type": "address" },
+      { "internalType": "uint24", "name": "poolFee0", "type": "uint24" },
+      { "internalType": "uint24", "name": "poolFee1", "type": "uint24" },
+      {
+        "internalType": "uint256",
+        "name": "amountOutMinimum",
+        "type": "uint256"
       }
     ],
-    "name": "transferOnwershipWrapper",
+    "name": "swapExactInputMulti",
     "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "uint256", "name": "amountOut", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+      { "internalType": "address", "name": "tokenIn", "type": "address" },
+      { "internalType": "address", "name": "tokenOut", "type": "address" },
+      { "internalType": "uint24", "name": "poolFee", "type": "uint24" },
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "amountOutMinimum",
+        "type": "uint256"
       }
+    ],
+    "name": "swapExactInputSingle",
+    "outputs": [
+      { "internalType": "uint256", "name": "amountOut", "type": "uint256" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "swapRouter",
+    "outputs": [
+      { "internalType": "contract ISwapRouter", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "transferOnwershipWrapper",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],

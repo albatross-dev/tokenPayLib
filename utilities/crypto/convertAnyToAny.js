@@ -43,7 +43,7 @@ export const uniswapAddresses = {
 
 export const uniswapAddressesPublic = {
   [polygon.id]: {
-    router: "0xADf0359c1491434955D8a9A4FEdDECf4424e2C1A",
+    router: "0x224498FF598EcBCBde689b593E64Ac48e9b3BE15",
     quote: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
   },
 }

@@ -173,36 +173,6 @@ async function acrossBridgeDeposit(
     const exclusiveRelayer = quoteData.exclusiveRelayer;
     const exclusivityDeadline = quoteData.exclusivityDeadline;
 
-    console.log(
-      "deposit",
-      "spokePoolAddress",
-      spokePoolAddress,
-      "depositor",
-      depositor,
-      "recipient",
-      recipient,
-      "tokenAddress",
-      tokenAddress,
-      "outputToken",
-      outputToken,
-      "amount",
-      amount,
-      "outputAmount",
-      outputAmount,
-      "destinationChainId",
-      destinationChainId,
-      "exclusiveRelayer",
-      exclusiveRelayer,
-      "timestamp",
-      timestamp,
-      "fillDeadline",
-      fillDeadline,
-      "exclusivityDeadline",
-      exclusivityDeadline,
-      "account",
-      account
-    );
-
     await deposit(
       spokePoolAddress,
       depositor,
@@ -268,7 +238,7 @@ const BridgeModalUniversal = ({
   
     // Fetch limits
     try {
-      const limitsResponse = await axios.get(`/api/limits`, {
+      const limitsResponse = await axios.get(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/limits`, {
         params: { token: tokenAddress, originChainId, destinationChainId },
       });
   
@@ -287,7 +257,7 @@ const BridgeModalUniversal = ({
   
     // Fetch quote
     try {
-      const quoteResponse = await axios.get(`/api/quotes`, {
+      const quoteResponse = await axios.get(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/quotes`, {
         params: {
           token: tokenAddress,
           originChainId: originChainId,
