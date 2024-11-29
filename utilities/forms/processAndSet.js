@@ -1,9 +1,14 @@
 import formatDateForInput from "./formatDateForInput";
 
   // Recursive function to preprocess and set values in nested data structures
-  const preprocessAndSetValues = (data, parentKey = "", setValue) => {
+  const preprocessAndSetValues = (data, parentKey = "", methods) => {
+    console.log("preprocessAndSetValues", data);
+
     Object.entries(data).forEach(([key, value]) => {
       const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handles nested keys
+
+      console.log("iterate", key, value);
+
       if (
         typeof value === "object" &&
         value !== null &&
@@ -18,12 +23,13 @@ import formatDateForInput from "./formatDateForInput";
         });
       } else {
         // Check if the value is a valid ISO date string
-        if (typeof value === "string" && !isNaN(Date.parse(value))) {
+        console.log("check value", value);
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/.test(value) && !isNaN(Date.parse(value))) {
           const formattedDate = formatDateForInput(value);
-          setValue(fullKey, formattedDate); // Set formatted date value
+          methods.setValue(fullKey, formattedDate); // Set formatted date value
         } else {
           // Set the value normally for non-date fields
-          setValue(fullKey, value);
+          methods.setValue(fullKey, value);
         }
       }
     });
