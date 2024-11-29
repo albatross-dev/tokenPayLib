@@ -1,16 +1,22 @@
-
 import { HiQuestionMarkCircle, HiLockClosed } from "react-icons/hi2";
 import React from "react";
 
-const LoadingButton = ({ isLoading, onClick, children, openError, active = true }) => {
-  let buttonStyles = "bw-full h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent w-full md:w-auto text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ";
+const LoadingButton = ({
+  isLoading,
+  onClick,
+  children,
+  openError,
+  active = true,
+}) => {
+  let buttonStyles =
+    "bw-full h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent w-full md:w-auto text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ";
   let buttonContent = children;
 
   if (isLoading === "processing") {
     buttonStyles += "bg-uhuBlue opacity-50 cursor-not-allowed";
     buttonContent = (
       <>
-            <div className="w-7"></div>
+        <div className="w-7"></div>
         {children}
         <svg
           className="animate-spin h-5 w-5 text-white ml-2"
@@ -50,11 +56,10 @@ const LoadingButton = ({ isLoading, onClick, children, openError, active = true 
       </>
     );
   } else {
-
     buttonStyles += " bg-uhuBlue hover:bg-uhuBlue focus:ring-uhuBlue";
     buttonContent = (
       <>
-      <div></div>
+        <div></div>
         {children}
       </>
     );
@@ -62,11 +67,7 @@ const LoadingButton = ({ isLoading, onClick, children, openError, active = true 
 
   if (!active) {
     buttonStyles += " opacity-50 cursor-not-allowed";
-    buttonContent = (
-      <>
-        {children}
-      </>
-    );
+    buttonContent = <>{children}</>;
   }
 
   return (
@@ -76,7 +77,15 @@ const LoadingButton = ({ isLoading, onClick, children, openError, active = true 
       className={buttonStyles}
     >
       {buttonContent}
-      {isLoading !== "processing" && isLoading !== "error"? active? <div></div> :  <HiLockClosed className="h-5 w-5 text-white ml-2" />: <></>}
+      {isLoading !== "processing" && isLoading !== "error" ? (
+        active ? (
+          <div></div>
+        ) : (
+          <HiLockClosed className="h-5 w-5 text-white ml-2" />
+        )
+      ) : (
+        <></>
+      )}
     </button>
   );
 };

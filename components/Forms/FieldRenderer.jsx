@@ -40,8 +40,6 @@ const FieldRenderer = ({
           methods.register(fieldName);
 
 
-        console.log("register", fieldName);
-
         // check if is visible field by checking if field.visible is a function and then run it
         if (field.visible && typeof field.visible === "function") {
           if (!field.visible(methods)) {
