@@ -5,7 +5,6 @@ import formatDateForInput from "./formatDateForInput";
 
 
     Object.entries(data).forEach(([key, value]) => {
-      console.log("preprocessAndSetValues", )
       const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handles nested keys
       if (
         typeof value === "object" &&
