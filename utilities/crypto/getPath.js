@@ -16,80 +16,17 @@ import {
   bsc,
 } from "thirdweb/chains";
 import { encodePacked } from "thirdweb/utils";
-import polygonPaths from "./polygonPaths";
+import polygonPaths from "./paths/polygonPaths";
+import ethereumPaths from "./paths/ethereumPaths";
+import arbitumPaths from "./paths/arbitumPaths";
+import optimismPaths from "./paths/optimismPaths";
+import basePaths from "./paths/basePaths";
 
 export const PATHS = {
   [polygon.id]: polygonPaths,
-  [ethereum.id]: {
-    USDT: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesEthereum["USDT"].contractAddress,
-          100, // Pool fee
-          currenciesEthereum["USDC"].contractAddress,
-        ]],
-      EUROE: [        ["address", "uint24", "address", "uint24", "address"],
-        [
-          currenciesEthereum["USDT"].contractAddress,
-          100, // Pool fee
-          currenciesEthereum["USDC"].contractAddress,
-          500, // Pool fee
-          currenciesEthereum["EUROE"].contractAddress,
-        ]],
-    },
-    EURS: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesEthereum["EURS"].contractAddress,
-          10500, // Pool fee
-          currenciesEthereum["USDC"].contractAddress,
-        ]],
-      EUROE: [        ["address", "uint24", "address", "uint24", "address"],
-        [
-          currenciesEthereum["EURS"].contractAddress,
-          10500, // Pool fee
-          currenciesEthereum["USDC"].contractAddress,
-          500, // Pool fee
-          currenciesEthereum["EUROE"].contractAddress,
-        ]],
-    },
-    EUROE: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesEthereum["EUROE"].contractAddress,
-          500, // Pool fee
-          currenciesEthereum["USDC"].contractAddress,
-        ]]
-    }
-  },
-  [arbitrum.id]: {
-    "USDC.E": {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesArbitrum["USDC.E"].contractAddress,
-          100, // Pool fee
-          currenciesArbitrum["USDC"].contractAddress,
-        ]],
-    },
-    USDT: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesArbitrum["USDT"].contractAddress,
-          100, // Pool fee
-          currenciesArbitrum["USDC"].contractAddress,
-        ]],
-    },
-  },
-  [optimism.id]: {
-    USDT: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesOP["USDT"].contractAddress,
-          100, // Pool fee
-          currenciesOP["USDC"].contractAddress,
-        ]],
-    },
-  },
+  [ethereum.id]: ethereumPaths,
+  [arbitrum.id]: arbitumPaths,
+  [optimism.id]: optimismPaths,
   [avalanche.id]: {
     USDT: {
       USDC: [        ["address", "uint24", "address"],
@@ -100,16 +37,7 @@ export const PATHS = {
         ]],
     },
   },
-  [bsc.id]: {
-    USDT: {
-      USDC: [        ["address", "uint24", "address"],
-        [
-          currenciesBSC["USDT"].contractAddress,
-          100, // Pool fee
-          currenciesBSC["USDC"].contractAddress,
-        ]],
-    },
-  },
+  [base.id]: basePaths,
 };
 
 export default function getPath(tokenSymbol, chain, targetTokenSymbol) {

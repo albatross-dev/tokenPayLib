@@ -40,6 +40,8 @@ const FieldRenderer = ({
           methods.register(fieldName);
 
 
+
+
         // check if is visible field by checking if field.visible is a function and then run it
         if (field.visible && typeof field.visible === "function") {
           if (!field.visible(methods)) {
@@ -233,6 +235,7 @@ const ArrayField = ({
   }, [arrayFields]); // Depend on initialItemAdded and arrayFields
 
   function getDefaultItem() {
+    console.log("getDefaultItem", field.fields);
     return field.fields.reduce((acc, childField) => {
       acc[childField.name] = ""; // Each child field starts with an empty value
       return acc;
@@ -254,7 +257,9 @@ const ArrayField = ({
 
   const addNewItem = () => {
     // Default values for each new item
+    console.log("add new item")
     const defaultItem = getDefaultItem();
+    console.log("defaultItem", defaultItem);
     append(defaultItem);
     setIsAdding(true);
   };

@@ -91,7 +91,7 @@ export default function TokenSelector({
                   className="hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm"
                   onClick={() => onSelect(tokens[tokenId])}
                 >
-                  {tokens[tokenId].icon ? (
+                  {tokens[tokenId]?.icon ? (
                     <Image
                       src={tokens[tokenId].icon}
                       alt={tokens[tokenId].name}

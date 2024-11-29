@@ -266,13 +266,13 @@ const BridgeModal = ({
     ).toString();
 
     try {
-      const limitsResponse = await axios.get(`/api/limits`, {
+      const limitsResponse = await axios.get(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/limits`, {
         params: { token: tokenAddress, originChainId, destinationChainId },
       });
 
       setLimits(limitsResponse.data);
 
-      const quoteResponse = await axios.get(`/api/quotes`, {
+      const quoteResponse = await axios.get(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/quotes`, {
         params: {
           token: tokenAddress,
           originChainId,
