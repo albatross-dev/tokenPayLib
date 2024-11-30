@@ -33,8 +33,8 @@ export default function TokenSelector({
     const token = tokens[tokenId];
     return (
       tokenId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (token.name &&
-        token.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      (token?.name &&
+        token?.name?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
 

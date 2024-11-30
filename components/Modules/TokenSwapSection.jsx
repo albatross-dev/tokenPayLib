@@ -124,10 +124,14 @@ export default function TokenSwapSection() {
   useEffect(() => {
     if (activeChain) {
       const tokens = Object.keys(PATHS[activeChain.id]).map((tokenId) => {
-        return [tokenId, TokensByChainId[activeChain.id][tokenId]];
+        let obj = TokensByChainId[activeChain.id][tokenId];
+        if(obj) obj.id = tokenId
+        return [tokenId, obj];
       });
 
+      console.log("tokens", tokens);
       const tokenObj = Object.fromEntries(tokens);
+
       setOriginTokens(tokenObj);
     }
   }, [activeChain]);
@@ -315,11 +319,18 @@ export default function TokenSwapSection() {
         onSelect={(token) => {
           setAmount(0);
           setSelectedToken(token);
+          
           let targetTokenArr = Object.keys(
             PATHS[activeChain.id][token.id.toUpperCase()]
           ).map((tokenId) => {
             return [tokenId, TokensByChainId[activeChain.id][tokenId]];
           });
+
+          console.log("target array", targetTokenArr);
+
+          targetTokenArr = targetTokenArr.filter((item)=>{
+            return item[1] !== undefined
+          })
 
           let targetTokens = Object.fromEntries(targetTokenArr);
           setTargetTokens(targetTokens);

@@ -1,5 +1,5 @@
 const basePaths = {
-"WETH": {
+  "WETH": {
 "USDC": [ ["address", "uint24", "address"],
 [
 "0x4200000000000000000000000000000000000006",
@@ -1400,8 +1400,7 @@ const basePaths = {
 "0x236aa50979d5f3de3bd1eeb40e81137f22ab794b",
 ]
 ],
-},
-
+}
 }
 
 export default basePaths;
