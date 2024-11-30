@@ -1,7 +1,7 @@
 import React from "react";
 import { BiRightArrowAlt } from "react-icons/bi";
 import { FiAlertCircle } from "react-icons/fi";
-import EUROE_Logo from "@/tokenPayLib/assets/payment-icons/euroe.png";
+import EUROE_Logo from "@/tokenPayLib/assets/payment-icons/polygon/euroe.png";
 import Image from "next/image";
 
 export default function ConvertStateButton({ onClick, state, children }) {

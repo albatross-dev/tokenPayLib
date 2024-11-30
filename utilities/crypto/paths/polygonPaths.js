@@ -107,7 +107,8 @@ export const oldPolygonPaths = {
   }
 }
 
-const polygonPaths = {"WMATIC": {
+const polygonPaths = {
+  "WMATIC": {
 "1INCH": [ ["address", "uint24", "address"],
 [
 "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
@@ -418,7 +419,7 @@ const polygonPaths = {"WMATIC": {
 "0x03b54a6e9a984069379fae1a4fc4dbae93b3bccd",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
 100,
@@ -555,7 +556,7 @@ const polygonPaths = {"WMATIC": {
 "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
 ]
 ],
-"USDT": [ ["address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address"],
 [
 "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
 100,
@@ -1262,7 +1263,7 @@ const polygonPaths = {"WMATIC": {
 "0x03b54a6e9a984069379fae1a4fc4dbae93b3bccd",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
 100,
@@ -1701,7 +1702,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
 500,
@@ -1990,7 +1991,7 @@ const polygonPaths = {"WMATIC": {
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
 100,
@@ -2524,7 +2525,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
 100,
@@ -2814,7 +2815,7 @@ const polygonPaths = {"WMATIC": {
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
 500,
@@ -3385,7 +3386,7 @@ const polygonPaths = {"WMATIC": {
 "0x3d2bd0e15829aa5c362a4144fdf4a1112fa29b5c",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xb33eaad8d922b1083446dc23f610c2567fb5180f",
 3000,
@@ -3886,7 +3887,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39",
 500,
@@ -3922,8 +3923,6 @@ const polygonPaths = {"WMATIC": {
 "0x03b54a6e9a984069379fae1a4fc4dbae93b3bccd",
 ]
 ],
-},
-"MATIC": {
 },
 "SHIB": {
 "WMATIC": [ ["address", "uint24", "address"],
@@ -4320,7 +4319,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x6f8a06447ff6fcf75d803135a7de15ce88c1d4ec",
 10000,
@@ -4893,7 +4892,7 @@ const polygonPaths = {"WMATIC": {
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x172370d5cd63279efa6d502dab29171933a610af",
 10000,
@@ -6043,7 +6042,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x3d2bd0e15829aa5c362a4144fdf4a1112fa29b5c",
 10000,
@@ -6484,7 +6483,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x61299774020da444af134c82fa83e3810b309991",
 3000,
@@ -7755,7 +7754,7 @@ const polygonPaths = {"WMATIC": {
 "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xbbba073c31bf03b8acf7c28ef0738decf3695683",
 3000,
@@ -9221,7 +9220,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4",
 3000,
@@ -10480,7 +10479,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x553d3d295e0f695b9228246232edf400ed3560b5",
 3000,
@@ -13110,7 +13109,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
 10000,
@@ -13444,7 +13443,7 @@ const polygonPaths = {"WMATIC": {
 ]
 ],
 },
-"USDT": {
+"USDT.w": {
 "USDT": [ ["address", "uint24", "address"],
 [
 "0x9417669fbf23357d2774e9d421307bd5ea1006d2",
@@ -13614,8 +13613,6 @@ const polygonPaths = {"WMATIC": {
 "0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4",
 ]
 ],
-},
-"UST": {
 },
 "BUSD": {
 "USDC.E": [ ["address", "uint24", "address"],
@@ -14648,8 +14645,6 @@ const polygonPaths = {"WMATIC": {
 ]
 ],
 },
-"UST": {
-},
 "COMP": {
 "WETH": [ ["address", "uint24", "address"],
 [
@@ -15221,7 +15216,7 @@ const polygonPaths = {"WMATIC": {
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 500,
@@ -19586,7 +19581,7 @@ const polygonPaths = {"WMATIC": {
 "0x18ec0a6e18e5bc3784fdd3a3634b31245ab704f6",
 ]
 ],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
+"USDT.w": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 10000,
@@ -20234,8 +20229,7 @@ const polygonPaths = {"WMATIC": {
 "0x61299774020da444af134c82fa83e3810b309991",
 ]
 ],
-},
-
+}
 };
 
 export default polygonPaths
