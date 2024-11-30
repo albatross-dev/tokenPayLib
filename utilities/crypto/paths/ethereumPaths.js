@@ -1,5 +1,4 @@
-const ethereumPaths = {
-  "WETH": {
+const ethereumPaths = {"WETH": {
 "BUSD": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
@@ -17328,7 +17327,8 @@ const ethereumPaths = {
 "0x249ca82617ec3dfb2589c4c17ab7ec9765350a18",
 ]
 ],
-},
+}
+
 }
 
 export default ethereumPaths

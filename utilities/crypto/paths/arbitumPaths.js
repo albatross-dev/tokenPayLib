@@ -234,13 +234,6 @@ const arbitumPaths = {
 "0x371c7ec6d8039ff7933a2aa28eb827ffe1f52f07",
 ]
 ],
-"ARB": [ ["address", "uint24", "address"],
-[
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "UNI": [ ["address", "uint24", "address"],
 [
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
@@ -425,15 +418,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 500,
 "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "pogai": [ ["address", "uint24", "address"],
@@ -821,15 +805,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address"],
 [
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
@@ -1089,15 +1064,6 @@ const arbitumPaths = {
 "0x5979d7b546e38e414f7e9822514be443a4800529",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address"],
 [
 "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
@@ -1320,382 +1286,6 @@ const arbitumPaths = {
 ]
 ],
 },
-"ARB": {
-"GRT": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-3000,
-"0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-]
-],
-"WBTC": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-500,
-"0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
-]
-],
-"USDs": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0xd74f5255d557944cf7dd0e45ff521520002d5748",
-]
-],
-"GNS": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-500,
-"0x18c11fd286c5ec11c3b683caa813b77f5163a122",
-]
-],
-"USDT": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-]
-],
-"USDC.E": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-]
-],
-"WETH": [ ["address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-]
-],
-"LINK": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
-]
-],
-"USD+": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0xe80772eaf6e2e18b651f160bc9158b2a5cafca65",
-]
-],
-"USDC": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-]
-],
-"MAGIC": [ ["address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-10000,
-"0x539bde0d7dbd336b79148aa742883198bbf60342",
-]
-],
-"DAI": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-]
-],
-"GMX": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-]
-],
-"wstETH": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-500,
-"0x5979d7b546e38e414f7e9822514be443a4800529",
-]
-],
-"gOHM": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1",
-]
-],
-"SPA": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-3000,
-"0xd74f5255d557944cf7dd0e45ff521520002d5748",
-3000,
-"0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"XAI": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-3000,
-"0x4cb9a7ae498cedcbb5eae9f25736ae7d428c9d66",
-]
-],
-"RDNT": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-3000,
-"0x3082cc23568ea640225c2467653db90e9250aaa0",
-]
-],
-"PENDLE": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-3000,
-"0x0c880f6761f1af8d9aa9c466984b80dab9a8c9e8",
-]
-],
-"LUSD": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-500,
-"0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
-]
-],
-"ZRO": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-3000,
-"0x6985884c4392d348587b19cb9eaaf157f13271cd",
-]
-],
-"NEXT": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-10000,
-"0x58b9cb810a68a7f3e1e4f8cb45d1b9b3c79705e8",
-]
-],
-"CRV": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-3000,
-"0x11cdb42b0eb46d95f990bedd4695a6e3fa034978",
-]
-],
-"LDO": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-3000,
-"0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60",
-]
-],
-"PEPE": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-3000,
-"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-3000,
-"0x25d887ce7a35172c62febfd67a1856f20faebb00",
-]
-],
-"FRAX": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-500,
-"0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
-]
-],
-"AIDOGE": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-3000,
-"0x09e18590e8f76b6cf471b3cd75fe1a1a9d2b2c2b",
-]
-],
-"UNI": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
-]
-],
-"pogai": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-3000,
-"0x6fd58f5a2f3468e35feb098b5f59f04157002407",
-]
-],
-"UMAMI": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-10000,
-"0x1622bf67e6e5747b81866fe0b85178a93c7f86e3",
-]
-],
-"SPELL": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-10000,
-"0x3e6648c5a70a150a88bce65f4ad4d506fe15d2af",
-]
-],
-"MIM": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a",
-]
-],
-"JOE": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-10000,
-"0x371c7ec6d8039ff7933a2aa28eb827ffe1f52f07",
-]
-],
-"OHM": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-3000,
-"0xf0cb2dc0db5e6c66b9a70ac27b06b878da017028",
-]
-],
-"GRAIL": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-10000,
-"0x3d9907f9a368ad0a51be60f7da3b97cf940982d8",
-]
-],
-"agEUR": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0xfa5ed56a203466cbbc2430a43c66b9d8723528e7",
-]
-],
-"rETH": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-500,
-"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8",
-]
-],
-"FXS": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-3000,
-"0x9d2f299715d94d8a7e6f5eaa8e654e8c74a988a7",
-]
-],
-"VSTA": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-10000,
-"0xa684cd057951541187f288294a1e1c2646aa2d24",
-]
-],
-"SUSHI": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-3000,
-"0xd4d42f0b6def4ce0383636770ef773390d85c61a",
-]
-],
-"RAM": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-10000,
-"0xaaa6c1e32c55a7bfa8066a6fae9b42650f262418",
-]
-],
-"OX": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-10000,
-"0xba0dda8762c24da9487f5fa026a9b64b695a07ea",
-]
-],
-},
 "DAI": {
 "WETH": [ ["address", "uint24", "address", "uint24", "address"],
 [
@@ -1741,15 +1331,6 @@ const arbitumPaths = {
 "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
 3000,
 "0x25d887ce7a35172c62febfd67a1856f20faebb00",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "USDC.E": [ ["address", "uint24", "address"],
@@ -2079,15 +1660,6 @@ const arbitumPaths = {
 "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
 500,
 "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
-500,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "DAI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -2476,15 +2048,6 @@ const arbitumPaths = {
 "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
@@ -2814,15 +2377,6 @@ const arbitumPaths = {
 "0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
 500,
 "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -3168,13 +2722,6 @@ const arbitumPaths = {
 "0x539bde0d7dbd336b79148aa742883198bbf60342",
 3000,
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-]
-],
-"ARB": [ ["address", "uint24", "address"],
-[
-"0x539bde0d7dbd336b79148aa742883198bbf60342",
-10000,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "RDNT": [ ["address", "uint24", "address", "uint24", "address"],
@@ -3547,15 +3094,6 @@ const arbitumPaths = {
 "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x0c880f6761f1af8d9aa9c466984b80dab9a8c9e8",
-3000,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "gOHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x0c880f6761f1af8d9aa9c466984b80dab9a8c9e8",
@@ -3854,15 +3392,6 @@ const arbitumPaths = {
 "0x5979d7b546e38e414f7e9822514be443a4800529",
 500,
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x5979d7b546e38e414f7e9822514be443a4800529",
-500,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "DAI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -4378,15 +3907,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
@@ -4608,15 +4128,6 @@ const arbitumPaths = {
 "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
 500,
 "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x3082cc23568ea640225c2467653db90e9250aaa0",
-3000,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "gOHM": [ ["address", "uint24", "address", "uint24", "address"],
@@ -5085,15 +4596,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
-500,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
@@ -5279,15 +4781,6 @@ const arbitumPaths = {
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
 500,
 "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x18c11fd286c5ec11c3b683caa813b77f5163a122",
-500,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "DAI": [ ["address", "uint24", "address"],
@@ -5606,15 +5099,6 @@ const arbitumPaths = {
 "0xd74f5255d557944cf7dd0e45ff521520002d5748",
 3000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xd74f5255d557944cf7dd0e45ff521520002d5748",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "USDC.E": [ ["address", "uint24", "address"],
@@ -6128,15 +5612,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1",
@@ -6495,15 +5970,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x1622bf67e6e5747b81866fe0b85178a93c7f86e3",
-10000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x1622bf67e6e5747b81866fe0b85178a93c7f86e3",
@@ -6754,15 +6220,6 @@ const arbitumPaths = {
 "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
 3000,
 "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
-500,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "pogai": [ ["address", "uint24", "address", "uint24", "address"],
@@ -7051,15 +6508,6 @@ const arbitumPaths = {
 "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
 10000,
 "0x9d2f299715d94d8a7e6f5eaa8e654e8c74a988a7",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x25d887ce7a35172c62febfd67a1856f20faebb00",
-3000,
-"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
-3000,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "FRAX": [ ["address", "uint24", "address", "uint24", "address"],
@@ -7427,15 +6875,6 @@ const arbitumPaths = {
 "0xd74f5255d557944cf7dd0e45ff521520002d5748",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60",
-3000,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "OHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60",
@@ -7646,15 +7085,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 10000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x11cdb42b0eb46d95f990bedd4695a6e3fa034978",
-3000,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
@@ -8377,15 +7807,6 @@ const arbitumPaths = {
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xd4d42f0b6def4ce0383636770ef773390d85c61a",
-3000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xd4d42f0b6def4ce0383636770ef773390d85c61a",
@@ -8424,15 +7845,6 @@ const arbitumPaths = {
 ],
 },
 "GRT": {
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-3000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "WETH": [ ["address", "uint24", "address"],
 [
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
@@ -8789,15 +8201,6 @@ const arbitumPaths = {
 "0x25d887ce7a35172c62febfd67a1856f20faebb00",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x09e18590e8f76b6cf471b3cd75fe1a1a9d2b2c2b",
-3000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "XAI": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x09e18590e8f76b6cf471b3cd75fe1a1a9d2b2c2b",
@@ -9091,15 +8494,6 @@ const arbitumPaths = {
 "0xd74f5255d557944cf7dd0e45ff521520002d5748",
 3000,
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-3000,
-"0xd74f5255d557944cf7dd0e45ff521520002d5748",
-3000,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "CRV": [ ["address", "uint24", "address", "uint24", "address"],
@@ -9552,15 +8946,6 @@ const arbitumPaths = {
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xaaa6c1e32c55a7bfa8066a6fae9b42650f262418",
-10000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xaaa6c1e32c55a7bfa8066a6fae9b42650f262418",
@@ -9993,15 +9378,6 @@ const arbitumPaths = {
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xfa5ed56a203466cbbc2430a43c66b9d8723528e7",
-500,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0xfa5ed56a203466cbbc2430a43c66b9d8723528e7",
@@ -10241,15 +9617,6 @@ const arbitumPaths = {
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
 10000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x3e6648c5a70a150a88bce65f4ad4d506fe15d2af",
-10000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
@@ -10603,15 +9970,6 @@ const arbitumPaths = {
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
 10000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
@@ -11022,15 +10380,6 @@ const arbitumPaths = {
 "0xd74f5255d557944cf7dd0e45ff521520002d5748",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x6985884c4392d348587b19cb9eaaf157f13271cd",
-3000,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "OHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x6985884c4392d348587b19cb9eaaf157f13271cd",
@@ -11227,15 +10576,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 3000,
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xba0dda8762c24da9487f5fa026a9b64b695a07ea",
-10000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -11776,15 +11116,6 @@ const arbitumPaths = {
 "0xd74f5255d557944cf7dd0e45ff521520002d5748",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x3d9907f9a368ad0a51be60f7da3b97cf940982d8",
-10000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "OHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x3d9907f9a368ad0a51be60f7da3b97cf940982d8",
@@ -11945,15 +11276,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 3000,
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xa684cd057951541187f288294a1e1c2646aa2d24",
-10000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -12215,15 +11537,6 @@ const arbitumPaths = {
 "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x58b9cb810a68a7f3e1e4f8cb45d1b9b3c79705e8",
-10000,
-"0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "gOHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x58b9cb810a68a7f3e1e4f8cb45d1b9b3c79705e8",
@@ -12427,15 +11740,6 @@ const arbitumPaths = {
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
 10000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x371c7ec6d8039ff7933a2aa28eb827ffe1f52f07",
-10000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
@@ -12722,15 +12026,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 3000,
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8",
-500,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -13037,15 +12332,6 @@ const arbitumPaths = {
 "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x6fd58f5a2f3468e35feb098b5f59f04157002407",
-3000,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "GMX": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x6fd58f5a2f3468e35feb098b5f59f04157002407",
@@ -13206,15 +12492,6 @@ const arbitumPaths = {
 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
 3000,
 "0x9623063377ad1b27544c965ccd7342f7ea7e88c7",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x9d2f299715d94d8a7e6f5eaa8e654e8c74a988a7",
-3000,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "UNI": [ ["address", "uint24", "address", "uint24", "address"],
@@ -13483,15 +12760,6 @@ const arbitumPaths = {
 "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
 10000,
 "0x5575552988a3a80504bbaeb1311674fcfd40ad4b",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xf0cb2dc0db5e6c66b9a70ac27b06b878da017028",
-3000,
-"0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "LDO": [ ["address", "uint24", "address", "uint24", "address"],
@@ -13852,15 +13120,6 @@ const arbitumPaths = {
 "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
 ]
 ],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0x4cb9a7ae498cedcbb5eae9f25736ae7d428c9d66",
-3000,
-"0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-500,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
-]
-],
 "gOHM": [ ["address", "uint24", "address", "uint24", "address"],
 [
 "0x4cb9a7ae498cedcbb5eae9f25736ae7d428c9d66",
@@ -13954,15 +13213,6 @@ const arbitumPaths = {
 "0xe80772eaf6e2e18b651f160bc9158b2a5cafca65",
 100,
 "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-]
-],
-"ARB": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xe80772eaf6e2e18b651f160bc9158b2a5cafca65",
-100,
-"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-100,
-"0x912ce59144191c1204e64559fe8253a0e49e6548",
 ]
 ],
 "rETH": [ ["address", "uint24", "address", "uint24", "address"],
@@ -14208,7 +13458,7 @@ const arbitumPaths = {
 "0x6985884c4392d348587b19cb9eaaf157f13271cd",
 ]
 ],
-},
+}
 }
 
 export default arbitumPaths;
