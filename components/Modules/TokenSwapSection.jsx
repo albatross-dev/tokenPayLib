@@ -129,8 +129,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
           (selectedToken.id || selectedToken.symbol).toUpperCase()
         ][selectedTargetToken.id.toUpperCase()];
 
-        console.log("fetch Quote", contract, path, selectedToken, selectedTargetToken, amount, BigInt(amount * numberWithZeros(selectedToken?.decimals || 1)),)
-
       const encodedPath = encodePacked(path[0], path[1]);
 
       const quote = await readContract({
@@ -142,7 +140,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
         ],
       });
       setQuote(quote);
-      console.log("quote", quote);
     }
     // Validate the amount and set error messages
     if (amount <= 0) {
@@ -160,7 +157,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       );
     } else {
       if (selectedToken && selectedTargetToken && amount) {
-        console.log("fetching quote for amount", amount)
         fetchQuote();
       }
       setError(""); // Clear error if valid
@@ -174,7 +170,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       return [tokenId, obj];
     });
 
-    console.log("tokens", tokens);
     const tokenObj = Object.fromEntries(tokens);
     return tokenObj;
   }
@@ -331,7 +326,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       return [tokenId, TokensByChainId[activeChain.id][tokenId]];
     });
 
-    console.log("target array", targetTokenArr);
 
     targetTokenArr = targetTokenArr.filter((item) => {
       return item[1] !== undefined;
@@ -339,7 +333,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
 
     let targetTokens = Object.fromEntries(targetTokenArr);
     setTargetTokens(targetTokens);
-    console.log("targetTokens", targetTokenArr);
     setSelectedTargetToken(targetTokenArr[0][1]);
 
     return targetTokens;

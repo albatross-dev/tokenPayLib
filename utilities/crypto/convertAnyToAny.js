@@ -180,6 +180,8 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
       transaction: exactInputCall,
     });
 
+    console.log("swap done", res);
+
     success();
   } catch (e) {
     console.error(`Error converting ${amount} ${token.id} to ${target.id}`, e);
@@ -229,6 +231,8 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
 
     let path = getPath(token.symbol || token.id, chain, target);
     let encodedPath = getEncodedPath(token.symbol || token.id, chain, target);
+
+    console.log("path", path, encodedPath, token.symbol || token.id, chain, target);
 
     console.log("path", path, encodedPath);
 
