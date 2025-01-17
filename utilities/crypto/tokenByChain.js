@@ -26,6 +26,7 @@ const tokenyByChain = {
   [polygon.id]: {
     chain: polygon,
     spokePool: "0x9295ee1d8C5b022Be115A2AD3c30C72E34e7F096",
+    spokePoolWrapper: "0x224498FF598EcBCBde689b593E64Ac48e9b3BE15", // custom wrapper
     tokens: [
       {
         symbol: "USDC",

@@ -21,6 +21,7 @@ import { useActiveAccount } from "thirdweb/react";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import { FiAlertCircle } from "react-icons/fi";
 import { useTranslation } from "next-i18next";
+import CustomWrapperABI from "@/tokenPayLib/assets/customSwapRouterAbi.json";
 
 // Define the ABI for the depositV3 function
 const SpokePoolAbi = [
@@ -99,14 +100,14 @@ async function deposit(
     client: client,
     chain: chain, // Change this to the correct chain
     address: spokePoolAddress,
-    abi: SpokePoolAbi,
+    abi: CustomWrapperABI,
   });
 
   console.log("spokePoolContract", spokePoolContract);
 
   const depositCall = prepareContractCall({
     contract: spokePoolContract,
-    method: "depositV3",
+    method: "bridge",
     params: [
       depositor,
       recipient,
@@ -118,8 +119,7 @@ async function deposit(
       exclusiveRelayer,
       quoteTimestamp,
       fillDeadline,
-      exclusivityDeadline,
-      "0x", // Message
+      exclusivityDeadline
     ],
   });
 
@@ -140,7 +140,8 @@ async function acrossBridgeDeposit(
   chain,
   quoteData,
   limits,
-  spokePool
+  spokePool,
+  spokePoolWrapper
 ) {
   try {
     // Step 1: Get a Quote
@@ -154,7 +155,7 @@ async function acrossBridgeDeposit(
     }
 
     // Step 3: Approve Tokens
-    const spokePoolAddress = spokePool; // Replace with actual SpokePool address
+    const spokePoolAddress = spokePoolWrapper; // Replace with actual SpokePool address
     let res = await approveTokens(
       spokePoolAddress,
       tokenAddress,
@@ -204,6 +205,7 @@ const BridgeModalUniversal = ({
   maxAmount,
   chain,
   spokePool,
+  spokePoolWrapper,
   onStart,
   onFinish,
   destinationChainId,
@@ -315,7 +317,8 @@ const BridgeModalUniversal = ({
       chain,
       quote,
       limits,
-      spokePool
+      spokePool,
+      spokePoolWrapper
     );
     onFinish();
   }

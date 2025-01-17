@@ -11992,15 +11992,6 @@ const polygonPaths = {
 "0x2f6f07cdcf3588944bf4c42ac74ff24bf56e7590",
 ]
 ],
-"EUROE": [ ["address", "uint24", "address", "uint24", "address"],
-[
-"0xe111178a87a3bff0c8d18decba5798827539ae99",
-3000,
-"0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
-500,
-"0x820802fa8a99901f52e39acd21177b0be6ee2974",
-]
-],
 },
 "FRAX": {
 "USDC.E": [ ["address", "uint24", "address"],

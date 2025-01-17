@@ -80,6 +80,7 @@ const CrossChainSection = () => {
         token={TokensByChainId[activeChain?.id]["USDC"]}
         chain={activeChain}
         spokePool={tokenyByChain[activeChain?.id]?.spokePool}
+        spokePoolWrapper={tokenyByChain[activeChain?.id]?.spokePoolWrapper}
         maxAmount={balanceOfStableData}
         destinationChainId={selectedChain?.chainId}
         onStart={() => {
