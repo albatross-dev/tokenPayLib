@@ -11,9 +11,7 @@ import {
 
 import { PATHS } from "@/tokenPayLib/utilities/crypto/getPath";
 import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
-import {
-  ConvertStateButtonWide,
-} from "@/tokenPayLib/components/UI/ConvertStateButton";
+import { ConvertStateButtonWide } from "@/tokenPayLib/components/UI/ConvertStateButton";
 
 import { client } from "@/pages/_app";
 import { getContract, readContract } from "thirdweb";
@@ -42,7 +40,7 @@ import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
-export default function TokenSwapSection() {
+export default function TokenSwapSection({ origin, target, max, preAmount }) {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
@@ -66,6 +64,54 @@ export default function TokenSwapSection() {
   const [inputError, setError] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  async function setMaxAmountImmediately(ot){
+
+    console.log("ot", ot)
+
+    const balance = await fetchBalance(
+      client,
+      activeChain,
+      ot.contractAddress,
+      ot.abi,
+      account.address
+    );
+
+    setSelectedTokenBalance(balance);
+
+    console.log("balance", balance)
+
+    // wait for 1 second
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    setAmount(
+      (Number(balance) || 1) /
+        numberWithZeros(ot?.decimals || 1)
+    );
+
+    
+  }
+
+  useEffect(() => {
+    if (origin) {
+      const ot = getOriginTokens();
+      setSelectedToken(ot[origin]);
+      const tt = processTargetTokens(ot[origin]);
+      console.log("tt", tt);
+      console.log("target", target);
+      if (target) {
+        console.log("target", target, tt[target]);
+        setSelectedTargetToken(tt[target]);
+      }
+
+      if (max) {
+        setMaxAmountImmediately(ot[origin]);
+      }
+
+      if (preAmount) {
+        setAmount(preAmount);
+      }
+    }
+  }, [origin, target, max, preAmount]);
 
   useEffect(() => {
     async function fetchQuote() {
@@ -94,7 +140,6 @@ export default function TokenSwapSection() {
         ],
       });
       setQuote(quote);
-      console.log("quote", quote);
     }
     // Validate the amount and set error messages
     if (amount <= 0) {
@@ -118,21 +163,20 @@ export default function TokenSwapSection() {
     }
   }, [selectedToken, selectedTargetToken, amount]);
 
+  function getOriginTokens() {
+    const tokens = Object.keys(PATHS[activeChain.id]).map((tokenId) => {
+      let obj = TokensByChainId[activeChain.id][tokenId];
+      if (obj) obj.id = tokenId;
+      return [tokenId, obj];
+    });
 
-
+    const tokenObj = Object.fromEntries(tokens);
+    return tokenObj;
+  }
 
   useEffect(() => {
     if (activeChain) {
-      const tokens = Object.keys(PATHS[activeChain.id]).map((tokenId) => {
-        let obj = TokensByChainId[activeChain.id][tokenId];
-        if(obj) obj.id = tokenId
-        return [tokenId, obj];
-      });
-
-      console.log("tokens", tokens);
-      const tokenObj = Object.fromEntries(tokens);
-
-      setOriginTokens(tokenObj);
+      setOriginTokens(getOriginTokens());
     }
   }, [activeChain]);
 
@@ -204,35 +248,34 @@ export default function TokenSwapSection() {
     handleExchangeAny(amount * numberWithZeros(selectedToken?.decimals || 1));
   };
 
-    // handle exchanges from the exchange function
-    async function handleExchangeAny(amount) {
-      setExchangeState("processing");
-      await convertAnyToAnyDirect(
-        selectedToken,
-        amount,
-        account,
-        () => {
-          setTimeout(() => {
-            fetchBalances();
-            setAmount(0);
-          }, 1000);
-          setShowSuccessModal(true);
-        },
-        (error) => {
-          console.error("Error converting to EUROE", error);
-  
-          setExchangeState("error");
-  
-          setTimeout(() => {
-            setExchangeState("normal");
-          }, 4000);
-        },
-        activeChain,
-        selectedTargetToken
-      );
-      setExchangeState("normal");
-      
-    }
+  // handle exchanges from the exchange function
+  async function handleExchangeAny(amount) {
+    setExchangeState("processing");
+    await convertAnyToAnyDirect(
+      selectedToken,
+      amount,
+      account,
+      () => {
+        setTimeout(() => {
+          fetchBalances();
+          setAmount(0);
+        }, 1000);
+        setShowSuccessModal(true);
+      },
+      (error) => {
+        console.error("Error converting to EUROE", error);
+
+        setExchangeState("error");
+
+        setTimeout(() => {
+          setExchangeState("normal");
+        }, 4000);
+      },
+      activeChain,
+      selectedTargetToken
+    );
+    setExchangeState("normal");
+  }
 
   // handle exchanges from the modals
   async function handleExchange(amount) {
@@ -275,15 +318,35 @@ export default function TokenSwapSection() {
     }));
   }
 
+  function processTargetTokens(token) {
+    if (!token) return;
+    let targetTokenArr = Object.keys(
+      PATHS[activeChain.id][token.id.toUpperCase()]
+    ).map((tokenId) => {
+      return [tokenId, TokensByChainId[activeChain.id][tokenId]];
+    });
+
+
+    targetTokenArr = targetTokenArr.filter((item) => {
+      return item[1] !== undefined;
+    });
+
+    let targetTokens = Object.fromEntries(targetTokenArr);
+    setTargetTokens(targetTokens);
+    setSelectedTargetToken(targetTokenArr[0][1]);
+
+    return targetTokens;
+  }
+
   return (
     <div>
-
       <UniversalModal
         isOpen={showSuccessModal}
         type={MODAL_TYPE_SUCCESS}
         title={t("exchange_success_title")}
         message={t("exchange_success_message")}
-        closeModal={() => setShowSuccessModal(false)}/>
+        closeModal={() => setShowSuccessModal(false)}
+      />
 
       <ExchangeModal
         show={showExchangeModal}
@@ -319,23 +382,7 @@ export default function TokenSwapSection() {
         onSelect={(token) => {
           setAmount(0);
           setSelectedToken(token);
-          
-          let targetTokenArr = Object.keys(
-            PATHS[activeChain.id][token.id.toUpperCase()]
-          ).map((tokenId) => {
-            return [tokenId, TokensByChainId[activeChain.id][tokenId]];
-          });
-
-          console.log("target array", targetTokenArr);
-
-          targetTokenArr = targetTokenArr.filter((item)=>{
-            return item[1] !== undefined
-          })
-
-          let targetTokens = Object.fromEntries(targetTokenArr);
-          setTargetTokens(targetTokens);
-          console.log("targetTokens", targetTokenArr);
-          setSelectedTargetToken(targetTokenArr[0][1]);
+          processTargetTokens(token);
         }}
         tokens={originTokens}
         selectedToken={selectedToken}
@@ -446,4 +493,4 @@ export default function TokenSwapSection() {
       </div>
     </div>
   );
-};
+}

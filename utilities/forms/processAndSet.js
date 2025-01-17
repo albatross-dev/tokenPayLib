@@ -3,9 +3,11 @@ import formatDateForInput from "./formatDateForInput";
   // Recursive function to preprocess and set values in nested data structures
   const preprocessAndSetValues = (data, parentKey = "", methods) => {
 
-
     Object.entries(data).forEach(([key, value]) => {
       const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handles nested keys
+
+      console.log("iterate", key, value);
+
       if (
         typeof value === "object" &&
         value !== null &&

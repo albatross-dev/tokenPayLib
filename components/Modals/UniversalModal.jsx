@@ -80,7 +80,7 @@ const UniversalModal = ({ isOpen, closeModal, type, title, message }) => {
                   className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentType.buttonBgColor} ${currentType.buttonTextColor}`}
                   onClick={closeModal}
                 >
-                  Close
+                  Schließen
                 </button>
               </div>
             </DialogPanel>

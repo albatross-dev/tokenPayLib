@@ -157,8 +157,6 @@ const FieldRenderer = ({
               <ArrayField
                 field={field}
                 methods={methods}
-                newLabel={field.newLabel}
-                removeLabel={field.removeLabel}
                 parentName={parentName} // Pass parentName for array fields
               />
             ) : field.type === "date" ? (
@@ -302,9 +300,10 @@ const ArrayField = ({
           className="text-gray-700 hover:text-black  transition-all group duration-300 flex items-center  gap-2  rounded-full"
           title="Add new item"
         > 
-          {field.newLabel}
+         
           
           <FiPlus className="w-8 h-8 p-2 rounded-full transition-all group-hover:shadow-xl duration-300 bg-uhuBlue shadow-sm text-white" />
+          {field.newLabel}
         </button>
       </div>
 
