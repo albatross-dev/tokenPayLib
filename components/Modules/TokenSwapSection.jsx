@@ -66,8 +66,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
 
   async function setMaxAmountImmediately(ot){
 
-    console.log("ot", ot)
-
     const balance = await fetchBalance(
       client,
       activeChain,
