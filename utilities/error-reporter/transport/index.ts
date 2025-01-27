@@ -17,7 +17,7 @@ import {
 import { AxiosTransport, AxiosTransportConfig } from "./axiosTransport";
 import { ConsoleTransport, ConsoleTransportConfig } from "./consoleTransport";
 
-export type {
+export {
   TelegramTransport,
   TelegramTransportConfig,
   AxiosTransport,
