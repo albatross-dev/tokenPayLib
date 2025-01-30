@@ -49,48 +49,51 @@ export class TelegramTransport implements Transport {
       return;
     }
 
-    const formattedLog = this.formatter(entrie);
+    const formattedLogs = this.formatter(entrie).log;
 
-    console.log(formattedLog);
+    for (const log of formattedLogs) {
+      try {
+        const response = await axios({
+          method: "post",
+          url: `https://api.telegram.org/bot${this.botToken}/sendMessage`,
+          data: {
+            chat_id: this.chatId,
+            text: log,
+            parse_mode: this.parseMode,
+          },
+        });
 
-    try {
-      const response = await axios({
-        method: "post",
-        url: `https://api.telegram.org/bot${this.botToken}/sendMessage`,
-        data: {
-          chat_id: this.chatId,
-          text: formattedLog.log,
-          parse_mode: this.parseMode,
-        },
-      });
+        if (response.status !== 200) {
+          console.error(
+            "Failed to send message with Http Status: ",
+            response.status,
+            " ",
+            response.statusText
+          );
+          continue;
+        }
 
-      if (response.status !== 200) {
-        console.error(
-          "Failed to send message with Http Status: ",
-          response.status,
-          " ",
-          response.statusText
-        );
-        return;
-      }
+        const data = response.data;
 
-      const data = response.data;
-
-      if (data.ok !== true) {
-        console.error(
-          "Failed to send message with Telegram Error: ",
-          data.description
-        );
-        return;
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(
-          "Failed to send message with Axios Error: ",
-          error.response?.data || error.message
-        );
-      } else {
-        console.error("Failed to send message with Unexpected Error: ", error);
+        if (data.ok !== true) {
+          console.error(
+            "Failed to send message with Telegram Error: ",
+            data.description
+          );
+          continue;
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error(
+            "Failed to send message with Axios Error: ",
+            error.response?.data || error.message
+          );
+        } else {
+          console.error(
+            "Failed to send message with Unexpected Error: ",
+            error
+          );
+        }
       }
     }
   }
