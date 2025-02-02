@@ -4,11 +4,12 @@ import { MdOutlineError } from "react-icons/md";
 import React from "react";
 
 export default class ErrorBoundary extends React.Component {
-  constructor({ clientReporter, serverReporter, ...props }) {
+  constructor({ clientReporter, serverReporter, backLink, ...props }) {
     super(props);
     this.state = { hasError: false };
     this.clientReporter = clientReporter;
     this.serverReporter = serverReporter;
+    this.backLink = backLink;
   }
 
   static getDerivedStateFromError(error) {
@@ -44,7 +45,7 @@ export default class ErrorBoundary extends React.Component {
               Ooops... Something went wrong!
             </h2>
             <Link
-              href='/dashboard'
+              href={this.backLink}
               className='bg-uhuBlue text-white rounded-md px-4 py-2'
               onClick={() => (this.state.hasError = false)}
             >
