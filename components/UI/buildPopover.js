@@ -46,7 +46,7 @@ export default function buildPopover(getButton, getContent, classInject) {
       let classAll = "shadow-lg bg-white z-[99]";
 
       if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        return 'left-0 bottom-0 w-screen rounded-t-[2rem] fixed pb-18 pt-8 ' + classAll;
+        return 'left-0 bottom-0 w-full rounded-t-[2rem] fixed pb-18 pt-8 ' + classAll;
       }
 
       let classBase = "transform absolute rounded sm:w-96 max-h-96 overflow-scroll  md:px-4 sm:px-0 " + classAll;

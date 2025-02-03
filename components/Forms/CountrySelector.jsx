@@ -69,8 +69,6 @@ export default function CountrySelector({
     selectedCountry = countries[selectedCountry];
   }
 
-  console.log("selectedcountry", countriesISO.getName("US","en"), countriesISO.getName("GB", "de"),"GB", "de");
-
   function select(country) {
     if (onlyIso) {
       onSelect(country || ""); // Send null if no country is selected
