@@ -282,6 +282,25 @@ export class Reporter {
     }
   }
 
+    /**
+   * Forwards the given entry to all transports of this reporter async.
+   * Can be used to forward client messages that where received on the server.
+   *
+   * @param entry The log entry to be forwarded
+   * @returns void
+   */
+    public async asyncForward(entry: LogEntry) {
+      // If the log level of the entry is lower then this reporters log level do nothing
+      if (entry.level < this.level) {
+        return;
+      }
+  
+      // Write the entry to all transports
+      for (const transport of this.transports) {
+        await transport.sendLog(entry);
+      }
+    }
+
   /**
    * Extracts the stack, message, name, data, and inner errors of the given error into an
    *  serializable object.

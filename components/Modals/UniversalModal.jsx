@@ -11,7 +11,7 @@ export const MODAL_TYPE_ERROR = "error";
 export const MODAL_TYPE_SUCCESS = "success";
 export const MODAL_TYPE_INFO = "info";
 
-const UniversalModal = ({ isOpen, closeModal, type, title, message }) => {
+const UniversalModal = ({ isOpen, closeModal, type, title, message, customButtonTitle, customButtonFunction }) => {
   const types = {
     error: {
       icon: <HiExclamationTriangle className="h-6 w-6 text-red-500 mr-2" />,
@@ -71,10 +71,18 @@ const UniversalModal = ({ isOpen, closeModal, type, title, message }) => {
                 {currentType.icon}
                 {title}
               </DialogTitle>
-              <div className="my-4">
+              {typeof message === "string"? ( <div className="my-4">
                 <p className="text-base text-gray-700">{message}</p>
-              </div>
-              <div className="mt-4 flex justify-end">
+              </div>):(message)}
+             
+              <div className="mt-4 flex justify-between">
+                {customButtonTitle?  <button
+                  type="button"
+                  className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentType.buttonBgColor} ${currentType.buttonTextColor}`}
+                  onClick={customButtonFunction}
+                >
+                  {customButtonTitle}
+                </button>:<div></div>}
                 <button
                   type="button"
                   className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentType.buttonBgColor} ${currentType.buttonTextColor}`}

@@ -1,4 +1,4 @@
-import { HiQuestionMarkCircle, HiLockClosed } from "react-icons/hi2";
+import { HiQuestionMarkCircle, HiLockClosed, HiCheck } from "react-icons/hi2";
 import React from "react";
 
 const LoadingButton = ({
@@ -77,7 +77,9 @@ const LoadingButton = ({
       className={buttonStyles}
     >
       {buttonContent}
-      {isLoading !== "processing" && isLoading !== "error" ? (
+      {isLoading === "success" ? (
+        <HiCheck className="h-5 w-5 text-white ml-2" />
+      ):(isLoading !== "processing" && isLoading !== "error" ? (
         active ? (
           <div></div>
         ) : (
@@ -85,7 +87,8 @@ const LoadingButton = ({
         )
       ) : (
         <></>
-      )}
+      ))}
+      {}
     </button>
   );
 };

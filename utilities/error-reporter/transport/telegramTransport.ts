@@ -88,6 +88,8 @@ export class TelegramTransport implements Transport {
             "Failed to send message with Axios Error: ",
             error.response?.data || error.message
           );
+
+          console.log("Error response: ", error.response);
         } else {
           console.error(
             "Failed to send message with Unexpected Error: ",
