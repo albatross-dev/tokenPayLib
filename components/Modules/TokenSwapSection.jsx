@@ -40,6 +40,9 @@ import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
+let retryCounterAny = 0;
+let retryCounter = 0;
+
 export default function TokenSwapSection({ origin, target, max, preAmount }) {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
@@ -85,8 +88,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       (Number(balance) || 1) /
         numberWithZeros(ot?.decimals || 1)
     );
-
-    
   }
 
   useEffect(() => {
@@ -261,13 +262,19 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
         setShowSuccessModal(true);
       },
       (error) => {
-        console.error("Error converting to EUROE", error);
-
-        setExchangeState("error");
-
-        setTimeout(() => {
-          setExchangeState("normal");
-        }, 4000);
+        retryCounterAny++;
+        if (retryCounterAny < 3) {
+          handleExchangeAny(amount);
+          console.log("retrying exchange", retryCounterAny);
+        }else{
+          retryCounterAny = 0;
+          console.error("Error converting to EUROE", error);
+          setExchangeState("error");
+          setTimeout(() => {
+            setExchangeState("normal");
+          }, 4000);
+        }
+      
       },
       activeChain,
       selectedTargetToken
@@ -277,6 +284,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
 
   // handle exchanges from the modals
   async function handleExchange(amount) {
+    
     setLoading((prevState) => ({
       ...prevState,
       [selectedToken.symbol]: "processing",
@@ -293,19 +301,26 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
         setShowSuccessModal(true);
       },
       (error) => {
-        console.error("Error converting to EUROE", error);
+        retryCounter++;
+        if (retryCounter < 3) {
+          handleExchange(amount);
+          console.log("retrying exchange", retryCounter);
+        } else {
+          retryCounter = 0;
+          console.error("Error converting to EUROE", error);
 
-        setLoading((prevState) => ({
-          ...prevState,
-          [selectedToken.symbol]: "error",
-        }));
-
-        setTimeout(() => {
           setLoading((prevState) => ({
             ...prevState,
-            [selectedToken.symbol]: "normal",
+            [selectedToken.symbol]: "error",
           }));
-        }, 4000);
+
+          setTimeout(() => {
+            setLoading((prevState) => ({
+              ...prevState,
+              [selectedToken.symbol]: "normal",
+            }));
+          }, 4000);
+        }
       },
       activeChain,
       "usdc"
