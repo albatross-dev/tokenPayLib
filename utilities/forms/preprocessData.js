@@ -17,6 +17,10 @@ const preprocessDataForServer = (data) => {
           recursiveProcess(value);
         }
       }
+
+      if(value === null){
+        delete obj[key];
+      }
     });
   };
 
