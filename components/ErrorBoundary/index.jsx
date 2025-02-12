@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MdOutlineError } from "react-icons/md";
 
 import React from "react";
+import ErrorView from "./ErrorView";
 
 export default class ErrorBoundary extends React.Component {
   constructor({ clientReporter, serverReporter, backLink, ...props }) {
@@ -38,21 +39,7 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className='w-screen h-screen flex justify-center items-center'>
-          <div className='my-auto mx-auto p-4 border border-gray-200 rounded-lg flex flex-col items-center'>
-            <h2 className='text-red-500 text-md text-center mb-4 flex flex-row'>
-              <MdOutlineError className='mr-2' />
-              Ooops... Something went wrong!
-            </h2>
-            <Link
-              href={this.backLink}
-              className='bg-uhuBlue text-white rounded-md px-4 py-2'
-              onClick={() => (this.state.hasError = false)}
-            >
-              Go back
-            </Link>
-          </div>
-        </div>
+        <ErrorView hasError={this.state.hasError} backLink={this.backLink} />
       );
     }
 
