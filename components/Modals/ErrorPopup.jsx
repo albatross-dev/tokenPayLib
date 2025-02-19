@@ -77,7 +77,7 @@ const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
                               className="origin-top"
                             >
                               <p className="text-sm text-red-400 mb-4 px-4">
-                                {errorMessage?.error.message}
+                                {errorMessage?.error?.message}
                               </p>
                             </DisclosurePanel>
                           )}
