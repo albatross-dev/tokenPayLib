@@ -60,7 +60,7 @@ const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
                       <DisclosureButton className="w-full  flex justify-between items-center p-4">
                         {" "}
                         <p className="text-sm text-red-400 font-bold">
-                          Error {errorMessage?.error.code}
+                          Error {errorMessage?.error?.code}
                         </p>
                         {open ? (<HiChevronUp className="h-4 w-4 text-red-400" />) : (<HiChevronDown className="h-4 w-4 text-red-400" />)}
                       </DisclosureButton>
