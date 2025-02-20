@@ -25,6 +25,7 @@ const FieldRenderer = ({
   alwaysEditable = false,
   parentName = "", // Parent name for correct nested structure
   arrayItemIndex = null,
+  step = "any"
 }) => {
 
   const methods = useFormContext();
@@ -168,7 +169,7 @@ const FieldRenderer = ({
               parsedRequired={parsedRequired}
               />
             ) : (
-              <DefaultInput disabled={alwaysEditable?false:field.disabled} type={field.type} placeholder={field.placeholder} fieldName={fieldName} methods={methods} parsedRequired={parsedRequired} />
+              <DefaultInput disabled={alwaysEditable?false:field.disabled} type={field.type} placeholder={field.placeholder} fieldName={fieldName} methods={methods} parsedRequired={parsedRequired} step={step}/>
             )}
             </div>
           </div>
@@ -275,6 +276,7 @@ const ArrayField = ({
             alwaysEditable={isAdding && index === (arrayFields.length-1)} // is isAdding and last field then editable
             parentName={arrayFieldName} // Pass the parent name with the index for unique field names
             arrayItemIndex={index}
+            step={field.step}
           />
 
           {/* Remove Button */}

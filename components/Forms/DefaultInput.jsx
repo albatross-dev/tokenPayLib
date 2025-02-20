@@ -14,12 +14,13 @@ import React, { useState } from 'react';
  *
  * @returns {JSX.Element} The rendered input element.
  */
-function DefaultInput({disabled, type, fieldName, methods ,placeholder ,  parsedRequired}) {
+function DefaultInput({disabled, type, fieldName, methods ,placeholder , parsedRequired, step}) {
   return  <input
   id={fieldName}
   name={fieldName}
   type={type}
   disabled={disabled}
+  step={step}
   placeholder={placeholder?.toString()}
   {...methods.register(fieldName, { required: parsedRequired })}
   className={`mt-1 p-2 w-full border rounded-md ${
