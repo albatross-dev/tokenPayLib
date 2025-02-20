@@ -24,7 +24,9 @@ const appendFilesRecursively = (processedData, data) => {
       });
     } else {
       // Append non-file values to FormData
-      formData.append(formKey || key, value);
+      if(value !== undefined){
+        formData.append(formKey || key, value);
+      }
     }
   };
 
