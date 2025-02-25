@@ -5,8 +5,11 @@ import React from "react";
 import ErrorView from "./ErrorView";
 
 export default class ErrorBoundary extends React.Component {
-  constructor({ clientReporter, serverReporter, backLink, ...props }) {
+  constructor(props) {
     super(props);
+  
+    const { clientReporter, serverReporter, backLink } = props; 
+  
     this.state = { hasError: false };
     this.clientReporter = clientReporter;
     this.serverReporter = serverReporter;
