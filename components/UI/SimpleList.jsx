@@ -1,10 +1,15 @@
 import DatePicker from '@/components/DatePicker'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from './Table';
+
 
 export default function SimpleList({children, columns, collection, loader, standardQuery}) {
 
   const [tableQuery, setTableQuery] = useState({ page: 1, limit: 20, where: standardQuery });
+
+  useEffect(()=>{
+    setTableQuery({ ...tableQuery, where: standardQuery });
+  }, [standardQuery]);
 
   const handleDateChange = (e) => {
     console.log(e);
@@ -41,8 +46,8 @@ export default function SimpleList({children, columns, collection, loader, stand
   };
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="flex flex-1 flex-row md:flex-row items-start gap-2 md:gap-8 mt-8 mb-4 bg-white rounded-md w-full">
+    <div>
+      <div className="flex flex flex-col md:flex-row items-start gap-2 md:gap-8 mt-8 mb-4 bg-white rounded-md w-full md:max-w-screen-lg">
         <DatePicker onDateChange={handleDateChange} minDate="2021-01-01" />
         {children}
       </div>

@@ -6,6 +6,9 @@ import QRCode from "react-qr-code";
 import { FiCopy, FiCheck } from "react-icons/fi";
 import { useTranslation } from "next-i18next";
 
+/**
+ * Component to display a QR code of the current wallet address
+ */
 const WalletQRCode = () => {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState(false);
