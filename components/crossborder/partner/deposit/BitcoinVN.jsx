@@ -1,6 +1,6 @@
 import Loader from "@/tokenPayLib/components/UI/Loader";
-import { getQuote } from "@/utilities/partner/bitcoinvn";
-import { STABLECOIN_TO_FIAT_MAP } from "@/utilities/stableCoinsMaps";
+import { getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
+import { STABLECOIN_TO_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { HiChevronDoubleRight } from "react-icons/hi2";
