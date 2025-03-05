@@ -1,10 +1,10 @@
-import OnRamp from "@/components/crossborder/partner/withdraw/OnRamp";
-import Swypt from "@/components/crossborder/partner/withdraw/Swypt";
-import RawCrypto from "@/components/crossborder/partner/withdraw/Crypto";
-import BitcoinVN from "@/components/crossborder/partner/withdraw/BitcoinVN";
-import Stasis from "@/components/crossborder/partner/withdraw/Stasis";
-import CryptoPartner from "@/components/crossborder/partner/withdraw/PartnerCrypto";
-import Unlimit from "@/components/crossborder/partner/withdraw/Unlimit";
+import OnRamp from "@/tokenPayLib/components/crossborder/partner/withdraw/OnRamp";
+import Swypt from "@/tokenPayLib/components/crossborder/partner/withdraw/Swypt";
+import RawCrypto from "@/tokenPayLib/components/crossborder/partner/withdraw/Crypto";
+import BitcoinVN from "@/tokenPayLib/components/crossborder/partner/withdraw/BitcoinVN";
+import Stasis from "@/tokenPayLib/components/crossborder/partner/withdraw/Stasis";
+import CryptoPartner from "@/tokenPayLib/components/crossborder/partner/withdraw/PartnerCrypto";
+import Unlimit from "@/tokenPayLib/components/crossborder/partner/withdraw/Unlimit";
 import HelpDesk from "./partner/withdraw/Helpdesks/HelpDesk";
 
 export default function TransferPanel({

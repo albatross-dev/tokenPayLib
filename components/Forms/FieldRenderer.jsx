@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState, Fragment } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import FormInput from "./FormInput";
 import DocumentUploadField from "./DocumentUploader";
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus } from "react-icons/fi";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { Dialog, Transition } from "@headlessui/react";
 import DateInputField from "./DateInputField";
@@ -21,13 +20,12 @@ import DefaultInput from "./DefaultInput";
  */
 const FieldRenderer = ({
   fields,
-  style="vertical",
+  style = "vertical",
   alwaysEditable = false,
   parentName = "", // Parent name for correct nested structure
   arrayItemIndex = null,
-  step = "any"
+  step = "any",
 }) => {
-
   const methods = useFormContext();
 
   return (
@@ -35,13 +33,8 @@ const FieldRenderer = ({
       {fields.map((field, index) => {
         // Generate a unique field key
         const fieldName = parentName
-          ? `${parentName}.${arrayItemIndex}.${field.name ? field.name : index}`
+          ? `${parentName}.${field.name ? field.name : index}`
           : field.name;
-
-          methods.register(fieldName);
-
-
-
 
         // check if is visible field by checking if field.visible is a function and then run it
         if (field.visible && typeof field.visible === "function") {
@@ -54,9 +47,9 @@ const FieldRenderer = ({
         let parsedRequired = false;
         if (field.required) {
           if (typeof field.required === "function") {
-            if(arrayItemIndex !== null){
+            if (arrayItemIndex !== null) {
               parsedRequired = field.required(methods, arrayItemIndex); // Execute the function with methods
-            }else{
+            } else {
               parsedRequired = field.required(methods); // Execute the function with methods
             }
           } else {
@@ -67,9 +60,9 @@ const FieldRenderer = ({
         return (
           <div
             key={fieldName || index} // Use fieldName if available, otherwise use index for non-named fields like rows
-            className={`${style==="horizontal"&&"md:flex w-full items-center flex-row"} ${field.type !== "row" && "mb-4"} ${
-              field.width || ""
-            }`}
+            className={`${
+              style === "horizontal" && "md:flex w-full items-center flex-row"
+            } ${field.type !== "row" && "mb-4"} ${field.width || ""}`}
           >
             {field.type !== "checkbox" &&
               field.type !== "array" &&
@@ -77,100 +70,119 @@ const FieldRenderer = ({
               field.label && ( // Exclude the date type from the generic input rendering
                 <label
                   htmlFor={fieldName}
-                  className={`block text-sm font-medium text-gray-700 ${style==="horizontal"&&"md:w-64 md:text-end pr-6"}`}
+                  className={`block text-sm font-medium text-gray-700 ${
+                    style === "horizontal" && "md:w-64 md:text-end pr-6"
+                  }`}
                 >
                   {field.label}
                   {parsedRequired && <span className="text-red-500">*</span>}
                 </label>
               )}
 
-            <div className={`${style==="horizontal" && field.type !== "checkbox" &&
-              field.type !== "array" &&
-              field.type !== "row" && field.type !== "ui" && "md:w-64"}`}>
-            {field.type === "checkbox" ? (
-              <div className="flex items-center">
-                <input
+            <div
+              className={`${
+                style === "horizontal" &&
+                field.type !== "checkbox" &&
+                field.type !== "array" &&
+                field.type !== "row" &&
+                field.type !== "ui" &&
+                "md:w-64"
+              }`}
+            >
+              {field.type === "checkbox" ? (
+                <div className="flex items-center">
+                  <input
+                    id={fieldName}
+                    name={fieldName}
+                    type="checkbox"
+                    {...methods.register(fieldName, {
+                      required: parsedRequired ? "!!!" : false, // Add validation rule
+                    })} // Register the checkbox with validation
+                    defaultChecked={methods.getValues(fieldName) || false} // Ensure defaultChecked is handled
+                    className="h-4 w-4 text-uhuBlue border-gray-300 rounded focus:ring-uhuBlue"
+                  />
+                  <label
+                    htmlFor={fieldName}
+                    className="ml-2 block text-sm cursor-pointer text-gray-900"
+                  >
+                    {field.label}{" "}
+                    {parsedRequired && <span className="text-red-500">*</span>}
+                  </label>
+                </div>
+              ) : field.type === "ui" ? (
+                field.content
+              ) : field.type === "custom" &&
+                typeof field.content === "function" ? (
+                field.content(methods) // Pass control and user to the custom component
+              ) : field.type === "select" ? (
+                <FormInput
+                  type="select"
+                  control={methods.control}
+                  options={field.options}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  required={parsedRequired}
+                  id={fieldName}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                />
+              ) : field.type === "country" ? (
+                <FormInput
+                  type="country"
+                  onlyIso={field.onlyIso}
+                  control={methods.control}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  required={parsedRequired}
+                  id={fieldName}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                />
+              ) : field.type === "textarea" ? (
+                <textarea
                   id={fieldName}
                   name={fieldName}
-                  type="checkbox"
-                  {...methods.register(fieldName, {
-                    required: parsedRequired ? "!!!" : false, // Add validation rule
-                  })} // Register the checkbox with validation
-                  defaultChecked={methods.getValues(fieldName) || false} // Ensure defaultChecked is handled
-                  className="h-4 w-4 text-uhuBlue border-gray-300 rounded focus:ring-uhuBlue"
+                  placeholder={field.placeholder?.toString()}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                  className="mt-1 p-2 w-full border rounded-md"
                 />
-                <label
-                  htmlFor={fieldName}
-                  className="ml-2 block text-sm cursor-pointer text-gray-900"
-                >
-                  {field.label} {parsedRequired && <span className="text-red-500">*</span>}
-                </label>
-              </div>
-            ) : field.type === "ui" ? (
-              field.content
-            ): field.type === "custom" && typeof field.content === "function" ? (
-              field.content(methods) // Pass control and user to the custom component
-            ) : field.type === "select" ? (
-              <FormInput
-                type="select"
-                control={methods.control}
-                options={field.options}
-                disabled={alwaysEditable?false:field.disabled}
-                required={parsedRequired}
-                id={fieldName}
-                {...methods.register(fieldName, { required: parsedRequired })}
-              />
-            ) : field.type === "country" ? (
-              <FormInput
-                type="country"
-                onlyIso={field.onlyIso}
-                control={methods.control}
-                disabled={alwaysEditable?false:field.disabled}
-                required={parsedRequired}
-                id={fieldName}
-                {...methods.register(fieldName, { required: parsedRequired })}
-              />
-            ) : field.type === "textarea" ? (
-              <textarea
-                id={fieldName}
-                name={fieldName}
-                placeholder={field.placeholder?.toString()}
-                {...methods.register(fieldName, { required: parsedRequired })}
-                className="mt-1 p-2 w-full border rounded-md"
-              />
-            ) : field.type === "file" ? (
-              <DocumentUploadField
-                name={fieldName}
-                control={methods.control}
-                label={field.label}
-                required={parsedRequired}
-                parentName={parentName}
-              />
-            ) : field.type === "row" ? (
-              <div className="flex flex-col md:flex-row md:gap-4">
-                <FieldRenderer
-                  fields={field.fields} // Render nested fields recursively
-                  parentName={parentName} // Pass parentName for nested fields
-                  alwaysEditable={alwaysEditable}
+              ) : field.type === "file" ? (
+                <DocumentUploadField
+                  name={fieldName}
+                  control={methods.control}
+                  label={field.label}
+                  required={parsedRequired}
+                  parentName={parentName}
                 />
-              </div>
-            ) : field.type === "array" ? (
-              <ArrayField
-                field={field}
-                methods={methods}
-                parentName={parentName} // Pass parentName for array fields
-              />
-            ) : field.type === "date" ? (
-              // Specific handling for date fields inside arrays
-              <DateInputField
-              fieldName={fieldName}
-              methods={methods}
-              disabled={alwaysEditable?false:field.disabled}
-              parsedRequired={parsedRequired}
-              />
-            ) : (
-              <DefaultInput disabled={alwaysEditable?false:field.disabled} type={field.type} placeholder={field.placeholder} fieldName={fieldName} methods={methods} parsedRequired={parsedRequired} step={step}/>
-            )}
+              ) : field.type === "row" ? (
+                <div className="flex flex-col md:flex-row md:gap-4">
+                  <FieldRenderer
+                    fields={field.fields} // Render nested fields recursively
+                    parentName={parentName} // Pass parentName for nested fields
+                    alwaysEditable={alwaysEditable}
+                  />
+                </div>
+              ) : field.type === "array" ? (
+                <ArrayField
+                  field={field}
+                  methods={methods}
+                  parentName={parentName} // Pass parentName for array fields
+                />
+              ) : field.type === "date" ? (
+                // Specific handling for date fields inside arrays
+                <DateInputField
+                  fieldName={fieldName}
+                  methods={methods}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  parsedRequired={parsedRequired}
+                />
+              ) : (
+                <DefaultInput
+                  disabled={alwaysEditable ? false : field.disabled}
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  fieldName={fieldName}
+                  methods={methods}
+                  parsedRequired={parsedRequired}
+                  step={step}
+                />
+              )}
             </div>
           </div>
         );
@@ -188,21 +200,20 @@ const FieldRenderer = ({
  *
  * @returns {JSX.Element} Rendered array of form fields with add and remove functionality.
  */
+
 const ArrayField = ({
   field,
   methods,
   parentName, // Pass parentName for array fields
 }) => {
-  const arrayFieldName = parentName ? `${parentName}.${field.name}` : field.name;
-
   const {
     fields: arrayFields,
     append,
     remove,
-    replace
+    replace,
   } = useFieldArray({
     control: methods.control,
-    name: arrayFieldName, // Map to the correct field array name
+    name: parentName ? `${parentName}.${field.name}` : field.name, // Map to the correct field array name
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -210,31 +221,15 @@ const ArrayField = ({
 
   const [isAdding, setIsAdding] = useState(false);
 
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    if(!loaded && arrayFields.length>0){
-      // await half a second before reloading
-      setTimeout(() => {
-        const currentValues = methods.getValues(arrayFieldName);
-        methods.reset({ ...methods.getValues(), [field.name]: currentValues });
-        setLoaded(true);
-      }, 500);
-
-    }
-  }, [arrayFields]);
-
   // Ensure at least one empty item on initial render
   useEffect(() => {
     if (arrayFields.length === 0) {
       const defaultItem = getDefaultItem();
       replace([defaultItem]); // Replace the empty array with a new item
     }
-    
   }, [arrayFields]); // Depend on initialItemAdded and arrayFields
 
   function getDefaultItem() {
-    console.log("getDefaultItem", field.fields);
     return field.fields.reduce((acc, childField) => {
       acc[childField.name] = ""; // Each child field starts with an empty value
       return acc;
@@ -243,7 +238,7 @@ const ArrayField = ({
 
   const handleDelete = () => {
     // if removed item is last item and isAdding is true, then set isAdding to false
-    if(isAdding && itemToDelete === (arrayFields.length-1)){
+    if (isAdding && itemToDelete === arrayFields.length - 1) {
       setIsAdding(false);
     }
 
@@ -256,9 +251,7 @@ const ArrayField = ({
 
   const addNewItem = () => {
     // Default values for each new item
-    console.log("add new item")
     const defaultItem = getDefaultItem();
-    console.log("defaultItem", defaultItem);
     append(defaultItem);
     setIsAdding(true);
   };
@@ -266,17 +259,23 @@ const ArrayField = ({
   return (
     <div className="mb-4 flex flex-col gap-4">
       {arrayFields.map((item, index) => (
-        <div key={item.id+"array_item"} className="mb-2 border rounded-lg p-4 relative">
+        <div
+          key={item.id + "array_item"}
+          className="mb-2 border rounded-lg p-4 relative"
+        >
           <h3 className="text-sm font-semibold mb-2">
-          {index + 1}. {field.label}  {isAdding && index === (arrayFields.length-1)?<span className="text-uhuBlue"> (Neu)</span>:""}
+            {index + 1}. {field.label}{" "}
+            {isAdding && index === arrayFields.length - 1 ? (
+              <span className="text-uhuBlue"> (Neu)</span>
+            ) : (
+              ""
+            )}
           </h3>
 
           <FieldRenderer
             fields={field.fields} // Render child fields recursively
-            alwaysEditable={isAdding && index === (arrayFields.length-1)} // is isAdding and last field then editable
-            parentName={arrayFieldName} // Pass the parent name with the index for unique field names
-            arrayItemIndex={index}
-            step={field.step}
+            alwaysEditable={isAdding && index === arrayFields.length - 1} // is isAdding and last field then editable
+            parentName={`${parentName}.${field.name}[${index}]`} // Pass the parent name with the index for unique field names
           />
 
           {/* Remove Button */}
@@ -286,7 +285,9 @@ const ArrayField = ({
               setItemToDelete(index);
               setIsModalOpen(true); // Open the modal
             }}
-            className={`${index===0&&arrayFields.length<2&&"hidden"} absolute top-2 right-2 text-red-600 hover:text-red-800`}
+            className={`${
+              index === 0 && arrayFields.length < 2 && "hidden"
+            } absolute top-2 right-2 text-red-600 hover:text-red-800`}
             title="Remove item"
           >
             <IoTrashBinOutline className="w-4 h-4 m-2" />
@@ -301,11 +302,10 @@ const ArrayField = ({
           onClick={addNewItem}
           className="text-gray-700 hover:text-black  transition-all group duration-300 flex items-center  gap-2  rounded-full"
           title="Add new item"
-        > 
-         
-          
-          <FiPlus className="w-8 h-8 p-2 rounded-full transition-all group-hover:shadow-xl duration-300 bg-uhuBlue shadow-sm text-white" />
+        >
           {field.newLabel}
+
+          <FiPlus className="w-8 h-8 p-2 rounded-full transition-all group-hover:shadow-xl duration-300 bg-uhuBlue shadow-sm text-white" />
         </button>
       </div>
 
@@ -348,7 +348,8 @@ const ArrayField = ({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-700">
-                      Möchten Sie dieses Element wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                      Möchten Sie dieses Element wirklich löschen? Diese Aktion
+                      kann nicht rückgängig gemacht werden.
                     </p>
                   </div>
 
