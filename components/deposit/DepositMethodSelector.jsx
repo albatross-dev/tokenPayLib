@@ -5,7 +5,7 @@ import axios from "axios";
 import {
   FIAT_SYMBOLS_MAP,
   STABLECOIN_TO_FIAT_MAP,
-} from "@/utilities/stableCoinsMaps";
+} from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
 

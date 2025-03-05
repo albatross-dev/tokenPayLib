@@ -13,7 +13,7 @@ import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import Image from "next/image";
 import DepositPanel from "@/tokenPayLib/components/deposit/DepositPanel";
 import DepositMethodSelector from "@/tokenPayLib/components/deposit/DepositMethodSelector";
-import { FIAT_SYMBOLS_MAP } from "@/utilities/stableCoinsMaps";
+import { FIAT_SYMBOLS_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { STANDARD_STABLE_MAP } from "@/tokenPayLib/components/crossborder/CurrencySelector";
 import { useUhuConfig } from "@/context/UhuConfigContext";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
