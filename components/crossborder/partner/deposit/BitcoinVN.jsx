@@ -1,5 +1,5 @@
 import Loader from "@/tokenPayLib/components/UI/Loader";
-import { getQuote } from "@/utilities/partner/bitcoinvn";
+import { getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
 import { STABLECOIN_TO_FIAT_MAP } from "@/utilities/stableCoinsMaps";
 import React, { useEffect, useState } from "react";
 import axios from "axios";

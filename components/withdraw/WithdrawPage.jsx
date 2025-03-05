@@ -1,5 +1,4 @@
 import Loader from "@/tokenPayLib/components/UI/Loader";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ErrorPopup from "@/tokenPayLib/components/Modals/ErrorPopup";
@@ -22,14 +21,6 @@ import FiatReceivingSelector, {
 import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanceSelector";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { useUhuConfig } from "@/context/UhuConfigContext";
-
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
-}
 
 export default function WithdrawPage() {
   const [state, setState] = useState("loading");
