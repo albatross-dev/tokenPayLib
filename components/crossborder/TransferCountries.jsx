@@ -23,6 +23,7 @@ export default function TransferCountries({
   ); // Initialize with the first country by default
 
   const {t} = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     setFilteredCountries(
@@ -84,7 +85,7 @@ export default function TransferCountries({
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Nach einem Land suchen"
+              placeholder={tCrossborder("transferCountries.searchCountryPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -94,7 +95,7 @@ export default function TransferCountries({
 
         {filteredCountries?.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            Keine unterstützten Länder in dieser Region.
+            {tCrossborder("transferCountries.noSupportedCountries")}
           </div>
         ) : (
           <div>
@@ -155,7 +156,7 @@ export default function TransferCountries({
                                   className="bg-uhuBlue rounded shadow py-1 px-4 text-white font-bold"
                                   onClick={() => countrySelected(country)}
                                 >
-                                  Dieses Zielland auswählen
+                                  {tCrossborder("transferCountries.selectCountry")}
                                 </button>
                               </div>
                             </div>

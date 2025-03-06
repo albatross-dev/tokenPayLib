@@ -31,6 +31,7 @@ import { IoIosSwap } from "react-icons/io";
 
 const ConvertPopup = ({ show, closeModal, token, targetToken, onSuccess, showSwapButton = false }) => {
   const { t } = useTranslation();
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
@@ -236,13 +237,13 @@ const ConvertPopup = ({ show, closeModal, token, targetToken, onSuccess, showSwa
                 className="text-lg flex items-center justify-between font-medium leading-6 text-gray-900"
               >
                 <div className="flex items-center gap-2">
-                  Konvertiere{" "}
+                {tCrossborder("convertPopup.convert")}{" "}
                   <span className="font-bold">
                     {STANDARD_STABLE_MAP[selectedToken?.name]
                       ? STANDARD_STABLE_MAP[selectedToken?.name]?.symbol
                       : selectedToken?.name}
                   </span>{" "}
-                  zu{" "}
+                  {tCrossborder("convertPopup.to")}{" "}
                   <span className="font-bold">
                     {STANDARD_STABLE_MAP[selectedTargetToken?.name]?.symbol}
                   </span>
@@ -256,13 +257,13 @@ const ConvertPopup = ({ show, closeModal, token, targetToken, onSuccess, showSwa
               </DialogTitle>
 
               <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
-                <div>Wie viel wollen Sie umwandeln?</div>
+                <div>{tCrossborder("convertPopup.howMuch")}</div>
                 <div  className="flex gap-2 bg-gray-200 items-center rounded-full cursor-pointer text-sm px-[6px] py-[2px]"  onClick={async () => {
                     setBalanceUpdate(true);
                     await fetchBalances(selectedToken, selectedTargetToken);
                     setBalanceUpdate(false);
                   }}>
-                <div className="text-[11px]">Wechselkurs aktualisieren</div>
+                <div className="text-[11px]">{tCrossborder("convertPopup.reloadRate")}</div>
                 <RxUpdate
                   className={`w-4 h-4 ${balanceUpdate && "animate-spin"}`}
                 

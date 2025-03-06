@@ -70,6 +70,8 @@ export default function CurrencyDisplay({
   const [balances, setBalances] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   const [mainCurrency, setMainCurrency] = useState(null);
   const [alternateCoinInfoOpen, setAlternateCoinInfoOpen] = useState(false);
 
@@ -264,7 +266,8 @@ export default function CurrencyDisplay({
                     }}
                     className='px-2 py-1 bg-uhuBlue cursor-pointer rounded-full font-bold text-white'
                   >
-                    Konvertieren
+                    {tCrossborder("durrencyDisplay.convert")}
+                    
                   </div>
                 </div>
               ))}

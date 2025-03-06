@@ -19,7 +19,7 @@ import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { sortMethodByCurrencyDeposit } from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
 
-export default function DepositPage() {
+export default function DepositPage({maintenance}) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
   // TW hooks
@@ -38,9 +38,6 @@ export default function DepositPage() {
   const [preferredFiatCurrency, setPreferredFiatCurrency] = useState("");
   // The amount the user wants to receive
   const [amount, setAmount] = useState("");
-
-  // Maintainance
-  const { maintenance } = useUhuConfig();
 
   const [error, setError] = useState("");
   const [state, setState] = useState("loading");
@@ -329,7 +326,7 @@ export default function DepositPage() {
         </div>
 
         <div className="border rounded w-full p-4 relative">
-          {maintenance?.dashboard?.deposit?.page && (
+          {maintenance.deposit?.page && (
             <Maintainance></Maintainance>
           )}
           {state === "loading" && (

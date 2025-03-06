@@ -1,5 +1,6 @@
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
 import axios from "axios";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import {
@@ -8,14 +9,17 @@ import {
   IoCopy,
   IoShieldCheckmarkSharp,
 } from "react-icons/io5";
+import Loader from "@/tokenPayLib/components/UI/Loader"; // Import the Loader component
 
 function StasisHeader({ view, setView }) {
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   const viewTitles = {
-    addBank: "Neues Bankkonto hinzufügen",
-    addCrypto: "Neues Krypto-Konto hinzufügen",
-    selectCrypto: "Krypto-Konto auswählen",
-    selectBank: "Bank-Konto auswählen",
-    deposit: "Zusammenfassung",
+    addBank: tCrossborder("deposit.stasis.header.addBank"),
+    addCrypto: tCrossborder("deposit.stasis.header.addCrypto"),
+    selectCrypto: tCrossborder("deposit.stasis.header.selectCrypto"),
+    selectBank: tCrossborder("deposit.stasis.header.selectBank"),
+    deposit: tCrossborder("deposit.stasis.header.deposit"),
   };
 
   const previousView = {
@@ -30,16 +34,16 @@ function StasisHeader({ view, setView }) {
   };
 
   return (
-    <div className='flex items-center mb-4'>
+    <div className="flex items-center mb-4">
       {view !== "selectBank" && view !== "success" && (
         <button
-          className='mr-4 text-gray-500 hover:text-gray-700 transition'
+          className="mr-4 text-gray-500 hover:text-gray-700 transition"
           onClick={handleBackClick}
         >
-          <IoArrowBack className='w-6 h-6' />
+          <IoArrowBack className="w-6 h-6" />
         </button>
       )}
-      <h3>{viewTitles[view] || "Stasis Einzahlung"}</h3>
+      <h3>{viewTitles[view] || tCrossborder("deposit.stasis.header.default")}</h3>
     </div>
   );
 }
@@ -73,6 +77,8 @@ export default function Stasis({ amount, account, user }) {
 
   const [reference, setReference] = useState("");
   const [paymentInfo, setPaymentInfo] = useState(null);
+    const { t: tCrossborder } = useTranslation("crossborder");
+
 
   useEffect(() => {
     fetchBankAccounts();
@@ -93,7 +99,7 @@ export default function Stasis({ amount, account, user }) {
     } catch (error) {
       setErrors({
         ...errors,
-        bankAccount: "Fehler beim Erstellen des Bankkontos.",
+        bankAccount: tCrossborder("deposit.stasis.errors.bankAccountFetch"),
       });
       console.error("Error fetching bank accounts", error);
       // TODO: Add error-reporter
@@ -110,7 +116,7 @@ export default function Stasis({ amount, account, user }) {
     } catch (error) {
       setErrors({
         ...errors,
-        cryptoAccount: "Fehler beim Erstellen des Krypto-Kontos.",
+        cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountFetch"),
       });
       console.error("Error fetching crypto accounts", error);
       // TODO: Add error-reporter
@@ -158,7 +164,7 @@ export default function Stasis({ amount, account, user }) {
       // TODO: Report Error with error-reporter
       setErrors({
         ...errors,
-        bankAccount: "Fehler beim Erstellen des Bankkontos.",
+        bankAccount: tCrossborder("deposit.stasis.errors.bankAccountCreate"),
       });
     }
   };
@@ -171,7 +177,10 @@ export default function Stasis({ amount, account, user }) {
    */
   const handleAddCryptoAccount = async () => {
     if (!account) {
-      setErrors({ ...errors, cryptoAccount: "Krypto-Konto nicht verbunden." });
+      setErrors({
+        ...errors,
+        cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountNotConnected"),
+      });
       return;
     }
 
@@ -205,7 +214,7 @@ export default function Stasis({ amount, account, user }) {
       console.error("Error creating crypto account", error);
       setErrors({
         ...errors,
-        cryptoAccount: "Fehler beim Erstellen des Krypto-Kontos.",
+        cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountCreate"),
       });
     }
   };
@@ -255,7 +264,7 @@ export default function Stasis({ amount, account, user }) {
       console.error("Error handling send", error);
       setErrors({
         ...errors,
-        send: "Fehler bei der Transaktion, bitte später erneut versuchen.",
+        send: tCrossborder("deposit.stasis.errors.transactionError"),
       });
     }
   };
@@ -265,83 +274,91 @@ export default function Stasis({ amount, account, user }) {
   // ####################
 
   const renderLoader = () => (
-    <div className='flex items-center justify-center h-[30rem]'>
+    <div className="flex items-center justify-center h-[30rem]">
       <Loader />
     </div>
   );
 
   const renderStasisKYCLink = () => (
     <>
-      <h2 className='text-xl font-semibold mb-4'>Weitere Informationen erforderlich</h2>
-      <p className='text-gray-600'>
-      Bitte geben Sie weitere Informationen an. Diese werden im Rahmen eines Know-Your-Customer-Prozesses durch TokenPay gesammelt und an den TokenPay-Partner Stasis weitergegeben.
+      <h2 className="text-xl font-semibold mb-4">
+        {tCrossborder("deposit.stasis.kyc.heading")}
+      </h2>
+      <p className="text-gray-600">
+        {tCrossborder("deposit.stasis.kyc.description")}
       </p>
       <Link
-        href='/kyc/stasis'
-        className='mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center'
+        href="/kyc/stasis"
+        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
       >
-        Jetzt Informationen vervollständigen
+        {tCrossborder("deposit.stasis.kyc.button")}
       </Link>
     </>
   );
 
   const renderSelectBank = () => (
     <div>
-      <h2 className='text-xl font-semibold mb-4'>
-        Wählen Sie ein Bankkonto aus
+      <h2 className="text-xl font-semibold mb-4">
+        {tCrossborder("deposit.stasis.selectBank.heading")}
       </h2>
       {bankAccounts.length > 0 ? (
-        <ul className='space-y-4'>
+        <ul className="space-y-4">
           {bankAccounts.map((account) => (
             <li
               key={account.uuid}
-              className='border p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition'
+              className="border p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
             >
-              <p className='text-sm font-medium text-gray-800 mb-2'>
+              <p className="text-sm font-medium text-gray-800 mb-2">
                 {account.name}
               </p>
-              <p className='text-xs text-gray-500 mb-1'>
-                Besitzer: {account.holder_name}
+              <p className="text-xs text-gray-500 mb-1">
+                {tCrossborder("deposit.stasis.selectBank.owner")}{" "}
+                {account.holder_name}
               </p>
-              <p className='text-xs text-gray-500 mb-1'>
-                Bank: {account.bank_name}
+              <p className="text-xs text-gray-500 mb-1">
+              {tCrossborder("deposit.stasis.selectBank.bank")} {account.bank_name}
               </p>
-              <p className='text-xs text-gray-500 mb-1'>IBAN: {account.iban}</p>
+              <p className="text-xs text-gray-500 mb-1">
+                IBAN: {account.iban}
+              </p>
               <button
-                className='mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition'
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 onClick={() => handleSelectBankAccount(account)}
               >
-                Dieses Konto auswählen
+                {tCrossborder("deposit.stasis.selectBank.button")}
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className='text-gray-600'>Keine Bankkonten verfügbar.</p>
+        <p className="text-gray-600">
+          {tCrossborder("deposit.stasis.selectBank.noAccounts")}
+        </p>
       )}
       <button
-        className='mt-6 w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center'
+        className="mt-6 w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
         onClick={() => setView("addBank")}
       >
-        <IoAdd className='mr-2' /> Neues Bankkonto hinzufügen
+        <IoAdd className="mr-2" />{" "}
+        {tCrossborder("deposit.stasis.selectBank.addButton")}
       </button>
     </div>
   );
 
   const renderAddBank = () => (
-    <div className='w-[50%]'>
-      <div className='mb-2'>
+    <div className="w-[50%]">
+      <div className="mb-2">
         {/* Name */}
         <label
-          htmlFor='holder_name'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="holder_name"
+          className="block text-sm font-medium text-gray-700"
         >
-          Name des Kontos:
+           {tCrossborder("deposit.stasis.addBank.accountName")}
         </label>
         <input
-          type='text'
-          name='name'
-          id='name'
+          type="text"
+          name="name"
+          id="name"
           required
           value={newBankAccount.name}
           onChange={(e) =>
@@ -350,21 +367,21 @@ export default function Stasis({ amount, account, user }) {
               name: e.target.value,
             })
           }
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className='mb-2'>
+      <div className="mb-2">
         {/* Holder Name */}
         <label
-          htmlFor='holder_name'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="holder_name"
+          className="block text-sm font-medium text-gray-700"
         >
-          Name des Kontoinhabers:
+          {tCrossborder("deposit.stasis.addBank.accountHolderName")}
         </label>
         <input
-          type='text'
-          name='holder_name'
-          id='holder_name'
+          type="text"
+          name="holder_name"
+          id="holder_name"
           required
           value={newBankAccount.holder_name}
           onChange={(e) =>
@@ -373,21 +390,21 @@ export default function Stasis({ amount, account, user }) {
               holder_name: e.target.value,
             })
           }
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className='mb-2'>
+      <div className="mb-2">
         {/* IBAN */}
         <label
-          htmlFor='iban'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="iban"
+          className="block text-sm font-medium text-gray-700"
         >
-          IBAN:
+          {tCrossborder("deposit.stasis.addBank.iban")}
         </label>
         <input
-          type='text'
-          name='iban'
-          id='iban'
+          type="text"
+          name="iban"
+          id="iban"
           required
           value={newBankAccount.iban}
           onChange={(e) =>
@@ -396,21 +413,21 @@ export default function Stasis({ amount, account, user }) {
               iban: e.target.value,
             })
           }
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className='mb-2'>
+      <div className="mb-2">
         {/* Bank Code */}
         <label
-          htmlFor='bank_code'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="bank_code"
+          className="block text-sm font-medium text-gray-700"
         >
-          BIC:
+          {tCrossborder("deposit.stasis.addBank.bic")}
         </label>
         <input
-          type='text'
-          name='bank_code'
-          id='bank_code'
+          type="text"
+          name="bank_code"
+          id="bank_code"
           required
           value={newBankAccount.bank_code}
           onChange={(e) =>
@@ -419,21 +436,21 @@ export default function Stasis({ amount, account, user }) {
               bank_code: e.target.value,
             })
           }
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className='mb-2'>
+      <div className="mb-2">
         {/* Bank Name */}
         <label
-          htmlFor='bank_name'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="bank_name"
+          className="block text-sm font-medium text-gray-700"
         >
-          Name der Bank:
+          {tCrossborder("deposit.stasis.addBank.bankName")}
         </label>
         <input
-          type='text'
-          name='bank_name'
-          id='bank_name'
+          type="text"
+          name="bank_name"
+          id="bank_name"
           required
           value={newBankAccount.bank_name}
           onChange={(e) =>
@@ -442,7 +459,7 @@ export default function Stasis({ amount, account, user }) {
               bank_name: e.target.value,
             })
           }
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -451,85 +468,89 @@ export default function Stasis({ amount, account, user }) {
         active={newBankAccountCompletlyFilled()}
         isLoading={loadingState}
         onClick={handleAddBankAccount}
-        className='w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center'
+        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
       >
-        <IoAdd className='mr-2' /> Bankkonto hinzufügen
+        <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addBank.button")}
       </LoadingButton>
 
       {/* Error message */}
       {errors.bankAccount && (
-        <p className='text-red-500 text-sm mt-2'>{errors.bankAccount}</p>
+        <p className="text-red-500 text-sm mt-2">{errors.bankAccount}</p>
       )}
     </div>
   );
 
   const renderSelectCrypto = () => (
     <div>
-      <h2 className='text-xl font-semibold mb-4'>
-        Wählen Sie ein Krypto-Konto aus
+      <h2 className="text-xl font-semibold mb-4">
+        {tCrossborder("deposit.stasis.selectCrypto.heading")}
       </h2>
       {cryptoAccounts.length > 0 ? (
-        <ul className='space-y-4'>
+        <ul className="space-y-4">
           {cryptoAccounts.map((account) => (
             <li
               key={account.uuid}
-              className='border p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition'
+              className="border p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
             >
-              <p className='text-sm font-medium text-gray-800 mb-1'>
+              <p className="text-sm font-medium text-gray-800 mb-1">
                 {account.name}
               </p>
-              <p className='text-xs text-gray-500'>
-                Adresse: {account.address}
+              <p className="text-xs text-gray-500">
+                {tCrossborder("deposit.stasis.selectCrypto.address")}
+                {account.address}
               </p>
               <button
-                className='mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition'
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 onClick={() => handleSelectCryptoAccount(account)}
               >
-                Dieses Krypto-Konto auswählen
+                {tCrossborder("deposit.stasis.selectCrypto.button")}
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className='text-gray-600'>Keine Krypto-Konten verfügbar.</p>
+        <p className="text-gray-600">
+          {tCrossborder("deposit.stasis.selectCrypto.noAccounts")}
+        </p>
       )}
       <button
-        className='mt-6 w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center'
+        className="mt-6 w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
         onClick={() => setView("addCrypto")}
       >
-        <IoAdd className='mr-2' /> Neues Krypto-Konto hinzufügen
+        <IoAdd className="mr-2" />
+        {tCrossborder("deposit.stasis.selectCrypto.addButton")}
       </button>
     </div>
   );
 
   const renderAddCrypto = () => (
-    <div className='w-[50%]'>
-      <div className='mb-2'>
+    <div className="w-[50%]">
+      <div className="mb-2">
         {/* Crypto Account Name */}
         <label
-          htmlFor='crypto_name'
-          className='block text-sm font-medium text-gray-700'
+          htmlFor="crypto_name"
+          className="block text-sm font-medium text-gray-700"
         >
-          Konto Name:
+          {tCrossborder("deposit.stasis.addCrypto.accountName")}
         </label>
         <input
-          type='text'
+          type="text"
           required
-          id='crypto_name'
-          name='crypto_name'
+          id="crypto_name"
+          name="crypto_name"
           value={newCryptoAccountName}
           onChange={(e) => {
             e.preventDefault();
             setNewCryptoAccountName(e.target.value);
           }}
-          className='mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       {/* Connected Crypto Wallet Address */}
-      <div className='bg-gray-100 rounded p-2 mb-2'>
-        <p>Aktuelles Konto: </p>
-        <p className='font-bold break-all'>{account?.address}</p>
+      <div className="bg-gray-100 rounded p-2 mb-2">
+        <p>{tCrossborder("deposit.stasis.addCrypto.currentAccount")}</p>
+        <p className="font-bold break-all">{account?.address}</p>
       </div>
 
       {/* Add Button */}
@@ -537,50 +558,50 @@ export default function Stasis({ amount, account, user }) {
         isLoading={loadingState}
         active={newCryptoAccountName !== null}
         onClick={handleAddCryptoAccount}
-        className='w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center'
+        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
       >
-        <IoAdd className='mr-2' /> Krypto-Konto hinzufügen
+        <IoAdd className="mr-2" />   {tCrossborder("deposit.stasis.addCrypto.button")}
       </LoadingButton>
 
       {/* Error Box */}
       {errors.cryptoAccount && (
-        <p className='text-red-500 text-sm mt-2'>{errors.cryptoAccount}</p>
+        <p className="text-red-500 text-sm mt-2">{errors.cryptoAccount}</p>
       )}
     </div>
   );
 
   const renderDeposit = () => (
-    <div className='flex flex-col items-center'>
-      <div className='w-full flex flex-col mt-4'>
+    <div className="flex flex-col items-center">
+      <div className="w-full flex flex-col mt-4">
         {/* Deposit Amount */}
-        <div className='mb-2'>Ihr gewählter Einzahlungs Betrag:</div>
-        <div className='border p-4 rounded-lg bg-gray-50 mb-4'>
-          <p className='text-sm font-medium text-gray-800'>{amount} €</p>
+        <div className="mb-2">{tCrossborder("deposit.stasis.deposit.amountLabel")}</div>
+        <div className="border p-4 rounded-lg bg-gray-50 mb-4">
+          <p className="text-sm font-medium text-gray-800">{amount} €</p>
         </div>
 
         {/* Selected Bank Account Info*/}
-        <div className='mb-2'>Ausgewähltes Bankkonto:</div>
+        <div className="mb-2">{tCrossborder("deposit.stasis.deposit.selectedBankLabel")}</div>
         {selectedBankAccount && (
-          <div className='border p-4 rounded-lg bg-gray-50 mb-4'>
-            <p className='text-sm font-medium text-gray-800'>
+          <div className="border p-4 rounded-lg bg-gray-50 mb-4">
+            <p className="text-sm font-medium text-gray-800">
               {selectedBankAccount.holder_name} -{" "}
               {selectedBankAccount.bank_name}
             </p>
-            <p className='text-xs text-gray-500'>
+            <p className="text-xs text-gray-500">
               IBAN: {selectedBankAccount.iban}
             </p>
           </div>
         )}
 
         {/* Selected Crypto Account Info*/}
-        <div className='mb-2'>Ausgewähltes Krypto-Konto:</div>
+        <div className="mb-2">{tCrossborder("deposit.stasis.deposit.selectedCryptoLabel")}</div>
         {selectedCryptoAccount && (
-          <div className='border p-4 rounded-lg bg-gray-50 mb-4'>
-            <p className='text-sm font-medium text-gray-800'>
+          <div className="border p-4 rounded-lg bg-gray-50 mb-4">
+            <p className="text-sm font-medium text-gray-800">
               {selectedCryptoAccount.name}
             </p>
-            <p className='text-xs text-gray-500'>
-              Adresse: {selectedCryptoAccount.address}
+            <p className="text-xs text-gray-500">
+            {tCrossborder("deposit.stasis.deposit.address")} {selectedCryptoAccount.address}
             </p>
           </div>
         )}
@@ -589,94 +610,92 @@ export default function Stasis({ amount, account, user }) {
         <LoadingButton
           isLoading={loadingState}
           onClick={handleSend}
-          className='w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition'
+          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
         >
-          Einzahlung initiieren
+          {tCrossborder("deposit.stasis.deposit.button")}
         </LoadingButton>
 
         {/* Error Box */}
         {errors.send && (
-          <p className='text-red-500 text-sm mt-2'>{errors.send}</p>
+          <p className="text-red-500 text-sm mt-2">{errors.send}</p>
         )}
       </div>
     </div>
   );
 
   const renderSuccess = () => (
-    <div className='flex items-center flex-col justify-center gap-4 h-[30rem]'>
-      <IoShieldCheckmarkSharp className='text-green-500 w-16 h-16' />
-      <div className='text-2xl text-center text-gray-700 font-bold'>
-        Ihr Geldtransfer wurde erfolgreich initiiert.
+    <div className="flex items-center flex-col justify-center gap-4 h-[30rem]">
+      <IoShieldCheckmarkSharp className="text-green-500 w-16 h-16" />
+      <div className="text-2xl text-center text-gray-700 font-bold">
+        {tCrossborder("deposit.stasis.success.heading")}
       </div>
-      <div className='text-center text-gray-600'>
-        <div className='w-full flex flex-col mt-4 gap-2'>
-          <h3 className='text-lg font-semibold mb-4'>
-            Einzahlungsinformationen
+      <div className="text-center text-gray-600">
+        <div className="w-full flex flex-col mt-4 gap-2">
+          <h3 className="text-lg font-semibold mb-4">
+           {tCrossborder("deposit.stasis.success.infoHeading")}
           </h3>
 
           {/* Amount */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>Betrag:</span> {amount} EUR
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.amount")}</span> {amount} EUR
             </p>
           </div>
 
           {/* Bank Name */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>Bankname:</span>{" "}
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.bankName")}</span>{" "}
               {paymentInfo.bank_name}
             </p>
           </div>
 
           {/* Bank Country */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>Land der Bank:</span>{" "}
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.bankCountry")}</span>{" "}
               {paymentInfo.bank_country}
             </p>
           </div>
 
           {/* Bank Code */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>BIC:</span> {paymentInfo.bank_code}
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.bic")}</span> {paymentInfo.bank_code}
             </p>
           </div>
 
           {/* Bank Account */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>IBAN:</span>{" "}
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.iban")}</span>{" "}
               {paymentInfo.bank_account}
             </p>
             <button
-              className='text-blue-500 hover:text-blue-700'
+              className="text-blue-500 hover:text-blue-700"
               onClick={() =>
                 navigator.clipboard.writeText(paymentInfo.bank_account)
               }
             >
-              <IoCopy className='w-5 h-5' />
+              <IoCopy className="w-5 h-5" />
             </button>
           </div>
 
           {/* Reference Code */}
-          <div className='flex justify-start flex-1 gap-2'>
-            <p className='text-sm font-medium text-gray-800'>
-              <span className='font-bold'>Referenzcode:</span> {reference}
+          <div className="flex justify-start flex-1 gap-2">
+            <p className="text-sm font-medium text-gray-800">
+              <span className="font-bold">{tCrossborder("deposit.stasis.success.referenceCode")}</span> {reference}
             </p>
             <button
-              className='text-blue-500 hover:text-blue-700'
+              className="text-blue-500 hover:text-blue-700"
               onClick={() => navigator.clipboard.writeText(reference)}
             >
-              <IoCopy className='w-5 h-5' />
+              <IoCopy className="w-5 h-5" />
             </button>
           </div>
 
-          <p className='text-sm text-gray-600 mb-4 mt-5'>
-            Bitte geben Sie den Referenzcode bei Ihrer Überweisung an, damit die
-            Zahlung korrekt zugeordnet werden kann. Und überweisen Sie von ihrem
-            Ausgewählten Bankkonto.
+          <p className="text-sm text-gray-600 mb-4 mt-5">
+            {tCrossborder("deposit.stasis.success.instructions")}
           </p>
         </div>
       </div>
@@ -690,7 +709,7 @@ export default function Stasis({ amount, account, user }) {
   const kycMissing = user.stasisKYBStatus !== "approved";
 
   return (
-    <div className='flex flex-col w-full max-w-4xl  items-center justify-center p-4'>
+    <div className="flex flex-col w-full max-w-4xl  items-center justify-center p-4">
       <StasisHeader view={view} setView={setView} />
 
       {kycMissing

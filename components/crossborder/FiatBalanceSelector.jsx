@@ -1,5 +1,5 @@
-
 import sortMethodByCurrencyWithdraw from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
+import { useTranslation } from "next-i18next";
 import React from "react";
 
 export const STABLE_FIAT_MAP = {
@@ -19,10 +19,15 @@ export default function FiatBalanceSelector({
   setAvailableMethods,
   setPreferredStableCoin,
   swiperInstance,
-  transfer=true,
+  transfer = true,
   nextSlide,
 }) {
-  let methodsByCurrency = sortMethodByCurrencyWithdraw(availableMethods, transfer);
+  let methodsByCurrency = sortMethodByCurrencyWithdraw(
+    availableMethods,
+    transfer
+  );
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   let missingCurrencies = minimalBalances.filter(
     (currency) => !methodsByCurrency[currency]
@@ -50,10 +55,20 @@ export default function FiatBalanceSelector({
           </div>
         );
       })}
-      {Object.keys(methodsByCurrency).length === 1 && (<div>
-        Für diese Währungsstrecke ist nur <span className="font-bold">{STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}</span> verfügbar. Bitte wählen Sie <span className="font-bold">{STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}</span> aus um fortzufahren.
-      </div>)}
-    
+      {Object.keys(methodsByCurrency).length === 1 && (
+        <div>
+          {tCrossborder("fiatBalanceSelector.onlyAvailable1")}{" "}
+          <span className="font-bold">
+            {STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}
+          </span>{" "}
+          {tCrossborder("fiatBalanceSelector.onlyAvailable2")}{" "}
+          <span className="font-bold">
+            {STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}
+          </span>{" "}
+          {tCrossborder("fiatBalanceSelector.onlyAvailable3")}
+        </div>
+      )}
+
       {missingCurrencies.map((currency) => {
         return (
           <div
@@ -69,8 +84,15 @@ export default function FiatBalanceSelector({
           </div>
         );
       })}
-        {missingCurrencies.length > 0 && (
-        <div>Sofern Sie andere Guthaben für diese Transaktion verwenden möchten, können Sie dieses im folgenden in <span className="font-bold">{STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}</span> konvertieren.</div>
+      {missingCurrencies.length > 0 && (
+        <div>
+          {" "}
+          {tCrossborder("fiatBalanceSelector.convert1")}{" "}
+          <span className="font-bold">
+            {STABLE_FIAT_MAP[Object.keys(methodsByCurrency)[0]].id}
+          </span>{" "}
+          {tCrossborder("fiatBalanceSelector.convert2")}{" "}
+        </div>
       )}
     </>
   );

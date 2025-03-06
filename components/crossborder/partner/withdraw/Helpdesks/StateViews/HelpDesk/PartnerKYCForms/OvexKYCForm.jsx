@@ -11,6 +11,8 @@ export default function OvexKYCForm({ setValue, methods }) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
+const { t: tCrossborder } = useTranslation("crossborder");
+
 
   useEffect(() => {
     formDataPreloaded = false;
@@ -29,7 +31,7 @@ export default function OvexKYCForm({ setValue, methods }) {
   const ovexB2BKYCInfo = [
     {
       type: "ui",
-      content: <div className="font-bold">Allgemeine Informationen</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}</div>,
     },
     {
       type: "row",
@@ -55,7 +57,7 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Addresse</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.address")}</div>,
     },
     {
       type: "row",
@@ -118,7 +120,7 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Bank</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.bank")}</div>,
     },
     {
       type: "row",
@@ -172,21 +174,21 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Vertreter</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representative")}</div>,
     },
     {
       type: "row",
       fields: [
         {
           name: "vendorRepresentativeName",
-          label: "Vorname",
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.name"),
           type: "text",
           required: true,
           width: "md:w-1/2",
         },
         {
           name: "vendorRepresentativeSurname",
-          label: "Nachname",
+          label:  tCrossborder("withdraw.helpDeskKYC.ovex.surname"),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -198,14 +200,14 @@ export default function OvexKYCForm({ setValue, methods }) {
       fields: [
         {
           name: "vendorRepresentativeEmail",
-          label: "Email",
+          label:  tCrossborder("withdraw.helpDeskKYC.ovex.email"),
           type: "text",
           required: true,
           width: "md:w-1/2",
         },
         {
           name: "vendorRepresentativePhone",
-          label: "Telefonnummer",
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.phone"),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -214,36 +216,35 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       name: "vendorRepresentativePosition",
-      label: "Position",
+      label:  tCrossborder("withdraw.helpDeskKYC.ovex.position"),
       type: "text",
       required: true,
     },
     {
       type: "ui",
-      content: <div className="font-bold">Über die Firma</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.businessModel")}</div>,
     },
     {
       name: "vendorBusinessModel",
-      label: "Kurze Beschreibung der Geschäftstätigkeit",
+      label: tCrossborder("withdraw.helpDeskKYC.ovex.businessModel"),
       type: "textarea",
       required: true,
     },
     {
       name: "ovexPurpose",
-      label:
-        "Kurze Beschreibung der geplanten Verwendung dieser Währungsstrecke",
+      label: tCrossborder("withdraw.helpDeskKYC.ovex.goal"),
       type: "textarea",
       required: true,
     },
     {
       name: "vendorSourceOfFunds",
-      label: "Quelle der für diese Währungsstrecke verwendeten Gelder",
+      label:  tCrossborder("withdraw.helpDeskKYC.ovex.source"),
       type: "textarea",
       required: true,
     },
     {
       type: "ui",
-      content: <div className="font-bold">Berechtigte Vertreter</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeRight")}</div>,
     },
     {
       type: "array",
@@ -292,7 +293,7 @@ export default function OvexKYCForm({ setValue, methods }) {
         },
         {
           name: "vendorRepresentativeNationality",
-          label: "Nationalität",
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.nationality"),
           onlyIso: true,
           type: "country",
           required: true,
@@ -338,7 +339,7 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Dokumente</div>,
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.documents")}</div>,
     },
     {
       type: "array",
@@ -393,18 +394,18 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="h-4">Bitte fügen Sie für alle oben aufgelisteten Repräsentanten einen Adressnachweis sowie einen Reise- oder Personalausweis bei.</div>,
+      content: <div className="h-4">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeFiles")}</div>,
     },
     {
       type: "array",
       name: "representativeDocs",
-      label: "Dokumente des Vertreters",
-      newLabel: "Neues Dokument hinzufügen",
-      removeLabel: "Dokument entfernen",
+      label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesLabel"),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesNewLabel"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesRemoveLabel"),
       fields: [
         {
           name: "representativeDoc",
-          label: "Dokument des Vertreters",
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFileLabel"),
           type: "file",
           required: true
         },
@@ -416,7 +417,7 @@ export default function OvexKYCForm({ setValue, methods }) {
     },
     {
       name: "acceptTerms",
-      label: "Nutzungsbedingungen akzeptieren",
+      label: tCrossborder("withdraw.helpDeskKYC.acceptTermsLabel"),
       type: "custom",
       content: (methods) => {
         return (

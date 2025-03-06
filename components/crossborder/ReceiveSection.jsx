@@ -45,6 +45,8 @@ function CountriesInfo({
 
   const { user } = useContext(AuthContext)
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
+  
 
   useEffect(() => {
     setFilteredCountries(
@@ -83,7 +85,6 @@ function CountriesInfo({
    * @returns {Object} - an object with the withdrawModality as key and an array of fiat currencies as value
    */
   function aggregatePaymentTypeInfo(paymentPartners) {
-    console.log("paymentPartners", paymentPartners);
     const paymentTypes = paymentPartners.reduce((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
@@ -113,8 +114,7 @@ function CountriesInfo({
         }}
         title={`Geld aus Zielland ${modalSelectedCountry?.countryInfo.name} empfangen`}
         message={<div className="my-4 flex flex-col gap-4">
-          Vielen Dank, dass Sie sich bei dieser Transaktion für TokenPay entschieden haben. 
-          Für das Empfangen von Geld mit TokenPay benötigt Ihr Sender im Zielland grundsätzlich auch einen TokenPay Account. In diesem nimmt der Sender die Transaktion an Sie vor. Der Sender benötigt dazu folgende Adresse von Ihrem TokenPay Account, um die Transaktion für Sie abschließen zu können:
+          {tCrossborder("receiveSection.thankyou")}
           <AddressDisplay concat={false} value={account?.address} />
           <LoadingButton isLoading={isLoading} onClick={async()=>{
           try {
@@ -135,7 +135,7 @@ function CountriesInfo({
             ClientReporter(clientErrorReporterConfig).error(error);
             setIsLoading("error");
           }
-        }}>Kostenlose Transaktionsbegleitung anfordern</LoadingButton>
+        }}>{tCrossborder("receiveSection.helpRequested")}</LoadingButton>
         </div>}
       ></UniversalModal>
       <div className="w-full max-w-4xl mx-auto mb-16">
@@ -157,7 +157,7 @@ function CountriesInfo({
 
           {filteredCountries?.length === 0 ? (
             <div className="p-6 text-center text-gray-500">
-              Keine unterstützten Länder in dieser Region.
+              {tCrossborder("receiveSection.notSupported")}
             </div>
           ) : (
             <div>
@@ -168,8 +168,6 @@ function CountriesInfo({
                 const aggregatedPaymentTypes = aggregatePaymentTypeInfo(
                   country.paymentTypes
                 );
-
-                console.log("aggregatedPaymentTypes", aggregatedPaymentTypes);
 
                 return (
                   <animated.div style={style} key={country.countryInfo.name}>
@@ -214,10 +212,6 @@ function CountriesInfo({
                                 <div className="text-gray-700 flex flex-col gap-2">
                                   {Object.keys(aggregatedPaymentTypes).map(
                                     (withdrawModality, index) => {
-                                      console.log(
-                                        "withdrawModality",
-                                        aggregatedPaymentTypes[withdrawModality]
-                                      );
 
                                       // Get the partner with the smallest fee
                                       const minimumFeePartner =
@@ -246,8 +240,6 @@ function CountriesInfo({
                                                 : current
                                             )
                                           : null; // Return null if the array is empty
-
-                                        console.log("minimumFeePartner", minimumFeePartner);
 
                                       // get unique currencies
                                       let currencies = [];
@@ -284,14 +276,15 @@ function CountriesInfo({
                                             className={`flex flex-col `}
                                           >
                                             <div className={`${minimumFeePartner?"":"hidden"} `}>
-                                              Gebühr: Ab
+                                            {tCrossborder("receiveSection.feeFrom")}
+                                              
                                               <span className="text-gray-500 font-bold">
                                                 {" "}
                                                 {minimumFeePartner?.partner.fee}%
                                               </span>
                                             </div>
                                             <div className={`${minimumFeePartner?"":"hidden"} `}>
-                                              Min.
+                                            {tCrossborder("receiveSection.min")}
                                               <span className="text-gray-500 font-bold">
                                                 {" "}
                                                 {
@@ -315,7 +308,8 @@ function CountriesInfo({
                                       setIsCountryInfoOpen(true);
                                     }}
                                   >
-                                    Empfängerland auswählen
+                                     {tCrossborder("receiveSection.selectReceivingCountry")}
+                                    
                                   </button>
                                 </div>
                               </div>
@@ -361,8 +355,6 @@ export default function ReceiveSection() {
 
       setCountryData(countriesResponse.data.docs);
       setLoading(false);
-
-      console.log("Country data", countriesResponse.data.docs);
     }
     if (selectedContinent) {
       loadCountryData();
@@ -384,7 +376,8 @@ export default function ReceiveSection() {
     <div className="p-4 w-full">
       <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
         <h2 className="text-2xl font-bold">
-          Herzlich Willkommen, was möchten Sie empfangen?
+        {tCrossborder("receiveSection.welcome")}
+          
         </h2>
       </div>
 
@@ -392,19 +385,21 @@ export default function ReceiveSection() {
         <TabList className="flex-wrap rounded-lg flex gap-2">
           <div className="relative flex-1">
             <Tab className="flex-1 data-[selected]:bg-uhuBlue rounded p-2 border-2 border-uhuBlue data-[selected]:text-white w-full h-full">
-              Geld empfangen
+            {tCrossborder("receiveSection.receiveFiat")}
+              
             </Tab>
           </div>
           <div className="relative flex-1">
             <Tab className="flex-1 data-[selected]:bg-uhuBlue rounded p-2 border-2 border-uhuBlue data-[selected]:text-white w-full h-full">
-              Kryptowährungen empfangen
+              
+            {tCrossborder("receiveSection.receiveCrypto")}
             </Tab>
           </div>
         </TabList>
         <TabPanels className="overflow-hidden  mt-2 flex-1 flex flex-col">
           <TabPanel className="relative">
             <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
-              <p className="text-sm">Bitte wählen Sie eine Region aus</p>
+              <p className="text-sm">{tCrossborder("receiveSection.selectRegionFirst")}</p>
             </div>
             <div className="max-w-4xl w-full h-92 mx-auto mb-8">
               <ContinentsMap

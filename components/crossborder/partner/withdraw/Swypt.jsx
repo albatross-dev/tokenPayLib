@@ -1,5 +1,6 @@
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import axios from "axios";
+import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
 import {
   createThirdwebClient,
@@ -15,6 +16,8 @@ export default function Swypt({ amount, account, user, method }) {
   const [formError, setFormError] = useState("");
   const USDT = currencies["USDT"];
 
+const { t: tCrossborder } = useTranslation("crossborder");
+
   const [formData, setFormData] = useState({
     phone: "",
   });
@@ -28,7 +31,7 @@ export default function Swypt({ amount, account, user, method }) {
     e.preventDefault();
 
     if (!formData.phone) {
-      setFormError("Bitte geben Sie eine Telefonnummer ein.");
+      setFormError(tCrossborder("withdraw.swypt.formErrorPhone"));
       return;
     }
 
@@ -128,7 +131,7 @@ export default function Swypt({ amount, account, user, method }) {
         <>
           {" "}
           <div className="mb-6 p-4 bg-blue-100 text-blue-700 rounded-lg text-center">
-            <h2 className="text-lg font-bold">Sende Betrag:</h2>
+            <h2 className="text-lg font-bold">{tCrossborder("withdraw.swypt.send")}</h2>
             <p className="text-2xl font-semibold">
               {amount} {method?.currency || "USD"}
             </p>
@@ -137,7 +140,7 @@ export default function Swypt({ amount, account, user, method }) {
           <form onSubmit={handleFormSubmit} className="space-y-4">
             <div>
               <label className="block text-gray-700 font-medium mb-1">
-                Telefonnummer <span className="text-red-500">*</span>
+              {tCrossborder("withdraw.swypt.phoneNumber")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -154,7 +157,7 @@ export default function Swypt({ amount, account, user, method }) {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
             >
-              Transaktion starten
+              {tCrossborder("withdraw.swypt.startTransaction")}
             </button>
           </form>
         </>
@@ -167,21 +170,22 @@ export default function Swypt({ amount, account, user, method }) {
        </div>
       )}
       {state === "transaction-created" && (
-        <p className="text-green-500 mt-4">Transaktion erfolgreich erstellt!</p>
+        <p className="text-green-500 mt-4">{tCrossborder("withdraw.swypt.successMessage")}</p>
       )}
       {state === "error" && (
         <p className="text-red-500 mt-4">
-          Fehler beim Erstellen der Transaktion.
+          {tCrossborder("withdraw.swypt.errorCreating")}
+          
         </p>
       )}
 
       {state === "success" && (
          <div className="max-w-4xl mx-auto p-6 w-full">
          <h1 className="text-2xl font-bold mb-6 text-green-600 text-center">
-           Transaktion erfolgreich
+         {tCrossborder("withdraw.swypt.transactionSuccess")}
          </h1>
          <p className="text-center">
-           Ihre Transaktion wurde erfolgreich durchgeführt. Sie sollten in Kürze das Geld auf Ihrem Konto haben.
+         {tCrossborder("withdraw.swypt.transactionSuccess")}
          </p>
        </div>
       )}

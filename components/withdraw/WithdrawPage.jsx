@@ -22,7 +22,7 @@ import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanc
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 
-export default function WithdrawPage() {
+export default function WithdrawPage({maintenance}) {
   const [state, setState] = useState("loading");
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -409,7 +409,7 @@ export default function WithdrawPage() {
         </div>
 
         <div className="border rounded w-full p-4 relative">
-          {maintenance?.dashboard?.withdraw?.page && (
+          {maintenance?.withdraw?.page && (
             <Maintainance></Maintainance>
           )}
           {state === "loading" && (

@@ -16,55 +16,17 @@ import "swiper/css";
 import FiatBalanceSelector from "./FiatBalanceSelector";
 import FiatReceivingSelector, { FIAT_INFO_MAP } from "./FiatReceivingSelector";
 import { useRouter } from "next/router";
-
-function filterCountryData(originCountryISO, countries) {
-  console.log("Filtering countries", originCountryISO, countries);
-
-  // if no origin country is set, return no countries
-  if (!originCountryISO) {
-    return [];
-  }
-
-  // filter the countries by black and whitelist
-  let newCountries = countries.filter((country) => {
-    if (country.useWhiteList) {
-      return country.receivingFromCountryWhiteList.some(
-        (whiteCountry) => whiteCountry.countryCode === originCountryISO
-      );
-    } else {
-      return !country.receivingFromCountryBlackList?.some(
-        (blackCountry) => blackCountry.countryCode === originCountryISO
-      );
-    }
-  });
-
-  // filter payment methods by black and whitelist
-  newCountries = newCountries.map((country) => {
-    country.paymentTypes = country.paymentTypes.filter((method) => {
-      if (method.withdrawOnly) return false;
-      if (method.useWhiteListPaymentMethod) {
-        return method.whiteList.some(
-          (whiteCountry) => whiteCountry.countryCode === originCountryISO
-        );
-      } else {
-        return !method.blackList?.some(
-          (blackCountry) => blackCountry.countryCode === originCountryISO
-        );
-      }
-    });
-    return country;
-  });
-
-  // filter the countries by black and whitelist
-  return newCountries;
-}
+import filterCountryData from "../../utilities/crossborder/filterCountryData";
+import { useTranslation } from "next-i18next";
 
 export default function TransferSection() {
   // Next.js router for query parameter handling
   const router = useRouter();
   const { continent, country, stableCoin, payoutCoin } = router.query;
 
-  const [selectedContinent, setSelectedContinent] = useState(continent || "europe");
+  const [selectedContinent, setSelectedContinent] = useState(
+    continent || "europe"
+  );
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [swiperInstance, setSwiperInstance] = useState(null); // Swiper instance
   const [countryData, setCountryData] = useState(null);
@@ -81,6 +43,8 @@ export default function TransferSection() {
   const [preferredStableCoin, setPreferredStableCoin] = useState("");
   const [exchangeRate, setExchangeRate] = useState(1);
   const [loadedExchangeRate, setLoadedExchangeRate] = useState(false);
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     let selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.symbol;
@@ -157,12 +121,10 @@ export default function TransferSection() {
       );
 
       let filteredList = filterCountryData(
-        user?.vendorCountry,
+        user?.vendorCountry || user?.country,
         countriesResponse.data.docs
       );
       setCountryData(filteredList);
-
-      
 
       if (clicked) {
         const top =
@@ -175,14 +137,13 @@ export default function TransferSection() {
         });
       }
 
-      if(country){
-        let foundCountry = filteredList.find((c) => c.countryCode === country)
+      if (country) {
+        let foundCountry = filteredList.find((c) => c.countryCode === country);
         setSelectedCountry(foundCountry);
         swiperInstance.slideTo(1);
       }
 
       setLoading(false);
-
     }
     if (selectedContinent && swiperInstance) {
       loadCountryData();
@@ -198,28 +159,36 @@ export default function TransferSection() {
     handlePayoutCurrencyUrlParam(currency);
   }
 
-  function handlePayoutCurrencyUrlParam(currency){
+  function handlePayoutCurrencyUrlParam(currency) {
     let query = { ...router.query, payoutCoin: currency || undefined };
-    router.push({
-      pathname: router.pathname,
-      query: query,
-    }, undefined, { shallow: true });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
   }
-  
+
   function handlePreferedStableCoin(coin) {
-    if(coin){
+    if (coin) {
       setPreferredStableCoin(coin);
       setPreferredStableCoinUrlParam(coin);
     }
   }
 
-  function setPreferredStableCoinUrlParam(coin){
+  function setPreferredStableCoinUrlParam(coin) {
     let query = { ...router.query, stableCoin: coin || undefined };
     delete query.payoutCoin;
-    router.push({
-      pathname: router.pathname,
-      query: query,
-    }, undefined, { shallow: true });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
   }
 
   function handleContinentSelect(continent) {
@@ -234,10 +203,14 @@ export default function TransferSection() {
     delete query.country;
     delete query.stableCoin;
     delete query.payoutCoin;
-    router.push({
-      pathname: router.pathname,
-      query: query,
-    }, undefined, { shallow: true });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
   }
 
   function handleSlideChange() {
@@ -252,7 +225,7 @@ export default function TransferSection() {
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }
 
   function handleCountrySelected(country) {
     setSelectedCountry(country);
@@ -268,10 +241,14 @@ export default function TransferSection() {
     let query = { ...router.query, country: countryCode || undefined };
     delete query.stableCoin;
     delete query.payoutCoin;
-    router.push({
-      pathname: router.pathname,
-      query: query,
-    }, undefined, { shallow: true });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
   }
 
   function clearData() {
@@ -284,7 +261,7 @@ export default function TransferSection() {
   function handleAmountChange(e) {
     let inputAmount = parseFloat(e.target.value);
 
-    if(selectedMethod?.type !== "crypto"){
+    if (selectedMethod?.type !== "crypto") {
       setSelectedMethod(null);
     }
 
@@ -322,7 +299,7 @@ export default function TransferSection() {
         className="flex relative z-[10] items-center text-uhuBlue hover:text-blue-700 mb-4"
       >
         <FiArrowLeft className="mr-2" />
-        Zurück
+        {tCrossborder("transferSection.back")}
       </button>
     );
   }
@@ -334,35 +311,37 @@ export default function TransferSection() {
   function renderContinentSelection() {
     return (
       <>
-      <div className="p-4">
-        <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
-          <h2 className="text-2xl font-bold">
-            Herzlich Willkommen, wohin soll die Transaktion gehen?
-          </h2>
-          <p className="text-sm">Bitte wählen Sie eine Region aus.</p>
-        </div>
-        <div className="max-w-4xl w-full h-92 mx-auto mb-8">
-          <ContinentsMap
-            onClick={handleContinentSelect}
-            selectedContinent={selectedContinent}
-          />
-        </div>
-
-        <div className="w-full" ref={countrySelectRef}>
-          {loading ? (
-            <div className="flex w-full items-center justify-center">
-              <Loader />
-            </div>
-          ) : (
-            <TransferCountries
-              countries={countryData}
+        <div className="p-4">
+          <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
+            <h2 className="text-2xl font-bold">
+              {tCrossborder("transferSection.welcome")}
+            </h2>
+            <p className="text-sm">
+              {tCrossborder("transferSection.region_select")}
+            </p>
+          </div>
+          <div className="max-w-4xl w-full h-92 mx-auto mb-8">
+            <ContinentsMap
+              onClick={handleContinentSelect}
               selectedContinent={selectedContinent}
-              selectedCountry={selectedCountry}
-              countrySelected={handleCountrySelected}
             />
-          )}
+          </div>
+
+          <div className="w-full" ref={countrySelectRef}>
+            {loading ? (
+              <div className="flex w-full items-center justify-center">
+                <Loader />
+              </div>
+            ) : (
+              <TransferCountries
+                countries={countryData}
+                selectedContinent={selectedContinent}
+                selectedCountry={selectedCountry}
+                countrySelected={handleCountrySelected}
+              />
+            )}
+          </div>
         </div>
-      </div>
       </>
     );
   }
@@ -372,8 +351,8 @@ export default function TransferSection() {
       <div className="relative z-[10] p-4  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
         <BackButton></BackButton>
         <h2 className="text-2xl">
-        Welches Guthaben möchten Sie für Ihre Transaktion verwenden?
-      </h2>
+          {tCrossborder("transferSection.ask_for_balance")}
+        </h2>
         {selectedCountry && (
           <FiatBalanceSelector
             availableMethods={selectedCountry?.paymentTypes}
@@ -407,18 +386,18 @@ export default function TransferSection() {
   }
 
   function renderTransactionDetailsForm() {
-    console.log("selectedMethod", selectedMethod);
     return (
       <div className="relative p-4">
         <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
           <BackButton clearData={clearData}></BackButton>
 
           <h2 className="text-2xl">
-            Sie haben als Zielland {selectedCountry?.countryInfo.name}{" "}
-            ausgewählt
+            {tCrossborder("transferSection.selected_target_country", {
+              country: selectedCountry?.countryInfo.name,
+            })}
           </h2>
 
-          <p className="text-xl font-bold">Guthaben</p>
+          <p className="text-xl font-bold">{tCrossborder("transferSection.balance")}</p>
           <CurrencyDisplay
             selectedCurrency={selectedCurrency}
             mainCurrencySymbol={preferredStableCoin}
@@ -431,7 +410,9 @@ export default function TransferSection() {
 
           {/* Betrag auswählen, nur erlauben wenn Währung ausgewählt ist */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-xl font-bold">Bitte wählen Sie einen Betrag aus</h2>
+            <h2 className="text-xl font-bold">
+            {tCrossborder("transferSection.select_amount")}
+            </h2>
             <div className="relative">
               <input
                 type="number"
@@ -454,7 +435,7 @@ export default function TransferSection() {
             {error && <p className="text-red-500 text-sm">{error}</p>}
             {!selectedCurrency && (
               <p className="text-red-500 text-sm">
-                Bitte wählen Sie zuerst eine Währung aus.
+                 {tCrossborder("transferSection.select_amount_first")}
               </p>
             )}
           </div>
@@ -481,7 +462,7 @@ export default function TransferSection() {
               disabled={!selectedMethod}
               onClick={() => swiperInstance.slideTo(4)}
             >
-              Weiter
+                {tCrossborder("transferSection.next")}
             </button>
           </div>
 
@@ -510,19 +491,19 @@ export default function TransferSection() {
                 </div>
                 <div className="flex-1 gap-2 flex flex-col">
                   <p>
-                    <strong>Hauptstadt:</strong>{" "}
+                    <strong>{tCrossborder("transferSection.capital")}</strong>{" "}
                     {selectedCountry?.countryInfo.capital}
                   </p>
                   <p>
-                    <strong>Bevölkerung:</strong>{" "}
+                    <strong>{tCrossborder("transferSection.population")}</strong>{" "}
                     {selectedCountry?.countryInfo.population.toLocaleString()}
                   </p>
                   <p>
-                    <strong>Währung:</strong>{" "}
+                    <strong>{tCrossborder("transferSection.currency")}</strong>{" "}
                     {selectedCountry?.countryInfo.currency}
                   </p>
                   <p>
-                    <strong>Bruttoinlandsprodukt:</strong>{" "}
+                    <strong>{tCrossborder("transferSection.gdp")}</strong>{" "}
                     {selectedCountry?.countryInfo.gdp.toLocaleString()} USD
                   </p>
                 </div>
@@ -538,7 +519,9 @@ export default function TransferSection() {
     return (
       <div>
         <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
-          <div className="p-4"><BackButton></BackButton></div>
+          <div className="p-4">
+            <BackButton></BackButton>
+          </div>
           <TransferPanel
             method={selectedMethod}
             amount={amount}

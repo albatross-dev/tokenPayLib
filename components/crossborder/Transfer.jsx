@@ -15,6 +15,7 @@ export default function Transfer() {
   const [selectedTransactionData, setSelectedTransactionData] = useState(null);
 
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   const [paymentsTableQuery, setPaymentsTableQuery] = useState({});
 
@@ -28,7 +29,7 @@ export default function Transfer() {
   const columns = [
     {
       accessorKey: "transactionHash",
-      header: "Informationen",
+      header: tCrossborder("transfer.information"),
       cell: (props) => {
         return (
           <BsArrowUpRight
@@ -40,7 +41,7 @@ export default function Transfer() {
     },
     {
       accessorKey: "amount",
-      header: "Betrag",
+      header: tCrossborder("transfer.amount"),
       cell: (props) => {
         return (
           <div className="table-cell font-bold">
@@ -58,14 +59,14 @@ export default function Transfer() {
     },
     {
       accessorKey: "currencyName",
-      header: "Währung",
+      header: tCrossborder("transfer.currency"),
       cell: (props) => {
         return <div className="table-cell uppercase">{props.getValue()}</div>;
       },
     },
     {
       accessorKey: "type",
-      header: "Typ",
+      header: tCrossborder("transfer.type"),
       cell: (props) => {
         return (
           <div className="table-cell">
@@ -78,7 +79,7 @@ export default function Transfer() {
     },
     {
       accessorKey: "toAccountIdentifier",
-      header: "Emfpänger",
+      header: tCrossborder("transfer.receiver"),
       cell: (props) => {
         return (
           <div className="table-cell ">
@@ -94,7 +95,7 @@ export default function Transfer() {
 
     {
       accessorKey: "createdAt",
-      header: "Datum",
+      header: tCrossborder("transfer.date"),
       cell: (props) => {
         return (
           <div className="table-cell whitespace-nowrap">
