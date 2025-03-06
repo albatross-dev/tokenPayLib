@@ -325,7 +325,7 @@ export default function DepositPage({maintenance}) {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance.deposit?.page && (
+          {maintenance?.deposit?.page && (
             <Maintainance></Maintainance>
           )}
           {state === "loading" && (
