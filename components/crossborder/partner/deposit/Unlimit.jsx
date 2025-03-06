@@ -1,4 +1,4 @@
-import { useUhuConfig } from "@/context/UhuConfigContext";
+import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

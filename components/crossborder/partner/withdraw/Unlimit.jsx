@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { useUhuConfig } from "@/context/UhuConfigContext";
+import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 
 export default function Unlimit({ amount, account, user, country }) {
   const { t } = useTranslation("common");

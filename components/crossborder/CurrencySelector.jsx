@@ -9,7 +9,7 @@ import Image from "next/image";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
-import { UhuConfigContext } from "@/context/UhuConfigContext";
+import { UhuConfigContext } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";

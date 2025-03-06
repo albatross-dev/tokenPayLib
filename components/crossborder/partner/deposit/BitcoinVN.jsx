@@ -1,6 +1,6 @@
 import Loader from "@/tokenPayLib/components/UI/Loader";
 import { getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
-import { STABLECOIN_TO_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import { getFiatCurrencyCode } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { HiChevronDoubleRight } from "react-icons/hi2";
@@ -133,7 +133,7 @@ export default function BitcoinVN({
           {/* Settle Amount */}
           <div className='flex flex-col items-end justify-end gap-1'>
             <p className='text-6xl'>
-              {quote.settleAmount} {STABLECOIN_TO_FIAT_MAP[quote.settleMethod]}
+              {quote.settleAmount} {getFiatCurrencyCode(quote.settleMethod)}
             </p>
             <strong className='text-gray-500'>Gutschrift</strong>
           </div>

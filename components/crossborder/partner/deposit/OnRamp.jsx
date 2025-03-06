@@ -1,4 +1,4 @@
-import { useUhuConfig } from "@/context/UhuConfigContext";
+import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import React from "react";
 
 export default function OnRamp({ amount, account, user, country, method }) {

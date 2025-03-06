@@ -13,9 +13,9 @@ import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import Image from "next/image";
 import DepositPanel from "@/tokenPayLib/components/deposit/DepositPanel";
 import DepositMethodSelector from "@/tokenPayLib/components/deposit/DepositMethodSelector";
-import { FIAT_SYMBOLS_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import { getFiatCurrencySymbol } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { STANDARD_STABLE_MAP } from "@/tokenPayLib/components/crossborder/CurrencySelector";
-import { useUhuConfig } from "@/context/UhuConfigContext";
+import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { sortMethodByCurrencyDeposit } from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
 
@@ -46,6 +46,9 @@ export default function DepositPage() {
   const [state, setState] = useState("loading");
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+    const { t: tCrossborder } = useTranslation("crossborder");
+
 
   // The swiper instance
   const [swiperInstance, setSwiperInstance] = useState(null);
@@ -101,7 +104,7 @@ export default function DepositPage() {
         );
 
         if (countryRes.data.docs.length === 0) {
-          setErrorMessage({message: "Country not found"});
+          setErrorMessage({ message: tCrossborder("depositPage.errors.countryNotFound") });
           setIsErrorPopupOpen(true);
         } else {
           setSelectedCountry(countryRes.data.docs[0]);
@@ -111,7 +114,7 @@ export default function DepositPage() {
           setState("loaded");
         }
       } catch (err) {
-        setErrorMessage({ message: "Failed to fetch country data"});
+        setErrorMessage({ message: tCrossborder("depositPage.errors.fetchCountryData") });
         setIsErrorPopupOpen(true);
       }
     }
@@ -127,7 +130,7 @@ export default function DepositPage() {
 
   const renderCryptoSelectionSlide = () => (
     <div className="relative z-[10]  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
-      <h2 className="text-2xl">Welches Guthaben möchten Sie aufladen?</h2>
+      <h2 className="text-2xl">{tCrossborder("depositPage.cryptoSelection.heading")}</h2>
       {Object.keys(methodsByCurrency).map((currency) => {
         let currencyDetails = currencies[currency];
         return (
@@ -164,10 +167,10 @@ export default function DepositPage() {
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
       >
         <FiArrowLeft className="mr-2" />
-        Zurück
+        {tCrossborder("depositPage.fiatSelection.back")}
       </button>
       <h2 className="text-2xl">
-        Mit welcher Währung möchten Sie die Einzahlung vornehmen?
+      {tCrossborder("depositPage.fiatSelection.heading")}
       </h2>
       {/* TODO: Show selection of possible fiat transactions */}
       {availableFiatCurrencies.map((currency) => {
@@ -181,7 +184,7 @@ export default function DepositPage() {
             className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
             <div className="flex items-center justify-center bg-uhuBlue text-xl rounded-full text-white font-bold w-10 h-10">
-              {FIAT_SYMBOLS_MAP[currency]}
+              {getFiatCurrencySymbol(currency)}
             </div>
             <h3 className="text-xl font-bold">{currency}</h3>
           </div>
@@ -197,13 +200,13 @@ export default function DepositPage() {
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
       >
         <FiArrowLeft className="mr-2" />
-        Zurück
+        {tCrossborder("depositPage.fiatSelection.back")}
       </button>
       <h2 className="text-2xl">
-        Einzahlungsmethoden für {selectedCountry?.countryInfo.name}
+        {tCrossborder("depositPage.depositDetails.heading")} {selectedCountry?.countryInfo.name}
       </h2>
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold">Bitte wählen Sie einen Betrag aus</h2>
+        <h2 className="text-xl font-bold">{tCrossborder("depositPage.depositDetails.selectAmount")}</h2>
         <div className="relative">
           <input
             type="number"
@@ -214,7 +217,7 @@ export default function DepositPage() {
             onChange={handleAmountChange}
           />
           <div className="absolute right-10 top-0 text-xl font-bold flex items-center justify-center h-full">
-            {FIAT_SYMBOLS_MAP[preferredFiatCurrency]}
+            {getFiatCurrencySymbol(preferredFiatCurrency)}
           </div>
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -237,7 +240,7 @@ export default function DepositPage() {
           disabled={!selectedMethod}
           onClick={() => goToSlide(3)}
         >
-          Weiter
+           {tCrossborder("depositPage.depositDetails.next")}
         </button>
       </div>
     </div>
@@ -250,7 +253,7 @@ export default function DepositPage() {
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
       >
         <FiArrowLeft className="mr-2" />
-        Zurück
+        {tCrossborder("depositPage.fiatSelection.back")}
       </button>
       <DepositPanel
         method={selectedMethod}
@@ -322,7 +325,7 @@ export default function DepositPage() {
       <div className="flex flex-col max-w-7xl w-full mx-auto p-4 md:p-10 gap-4">
         <div>
           <BalanceOverview></BalanceOverview>
-          <h1 className="text-xl font-bold mt-4">Guthaben Einzahlen</h1>
+          <h1 className="text-xl font-bold mt-4">{tCrossborder("depositPage.heading")}</h1>
         </div>
 
         <div className="border rounded w-full p-4 relative">
