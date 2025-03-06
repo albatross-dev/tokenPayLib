@@ -132,9 +132,9 @@ export default function BitcoinVN({
             <HiChevronDoubleRight className="text-6xl text-gray-500" />
           </div>
           {/* Settle Amount */}
-          <div className="flex flex-col items-end justify-end gap-1">
-            <p className="text-6xl">
-              {quote.settleAmount} {getFiatCurrencyCode(quote.settleMethod)}
+          <div className='flex flex-col items-end justify-end gap-1'>
+            <p className='text-6xl'>
+              {quote.settleAmount} {STABLECOIN_TO_FIAT_MAP[quote.settleMethod]}
             </p>
             <strong className="text-gray-500">
               {tCrossborder("deposit.bitcoinvn.overview.credit")}
