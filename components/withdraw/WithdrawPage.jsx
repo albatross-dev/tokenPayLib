@@ -20,7 +20,6 @@ import FiatReceivingSelector, {
 } from "@/tokenPayLib/components/crossborder/FiatReceivingSelector";
 import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanceSelector";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
-import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 
 export default function WithdrawPage({maintenance}) {
   const [state, setState] = useState("loading");
@@ -47,11 +46,8 @@ export default function WithdrawPage({maintenance}) {
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [swiperInstance, setSwiperInstance] = useState(null); // Swiper instance
 
-    const { t: tCrossborder } = useTranslation("crossborder");
+  const { t: tCrossborder } = useTranslation("crossborder");
 
-
-  // Maintainance
-  const { maintenance } = useUhuConfig();
 
   useEffect(() => {
     async function getCountryData() {
