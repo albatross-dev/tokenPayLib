@@ -45,6 +45,9 @@ export function MethodSelectorOld({
   selectedMethod,
   setSelectedMethod,
 }) {
+
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   // check if the method are there
   if (!methods || methods.length === 0) {
     return null;
@@ -65,7 +68,7 @@ export function MethodSelectorOld({
 
   return (
     <div className='space-y-4 bg-white w-full mt-4'>
-      <h2 className='text-xl font-bold mb-2'>Zahlungsmethode auswählen</h2>
+      <h2 className='text-xl font-bold mb-2'>{tCrossborder("methodSelector.selectMethod")}</h2>
       {sortedMethods.map((method, index) => {
         return (
           <QuoteSection
@@ -95,6 +98,8 @@ export default function MethodSelector({
 }) {
   const [sortedMethods, setSortedMethods] = useState({});
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
+
 
   const [loading, setLoading] = useState(true);
 
@@ -218,7 +223,6 @@ export default function MethodSelector({
       }
 
       setSortedMethods(sortedMethods);
-      console.log("update finished", sortedMethods);
       setLoading(false);
     }
 
@@ -232,11 +236,11 @@ export default function MethodSelector({
     return (
       <div>
         <h2 className='text-xl font-bold mb-2 mt-8'>
-          Zahlungsmethode auswählen
+        {tCrossborder("methodSelector.selectMethod")}
         </h2>
         <div className='flex p-4 border w-full rounded'>
           <div className='flex text-xl font-bold items-center gap-2 flex-1'>
-            <div className=' text-sm px-2 rounded'>Lade Wechselkurse</div>
+            <div className=' text-sm px-2 rounded'>{tCrossborder("methodSelector.loadingExchangeRates")}</div>
           </div>
           <div className='flex flex-row items-center font-bold gap-6'>
             <IoWarning className='text-gray-600' />
@@ -250,12 +254,12 @@ export default function MethodSelector({
     return (
       <div>
         <h2 className='text-xl font-bold mb-2 mt-8'>
-          Zahlungsmethode auswählen
+        {tCrossborder("methodSelector.selectMethod")}
         </h2>
         <div className='flex p-4 border w-full rounded'>
           <div className='flex text-xl font-bold items-center gap-2 flex-1'>
             <div className=' text-sm px-2 rounded'>
-              Bitte wählen Sie einen Betrag aus
+            {tCrossborder("methodSelector.selectAmount")}
             </div>
           </div>
           <div className='flex flex-row items-center font-bold gap-6'>
@@ -268,7 +272,7 @@ export default function MethodSelector({
 
   return (
     <div>
-      <h2 className='text-xl font-bold mb-2 mt-8'>Zahlungsmethode auswählen</h2>
+      <h2 className='text-xl font-bold mb-2 mt-8'>{tCrossborder("methodSelector.selectMethod")}</h2>
       {loading ? (
         <div>
           <div className='flex flex-col gap-2 justify-center items-center py-4 w-full'>
@@ -276,7 +280,8 @@ export default function MethodSelector({
               <div className='flex text-xl font-bold items-center gap-2 flex-1'>
                 <MiniLoader />
                 <div className=' text-sm px-2 animate-pulse rounded bg-gray-200'>
-                  Wir finden das beste Angebot für Sie
+                {tCrossborder("methodSelector.findingBestOffer")}
+                  
                 </div>
               </div>
               <div className='flex flex-row items-center font-bold gap-6'>
@@ -327,7 +332,9 @@ export default function MethodSelector({
                   </div>
                 ) : (
                   <div className='text-[9px] bg-gray-200 text-gray-500 px-1 rounded'>
-                    Keine verfügbare Methode
+                    {tCrossborder("methodSelector.noMethodAvailable")}
+                 
+                    
                   </div>
                 )}
               </div>
@@ -337,7 +344,8 @@ export default function MethodSelector({
                 sortedMethods[modality].nextLowerLimitMethod ? (
                   <div className='flex flex-row justify-between text-sm'>
                     <div>
-                      Ihr gewälter Betrag übersteigt die letzte Methode um{" "}
+                    {tCrossborder("methodSelector.notEnoughMoney")}
+                      {" "}
                       <span className='font-bold text-red-500'>
                         {amount -
                           sortedMethods[modality].nextLowerLimitMethod
@@ -354,13 +362,15 @@ export default function MethodSelector({
                   <div className='flex flex-row justify-between'>
                     <div></div>
                     <div className='text-sm'>
-                      Noch{" "}
+                    {tCrossborder("methodSelector.missingAmount")}
+                      {" "}
                       <span className='font-bold text-uhuBlue'>
                         {sortedMethods[modality].nextMethodWithLimit.minAmount -
                           amount}{" "}
                         {sendingCurrency?.icon}
                       </span>{" "}
-                      bis zur nächsten Methode
+                       {tCrossborder("methodSelector.missingAmount1")}
+                       
                     </div>
                   </div>
                 )}

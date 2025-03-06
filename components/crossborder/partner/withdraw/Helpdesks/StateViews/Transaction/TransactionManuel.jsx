@@ -1,16 +1,19 @@
-import React from 'react'
+import { useTranslation } from "next-i18next";
+import React from "react";
 
 export default function TransactionManual() {
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   <div className="flex flex-col items-center justify-center mt-8 gap-2">
     <div className="font-bold">
-      Die Zahlung kann nicht automatisch verarbeitet werden.
+      {tCrossborder("withdraw.otcStates.manuelInfo")}
     </div>
-    <div>Wir setzen uns mit Ihnen per Email in verbindung</div>
+    <div>{tCrossborder("withdraw.otcStates.manuelInfo2")}</div>
     <div
       onClick={handleNewTransaction}
       className="cursor-pointer bg-uhuBlue rounded py-1 px-2 font-bold text-white"
     >
-      Neue Transaktion
+      {tCrossborder("withdraw.otcStates.newTransaction")}
     </div>
   </div>;
 }

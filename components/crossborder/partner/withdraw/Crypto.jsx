@@ -28,13 +28,13 @@ import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import { encodePacked } from "thirdweb/utils";
 import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
+import { useTranslation } from "next-i18next";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
 export default function RawCrypto({ amount, preferredStableCoin }) {
-
   const [defaultToken, setDefaultToken] = useState(
     TokensByChainId[polygon.id][preferredStableCoin]
   );
@@ -53,6 +53,8 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
   const [loadingQuote, setLoadingQuote] = useState(false);
   const [quote, setQuote] = useState(null);
   const [state, setState] = useState("transaction");
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     processTargetTokens(defaultToken);
@@ -130,19 +132,22 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
 
     if (differentToken) {
       if (!selectedToken) {
-        validationErrors.selectedToken =
-          "Bitte wählen Sie eine Kryptowährung aus.";
+        validationErrors.selectedToken = tCrossborder(
+          "withdraw.crypto.errorSelectCrypto"
+        );
       }
     }
 
     if (!amountToSend || amountToSend <= 0) {
-      validationErrors.amountToSend =
-        "Bitte geben Sie einen gültigen Betrag ein.";
+      validationErrors.amountToSend = tCrossborder(
+        "withdraw.crypto.errorEmail"
+      );
     }
 
     if (!targetAddress || !/^0x[a-fA-F0-9]{40}$/.test(targetAddress)) {
-      validationErrors.targetAddress =
-        "Bitte geben Sie eine gültige Wallet-Adresse ein.";
+      validationErrors.targetAddress = tCrossborder(
+        "withdraw.crypto.errorWallet"
+      );
     }
 
     setErrors(validationErrors);
@@ -163,15 +168,12 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
 
     let targetTokens = Object.fromEntries(targetTokenArr);
     setTargetTokens(targetTokens);
-    console.log("targetTokens", targetTokenArr);
     setSelectedToken(targetTokenArr[0][1]);
 
     return targetTokens;
   }
 
   const handleTransfer = async (token, amount, address) => {
-    console.log("handle transfer", amount, token, address);
-
     const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
       client,
       account,
@@ -179,7 +181,7 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
       amount,
       token,
       address
-    ) 
+    );
 
     return transactionHash;
   };
@@ -209,7 +211,7 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
         let transactionHash = await handleTransfer(
           selectedToken,
           sendAmount.toString(),
-          targetAddress,
+          targetAddress
         );
 
         await axios.post("/api/fiatTransaction", {
@@ -233,8 +235,9 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
         });
       } catch (error) {
         const errors = {};
-        errors.conversionError =
-          "Fehler beim Konvertieren der Kryptowährung, versuchen Sie es erneut";
+        errors.conversionError = tCrossborder(
+          "withdraw.crypto.errorTransaction"
+        );
         setErrors(errors);
         console.error("Error transfering token", error);
         setIsLoading(false);
@@ -278,8 +281,14 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
     <div className="max-w-4xl w-full mx-auto p-6">
       {state === "transaction" && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Kryptowährung senden</h2>
-          <div className={`${selectedToken && differentToken && "text-gray-500 grayscale"} flex flex-row gap-2 items-center bg-gray-100 rounded p-4`}>
+          <h2 className="text-2xl font-bold mb-4">
+            {tCrossborder("withdraw.crypto.sendCrypto")}
+          </h2>
+          <div
+            className={`${
+              selectedToken && differentToken && "text-gray-500 grayscale"
+            } flex flex-row gap-2 items-center bg-gray-100 rounded p-4`}
+          >
             <div className={`relative w-8 h-8`}>
               <Image src={defaultToken.icon} fill="true"></Image>+
             </div>
@@ -298,13 +307,13 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
                 }}
                 className="block font-medium text-gray-700 mt-4 text-uhuBlue cursor-pointer"
               >
-                Möchten Sie eine andere Kryptowährung verwenden?
+                {tCrossborder("withdraw.crypto.changeCrypto")}
               </div>
               {differentToken && (
                 <div className="border shadow-sm rounded p-4 mt-4">
                   <div className="flex justify-between">
                     <label className="block font-medium text-gray-700">
-                      Wählen Sie eine Kryptowährung aus
+                      {tCrossborder("withdraw.crypto.selectCrypto")}
                     </label>
                     <IoClose
                       onClick={() => {
@@ -350,7 +359,7 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
             </div>
             <div className="mt-4 mb-4">
               <label className="block font-medium text-gray-700 mb-1">
-              Zieladresse für Polygon Mainnet (Chain-ID: 137)
+                {tCrossborder("withdraw.crypto.targetAddress")}
               </label>
               <input
                 type="text"
@@ -371,7 +380,9 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
               onClick={handleSend}
               disabled={isLoading || !selectedToken || loadingQuote}
             >
-              {isLoading ? "Senden..." : "Jetzt senden"}
+              {isLoading
+                ? tCrossborder("withdraw.crypto.send")
+                : tCrossborder("withdraw.crypto.sendNow")}
             </button>
           </div>
         </div>
@@ -380,11 +391,10 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
       {state === "success" && (
         <div className="max-w-4xl mx-auto p-6 w-full">
           <h1 className="text-2xl font-bold mb-6 text-green-600 text-center">
-            Transaktion erfolgreich
+            {tCrossborder("withdraw.crypto.transactionSuccess")}
           </h1>
           <p className="text-center">
-            Ihre Transaktion wurde erfolgreich durchgeführt. Sie sollten in
-            Kürze das Geld auf Ihrem Konto haben.
+            {tCrossborder("withdraw.crypto.transactionSuccessInfo")}
           </p>
         </div>
       )}

@@ -12,6 +12,8 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   useEffect(() => {
     formDataPreloaded = false;
   }, []);
@@ -28,7 +30,11 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
   const ovexB2BKYCInfo = [
     {
       type: "ui",
-      content: <div className="font-bold">Allgemeine Informationen</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.generalInfo")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -60,13 +66,17 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       name: "Website",
-      label: "Website",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.website"),
       type: "text",
       required: false,
     },
     {
       type: "ui",
-      content: <div className="font-bold">Addresse</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.address")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -129,17 +139,21 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Bank</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.bank")}
+        </div>
+      ),
     },
     {
       name: "bankName",
-      label: "Name",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.name"),
       type: "text",
       required: true,
     },
     {
       name: "bankAccountCurrency",
-      label: "Konto Währung",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.bankAccountCurrency"),
       type: "text",
       required: true,
     },
@@ -165,13 +179,15 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     {
       type: "array",
       name: "vendorBankStatements",
-      label: "Bankauszüge",
-      newLabel: "Dokument hinzufügen",
-      removeLabel: "Dokument entfernen",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.bankStatements"),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.kotanipay.addDocument"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.kotanipay.removeDocument"
+      ),
       fields: [
         {
           name: "vendorBankStatement",
-          label: "Bankauszug",
+          label: tCrossborder("withdraw.helpDeskKYC.kotanipay.bankStatement"),
           type: "file",
           required: true,
         },
@@ -179,21 +195,29 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Geschäftsführer</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.managingDirector")}
+        </div>
+      ),
     },
     {
       type: "row",
       fields: [
         {
           name: "vendorRepresentativeName",
-          label: "Vorname",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeName"
+          ),
           type: "text",
           required: true,
           width: "md:w-1/2",
         },
         {
           name: "vendorRepresentativeSurname",
-          label: "Nachname",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeSurname"
+          ),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -205,14 +229,18 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
       fields: [
         {
           name: "vendorRepresentativeEmail",
-          label: "Email",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeEmail"
+          ),
           type: "text",
           required: true,
           width: "md:w-1/2",
         },
         {
           name: "vendorRepresentativePhone",
-          label: "Telefonnummer",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativePhone"
+          ),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -221,7 +249,13 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Berechtigte Vertreter / UBO (ab 10%)</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.authorizedRepresentatives"
+          )}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -270,7 +304,9 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
         },
         {
           name: "vendorRepresentativeAddress",
-          label: "Addresse",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeAddress"
+          ),
           type: "text",
           required: true,
         },
@@ -279,14 +315,18 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
           fields: [
             {
               name: "vendorRepresentativeZip",
-              label: "Postleitzahl",
+              label: tCrossborder(
+                "withdraw.helpDeskKYC.kotanipay.representativeZip"
+              ),
               type: "text",
               width: "md:w-1/3",
               required: true,
             },
             {
               name: "vendorRepresentativeCity",
-              label: "Stadt",
+              label: tCrossborder(
+                "withdraw.helpDeskKYC.kotanipay.representativeCity"
+              ),
               type: "text",
               width: "md:w-2/3",
               required: true,
@@ -295,7 +335,9 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
         },
         {
           name: "vendorRepresentativeNationality",
-          label: "Nationalität",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeNationality"
+          ),
           onlyIso: true,
           type: "country",
           required: true,
@@ -339,7 +381,9 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
         },
         {
           name: "vendorRepresentativeShares",
-          label: "Anteil in %",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeShare"
+          ),
           type: "number",
           required: false,
         },
@@ -347,24 +391,36 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Dokumente</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.documents")}
+        </div>
+      ),
     },
-    {
+      {
       type: "ui",
-      content: <div className="h-4">Bitte fügen Sie für alle oben aufgelisteten Repräsentanten einen Adressnachweis sowie einen Reise- oder Personalausweis bei.</div>,
+      content: (
+        <div className="h-4">
+          {tCrossborder("withdraw.helpDeskKYC.kotanipay.documentInstructions")}
+        </div>
+      ),
     },
     {
       type: "array",
       name: "representativeDocs",
-      label: "Dokumente des Vertreters",
-      newLabel: "Neues Dokument hinzufügen",
-      removeLabel: "Dokument entfernen",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.representativeDocs"),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.kotanipay.newDocument"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.kotanipay.removeDocument"
+      ),
       fields: [
         {
           name: "representativeDoc",
-          label: "Dokument des Vertreters",
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.kotanipay.representativeDoc"
+          ),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
@@ -492,7 +548,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
     },
     {
       name: "acceptTerms",
-      label: "Nutzungsbedingungen akzeptieren",
+      label: tCrossborder("withdraw.helpDeskKYC.kotanipay.acceptTermsLabel"),
       type: "custom",
       content: (methods) => {
         return (

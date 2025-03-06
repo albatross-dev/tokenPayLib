@@ -18,6 +18,7 @@ import { client } from "@/pages/_app";
 import { polygon } from "thirdweb/chains";
 import preprocessDataForServer from "@/tokenPayLib/utilities/forms/preprocessData";
 import getFormData from "@/tokenPayLib/utilities/forms/getFormData";
+import { useTranslation } from "next-i18next";
 
 const DESK_STATE_LOADING = "loading";
 const DESK_STATE_ONGOING = "ongoing";
@@ -34,6 +35,8 @@ const TRANSACTION_STATE_PAYMENT_PENDING = "paymentPending";
 
 export default function HelpDesk({ country, amount, account, method }) {
   const { user, refreshAuthentication } = useContext(AuthContext);
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   // state for the helpdesk request form
   const [state, setState] = useState(DESK_STATE_LOADING);
@@ -130,51 +133,6 @@ export default function HelpDesk({ country, amount, account, method }) {
   // ! ||--------------------------------------------------------------------------------||
 
   /**
-   * Fetch the current transaction from the server
-   */
-  async function updateTransaction() {
-    let currentTransactionKey = "";
-    switch (method?.type) {
-      case "ovex":
-        currentTransactionKey = "currentOvexTransaction";
-        break;
-      case "bitcoin_vn_helpdesk":
-        currentTransactionKey = "currentBitcoinVNHelpdeskTransaction";
-        break;
-      case "koywe_helpdesk":
-        currentTransactionKey = "currentKoyweHelpdeskTransaction";
-        break;
-      case "kotanipay_helpdesk":
-        currentTransactionKey = "currentKotaniPayHelpdeskTransaction";
-        break;
-      case "coinhako_helpdesk":
-        currentTransactionKey = "currentCoinhakoHelpdeskTransaction";
-        break;
-      case "roma":
-        currentTransactionKey = "currentRomaTransaction";
-        break;
-      default:
-        break;
-    }
-
-    console.log("update transaction", currentTransactionKey);
-
-    if (user[currentTransactionKey]) {
-      const res = await axios.get(
-        `/api/fiatTransaction/${user[currentTransactionKey].id}`
-      );
-      console.log("res", res.data.status);
-      if (res.data.status === "pending") {
-        console.log("setState","ongoing");
-        setState("ongoing");
-      }
-
-      console.log("update transaction", res.data);
-      setTransaction(res.data);
-    }
-  }
-
-  /**
    * Handle the verification request for the helpdesk
    */
   async function handleVerificationRequest(data) {
@@ -225,7 +183,7 @@ export default function HelpDesk({ country, amount, account, method }) {
    */
   async function handleStartTransaction() {
     if (!textareaContent.trim()) {
-      setError("Das Textfeld darf nicht leer sein.");
+      setError(tCrossborder("withdraw.helpDesk.errorText"));
       return;
     }
 
@@ -280,7 +238,7 @@ export default function HelpDesk({ country, amount, account, method }) {
     } catch (error) {
       console.log("error handle send", error);
       setErrorMessage({
-        message: "Bitte versuchen Sie es später nochmal",
+        message: tCrossborder("withdraw.helpDesk.errorTryLater"),
         error: error,
       });
       setIsLoading("error");

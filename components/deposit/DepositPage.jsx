@@ -13,13 +13,13 @@ import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import Image from "next/image";
 import DepositPanel from "@/tokenPayLib/components/deposit/DepositPanel";
 import DepositMethodSelector from "@/tokenPayLib/components/deposit/DepositMethodSelector";
-import { FIAT_SYMBOLS_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import { getFiatCurrencySymbol } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { STANDARD_STABLE_MAP } from "@/tokenPayLib/components/crossborder/CurrencySelector";
 import { useUhuConfig } from "@/context/UhuConfigContext";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { sortMethodByCurrencyDeposit } from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
 
-export default function DepositPage() {
+export default function DepositPage({maintenance}) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
   // TW hooks
@@ -38,9 +38,6 @@ export default function DepositPage() {
   const [preferredFiatCurrency, setPreferredFiatCurrency] = useState("");
   // The amount the user wants to receive
   const [amount, setAmount] = useState("");
-
-  // Maintainance
-  const { maintenance } = useUhuConfig();
 
   const [error, setError] = useState("");
   const [state, setState] = useState("loading");
@@ -181,7 +178,7 @@ export default function DepositPage() {
             className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
             <div className="flex items-center justify-center bg-uhuBlue text-xl rounded-full text-white font-bold w-10 h-10">
-              {FIAT_SYMBOLS_MAP[currency]}
+              {getFiatCurrencySymbol(currency)}
             </div>
             <h3 className="text-xl font-bold">{currency}</h3>
           </div>
@@ -214,7 +211,7 @@ export default function DepositPage() {
             onChange={handleAmountChange}
           />
           <div className="absolute right-10 top-0 text-xl font-bold flex items-center justify-center h-full">
-            {FIAT_SYMBOLS_MAP[preferredFiatCurrency]}
+            {getFiatCurrencySymbol(preferredFiatCurrency)}
           </div>
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -326,7 +323,7 @@ export default function DepositPage() {
         </div>
 
         <div className="border rounded w-full p-4 relative">
-          {maintenance?.dashboard?.deposit?.page && (
+          {maintenance.deposit?.page && (
             <Maintainance></Maintainance>
           )}
           {state === "loading" && (

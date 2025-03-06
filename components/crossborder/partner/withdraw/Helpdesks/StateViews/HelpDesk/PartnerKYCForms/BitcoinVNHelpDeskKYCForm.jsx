@@ -7,10 +7,11 @@ import preprocessDataForHelpDesk from "./Helper/processAndSerValues";
 
 let formDataPreloaded = false;
 
-export default function BitcoinVNHelpDeskKYCForm({setValue, methods}) {
+export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     formDataPreloaded = false;
@@ -18,7 +19,6 @@ export default function BitcoinVNHelpDeskKYCForm({setValue, methods}) {
 
   useEffect(() => {
     if (user !== "loading" && user && formDataPreloaded === false) {
-
       // copy user data to form
       preprocessDataForHelpDesk(user, setValue);
 
@@ -29,7 +29,11 @@ export default function BitcoinVNHelpDeskKYCForm({setValue, methods}) {
   const ovexB2BKYCInfo = [
     {
       type: "ui",
-      content: <div className="font-bold">Dokumente</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documents")}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -52,20 +56,26 @@ export default function BitcoinVNHelpDeskKYCForm({setValue, methods}) {
     },
     {
       type: "ui",
-      content: <div className="font-bold">Bitte fügen Sie an: Bild der Hauptseite des Reisepasses eines Geschäftsführers sowie ein Selfie des Geschäftsführers mit einem handgeschriebenen Blatt Papier, auf dem die Reisepass-Nummer und das heutige Datum stehen.</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder(
+            "withdraw.helpDeskKYC.bitcoinvn.documentInstructions"
+          )}
+        </div>
+      ),
     },
     {
       type: "array",
       name: "bitcoinVNDocs",
-      label: "Dokumente des Vertreters",
-      newLabel: "Neues Dokument hinzufügen",
-      removeLabel: "Dokument entfernen",
+      label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDocs"),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.newDocument"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.removeDocument"),
       fields: [
         {
           name: "bitcoinVNDoc",
-          label: "Dokument des Vertreters",
+          label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDoc"),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
@@ -75,7 +85,7 @@ export default function BitcoinVNHelpDeskKYCForm({setValue, methods}) {
     },
     {
       name: "acceptTerms",
-      label: "Nutzungsbedingungen akzeptieren",
+      label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.acceptTermsLabel"),
       type: "custom",
       content: (methods) => {
         return (

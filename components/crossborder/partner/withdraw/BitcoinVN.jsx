@@ -8,12 +8,8 @@ import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import { polygon } from "thirdweb/chains";
 import { client } from "@/pages/_app";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
-import {
-  getContract,
-  prepareContractCall,
-  sendAndConfirmTransaction,
-} from "thirdweb";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
+import { useTranslation } from "next-i18next";
 
 const POOL_FEE = 0.004;
 
@@ -38,10 +34,12 @@ export default function BitcoinVN({ amount }) {
   const [quoteLoaded, setQuoteLoaded] = useState(false);
   const [infoLoaded, setInfoLoaded] = useState(false);
 
+  const { t: tCrossborder } = useTranslation("crossborder");
+
   async function getQuote() {
     try {
       const result = await axios.post("/api/fiatTransaction/bitcoinVN/quote", {
-        depositAmount: amount-(amount*POOL_FEE),
+        depositAmount: amount - amount * POOL_FEE,
         settleAmount: null,
       });
       setQuote(result.data);
@@ -62,7 +60,7 @@ export default function BitcoinVN({ amount }) {
       );
 
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
-        client, 
+        client,
         account,
         polygon,
         Number(amount) * 10 ** selectedToken.decimals,
@@ -98,7 +96,7 @@ export default function BitcoinVN({ amount }) {
     } catch (error) {
       console.log("error handle send", error);
       setErrorMessage({
-        message: "Bitte versuchen Sie es später nochmal",
+        message: tCrossborder("withdraw.bitcoinvn.errorAgain"),
         error: error,
       });
       setIsLoading("error");
@@ -165,7 +163,7 @@ export default function BitcoinVN({ amount }) {
     e.preventDefault();
 
     if (!formData.bank) {
-      setFormError("Bitte wählen Sie eine Bank aus.");
+      setFormError(tCrossborder("withdraw.bitcoinvn.errorBank"));
       return;
     }
 
@@ -175,7 +173,7 @@ export default function BitcoinVN({ amount }) {
 
   if (state === "loading" || !quoteLoaded || !infoLoaded) {
     return (
-      <div className='w-full h-full flex items-center justify-center mt-16'>
+      <div className="w-full h-full flex items-center justify-center mt-16">
         <Loader />
       </div>
     );
@@ -183,96 +181,101 @@ export default function BitcoinVN({ amount }) {
 
   if (state === "error") {
     return (
-      <div className='text-center text-red-600 py-10'>
-        Fehler beim Abrufen der Daten. Bitte versuchen Sie es später erneut.
+      <div className="text-center text-red-600 py-10">
+        {tCrossborder("withdraw.bitcoinvn.errorLoadingData")}
       </div>
     );
   }
 
   if (state === "loaded" && quote) {
     return (
-      <div className='max-w-4xl w-full mx-auto p-6 bg-white'>
-        <div className='mb-6'>
-          <h2 className='text-xl font-semibold text-gray-700 mb-6'>
-            Angebotszusammenfassung
+      <div className="max-w-4xl w-full mx-auto p-6 bg-white">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            {tCrossborder("withdraw.bitcoinvn.offerSummary")}
           </h2>
-          <div className='flex flex-col'>
-            <div className='flex gap-2 text-sm'>
+          <div className="flex flex-col">
+            <div className="flex gap-2 text-sm">
               <p>
-                <strong>Wechselkurs:</strong> {quote.rate}
+                <strong>
+                  {tCrossborder("withdraw.bitcoinvn.exchangeRate")}
+                </strong>{" "}
+                {quote.rate}
               </p>
-              <p className='text-red-600'>
-                <strong>Gültig für:</strong>{" "}
+              <p className="text-red-600">
+                <strong>{tCrossborder("withdraw.bitcoinvn.validFor")}</strong>{" "}
                 {Math.round((new Date(quote.expiresAt) - new Date()) / 60000)}{" "}
-                Minuten
+                {tCrossborder("withdraw.bitcoinvn.minutes")}
               </p>
             </div>
 
-            <div className='w-full flex-1 flex flex-row gap-4'>
-              <div className='gap-1 flex-1 flex flex-col'>
-                <div className='font-bold text-6xl text-gray-600 whitespace-nowrap'>
+            <div className="w-full flex-1 flex flex-row gap-4">
+              <div className="gap-1 flex-1 flex flex-col">
+                <div className="font-bold text-6xl text-gray-600 whitespace-nowrap">
                   {quote.depositAmount} {quote.depositMethod.toUpperCase()}
                 </div>
-                <div>Einzahlungsbetrag</div>
+                <div>{tCrossborder("withdraw.bitcoinvn.depositAmount")}</div>
               </div>
-              <div className='flex items-center justify-center'>
-                <HiChevronDoubleRight className='h-12 w-12 text-gray-600' />
+              <div className="flex items-center justify-center">
+                <HiChevronDoubleRight className="h-12 w-12 text-gray-600" />
               </div>
 
-              <div className='gap-1 flex-1 flex flex-col justify-end items-end'>
-                <div className='font-bold text-6xl whitespace-nowrap '>
+              <div className="gap-1 flex-1 flex flex-col justify-end items-end">
+                <div className="font-bold text-6xl whitespace-nowrap ">
                   {quote.settleAmount} {quote.settleMethod.toUpperCase()}
                 </div>
-                <div>Auszahlungsbetrag</div>
+                <div>{tCrossborder("withdraw.bitcoinvn.withdrawAmount")}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleFormSubmit} className='space-y-4'>
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <div>
-            <label className='block text-gray-700 font-medium mb-1'>
-              Bank <span className='text-red-500'>*</span>
+            <label className="block text-gray-700 font-medium mb-1">
+              {tCrossborder("withdraw.bitcoinvn.bank")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <CustomDropdown
               options={bankList}
               value={formData.bank}
               onChange={handleBankChange}
-              name='bank'
-              placeholder='Wählen Sie eine Bank aus'
+              name="bank"
+              placeholder={tCrossborder("withdraw.bitcoinvn.placeholderBank")}
             />
           </div>
           <div>
-            <label className='block text-gray-700 font-medium mb-1'>
-              Kontonummer <span className='text-red-500'>*</span>
+            <label className="block text-gray-700 font-medium mb-1">
+              {tCrossborder("withdraw.bitcoinvn.accountNumber")}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
-              type='text'
-              name='accountNumber'
+              type="text"
+              name="accountNumber"
               value={formData.accountNumber}
               onChange={handleInputChange}
               required
-              className='w-full border border-gray-300 rounded-lg p-2'
+              className="w-full border border-gray-300 rounded-lg p-2"
             />
           </div>
           <div>
-            <label className='block text-gray-700 font-medium mb-1'>
-              Kontoinhaber
+            <label className="block text-gray-700 font-medium mb-1">
+              {tCrossborder("withdraw.bitcoinvn.accountOwner")}
             </label>
             <input
-              type='text'
-              name='accountHolder'
+              type="text"
+              name="accountHolder"
               value={formData.accountHolder}
               onChange={handleInputChange}
-              className='w-full border border-gray-300 rounded-lg p-2'
+              className="w-full border border-gray-300 rounded-lg p-2"
             />
           </div>
-          {formError && <p className='text-red-500 text-sm'>{formError}</p>}
+          {formError && <p className="text-red-500 text-sm">{formError}</p>}
           <button
-            type='submit'
-            className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700'
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
-            Transaktion starten
+            {tCrossborder("withdraw.bitcoinvn.startTransaction")}
           </button>
         </form>
       </div>
@@ -281,33 +284,36 @@ export default function BitcoinVN({ amount }) {
 
   if (state === "transaction-created" && transaction) {
     return (
-      <div className='max-w-4xl mx-auto p-6 w-full'>
-        <h1 className='text-2xl font-bold mb-6 text-uhuBlue text-center'>
-          Transaktion erstellt
+      <div className="max-w-4xl mx-auto p-6 w-full">
+        <h1 className="text-2xl font-bold mb-6 text-uhuBlue text-center">
+          {tCrossborder("withdraw.bitcoinvn.transactionCreated")}
         </h1>
-        <div className='space-y-4'>
+        <div className="space-y-4">
           <p>
-            <strong>Transaktions-ID:</strong> {transaction.id}
+            <strong>{tCrossborder("withdraw.bitcoinvn.transactionId")}</strong>{" "}
+            {transaction.id}
           </p>
           <p>
-            <strong>Einzahlungsadresse:</strong>{" "}
+            <strong>{tCrossborder("withdraw.bitcoinvn.depositAddress")}</strong>{" "}
             {transaction.depositData.address}
           </p>
           <p>
-            <strong>Zielkonto:</strong> {transaction.settleData.accountNumber}
+            <strong>{tCrossborder("withdraw.bitcoinvn.targetAccount")}</strong>{" "}
+            {transaction.settleData.accountNumber}
           </p>
           <p>
-            <strong>Bank:</strong> {transaction.settleData.bank}
+            <strong>{tCrossborder("withdraw.bitcoinvn.bankInfo")}</strong>{" "}
+            {transaction.settleData.bank}
           </p>
         </div>
-        <div className='flex items-end justify-end mt-6'>
+        <div className="flex items-end justify-end mt-6">
           <LoadingButton
             openError={() => {}}
             isLoading={isLoading}
             onClick={handleSend}
-            className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700'
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
-            Transaktion abschließen
+            {tCrossborder("withdraw.bitcoinvn.finalizeTransaction")}
           </LoadingButton>
         </div>
       </div>
@@ -316,13 +322,12 @@ export default function BitcoinVN({ amount }) {
 
   if (state === "success") {
     return (
-      <div className='max-w-4xl mx-auto p-6 w-full'>
-        <h1 className='text-2xl font-bold mb-6 text-green-600 text-center'>
-          Transaktion erfolgreich
+      <div className="max-w-4xl mx-auto p-6 w-full">
+        <h1 className="text-2xl font-bold mb-6 text-green-600 text-center">
+          {tCrossborder("withdraw.bitcoinvn.transactionSuccess")}
         </h1>
-        <p className='text-center'>
-          Ihre Transaktion wurde erfolgreich durchgeführt. Sie sollten in Kürze
-          das Geld auf dem Gewünschten Konto haben.
+        <p className="text-center">
+          {tCrossborder("withdraw.bitcoinvn.successInfo")}
         </p>
       </div>
     );

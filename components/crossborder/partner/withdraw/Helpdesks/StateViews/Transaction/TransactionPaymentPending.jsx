@@ -1,19 +1,25 @@
 import AddressDisplay from '@/tokenPayLib/components/UI/AddressDisplay'
 import LoadingButton from '@/tokenPayLib/components/UI/LoadingButton'
+import { useTranslation } from 'next-i18next';
 import React from 'react'
 
 export default function TransactionPaymentPending({transaction, handleSend, isLoading, errorMessage}) {
+
+const { t: tCrossborder } = useTranslation("crossborder");
+
+
   return (
     <div className="max-w-4xl mx-auto p-6 w-full">
     <h1 className="text-2xl font-bold mb-6 text-uhuBlue text-center">
-      Transaktion abschließen
+      {tCrossborder("withdraw.otcStates.finalize")}
+      
     </h1>
     <div className="flex flex-col gap-2 bg-uhuGray p-4 rounded-lg shadow-sm">
-      <div>Senden Sie</div>
+      <div>{tCrossborder("withdraw.otcStates.send")}</div>
       <div className="font-bold text-6xl text-gray-600">
         {transaction?.amount} {transaction?.currencyName}
       </div>
-      <div>An unseren OTC Partner unter der Addresse</div>
+      <div>{tCrossborder("withdraw.otcStates.otcAddressInfo")}</div>
       <div className="">
         <AddressDisplay
           concat={true}
@@ -30,7 +36,7 @@ export default function TransactionPaymentPending({transaction, handleSend, isLo
         onClick={handleSend}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
       >
-        Transaktion abschließen
+        {tCrossborder("withdraw.otcStates.finalize")}
       </LoadingButton>
     </div>
   </div>

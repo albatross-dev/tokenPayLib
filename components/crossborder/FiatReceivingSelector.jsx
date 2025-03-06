@@ -15,10 +15,10 @@ export default function FiatReceivingSelector({
   setPayoutCurrency,
   setSelectedMethod,
   swiperInstance,
-  nextSlide
+  nextSlide,
 }) {
-
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   // make a set of all available currencies from the availableMethods and adding crypto
   const allCurrencies = new Set();
@@ -42,8 +42,8 @@ export default function FiatReceivingSelector({
 
   return (
     <>
-      <h2 className='text-2xl'>
-        In welcher Währung soll das Guthaben ausgezahlt werden?
+      <h2 className="text-2xl">
+        {tCrossborder("receivingSelector.targetCurrency")}
       </h2>
       {Array.from(allCurrencies).map((currency) => {
         return currency === "crypto" ? (
@@ -61,12 +61,12 @@ export default function FiatReceivingSelector({
               setPayoutCurrency(currency);
               swiperInstance.slideTo(nextSlide);
             }}
-            className='flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer'
+            className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
-            <div className='font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10'>
+            <div className="font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10">
               <CryptoIcon />
             </div>
-            <h2 className='text-xl font-bold'>{t("crypto")}</h2>
+            <h2 className="text-xl font-bold">{t("crypto")}</h2>
           </div>
         ) : (
           <div
@@ -76,12 +76,12 @@ export default function FiatReceivingSelector({
               setPayoutCurrency(currency);
               swiperInstance.slideTo(nextSlide);
             }}
-            className='flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer'
+            className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
-            <div className='font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10'>
+            <div className="font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10">
               {FIAT_INFO_MAP[currency].symbol}
             </div>
-            <h2 className='text-xl font-bold'>{FIAT_INFO_MAP[currency].id}</h2>
+            <h2 className="text-xl font-bold">{FIAT_INFO_MAP[currency].id}</h2>
           </div>
         );
       })}

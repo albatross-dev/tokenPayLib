@@ -30,6 +30,7 @@ export default function BalanceOverview() {
   const [isClient, setIsClient] = useState(false);
   const { uhuConfig } = useContext(UhuConfigContext);
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
   const [balances, setBalances] = useState([]);
   const [totalEuroBalance, setTotalEuroBalance] = useState(0);
   const [totalUsdBalance, setTotalUsdBalance] = useState(0);
@@ -126,8 +127,8 @@ export default function BalanceOverview() {
           setIsUSDInfoModalOpen(false);
         }}
         type="info"
-        title="USD als TokenPay Guthaben-Währung"
-        message="Internationale Währungs-Transfers werden in den allermeisten Fällen über den US-Dollar abgebildet. Um einen weiteren Währungswechsel und damit verbundene Kosten und Kursrisiken zu vermeiden, bietet es sich an, Ihr TokenPay-Guthaben direkt in US-Dollar zu führen. Bitte beachten Sie dabei aber, dass es auch bei dem US-Dollar gegenüber anderen Währungen auch langfristig Kursschwankungen kommen kann."
+        title={tCrossborder("balanceOverview.useUSDInfoHeadline")}
+        message={tCrossborder("balanceOverview.useUSDInfoMessage")}
       ></UniversalModal>
 
       <UniversalModal
@@ -186,7 +187,7 @@ export default function BalanceOverview() {
             }}
           >
             <HiInformationCircle className="h-6 w-6" />
-            USD-Guthaben empfohlen
+            {tCrossborder("balanceOverview.usdRecomendedButton")}
           </div>
           <div className="flex-1"></div>
           <div
@@ -197,7 +198,7 @@ export default function BalanceOverview() {
               isConverterOpen ? "text-uhuBlue border-uhuBlue" : ""
             }`}
           >
-            EUR/USD konvertieren
+            {tCrossborder("balanceOverview.eurUsdConvert")}
           </div>
           <Link
             href={"/deposit"}
@@ -205,7 +206,7 @@ export default function BalanceOverview() {
               router.route === "/deposit" ? "text-uhuBlue border-uhuBlue" : ""
             }`}
           >
-            Guthaben einzahlen
+            {tCrossborder("balanceOverview.depositBalance")}
           </Link>
           <Link
             href={"/withdraw"}
@@ -213,7 +214,7 @@ export default function BalanceOverview() {
               router.route === "/withdraw" ? "text-uhuBlue border-uhuBlue" : ""
             }`}
           >
-            Guthaben auszahlen
+            {tCrossborder("balanceOverview.withdrawBalance")}
           </Link>
         </div>
       </div>

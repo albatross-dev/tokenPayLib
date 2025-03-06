@@ -30,6 +30,7 @@ import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
 import { STABLE_FIAT_MAP } from "../../FiatBalanceSelector";
 import { IoIosInformationCircle } from "react-icons/io";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
+import { useTranslation } from "next-i18next";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -54,6 +55,8 @@ export default function CryptoPartner({ amount, country, method }) {
   const [loadingQuote, setLoadingQuote] = useState(false);
   const [quote, setQuote] = useState(null);
   const [state, setState] = useState("transaction");
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     processTargetTokens(defaultToken);
@@ -100,7 +103,6 @@ export default function CryptoPartner({ amount, country, method }) {
     }
 
     if (selectedToken && differentToken) {
-      console.log("fetching quote for amount", amount);
       fetchQuote();
     }
   }, [selectedToken, differentToken]);
@@ -131,19 +133,22 @@ export default function CryptoPartner({ amount, country, method }) {
 
     if (differentToken) {
       if (!selectedToken) {
-        validationErrors.selectedToken =
-          "Bitte wählen Sie eine Kryptowährung aus.";
+        validationErrors.selectedToken = tCrossborder(
+          "withdraw.partnerCrypto.errorSelectCrypto"
+        );
       }
     }
 
     if (!amountToSend || amountToSend <= 0) {
-      validationErrors.amountToSend =
-        "Bitte geben Sie einen gültigen Betrag ein.";
+      validationErrors.amountToSend = tCrossborder(
+        "withdraw.partnerCrypto.errorValidAmount"
+      );
     }
 
     if (!targetAddress || !/^0x[a-fA-F0-9]{40}$/.test(targetAddress)) {
-      validationErrors.targetAddress =
-        "Bitte geben Sie eine gültige Wallet-Adresse ein.";
+      validationErrors.targetAddress = tCrossborder(
+        "withdraw.partnerCrypto.errorValidEmail"
+      );
     }
 
     setErrors(validationErrors);
@@ -173,14 +178,14 @@ export default function CryptoPartner({ amount, country, method }) {
   const handleTransfer = async (token, amount, address) => {
     console.log("handle transfer", amount, token, address);
 
-      const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
-          client,
-          account,
-          polygon,
-          amount,
-          token,
-          address
-        ) 
+    const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
+      client,
+      account,
+      polygon,
+      amount,
+      token,
+      address
+    );
 
     return transactionHash;
   };
@@ -235,8 +240,9 @@ export default function CryptoPartner({ amount, country, method }) {
         });
       } catch (error) {
         const errors = {};
-        errors.conversionError =
-          "Fehler beim Konvertieren der Kryptowährung, versuchen Sie es erneut";
+        errors.conversionError = tCrossborder(
+          "withdraw.partnerCrypto.errorConvertCrypto"
+        );
         setErrors(errors);
         console.error("Error transfering token", error);
         setIsLoading(false);
@@ -281,7 +287,8 @@ export default function CryptoPartner({ amount, country, method }) {
       {state === "transaction" && (
         <div>
           <h2 className="text-2xl font-bold mb-4">
-            {STABLE_FIAT_MAP[defaultToken.name]?.id} senden
+            {STABLE_FIAT_MAP[defaultToken.name]?.id}{" "}
+            {tCrossborder("withdraw.partnerCrypto.sendHeader")}
           </h2>
           <div className="flex flex-row gap-2 items-center bg-gray-100 rounded p-4">
             <div className="relative w-8 h-8 bg-uhuBlue flex items-center text-white font-bold justify-center rounded-full">
@@ -298,16 +305,16 @@ export default function CryptoPartner({ amount, country, method }) {
             <div>{STABLE_FIAT_MAP[defaultToken.name]?.symbol}</div>
           </div>
           <div className="mt-4 text-sm text-gray-700">
-          Geben Sie bitte die Wallet-Adresse des TokenPay-Accounts Ihres Empfängers an. Ihr Empfänger kann sich anschließend Ihr gesendetes Guthaben auf sein Bankkonto auszahlen lassen.
+            {tCrossborder("withdraw.partnerCrypto.walletInfo")}
           </div>
           <div className="mt-4 text-sm text-gray-700 flex gap-2 items-center bg-gray-100 rounded p-2">
             <IoIosInformationCircle className="text-2xl text-blue-500 inline" />
-            Ihr Empfänger findet seine Wallet-Adresse des TokenPay-Accounts rechts oben durch einen Klick auf das Geldbörse-Symbol.
+            {tCrossborder("withdraw.partnerCrypto.receiverInfo")}
           </div>
           <div className="">
             <div className="mt-4 mb-4">
               <label className="block font-medium text-gray-700 mb-1">
-              Wallet-Adresse des TokenPay-Accounts
+                {tCrossborder("withdraw.partnerCrypto.walletAddress")}
               </label>
               <input
                 type="text"
@@ -328,7 +335,9 @@ export default function CryptoPartner({ amount, country, method }) {
               onClick={handleSend}
               disabled={isLoading || !selectedToken || loadingQuote}
             >
-              {isLoading ? "Senden..." : "Jetzt senden"}
+              {isLoading
+                ? tCrossborder("withdraw.partnerCrypto.send")
+                : tCrossborder("withdraw.partnerCrypto.sendNow")}
             </button>
           </div>
         </div>
@@ -337,11 +346,10 @@ export default function CryptoPartner({ amount, country, method }) {
       {state === "success" && (
         <div className="max-w-4xl mx-auto p-6 w-full">
           <h1 className="text-2xl font-bold mb-6 text-green-600 text-center">
-            Transaktion erfolgreich
+            {tCrossborder("withdraw.partnerCrypto.transactionSuccess")}
           </h1>
           <p className="text-center">
-            Ihre Transaktion wurde erfolgreich durchgeführt. Sie sollten in
-            Kürze das Geld auf Ihrem Konto haben.
+            {tCrossborder("withdraw.partnerCrypto.transactionSuccessInfo")}
           </p>
         </div>
       )}

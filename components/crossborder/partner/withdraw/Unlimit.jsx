@@ -4,6 +4,7 @@ import { useUhuConfig } from "@/context/UhuConfigContext";
 
 export default function Unlimit({ amount, account, user, country }) {
   const { t } = useTranslation("common");
+  const { t: tCrossborder } = useTranslation("crossborder");
   const { setIsHelpModalOpen } = useUhuConfig();
 
   const offrampUrl = `https://offramp.gatefi.com/?region=${
@@ -20,16 +21,18 @@ export default function Unlimit({ amount, account, user, country }) {
 
   return (
     <div className="flex flex-col -mt-8">
-      <div className="font-bold text-xl mb-2">Transaktion mit TokenPay-Partner unlimit.crypto</div>
+      <div className="font-bold text-xl mb-2">
+        {tCrossborder("withdraw.unlimit.partnerHeadline")}
+      </div>
       <div>
-        Für die Durchführung Ihrer Transaktion folgen Sie bitte den Schritten in
-        dem Fenster unten und geben Sie gegebenenfalls weitere benötigte
-        persönliche Daten und Informationen an. Die angefragten Informationen
-        sind abhängig von der Transaktionshöhe und werden zur Prävention von
-        Geldwäsche und aus Sicherheitsgründen regelmäßig abgefragt. Bei Fragen
-        oder Fehlern wenden Sie sich gerne an den{" "}
-        <span className="text-uhuBlue cursor-pointer" onClick={() => {setIsHelpModalOpen(true)}}>
-          TokenPay-Kundenservice
+        {tCrossborder("withdraw.unlimit.partnerText")}{" "}
+        <span
+          className="text-uhuBlue cursor-pointer"
+          onClick={() => {
+            setIsHelpModalOpen(true);
+          }}
+        >
+          {tCrossborder("withdraw.unlimit.customerSupport")}
         </span>
         .
       </div>

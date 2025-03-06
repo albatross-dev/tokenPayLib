@@ -3,8 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { IoWarning } from "react-icons/io5";
 import axios from "axios";
 import {
-  FIAT_SYMBOLS_MAP,
-  STABLECOIN_TO_FIAT_MAP,
+  getFiatCurrencySymbol,
+  getFiatCurrencyCode,
 } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
@@ -51,7 +51,7 @@ export default function DepositMethodSelector({
       // Fetch the current exchange rate
       const exchangeRate = await fetchExchangeRate(
         startCurrency,
-        STABLECOIN_TO_FIAT_MAP[endCurrency]
+        getFiatCurrencyCode(endCurrency)
       );
 
       if (!exchangeRate) {
@@ -288,7 +288,7 @@ export default function DepositMethodSelector({
                   <span className='font-bold'>
                     {cheapestMethod.predictedOnrampAmount.toFixed(5)}
                     {" " +
-                      FIAT_SYMBOLS_MAP[STABLECOIN_TO_FIAT_MAP[endCurrency]]}
+                      getFiatCurrencySymbol(getFiatCurrencyCode(endCurrency))}
                   </span>
                 </div>
               </div>
@@ -309,7 +309,7 @@ export default function DepositMethodSelector({
               Ihr gewählter Betrag übersteigt den maximal Betrag um&nbsp;
               <span className='font-bold text-red-600'>
                 {amount - nextLowerLimitMethod.onrampMaxAmount}&nbsp;
-                {FIAT_SYMBOLS_MAP[startCurrency]}
+                {getFiatCurrencySymbol(startCurrency)}
               </span>
             </p>
           )}
@@ -320,7 +320,7 @@ export default function DepositMethodSelector({
               Noch&nbsp;
               <span className='text-uhuBlue font-bold'>
                 {nextMethodWithLimit.onrampMinAmount - amount}&nbsp;
-                {FIAT_SYMBOLS_MAP[startCurrency]}
+                {getFiatCurrencySymbol(startCurrency)}
               </span>
               &nbsp;bis zur nächsten Methode
             </p>
