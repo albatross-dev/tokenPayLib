@@ -48,7 +48,6 @@ export default function WithdrawPage({maintenance}) {
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
-
   useEffect(() => {
     async function getCountryData() {
       try {

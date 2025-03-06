@@ -1,4 +1,4 @@
-import { useUhuConfig } from "@/context/UhuConfigContext";
+
 import { useTranslation } from "next-i18next";
 import React from "react";
 
