@@ -402,7 +402,7 @@ export default function WithdrawPage({maintenance}) {
           <h1 className="text-xl font-bold mt-4">Guthaben auszahlen</h1>
         </div>
 
-        <div className="border rounded w-full p-4 relative">
+        <div className="border bg-white rounded w-full p-4 relative">
           {maintenance?.withdraw?.page && (
             <Maintainance></Maintainance>
           )}

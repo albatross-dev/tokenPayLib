@@ -14,7 +14,7 @@ export default function OnRamp({ amount, account, user, country, method }) {
       <div className="font-bold text-xl mb-2">
         {tCrossborder("deposit.onramp.transactionTitle")}
       </div>
-      <div>
+      <div className="mb-4">
         {tCrossborder("deposit.onramp.transactionInstructions1")}
         <span
           className="text-uhuBlue cursor-pointer"

@@ -145,7 +145,7 @@ export default function HelpDesk({ country, amount, account, method }) {
         const processedData = preprocessDataForServer(data);
         const formData = getFormData(processedData);
 
-        let patchRes = await axios.patch(`/api/vendor/${user.id}`, formData, {
+        let patchRes = await axios.patch(`/api/${user.collection}/${user.id}`, formData, {
           headers: { "Content-Type": undefined },
         });
         console.log("patchRes", patchRes);
@@ -199,7 +199,7 @@ export default function HelpDesk({ country, amount, account, method }) {
         finalCurrency: country.currency,
         amount: amount,
         country: country.countryCode,
-        fromCountry: user?.vendorCountry,
+        fromCountry: user?.vendorCountry || user?.country,
         transactionDetails: textareaContent,
       });
       setState("ongoing");

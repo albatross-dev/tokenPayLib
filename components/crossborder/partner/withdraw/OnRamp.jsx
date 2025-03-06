@@ -17,9 +17,8 @@ export default function OnRamp({ amount, account, user, method }) {
     <div className="flex flex-col -mt-8">
     <div className="font-bold text-xl mb-2">
     {tCrossborder("withdraw.onramp.headerInfo")}
-      
     </div>
-    <div>
+    <div className="mb-4">
     {tCrossborder("withdraw.onramp.infoText")}
       {" "}
       <span

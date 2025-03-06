@@ -1,36 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import OvexKYCForm from "./PartnerKYCForms/OvexKYCForm";
 import { FormProvider, useForm } from "react-hook-form";
 import BitcoinVNHelpDeskKYCForm from "./PartnerKYCForms/BitcoinVNHelpDeskKYCForm";
 import KoyweHelpDeskKYCForm from "./PartnerKYCForms/KoyweHelpDeskKYCForm";
 import KotaniPayHelpDeskKYCForm from "./PartnerKYCForms/KotaniPayHelpDeskKYCForm";
 import { useTranslation } from "next-i18next";
+import { AuthContext } from "../../../../../../../../context/UserContext";
 
 function FormRenderer({ method, setValue, methods }) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  switch (method?.type) {
-    case "ovex":
-      return <OvexKYCForm setValue={setValue} methods={methods} />;
-    case "bitcoin_vn_helpdesk":
-      return <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />;
-    case "koywe_helpdesk":
-      return <KoyweHelpDeskKYCForm setValue={setValue} methods={methods} />;
-    case "kotanipay_helpdesk":
-      return <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />;
-    case "coinhako_helpdesk":
-      return (
-        <div className="mb-4 bg-gray-100 rounded p-4">
-          {tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}
-        </div>
-      );
-    default:
-      return (
-        <div className="mb-4 bg-gray-100 rounded p-4">
-          {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
-        </div>
-      );
+  const { user } = useContext(AuthContext);
+
+  if(user?.collection === "vendor"){
+    switch (method?.type) {
+      case "ovex":
+        return <OvexKYCForm setValue={setValue} methods={methods} />;
+      case "bitcoin_vn_helpdesk":
+        return <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />;
+      case "koywe_helpdesk":
+        return <KoyweHelpDeskKYCForm setValue={setValue} methods={methods} />;
+      case "kotanipay_helpdesk":
+        return <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />;
+      case "coinhako_helpdesk":
+        return (
+          <div className="mb-4 bg-gray-100 rounded p-4">
+            {tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}
+          </div>
+        );
+      default:
+        return (
+          <div className="mb-4 bg-gray-100 rounded p-4">
+            {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
+          </div>
+        );
+    }
+  }else{
+    return (
+      <div className="mb-4 bg-gray-100 rounded p-4">
+        {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
+      </div>
+    );
   }
+  
 }
 
 export default function HelpDeskVerificationForm({

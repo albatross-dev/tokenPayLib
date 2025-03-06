@@ -322,7 +322,7 @@ export default function DepositPage({maintenance}) {
           <h1 className="text-xl font-bold mt-4">Guthaben Einzahlen</h1>
         </div>
 
-        <div className="border rounded w-full p-4 relative">
+        <div className="border bg-white rounded w-full p-4 relative">
           {maintenance.deposit?.page && (
             <Maintainance></Maintainance>
           )}

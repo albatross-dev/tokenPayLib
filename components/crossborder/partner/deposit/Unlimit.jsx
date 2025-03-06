@@ -25,7 +25,7 @@ export default function Unlimit({ amount, account, user, country }) {
       <div className="font-bold text-xl mb-2">
         {tCrossborder("deposit.unlimit.transactionTitle")}
       </div>
-      <div>
+      <div className="mb-4">
         {tCrossborder("deposit.unlimit.transactionInstructions1")}
         <span
           className="text-uhuBlue cursor-pointer"
