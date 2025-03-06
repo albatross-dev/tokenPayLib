@@ -44,8 +44,7 @@ export default function DepositPage({maintenance}) {
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-    const { t: tCrossborder } = useTranslation("crossborder");
-
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   // The swiper instance
   const [swiperInstance, setSwiperInstance] = useState(null);
