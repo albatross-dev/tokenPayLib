@@ -45,7 +45,7 @@ function CountriesInfo({
 
   const { user } = useContext(AuthContext)
   const { t } = useTranslation("common");
-  const { t: tCrossborder } = useTranslation("crossborder");
+  const { t: tCrossborder } = useTranslation("crossborder"); 
   
 
   useEffect(() => {
@@ -334,6 +334,8 @@ export default function ReceiveSection() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [loading, setLoading] = useState(false);
   const [countryData, setCountryData] = useState(null);
+
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     async function loadCountryData() {

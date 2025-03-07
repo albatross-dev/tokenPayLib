@@ -98,7 +98,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
         {
           name: "vendorZipCode",
           label: t("information.fields.companyAddress.vendorZipCode"),
-          type: "number",
+          type: "text",
           required: true,
           width: "md:w-1/4",
         },
@@ -307,8 +307,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentative"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
@@ -316,8 +315,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
           ],
         },
@@ -330,8 +328,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentativeShareholder"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
           ],
         },

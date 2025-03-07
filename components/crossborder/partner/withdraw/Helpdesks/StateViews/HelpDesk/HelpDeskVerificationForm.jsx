@@ -12,7 +12,9 @@ function FormRenderer({ method, setValue, methods }) {
 
   const { user } = useContext(AuthContext);
 
-  if(user?.collection === "vendor"){
+  console.log("user", user);
+
+  if(user?.type === "vendor"){
     switch (method?.type) {
       case "ovex":
         return <OvexKYCForm setValue={setValue} methods={methods} />;

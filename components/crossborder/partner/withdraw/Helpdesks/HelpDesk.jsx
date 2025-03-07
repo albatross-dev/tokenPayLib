@@ -145,7 +145,7 @@ export default function HelpDesk({ country, amount, account, method }) {
         const processedData = preprocessDataForServer(data);
         const formData = getFormData(processedData);
 
-        let patchRes = await axios.patch(`/api/${user.collection}/${user.id}`, formData, {
+        let patchRes = await axios.patch(`/api/${user.type}/${user.id}`, formData, {
           headers: { "Content-Type": undefined },
         });
         console.log("patchRes", patchRes);

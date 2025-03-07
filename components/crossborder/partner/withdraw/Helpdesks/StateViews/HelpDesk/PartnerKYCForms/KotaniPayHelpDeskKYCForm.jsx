@@ -117,7 +117,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
         {
           name: "vendorZipCode",
           label: t("information.fields.companyAddress.vendorZipCode"),
-          type: "number",
+          type: "text",
           required: true,
           width: "md:w-1/4",
         },
@@ -351,8 +351,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
                 "privateSettings.representativeInformation.vendorRepresentative"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
@@ -360,8 +359,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
                 "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
           ],
         },
@@ -374,8 +372,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }) {
                 "privateSettings.representativeInformation.vendorRepresentativeShareholder"
               ),
               type: "checkbox",
-              width: "md:w-1/2",
-              required: true,
+              width: "md:w-1/2"
             },
           ],
         },

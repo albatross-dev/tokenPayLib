@@ -19,7 +19,6 @@ import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ConvertPopup from "./ConverterPopup";
-import { set } from "date-fns";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
