@@ -494,20 +494,20 @@ export default function TransferSection() {
                 </div>
                 <div className="flex-1 gap-2 flex flex-col">
                   <p>
-                    <strong>{tCrossborder("transferSection.capital")}</strong>{" "}
+                    <strong>{tCrossborder("transferSection.capital")}:</strong>{" "}
                     {selectedCountry?.countryInfo.capital}
                   </p>
                   <p>
-                    <strong>{tCrossborder("transferSection.population")}</strong>{" "}
+                    <strong>{tCrossborder("transferSection.population")}:</strong>{" "}
                     {selectedCountry?.countryInfo.population.toLocaleString()}
                   </p>
                   <p>
-                    <strong>{tCrossborder("transferSection.currency")}</strong>{" "}
+                    <strong>{tCrossborder("transferSection.currency")}:</strong>{" "}
                     {selectedCountry?.countryInfo.currency}
                   </p>
-                  <p>
-                    <strong>{tCrossborder("transferSection.gdp")}</strong>{" "}
-                    {selectedCountry?.countryInfo.gdp.toLocaleString()} USD
+                  <p className={`${selectedCountry?.countryInfo.gdp ? "" : "hidden"}`}>
+                    <strong>{tCrossborder("transferSection.gdp")}:</strong>{" "}
+                    {selectedCountry?.countryInfo.gdp}
                   </p>
                 </div>
               </div>
