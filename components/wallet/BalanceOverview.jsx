@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import { formatNumberWithCurrency } from "@/utilities/currencies";
-import currencies, {
-  formatCrypto,
-} from "@/tokenPayLib/utilities/crypto/currencies";
+import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
 import numberWithZeros from "@/utilities/numberWithZeros";
 import Image from "next/image";
@@ -24,7 +22,7 @@ export default function BalanceOverview() {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState(false);
   const { uhuConfig } = useContext(UhuConfigContext);
-  const { t } = useTranslation("common");
+  const { t: tAccount } = useTranslation("wallet");
   const [balances, setBalances] = useState([]);
   const [totalEuroBalance, setTotalEuroBalance] = useState(0);
   const [totalUsdBalance, setTotalUsdBalance] = useState(0);
@@ -116,7 +114,7 @@ export default function BalanceOverview() {
             {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
           </span>
           <span className="text-gray-500">
-            {t("BalanceOverview.total_balance_eur")}
+            {tAccount("BalanceOverview.total_balance_eur")}
           </span>
         </div>
         <div className="flex flex-col items-center md:items-start">
@@ -124,7 +122,7 @@ export default function BalanceOverview() {
             {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}
           </span>
           <span className="text-gray-500">
-            {t("BalanceOverview.total_balance_usd")}
+            {tAccount("BalanceOverview.total_balance_usd")}
           </span>
         </div>
 
@@ -134,7 +132,7 @@ export default function BalanceOverview() {
             href={"/withdraw"}
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
-            Auszahlen
+            {tAccount("withdrawal")}
           </Link>
         </div>
         <div>
@@ -142,7 +140,7 @@ export default function BalanceOverview() {
             href={"/deposit"}
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
-            Einzahlen
+             {tAccount("deposit")}
           </Link>
         </div>
       </div>

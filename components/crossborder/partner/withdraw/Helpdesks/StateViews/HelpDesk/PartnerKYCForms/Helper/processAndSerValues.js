@@ -27,8 +27,9 @@ const preprocessDataForHelpDesk = (user, setValue) => {
         });
       } else {
         // Check if the value is a valid ISO date string
-        if (typeof value === "string" && !isNaN(Date.parse(value))) {
+        if (typeof value === "string" && !isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
           const formattedDate = formatDateForInput(value);
+          console.log("formattedDate", key, value , formattedDate);
           setValue(fullKey, formattedDate); // Set formatted date value
         } else {
           // Set the value normally for non-date fields
