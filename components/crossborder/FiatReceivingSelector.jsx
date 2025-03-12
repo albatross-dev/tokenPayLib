@@ -1,12 +1,7 @@
 import CryptoIcon from "@/tokenPayLib/assets/CryptoIcon";
+import { FIAT_INFO_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import React from "react";
 import { useTranslation } from "react-i18next";
-
-export const FIAT_INFO_MAP = {
-  USD: { id: "USD", symbol: "$" },
-  EUR: { id: "EUR", symbol: "€" },
-  VND: { id: "VND", symbol: "₫" },
-};
 
 export default function FiatReceivingSelector({
   availableMethods,

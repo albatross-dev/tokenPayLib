@@ -27,10 +27,10 @@ import convertAnyToAny, {
 import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import { encodePacked } from "thirdweb/utils";
 import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
-import { STABLE_FIAT_MAP } from "../../FiatBalanceSelector";
 import { IoIosInformationCircle } from "react-icons/io";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
+import { STABLE_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,

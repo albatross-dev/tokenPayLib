@@ -1,7 +1,7 @@
 import sortMethodByCurrencyWithdraw from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
+import { STABLE_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { STABLE_FIAT_MAP } from "../../utilities/stableCoinsMaps";
 
 const minimalBalances = ["EURS", "USDC"];
 
@@ -16,6 +16,7 @@ export default function FiatBalanceSelector({
   transfer = true,
   nextSlide,
 }) {
+
   let methodsByCurrency = sortMethodByCurrencyWithdraw(
     availableMethods,
     transfer
@@ -41,7 +42,7 @@ export default function FiatBalanceSelector({
             className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
             <div className="font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10">
-              {STABLE[currency].symbol}
+              {STABLE_FIAT_MAP[currency].symbol}
             </div>
             <h2 className="text-xl font-bold">
               {STABLE_FIAT_MAP[currency].id}
