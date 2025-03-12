@@ -134,7 +134,7 @@ export default function BitcoinVN({
           {/* Settle Amount */}
           <div className='flex flex-col items-end justify-end gap-1'>
             <p className='text-6xl'>
-              {quote.settleAmount} {STABLECOIN_TO_FIAT_MAP[quote.settleMethod]}
+              {quote.settleAmount} {getFiatCurrencyCode(quote.settleMethod)}
             </p>
             <strong className="text-gray-500">
               {tCrossborder("deposit.bitcoinvn.overview.credit")}
