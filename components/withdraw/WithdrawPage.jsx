@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import ErrorPopup from "@/tokenPayLib/components/Modals/ErrorPopup";
 import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
 import axios from "axios";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import BalanceOverview from "@/tokenPayLib/components/crossborder/BalanceOverview";
 import CurrencyDisplay, {
   STANDARD_STABLE_MAP,
@@ -64,6 +64,7 @@ export default function WithdrawPage({maintenance}) {
         }
       } catch (err) {
         setErrorMessage({ message: tCrossborder("withdrawPage.errors.fetchCountryData") });
+        sendErrorReport("WithdrawPage - Fetching country data failed", err);
         setIsErrorPopupOpen(true);
       }
     }
@@ -98,6 +99,7 @@ export default function WithdrawPage({maintenance}) {
           setExchangeRate(response.data.rate);
         } catch (error) {
           console.error("Error fetching exchange rate:", error);
+          sendErrorReport("WithdrawPage - Fetching exchange rate failed", error);
           return;
         }
         setLoadedExchangeRate(true);

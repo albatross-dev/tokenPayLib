@@ -9,7 +9,7 @@ import Loader from "@/tokenPayLib/components/UI/Loader";
 import Image from "next/image";
 import CurrencyDisplay, { STANDARD_STABLE_MAP } from "./CurrencySelector";
 import { useActiveAccount } from "thirdweb/react";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import TransferPanel from "./TransferPanel";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -73,6 +73,7 @@ export default function TransferSection() {
           console.log("Exchange rate response", response.data);
           setExchangeRate(response.data.rate);
         } catch (error) {
+          sendErrorReport("TransferSection - Fetching exchange rate failed", error);
           console.error("Error fetching exchange rate:", error);
           return;
         }
@@ -127,6 +128,18 @@ export default function TransferSection() {
         user?.vendorCountry || user?.country,
         countriesResponse.data.docs
       );
+
+      // sort filtered list by country name in countryInfo.name
+      filteredList.sort((a, b) => {
+        if (a?.countryInfo?.name < b?.countryInfo?.name) {
+          return -1;
+        }
+        if (a?.countryInfo?.name > b?.countryInfo?.name) {
+          return 1;
+        }
+        return 0;
+      });
+
       setCountryData(filteredList);
 
       if (clicked) {

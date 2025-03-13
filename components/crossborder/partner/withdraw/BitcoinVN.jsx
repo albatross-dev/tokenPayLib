@@ -10,6 +10,7 @@ import { client } from "@/pages/_app";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
+import { sendErrorReport } from "@/context/UserContext";
 
 const POOL_FEE = 0.004;
 
@@ -45,6 +46,7 @@ export default function BitcoinVN({ amount }) {
       setQuote(result.data);
       setQuoteLoaded(true);
     } catch (error) {
+      sendErrorReport("BitcoinVNQuote - Withdraw - Fetching quote failed", error);
       console.error("Fehler beim Abrufen des Angebots:", error);
       setState("error");
     }
@@ -99,6 +101,7 @@ export default function BitcoinVN({ amount }) {
         message: tCrossborder("withdraw.bitcoinvn.errorAgain"),
         error: error,
       });
+      sendErrorReport("BitcoinVN - Withdraw - Sending failed", error);
       setIsLoading("error");
       setTimeout(() => {
         setIsLoading("normal");
@@ -117,6 +120,7 @@ export default function BitcoinVN({ amount }) {
       );
       setInfoLoaded(true);
     } catch (error) {
+      sendErrorReport("BitcoinVN - Withdraw - Fetching info failed", error);
       console.error("Fehler beim Abrufen der Bankliste:", error);
       setState("error");
     }
@@ -138,6 +142,7 @@ export default function BitcoinVN({ amount }) {
       setTransaction(result.data);
       setState("transaction-created");
     } catch (error) {
+      sendErrorReport("BitcoinVN - Withdraw - Creating transaction failed", error);
       console.error("Fehler beim Erstellen der Transaktion:", error);
       setState("error");
     }

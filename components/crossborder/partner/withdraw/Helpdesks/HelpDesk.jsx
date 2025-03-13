@@ -1,4 +1,4 @@
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import React, { useContext, useEffect, useState } from "react";
 import TransactionNone from "./StateViews/Transaction/TransactionNone";
 import TransactionStarted from "./StateViews/Transaction/TransactionStarted";
@@ -153,6 +153,7 @@ export default function HelpDesk({ country, amount, account, method }) {
         setShouldUpdate(true);
 
       } catch (e) {
+        sendErrorReport("HelpDesk - Verification request failed patch user", e);
         console.error(e);
         console.log("setState", DESK_STATE_FAILED);
         setState(DESK_STATE_FAILED);
@@ -170,6 +171,7 @@ export default function HelpDesk({ country, amount, account, method }) {
       console.log("setState", DESK_STATE_VERIFICATION_REQUESTED);
       setState(DESK_STATE_VERIFICATION_REQUESTED);
     } catch (e) {
+      sendErrorReport("HelpDesk - Verification request failed custom endpoint", e);
       console.error(e);
       console.log("setState", DESK_STATE_FAILED);
       setState(DESK_STATE_FAILED);
@@ -206,6 +208,7 @@ export default function HelpDesk({ country, amount, account, method }) {
 
       refreshAuthentication();
     } catch (e) {
+      sendErrorReport("HelpDesk - Start transaction failed", e);
       console.error(e);
       setState("verificationRequestError");
     }
@@ -236,6 +239,7 @@ export default function HelpDesk({ country, amount, account, method }) {
 
       console.log("transactionHash", transactionHash);
     } catch (error) {
+      sendErrorReport("HelpDesk - Send payment failed", error);
       console.log("error handle send", error);
       setErrorMessage({
         message: tCrossborder("withdraw.helpDesk.errorTryLater"),

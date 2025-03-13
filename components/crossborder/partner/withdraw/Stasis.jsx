@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { IoShieldCheckmarkSharp, IoArrowBack, IoAdd } from "react-icons/io5";
 import Loader from "@/tokenPayLib/components/UI/Loader";
@@ -47,6 +47,7 @@ export default function Stasis({ amount, account, user }) {
       const response = await axios.get("/api/vendor/stasis/getBankAccounts");
       setBankAccounts(response.data);
     } catch (error) {
+      sendErrorReport("Stasis - Withdraw - Fetching bank accounts failed", error);
       console.error("Error fetching bank accounts", error);
     }
   };
@@ -78,6 +79,7 @@ export default function Stasis({ amount, account, user }) {
       setView("select");
       setErrors({ ...errors, bankAccount: "" });
     } catch (error) {
+      sendErrorReport("Stasis - Withdraw - Creating bank account failed", error);
       console.error("Error creating bank account", error);
       setErrors({
         ...errors,
@@ -172,6 +174,7 @@ export default function Stasis({ amount, account, user }) {
           setIsLoading("normal");
         }, 3000);
       } catch (error) {
+        sendErrorReport("Stasis - Withdraw - Sending failed", error);
         console.error("Error handling send", error);
         setErrors({
           ...errors,

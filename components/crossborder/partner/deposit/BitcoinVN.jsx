@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { HiChevronDoubleRight } from "react-icons/hi2";
 import { useTranslation } from "next-i18next";
+import { sendErrorReport } from "@/context/UserContext";
 
 export default function BitcoinVN({
   amount,
@@ -47,6 +48,10 @@ export default function BitcoinVN({
         }
       })
       .catch((reason) => {
+        sendErrorReport(
+          "BitcoinVNQuote- Deposit - Fetching quote failed",
+          reason
+        );
         console.log("Failed to get bictoinVN quote:", reason);
         setState("error");
       });
@@ -68,6 +73,10 @@ export default function BitcoinVN({
       setTransaction(result.data); // Access the response data
       setState("created");
     } catch (error) {
+      sendErrorReport(
+        "BitcoinVNQuote - Deposit - Creating transaction failed",
+        error
+      );
       console.error(
         "(BitcoinVN::deposit::handleStartTransaktion) An Error Occured: ",
         error

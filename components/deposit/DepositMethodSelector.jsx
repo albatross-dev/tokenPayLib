@@ -8,6 +8,7 @@ import {
 } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
+import { sendErrorReport } from "@/context/UserContext";
 
 export default function DepositMethodSelector({
   methods,
@@ -36,6 +37,7 @@ export default function DepositMethodSelector({
 
         return response.data.rate;
       } catch (error) {
+        sendErrorReport("DepositMethodSelector - Fetching exchange rate failed", error);
         console.error("Error fetching exchange rate:", error);
         return null;
       }

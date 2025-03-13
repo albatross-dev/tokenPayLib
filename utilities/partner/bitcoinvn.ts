@@ -1,3 +1,4 @@
+import { sendErrorReport } from "@/context/UserContext";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
 // --- Type Definitions ---
@@ -34,6 +35,7 @@ export async function getQuote(
 
     return response.data;
   } catch (error: any) {
+    sendErrorReport("Error while retrieving quote from bitcoinVN", error);
     if (axios.isAxiosError(error)) {
       console.error(
         "Error while retrieving quote from bitcoinVN (Axios Error):",
@@ -70,6 +72,7 @@ export async function getMetaData(
 
     return response.data;
   } catch (error: any) {
+    sendErrorReport("Error while retrieving metadata from bitcoinVN", error);
       if (axios.isAxiosError(error)) {
         console.error(
           "Error while retrieving metadata from bitcoinVN (Axios Error):",

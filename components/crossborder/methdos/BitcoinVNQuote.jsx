@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
+import { sendErrorReport } from "@/context/UserContext";
+import { sendError } from "next/dist/server/api-utils";
 
 /**
  * Get the metadata for BitcoinVN transactions
@@ -13,6 +15,7 @@ export async function getBitcoinVNMetaData() {
     );
     return result.data;
   } catch (error) {
+    sendErrorReport("BitcoinVNQuote - Fetching metadata failed", error);
     console.error("Fehler beim Abrufen der Metadaten:", error);
     throw error;
   }
@@ -31,6 +34,7 @@ export async function getBitcoinVNQuote(amount) {
     });
     return result.data;
   } catch (error) {
+    sendErrorReport("BitcoinVNQuote - Fetching quote failed", error);
     console.error("Fehler beim Abrufen des Angebots:", error);
     throw error;
   }
@@ -59,6 +63,7 @@ export default function BitcoinVNQuote({
         setState("metadata-loaded");
       })
       .catch((error) => {
+        sendErrorReport("BitcoinVNQuote - Fetching metadata failed", error);
         console.error("Fehler beim Laden der Metadaten:", error);
         setState("error");
       });
@@ -98,6 +103,7 @@ export default function BitcoinVNQuote({
           setState("loaded");
         })
         .catch((err) => {
+          sendErrorReport("BitcoinVNQuote - Fetching quote failed", err);
           console.error("Fehler beim Abrufen des Angebots:", err);
           setState("error");
         });

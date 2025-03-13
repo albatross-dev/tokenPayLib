@@ -1,3 +1,4 @@
+import { sendErrorReport } from "@/context/UserContext";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import axios from "axios";
 import { useTranslation } from "next-i18next";
@@ -121,6 +122,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
 
       setState("success");
     } catch (error) {
+      sendErrorReport("Swypt - Withdraw - Error creating transaction", error);
       setState("error");
     }
   };

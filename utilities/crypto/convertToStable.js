@@ -11,6 +11,7 @@ import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
 import { client } from "@/pages/_app";
 import { encodePacked } from "thirdweb/utils";
 import getPath from "./getPath";
+import { sendErrorReport } from "@/context/UserContext";
 
 // Addresses
 const SwapRouterAddressPolygon = "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45";
@@ -91,6 +92,10 @@ async function convertToStablePolygon(token, amount, account, success, error, ta
 
     success();
   } catch (e) {
+    sendErrorReport(
+      `Error converting ${amount} ${token.symbol} to EUROE`,
+      e
+    );
     console.error(`Error converting ${amount} ${token.symbol} to EUROE`, e);
     error(e);
   }

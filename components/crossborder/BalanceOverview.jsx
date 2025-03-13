@@ -19,6 +19,7 @@ import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ConvertPopup from "./ConverterPopup";
+import { sendErrorReport } from "@/context/UserContext";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -76,6 +77,10 @@ export default function BalanceOverview() {
             };
           }
         } catch (error) {
+          sendErrorReport(
+            `BalanceOverview - Error fetching balance for ${symbol}`,
+            error
+          );
           console.error(`Error fetching balance for ${symbol}:`, error);
         }
         return null; // Return null for currencies with no balance or errors

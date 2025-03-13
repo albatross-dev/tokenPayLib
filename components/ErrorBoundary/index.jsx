@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { MdOutlineError } from "react-icons/md";
-
 import React from "react";
 import ErrorView from "./ErrorView";
 

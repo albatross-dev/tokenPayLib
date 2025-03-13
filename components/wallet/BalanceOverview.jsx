@@ -13,6 +13,7 @@ import { useActiveAccount } from "thirdweb/react";
 import { UhuConfigContext } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { sendErrorReport } from "@/context/UserContext";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -67,6 +68,7 @@ export default function BalanceOverview() {
             }
           } catch (error) {
             console.error(`Error fetching balance for ${symbol}:`, error);
+            sendErrorReport("BalanceOverview - Fetching balance failed", error);
           }
           return null; // Return null for currencies with no balance or errors
         }

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { createContext, useContext, useState, useEffect } from 'react';
 import qs from "qs";
+import { sendErrorReport } from '@/context/UserContext';
 
 export const UhuConfigContext = createContext(null);
 
@@ -20,6 +21,7 @@ export const UhuConfigProvider = ({ children }) => {
       setMaintenance(resMaintenance.data);
       setUhuConfig(res.data);
     } catch (error) {
+      sendErrorReport("UhuConfigProvider - Fetching Uhu config failed", error);
       console.error("Error fetching Uhu config:", error);
       setUhuConfig(null);
     }
@@ -47,6 +49,7 @@ export const UhuConfigProvider = ({ children }) => {
       setCurrentRouter(router.docs[0]);
       return router;
     } catch (error) {
+      sendErrorReport("UhuConfigProvider - Fetching router failed", error);
       console.error("Error fetching router:", error);
       throw error;
     }

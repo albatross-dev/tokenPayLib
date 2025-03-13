@@ -21,6 +21,7 @@ import { useActiveAccount } from "thirdweb/react";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import { FiAlertCircle } from "react-icons/fi";
 import { useTranslation } from "next-i18next";
+import { sendErrorReport } from "@/context/UserContext";
 
 // Define the ABI for the depositV3 function
 const SpokePoolAbi = [
@@ -221,6 +222,7 @@ async function acrossBridgeDeposit(
 
     console.log("Deposit successful!");
   } catch (error) {
+    sendErrorReport("acrossBridgeDeposit - Error", error);
     console.error("Error in acrossBridgeDeposit:", error);
   }
 }
@@ -283,6 +285,7 @@ const BridgeModal = ({
 
       setQuote(quoteResponse.data);
     } catch (error) {
+      sendErrorReport("BridgeModal - Error fetching limits and quote", error);
       console.error("Error fetching limits and quote:", error);
     }
   };

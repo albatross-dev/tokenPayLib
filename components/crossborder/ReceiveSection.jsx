@@ -17,9 +17,7 @@ import { useTranslation } from "react-i18next";
 import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
 import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 import { useActiveAccount } from "thirdweb/react";
-import { ClientReporter } from "@/tokenPayLib/utilities/error-reporter";
-import { clientErrorReporterConfig } from "@/importantReporter.client.config";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { LogLevel } from "@/tokenPayLib/utilities/error-reporter/reporter";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
 
@@ -132,7 +130,7 @@ function CountriesInfo({
               setIsLoading("normal");
             }, 5000);
           } catch (error) {
-            ClientReporter(clientErrorReporterConfig).error(error);
+            sendErrorReport("ReceiveSection - Requesting support failed", error);
             setIsLoading("error");
           }
         }}>{tCrossborder("receiveSection.helpRequested")}</LoadingButton>

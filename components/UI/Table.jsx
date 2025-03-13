@@ -9,6 +9,7 @@ import {
 import axios from "axios";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
+import { sendErrorReport } from "@/context/UserContext";
 
 export default function Table({
   tableQuery,
@@ -27,7 +28,8 @@ export default function Table({
       );
       return res.data;
     } catch (error) {
-      console.log("error", error);
+      sendErrorReport("Table - Fetching data failed", error);
+      console.log("Table - Fetching data failed", error);
       return {
         docs: [],
       };

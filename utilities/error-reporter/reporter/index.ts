@@ -1,5 +1,6 @@
 import { Transport } from "../transport";
 import { ConsoleTransport } from "../transport/consoleTransport";
+import knownErrors from "./knownErrors";
 
 export enum LogLevel {
   DEBUG = 0,
@@ -21,7 +22,6 @@ export type LogEntry = {
   level: LogLevel;
   message: string;
   data?: unknown;
-  platform?: string;
   email?: string;
   userInformation?: any;
 };
@@ -179,7 +179,7 @@ export class Reporter {
    * @param data An optional object that can hold additional information for the log.
    * @param exception An optional error or exception.
    */
-  public log(level: LogLevel, message: string, data?: any, exception?: any) {
+  public log(level: LogLevel, message: string, data?: any, exception?: any, email?: string) {
     // If the given log level is lower then the set level do nothing
     if (level < this.level) {
       return;
@@ -203,6 +203,7 @@ export class Reporter {
       level,
       message,
       data: compositeMessage,
+      email: email,
       userInformation: this.userInformation ? this.userInformation : undefined,
     };
 
@@ -221,8 +222,17 @@ export class Reporter {
    * @param data An optional object that can hold additional information for the log
    * @param exception An optional error or exception
    */
-  public exception(message: string, data: any, exception: any) {
-    this.log(LogLevel.ERROR, message, data, exception);
+  public exception(message: string, data: any, exception: any, email?: string) {
+
+    // check if error is known and if so do not log it
+    for(const knownError of knownErrors) {
+      if(exception.name === knownError.name && exception.message === knownError.message) {
+        console.log("ommited known error",exception.name ,exception.message);
+        return;
+      }
+    }
+
+    this.log(LogLevel.ERROR, message, data, exception, email);
   }
 
   /**
@@ -231,8 +241,8 @@ export class Reporter {
    * @param message Log message as a string
    * @param data An optional object that can hold additional information for the log
    */
-  public error(message: string, data: any) {
-    this.log(LogLevel.ERROR, message, data);
+  public error(message: string, data: any, email?: string) {
+    this.log(LogLevel.ERROR, message, data, undefined, email);
   }
 
   /**
@@ -241,8 +251,8 @@ export class Reporter {
    * @param message Log message as a string
    * @param data An optional object that can hold additional information for the log
    */
-  public warn(message: string, data: any) {
-    this.log(LogLevel.WARN, message, data);
+  public warn(message: string, data: any, email?: string) {
+    this.log(LogLevel.WARN, message, data, undefined, email);
   }
 
   /**
@@ -251,8 +261,8 @@ export class Reporter {
    * @param message Log message as a string
    * @param data An optional object that can hold additional information for the log
    */
-  public info(message: string, data: any) {
-    this.log(LogLevel.INFO, message, data);
+  public info(message: string, data: any, email?: string) {
+    this.log(LogLevel.INFO, message, data, undefined, email);
   }
 
   /**
@@ -261,8 +271,8 @@ export class Reporter {
    * @param message Log message as a string
    * @param data An optional object that can hold additional information for the log
    */
-  public debug(message: string, data: any) {
-    this.log(LogLevel.DEBUG, message, data);
+  public debug(message: string, data: any, email?: string) {
+    this.log(LogLevel.DEBUG, message, data, undefined, email);
   }
 
   /**

@@ -10,6 +10,7 @@ import {
   IoShieldCheckmarkSharp,
 } from "react-icons/io5";
 import Loader from "@/tokenPayLib/components/UI/Loader"; // Import the Loader component
+import { sendErrorReport } from "@/context/UserContext";
 
 function StasisHeader({ view, setView }) {
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -97,6 +98,7 @@ export default function Stasis({ amount, account, user }) {
       const response = await axios.get("/api/vendor/stasis/getBankAccounts");
       setBankAccounts(response.data);
     } catch (error) {
+      sendErrorReport("Stasis - Deposit - Fetching bank accounts failed", error);
       setErrors({
         ...errors,
         bankAccount: tCrossborder("deposit.stasis.errors.bankAccountFetch"),
@@ -114,6 +116,7 @@ export default function Stasis({ amount, account, user }) {
       const response = await axios.get("/api/vendor/stasis/getCryptoAccounts");
       setCryptoAccounts(response.data);
     } catch (error) {
+      sendErrorReport("Stasis - Deposit - Fetching crypto accounts failed", error);
       setErrors({
         ...errors,
         cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountFetch"),
@@ -161,6 +164,7 @@ export default function Stasis({ amount, account, user }) {
       });
       setLoadingState("normal");
     } catch (error) {
+      sendErrorReport("Stasis - Deposit - Creating bank account failed", error);
       // TODO: Report Error with error-reporter
       setErrors({
         ...errors,
@@ -210,6 +214,7 @@ export default function Stasis({ amount, account, user }) {
       setErrors({ ...errors, cryptoAccount: "" });
       setLoadingState("normal");
     } catch (error) {
+      sendErrorReport("Stasis - Deposit - Creating crypto account failed", error);
       // TODO: log with error-reporter
       console.error("Error creating crypto account", error);
       setErrors({
@@ -260,6 +265,7 @@ export default function Stasis({ amount, account, user }) {
       setView("success");
       setLoadingState("normal");
     } catch (error) {
+      sendErrorReport("Stasis - Deposit - Creating deposit failed", error);
       // TODO: log error with error-reporter
       console.error("Error handling send", error);
       setErrors({

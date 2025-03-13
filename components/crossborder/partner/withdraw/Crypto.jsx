@@ -7,7 +7,7 @@ import {
   sendAndConfirmTransaction,
 } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { IoClose } from "react-icons/io5";
 
 import axios from "axios";
@@ -123,6 +123,10 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
 
       setSelectedTokenBalance(balance);
     } catch (error) {
+      sendErrorReport(
+        `Crypto - Withdraw - Error fetching token balance for ${selectedToken.id}`,
+        error
+      );
       console.error("Error fetching token balance:", error);
     }
   };
@@ -235,6 +239,10 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
         });
       } catch (error) {
         const errors = {};
+        sendErrorReport(
+          `Crypto - Withdraw - Error transfering token`,
+          error
+        );
         errors.conversionError = tCrossborder(
           "withdraw.crypto.errorTransaction"
         );

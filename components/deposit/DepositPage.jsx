@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import ErrorPopup from "@/tokenPayLib/components/Modals/ErrorPopup";
 import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
 import axios from "axios";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import BalanceOverview from "@/tokenPayLib/components/crossborder/BalanceOverview";
 import { FiArrowLeft } from "react-icons/fi";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -110,6 +110,7 @@ export default function DepositPage({maintenance}) {
           setState("loaded");
         }
       } catch (err) {
+        sendErrorReport("DepositPage - Fetching country data failed", err);
         setErrorMessage({ message: tCrossborder("depositPage.errors.fetchCountryData") });
         setIsErrorPopupOpen(true);
       }

@@ -17,6 +17,7 @@ import { HiInformationCircle } from "react-icons/hi2";
 import ConvertPopup from "./ConverterPopup";
 import { max } from "date-fns";
 import { convertAnyToAnyDirect } from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
+import { sendErrorReport } from "@/context/UserContext";
 
 export const STANDARD_STABLE_MAP = {
   USDC: { symbol: "USD", icon: "$" },
@@ -54,6 +55,7 @@ async function getBalance(account, symbol, currency) {
       decimals: currency.decimals,
     };
   } catch (error) {
+    sendErrorReport(`CurrencySelector - Error fetching balance for ${symbol}:`, error);
     console.error(`Error fetching balance for ${symbol}:`, error);
   }
   return null; // Return null for currencies with no balance or errors

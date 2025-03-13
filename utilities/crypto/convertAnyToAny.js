@@ -15,6 +15,7 @@ import getPath, {getEncodedPath} from "./getPath";
 import { EXCHANGE_TYPE_EXTERNAL, EXCHANGE_TYPE_INTERNAL } from "@/tokenPayLib/utilities/exchangeTypes";
 
 import { ERC20ABI } from "./currencies";
+import { sendErrorReport } from "@/context/UserContext";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
@@ -184,6 +185,7 @@ export async function convertAnyToAnyDirect(token, amount, account, success, err
 
     success();
   } catch (e) {
+    sendErrorReport("convertAnyToAnyDirect", e);
     console.error(`Error converting ${amount} ${token.id} to ${target.id}`, e);
     error(e);
   }
@@ -328,6 +330,7 @@ async function convertAnyToAny(token, amount, account, success, error, chain, ta
 
     success();
   } catch (e) {
+    sendErrorReport("convertAnyToAny", e);
     console.error(`Error converting ${amount} ${token.symbol || token.id} to ${target}`, e);
     error(e);
   }
