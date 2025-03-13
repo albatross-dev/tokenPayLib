@@ -144,7 +144,7 @@ export default function DepositPage({maintenance}) {
                 {STANDARD_STABLE_MAP[currency].icon}
               </div>
             ) : (
-              <Image src={currencyDetails.icon} fill={true} />
+              <Image src={currencyDetails.icon} fill={true} alt="currency icon" />
             )}
             <h2 className="text-xl font-bold">
               {STANDARD_STABLE_MAP[currency]

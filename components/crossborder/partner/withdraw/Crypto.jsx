@@ -298,7 +298,7 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
             } flex flex-row gap-2 items-center bg-gray-100 rounded p-4`}
           >
             <div className={`relative w-8 h-8`}>
-              <Image src={defaultToken.icon} fill="true"></Image>+
+              <Image src={defaultToken.icon} fill="true" alt="token icon"></Image>+
             </div>
             <div>{defaultToken.name}</div>
             <div className="flex-1"></div>

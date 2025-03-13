@@ -294,6 +294,7 @@ export default function WithdrawPage({maintenance}) {
                     src={selectedCountry?.countryInfo.background?.url}
                     fill={true}
                     objectFit="cover"
+                    alt="Country background"
                   />
                 </div>
               )}

@@ -490,6 +490,7 @@ export default function TransferSection() {
                     src={selectedCountry?.countryInfo.background?.url}
                     fill={true}
                     objectFit="cover"
+                    alt="Country Background"
                   />
                 </div>
               )}
