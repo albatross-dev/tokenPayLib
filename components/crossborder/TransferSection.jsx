@@ -14,10 +14,13 @@ import TransferPanel from "./TransferPanel";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import FiatBalanceSelector from "./FiatBalanceSelector";
-import FiatReceivingSelector, { FIAT_INFO_MAP } from "./FiatReceivingSelector";
+import FiatReceivingSelector from "./FiatReceivingSelector";
 import { useRouter } from "next/router";
 import filterCountryData from "../../utilities/crossborder/filterCountryData";
 import { useTranslation } from "next-i18next";
+import { FIAT_INFO_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+
+const isDevelopment = process.env.NEXT_PUBLIC_NEXT_ENV === "development"
 
 export default function TransferSection() {
   // Next.js router for query parameter handling
@@ -271,7 +274,7 @@ export default function TransferSection() {
     } else if (inputAmount > maxAmount) {
       setAmount(inputAmount);
       setError(
-        `Der ausgewählte Betrag übersteigt ihr Guthaben von ${maxAmount} ${
+        `${tCrossborder("transferSection.select_amount_to_much")} ${maxAmount} ${
           STANDARD_STABLE_MAP[selectedCurrency.symbol]
             ? STANDARD_STABLE_MAP[selectedCurrency.symbol]?.icon
             : selectedCurrency.name
@@ -457,9 +460,9 @@ export default function TransferSection() {
           <div className="flex justify-end">
             <button
               className={`${
-                selectedMethod ? "bg-uhuBlue" : "bg-gray-300"
+                selectedMethod && (!error || isDevelopment) ? "bg-uhuBlue" : "bg-gray-300"
               } text-white font-bold py-2 px-4 rounded-lg mt-4`}
-              disabled={!selectedMethod}
+              disabled={!selectedMethod || (error && !isDevelopment)}
               onClick={() => swiperInstance.slideTo(4)}
             >
                 {tCrossborder("transferSection.next")}
