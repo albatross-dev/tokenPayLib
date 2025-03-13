@@ -21,7 +21,8 @@ export const telegramHTMLFormatter: Formatter = (entry: LogEntry) => {
     }\n
 <b>Logger: </b>${entry.loggerName}\n
 <b>Timestamp: </b>${entry.timestamp}\n
-        `;
+${entry.platform ? `<b>Platform: </b>${entry.platform}\n` : ""}
+${entry.email ? `<b>User: </b>${entry.email}\n` : ""}`;
   };
 
   const formatMessage = (message: string) => {

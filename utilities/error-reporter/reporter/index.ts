@@ -21,6 +21,8 @@ export type LogEntry = {
   level: LogLevel;
   message: string;
   data?: unknown;
+  platform?: string;
+  email?: string;
   userInformation?: any;
 };
 
