@@ -15,13 +15,14 @@ import Link from "next/link";
 import { client } from "@/pages/_app";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
+import { STABLE_FIAT_MAP, STABLECOIN_TO_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 
 const POOL_FEE = 0.004;
 
-export default function Stasis({ amount, account, user }) {
+export default function Stasis({ amount, account, user, preferredStableCoin }) {
   const [isLoading, setIsLoading] = useState("normal");
   const [errors, setErrors] = useState({});
-  const [selectedToken, setSelectedToken] = useState(currencies["EURS"]);
+  const [selectedToken, setSelectedToken] = useState(currencies[preferredStableCoin]);
   const [selectedTokenBalance, setSelectedTokenBalance] = useState(null);
   const [selectedBankAccount, setSelectedBankAccount] = useState(null);
   const [view, setView] = useState("select"); // 'select', 'add', or 'withdraw'
@@ -99,6 +100,8 @@ export default function Stasis({ amount, account, user }) {
     setSelectedToken(selectedToken);
     if (!account) return;
     const balance = await fetchBalance(
+      client,
+      polygon,
       selectedToken.contractAddress,
       selectedToken.abi,
       account.address
@@ -145,6 +148,7 @@ export default function Stasis({ amount, account, user }) {
           {
             incoming_amount: Number(amount - amount * POOL_FEE),
             bankAccountId: selectedBankAccount.uuid,
+            preferredStableCoin: selectedToken
           }
         );
 
@@ -186,7 +190,7 @@ export default function Stasis({ amount, account, user }) {
   };
 
   const renderHeader = () => (
-    <div className="flex items-center mb-4">
+    <div className="flex w-full items-center mb-4 bg-gray-100 p-4 rounded-lg shadow-sm">
       {view !== "select" && (
         <button
           className="mr-4 text-gray-500 hover:text-gray-700 transition"
@@ -210,11 +214,11 @@ export default function Stasis({ amount, account, user }) {
     <div className="flex flex-col w-full max-w-4xl  items-center justify-center p-4">
       {renderHeader()}
       {isLoading === "processing" ? (
-        <div className="flex items-center justify-center h-[30rem]">
+        <div className="flex items-center justify-center h-[30rem] mb-16 mt-4">
           <Loader />
         </div>
       ) : user?.stasisKYBStatus !== "approved" ? (
-        <div>
+        <div className="max-w-96 w-full mb-16 mt-4">
           <h2 className="text-xl font-semibold mb-4">
             {tCrossborder("withdraw.stasis.moreInfo")}
           </h2>
@@ -229,7 +233,7 @@ export default function Stasis({ amount, account, user }) {
           </Link>
         </div>
       ) : isLoading === "success" ? (
-        <div className="flex items-center flex-col justify-center gap-4 h-[30rem]">
+        <div className="max-w-96 w-full mb-16 mt-4 flex items-center flex-col justify-center gap-4 h-[30rem]">
           <IoShieldCheckmarkSharp className="text-green-500 w-16 h-16" />
           <div className="text-2xl text-center text-gray-700 font-bold">
             {tCrossborder("withdraw.stasis.successfullTransaction")}
@@ -239,7 +243,7 @@ export default function Stasis({ amount, account, user }) {
           </div>
         </div>
       ) : view === "select" ? (
-        <div>
+        <div className="max-w-96 w-full mb-16 mt-4">
           <h2 className="text-xl font-semibold mb-4">
             {tCrossborder("withdraw.stasis.chooseBankaccount")}
           </h2>
@@ -281,7 +285,7 @@ export default function Stasis({ amount, account, user }) {
           </button>
         </div>
       ) : view === "add" ? (
-        <div>
+        <div className="max-w-96 w-full mb-16 mt-4">
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -346,22 +350,14 @@ export default function Stasis({ amount, account, user }) {
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center">
+        <div className="w-full max-w-96 mb-16 mt-4 flex flex-col items-center">
           <div className="w-full flex flex-col mt-4">
             <div className="text-gray-600">
-              {tCrossborder("withdraw.stasis.balance")}
+              {tCrossborder("withdraw.stasis.payoutCurrency")} {STABLECOIN_TO_FIAT_MAP[selectedToken.name]}:
             </div>
             <div className="text-4xl font-bold mb-4">
-              {formatCrypto(
-                selectedTokenBalance || 0,
-                selectedToken?.decimals || 18,
-                6
-              )}{" "}
-              {selectedToken.name}
-            </div>
-            <div className="mb-2">
-              {tCrossborder("withdraw.stasis.payoutCurrency")}{" "}
-              {selectedToken.name}:
+              {amount}
+              {STABLE_FIAT_MAP[selectedToken.name].symbol}
             </div>
 
             {errors.amount && (

@@ -15,11 +15,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Image from "next/image";
 import TransferPanel from "@/tokenPayLib/components/crossborder/TransferPanel";
-import FiatReceivingSelector, {
-  FIAT_INFO_MAP,
-} from "@/tokenPayLib/components/crossborder/FiatReceivingSelector";
+import FiatReceivingSelector from "@/tokenPayLib/components/crossborder/FiatReceivingSelector";
 import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanceSelector";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
+import { FIAT_INFO_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 
 export default function WithdrawPage({maintenance}) {
   const [state, setState] = useState("loading");

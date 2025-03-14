@@ -8,16 +8,23 @@ export default function sortMethodByCurrencyWithdraw(methods, transfer) {
   let sortedMethods = {};
 
   methods.forEach((method) => {
-    if (!sortedMethods[method.acceptedCrypto]) {
-      sortedMethods[method.acceptedCrypto] = [];
-    }
+    // Ensure acceptedCrypto is an array (split if it's a string)
+     // EURS or EURS,USDC,USDT
+    const acceptedCurrencies = typeof method.acceptedCrypto === "string"
+      ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
+      : [method.acceptedCrypto]; // Wrap single currency in an array
 
-    if (transfer) {
-      if (!method.withdrawOnly)
-        sortedMethods[method.acceptedCrypto].push(method);
-    } else {
-      if (!method.noWithdraw) sortedMethods[method.acceptedCrypto].push(method);
-    }
+    acceptedCurrencies.forEach((currency) => {
+      if (!sortedMethods[currency]) {
+        sortedMethods[currency] = [];
+      }
+
+      if (transfer) {
+        if (!method.withdrawOnly) sortedMethods[currency].push(method);
+      } else {
+        if (!method.noWithdraw) sortedMethods[currency].push(method);
+      }
+    });
   });
 
   return sortedMethods;

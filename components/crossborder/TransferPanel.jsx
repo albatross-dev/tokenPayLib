@@ -80,6 +80,7 @@ export default function TransferPanel({
           amount={amount}
           account={account}
           user={user}
+          preferredStableCoin={preferredStableCoin}
           method={selectedMethod}
         ></Stasis>
       );
@@ -89,6 +90,7 @@ export default function TransferPanel({
           amount={amount}
           country={selectedCountry}
           method={selectedMethod}
+          preferredStableCoin={preferredStableCoin}
         ></CryptoPartner>
       );
     case "koywe_crypto_only":
