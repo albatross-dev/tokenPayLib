@@ -35,7 +35,7 @@ function StasisHeader({ view, setView }) {
   };
 
   return (
-    <div className="flex items-center mb-4">
+    <div className="flex w-full items-center mb-4 bg-gray-100 p-4 rounded-lg shadow-sm">
       {view !== "selectBank" && view !== "success" && (
         <button
           className="mr-4 text-gray-500 hover:text-gray-700 transition"
@@ -44,7 +44,9 @@ function StasisHeader({ view, setView }) {
           <IoArrowBack className="w-6 h-6" />
         </button>
       )}
-      <h3>{viewTitles[view] || tCrossborder("deposit.stasis.header.default")}</h3>
+      <div
+        className="text-2xl font-bold leading-6 text-gray-900 flex-grow"
+      >{viewTitles[view] || tCrossborder("deposit.stasis.header.default")}</div>
     </div>
   );
 }
@@ -94,8 +96,12 @@ export default function Stasis({ amount, account, user }) {
    * Fetches the users bank accounts from the backend via stasis and sets them in the state.
    */
   const fetchBankAccounts = async () => {
+    if (!user.stasisClientUUID) {
+      console.log('Stasis client UUID is missing');
+      return;
+    }
     try {
-      const response = await axios.get("/api/vendor/stasis/getBankAccounts");
+      const response = await axios.get("/api/fiatTransaction/stasis/getBankAccounts");
       setBankAccounts(response.data);
     } catch (error) {
       sendErrorReport("Stasis - Deposit - Fetching bank accounts failed", error);
@@ -112,8 +118,12 @@ export default function Stasis({ amount, account, user }) {
    * Fetches the users crypto accounts from the backend via stasis and sets them in the state.
    */
   const fetchCryptoAccounts = async () => {
+    if (!user.stasisClientUUID) {
+      console.log('Stasis client UUID is missing');
+      return;
+    }
     try {
-      const response = await axios.get("/api/vendor/stasis/getCryptoAccounts");
+      const response = await axios.get("/api/fiatTransaction/stasis/getCryptoAccounts");
       setCryptoAccounts(response.data);
     } catch (error) {
       sendErrorReport("Stasis - Deposit - Fetching crypto accounts failed", error);
@@ -153,7 +163,7 @@ export default function Stasis({ amount, account, user }) {
     //  if all values are set so it is safe to send here
 
     try {
-      await axios.post("/api/vendor/stasis/createBankAccount", newBankAccount);
+      await axios.post("/api/fiatTransaction/stasis/createBankAccount", newBankAccount);
       await fetchBankAccounts();
       setView("selectBank");
 
@@ -200,7 +210,7 @@ export default function Stasis({ amount, account, user }) {
       });
 
       // Step 3: Create crypto account on the backend
-      await axios.post("/api/vendor/stasis/createCryptoAccount", {
+      await axios.post("/api/fiatTransaction/stasis/createCryptoAccount", {
         name: newCryptoAccountName,
         network_type: "polygon",
         address: walletAddress,
@@ -286,7 +296,7 @@ export default function Stasis({ amount, account, user }) {
   );
 
   const renderStasisKYCLink = () => (
-    <>
+    <div className="w-full">
       <h2 className="text-xl font-semibold mb-4">
         {tCrossborder("deposit.stasis.kyc.heading")}
       </h2>
@@ -299,11 +309,11 @@ export default function Stasis({ amount, account, user }) {
       >
         {tCrossborder("deposit.stasis.kyc.button")}
       </Link>
-    </>
+    </div>
   );
 
   const renderSelectBank = () => (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-semibold mb-4">
         {tCrossborder("deposit.stasis.selectBank.heading")}
       </h2>
@@ -352,7 +362,7 @@ export default function Stasis({ amount, account, user }) {
   );
 
   const renderAddBank = () => (
-    <div className="w-[50%]">
+    <div className="w-full">
       <div className="mb-2">
         {/* Name */}
         <label
@@ -487,7 +497,7 @@ export default function Stasis({ amount, account, user }) {
   );
 
   const renderSelectCrypto = () => (
-    <div>
+    <div className="w-full">
       <h2 className="text-xl font-semibold mb-4">
         {tCrossborder("deposit.stasis.selectCrypto.heading")}
       </h2>
@@ -530,7 +540,7 @@ export default function Stasis({ amount, account, user }) {
   );
 
   const renderAddCrypto = () => (
-    <div className="w-[50%]">
+    <div className="w-full]">
       <div className="mb-2">
         {/* Crypto Account Name */}
         <label
@@ -577,7 +587,7 @@ export default function Stasis({ amount, account, user }) {
   );
 
   const renderDeposit = () => (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <div className="w-full flex flex-col mt-4">
         {/* Deposit Amount */}
         <div className="mb-2">{tCrossborder("deposit.stasis.deposit.amountLabel")}</div>

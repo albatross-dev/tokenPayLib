@@ -128,6 +128,7 @@ function convertToCSV(arr) {
     "updatedAt",
     "items",
     "vendor",
+    "consumer",
     "checkoutConfig",
     "companyWebsite",
     "supportWebsite",

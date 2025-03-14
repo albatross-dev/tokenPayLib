@@ -15,11 +15,11 @@ import DepositPanel from "@/tokenPayLib/components/deposit/DepositPanel";
 import DepositMethodSelector from "@/tokenPayLib/components/deposit/DepositMethodSelector";
 import { getFiatCurrencySymbol } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { STANDARD_STABLE_MAP } from "@/tokenPayLib/components/crossborder/CurrencySelector";
-import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { sortMethodByCurrencyDeposit } from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
+import Banner from "../UI/Banner";
 
-export default function DepositPage({maintenance}) {
+export default function DepositPage({ maintenance }) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
   // TW hooks
@@ -96,11 +96,22 @@ export default function DepositPage({maintenance}) {
     async function getCountryData() {
       try {
         let countryRes = await axios.get(
-          `/api/countries?where[countryCode][equals]=${user.vendorCountry}`
+          `/api/countries?where[countryCode][equals]=${user?.vendorCountry || user?.billingAddress?.country}`
         );
 
         if (countryRes.data.docs.length === 0) {
-          setErrorMessage({ message: tCrossborder("depositPage.errors.countryNotFound") });
+          setErrorMessage({
+            message: tCrossborder("depositPage.errors.countryNotFound"),
+            component: (
+              <Banner
+                href={"/settings"}
+                color={"bg-red-400"}
+                rounded={"rounded"}
+              >
+                <div suppressHydrationWarning>{t("no_country")}</div>
+              </Banner>
+            ),
+          });
           setIsErrorPopupOpen(true);
         } else {
           setSelectedCountry(countryRes.data.docs[0]);
@@ -111,7 +122,18 @@ export default function DepositPage({maintenance}) {
         }
       } catch (err) {
         sendErrorReport("DepositPage - Fetching country data failed", err);
-        setErrorMessage({ message: tCrossborder("depositPage.errors.fetchCountryData") });
+        setErrorMessage({
+          message: tCrossborder("depositPage.errors.fetchCountryData"),
+          component: (
+            <Banner
+              href={"/settings"}
+              color={"bg-red-400"}
+              rounded={"rounded"}
+            >
+              <div suppressHydrationWarning>{t("no_country")}</div>
+            </Banner>
+          ),
+        });
         setIsErrorPopupOpen(true);
       }
     }
@@ -126,9 +148,12 @@ export default function DepositPage({maintenance}) {
   // ####################
 
   const renderCryptoSelectionSlide = () => (
-    <div className="relative z-[10]  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
-      <h2 className="text-2xl">{tCrossborder("depositPage.cryptoSelection.heading")}</h2>
+    <div className="relative z-[10] p-4 flex flex-col gap-4  max-w-4xl mx-auto">
+      <h2 className="text-2xl">
+        {tCrossborder("depositPage.cryptoSelection.heading")}
+      </h2>
       {Object.keys(methodsByCurrency).map((currency) => {
+        console.log("/deposit::index.jsx currency: ", currency);
         let currencyDetails = currencies[currency];
         return (
           <div
@@ -144,12 +169,16 @@ export default function DepositPage({maintenance}) {
                 {STANDARD_STABLE_MAP[currency].icon}
               </div>
             ) : (
-              <Image src={currencyDetails.icon} fill={true} alt="currency icon" />
+              currencyDetails?.icon && <Image
+                src={currencyDetails?.icon}
+                fill={true}
+                alt="currency icon"
+              />
             )}
             <h2 className="text-xl font-bold">
               {STANDARD_STABLE_MAP[currency]
                 ? STANDARD_STABLE_MAP[currency].symbol
-                : currencyDetails.name.toUpperCase()}
+                : currencyDetails?.name.toUpperCase()}
             </h2>
           </div>
         );
@@ -158,7 +187,7 @@ export default function DepositPage({maintenance}) {
   );
 
   const renderFiatSelectionSlide = () => (
-    <div className="relative z-[10] flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+    <div className="relative p-4 z-[10] flex flex-col gap-4  max-w-4xl mx-auto">
       <button
         onClick={back}
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
@@ -167,7 +196,7 @@ export default function DepositPage({maintenance}) {
         {tCrossborder("depositPage.fiatSelection.back")}
       </button>
       <h2 className="text-2xl">
-      {tCrossborder("depositPage.fiatSelection.heading")}
+        {tCrossborder("depositPage.fiatSelection.heading")}
       </h2>
       {/* TODO: Show selection of possible fiat transactions */}
       {availableFiatCurrencies.map((currency) => {
@@ -191,7 +220,7 @@ export default function DepositPage({maintenance}) {
   );
 
   const renderDepositDetailsSlide = () => (
-    <div className="relative z-[10]  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+    <div className="relative z-[10] p-4 flex flex-col gap-4  max-w-4xl mx-auto">
       <button
         onClick={back}
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
@@ -200,10 +229,13 @@ export default function DepositPage({maintenance}) {
         {tCrossborder("depositPage.fiatSelection.back")}
       </button>
       <h2 className="text-2xl">
-        {tCrossborder("depositPage.depositDetails.heading")} {selectedCountry?.countryInfo.name}
+        {tCrossborder("depositPage.depositDetails.heading")}{" "}
+        {selectedCountry?.countryInfo.name}
       </h2>
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold">{tCrossborder("depositPage.depositDetails.selectAmount")}</h2>
+        <h2 className="text-xl font-bold">
+          {tCrossborder("depositPage.depositDetails.selectAmount")}
+        </h2>
         <div className="relative">
           <input
             type="number"
@@ -237,14 +269,14 @@ export default function DepositPage({maintenance}) {
           disabled={!selectedMethod}
           onClick={() => goToSlide(3)}
         >
-           {tCrossborder("depositPage.depositDetails.next")}
+          {tCrossborder("depositPage.depositDetails.next")}
         </button>
       </div>
     </div>
   );
 
   const renderDepositSlide = () => (
-    <div className="relative z-[10]  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+    <div className="relative z-[10]  flex flex-col gap-4  max-w-4xl mx-auto">
       <button
         onClick={back}
         className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
@@ -322,15 +354,15 @@ export default function DepositPage({maintenance}) {
       <div className="flex flex-col max-w-7xl w-full mx-auto p-4 md:p-10 gap-4">
         <div>
           <BalanceOverview></BalanceOverview>
-          <h1 className="text-xl font-bold mt-4">{tCrossborder("depositPage.heading")}</h1>
+          <h1 className="text-xl font-bold mt-4">
+            {tCrossborder("depositPage.heading")}
+          </h1>
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.deposit?.page && (
-            <Maintainance></Maintainance>
-          )}
+          {maintenance?.deposit?.page && <Maintainance></Maintainance>}
           {state === "loading" && (
-            <div className="flex h-full items-center justify-center mb-16 w-full">
+            <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader></Loader>
             </div>
           )}

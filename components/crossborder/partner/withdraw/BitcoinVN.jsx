@@ -70,8 +70,7 @@ export default function BitcoinVN({ amount }) {
         transaction.depositData.address
       );
 
-      const sendRes = axios.post("/api/fiatTransaction", {
-        vendor: user.id,
+      let transactionData = {
         partner: "bitcoinVN",
         amount: Number(amount),
         currency: selectedToken.contractAddress,
@@ -88,7 +87,15 @@ export default function BitcoinVN({ amount }) {
         type: "Withdraw",
         finalCurrency: "VND",
         finalAmount: quote.settleAmount,
-      });
+      }
+
+      if(user.type === "vendor") {
+        transactionData.vendor = user.id
+      }else{
+        transactionData.consumer = user.id
+      }
+
+      const sendRes = axios.post("/api/fiatTransaction", transactionData);
 
       setIsLoading("success");
       // set on normal after 20 seconds

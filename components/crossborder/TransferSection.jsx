@@ -125,7 +125,7 @@ export default function TransferSection() {
       );
 
       let filteredList = filterCountryData(
-        user?.vendorCountry || user?.country,
+        user?.vendorCountry || user?.billingAddress.country,
         countriesResponse.data.docs
       );
 
@@ -328,7 +328,7 @@ export default function TransferSection() {
     return (
       <>
         <div className="p-4">
-          <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
+          <div className="text-darkBlue flex flex-col items-center gap-4 ">
             <h2 className="text-2xl font-bold">
               {tCrossborder("transferSection.welcome")}
             </h2>
@@ -364,7 +364,7 @@ export default function TransferSection() {
 
   function renderBalanceSelection() {
     return (
-      <div className="relative z-[10] p-4  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+      <div className="relative z-[10] p-4  flex flex-col gap-4  max-w-4xl mx-auto">
         <BackButton></BackButton>
         <h2 className="text-2xl">
           {tCrossborder("transferSection.ask_for_balance")}
@@ -384,7 +384,7 @@ export default function TransferSection() {
 
   function renderCurrencyConversionSelection() {
     return (
-      <div className="relative z-[10] p-4 flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+      <div className="relative z-[10] p-4 flex flex-col gap-4  max-w-4xl mx-auto">
         <BackButton></BackButton>
         {selectedCountry && (
           <FiatReceivingSelector
@@ -404,7 +404,7 @@ export default function TransferSection() {
   function renderTransactionDetailsForm() {
     return (
       <div className="relative p-4">
-        <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+        <div className="relative z-[10] text-darkBlue flex flex-col gap-4  max-w-4xl mx-auto">
           <BackButton clearData={clearData}></BackButton>
 
           <h2 className="text-2xl">
@@ -535,7 +535,7 @@ export default function TransferSection() {
   function renderPartnerPanel() {
     return (
       <div>
-        <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+        <div className="relative z-[10] text-darkBlue flex flex-col gap-4  max-w-4xl mx-auto">
           <div className="p-4">
             <BackButton></BackButton>
           </div>
@@ -555,7 +555,7 @@ export default function TransferSection() {
 
   return (
     <div
-      className="overflow-y-hidden w-full mx-auto relative"
+      className="overflow-y-hidden w-full mx-auto relative p-4"
       ref={containerRef}
     >
       <Swiper

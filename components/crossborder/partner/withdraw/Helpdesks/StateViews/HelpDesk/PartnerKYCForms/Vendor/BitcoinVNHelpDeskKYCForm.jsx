@@ -1,9 +1,10 @@
 import FieldRenderer from "@/tokenPayLib/components/Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import AcceptTermsCheckbox from "./Helper/AcceptTermsCheckbox";
 import { AuthContext } from "@/context/UserContext";
-import preprocessDataForHelpDesk from "./Helper/processAndSerValues";
+import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
+
+import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 
 let formDataPreloaded = false;
 

@@ -1,18 +1,19 @@
 /**
  * Sorts the payment methods by the currency they accept
- * @param {*} methods as retrieved from the backend 
+ * @param {*} methods as retrieved from the backend
  * @param {*} transfer boolean to determine if the methods are for a transfer (crossborder) or not
- * @returns 
+ * @returns
  */
 export default function sortMethodByCurrencyWithdraw(methods, transfer) {
   let sortedMethods = {};
 
   methods.forEach((method) => {
     // Ensure acceptedCrypto is an array (split if it's a string)
-     // EURS or EURS,USDC,USDT
-    const acceptedCurrencies = typeof method.acceptedCrypto === "string"
-      ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
-      : [method.acceptedCrypto]; // Wrap single currency in an array
+    // EURS or EURS,USDC,USDT
+    const acceptedCurrencies =
+      typeof method.acceptedCrypto === "string"
+        ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
+        : [method.acceptedCrypto]; // Wrap single currency in an array
 
     acceptedCurrencies.forEach((currency) => {
       if (!sortedMethods[currency]) {
@@ -40,13 +41,29 @@ export function sortMethodByCurrencyDeposit(methods) {
   let sortedMethods = {};
 
   methods.forEach((method) => {
-    if (!sortedMethods[method.acceptedCrypto]) {
-      sortedMethods[method.acceptedCrypto] = [];
-    }
+    // Ensure acceptedCrypto is an array (split if it's a string)
+    // EURS or EURS,USDC,USDT
+    const acceptedCurrencies =
+      typeof method.acceptedCrypto === "string"
+        ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
+        : [method.acceptedCrypto]; // Wrap single currency in an array
 
-    if (method.supportDeposit)
-      sortedMethods[method.acceptedCrypto].push(method);
+    console.log("acceptedCurrencies",method.name, acceptedCurrencies);
+
+    acceptedCurrencies.forEach((currency) => {
+      if (!sortedMethods[currency]) {
+        sortedMethods[currency] = [];
+      }
+
+      if (method.supportDeposit) {
+        // copy method and replace acceptedCrypto with currency
+        let methodCopy = { ...method, acceptedCrypto: currency };
+        sortedMethods[currency].push(methodCopy);
+      }
+    });
   });
+
+  console.log("sortedMethods", sortedMethods);
 
   return sortedMethods;
 }

@@ -1,4 +1,4 @@
-import { formatDateForInput } from "@/pages/information";
+import formatDateForInput from "@/tokenPayLib/utilities/forms/formatDateForInput";
 
 
 // Recursive function to preprocess and set values in nested data structures

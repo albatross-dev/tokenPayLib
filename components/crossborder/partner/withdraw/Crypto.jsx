@@ -258,8 +258,7 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
         targetAddress
       );
 
-      await axios.post("/api/fiatTransaction", {
-        vendor: user.id,
+      let transactionData = {
         partner: "crypto",
         amount: Number(amount),
         currency: defaultToken.contractAddress,
@@ -276,7 +275,15 @@ export default function RawCrypto({ amount, preferredStableCoin }) {
         type: "Withdraw",
         finalCurrency: defaultToken.id,
         finalAmount: amount,
-      });
+      }
+
+      if(user.type === "vendor"){
+        transactionData.vendor = user.id
+      }else{
+        transactionData.consumer = user.id
+      }
+
+      await axios.post("/api/fiatTransaction", transactionData);
     }
 
     setState("success");

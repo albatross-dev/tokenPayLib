@@ -7,7 +7,6 @@ import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
   if (!transactionData) return null;
 
-  // remove the transactionHash from the transaction data
   delete transactionData.vendor;
   delete transactionData.requestChatId;
   delete transactionData.requestMessageId;

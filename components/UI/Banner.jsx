@@ -11,13 +11,13 @@ import { BsArrowUpRight } from "react-icons/bs";
  *
  * @returns {JSX.Element} The rendered Banner component.
  */
-export default function Banner({ color, href, children }) {
+export default function Banner({ color, href, children, rounded="" }) {
   return <Link href={href}>
     <div
-      className={`${color} text-white font-bold px-4 py-1 flex flex-row justify-between items-center`}
+      className={`${color} ${rounded} text-white font-bold px-4 py-1 flex flex-row justify-between items-center`}
     >
       <div>{children}</div>
-      <BsArrowUpRight></BsArrowUpRight>
+      <BsArrowUpRight className="ml-4"></BsArrowUpRight>
     </div>
   </Link>;
 }

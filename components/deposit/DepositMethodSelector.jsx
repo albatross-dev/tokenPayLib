@@ -282,7 +282,7 @@ export default function DepositMethodSelector({
             {/* Cheapest Method for this modality*/}
             {cheapestMethod ? (
               <div className='flex flex-row justify-between items-center flex-grow'>
-                <div className='bg-uhuBlue text-white rounded px-1 text'>
+                <div className='text-[9px] bg-uhuBlue text-white px-1 rounded'>
                   via <span className='font-bold'>{cheapestMethod.name}</span>
                 </div>
                 <div>

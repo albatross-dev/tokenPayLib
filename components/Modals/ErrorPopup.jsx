@@ -8,14 +8,18 @@ import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
-  TransitionChild
+  TransitionChild,
 } from "@headlessui/react";
 import { AnimatePresence, easeOut, motion } from "framer-motion";
-import { HiChevronDown, HiChevronUp, HiExclamationTriangle } from "react-icons/hi2";
+import {
+  HiChevronDown,
+  HiChevronUp,
+  HiExclamationTriangle,
+} from "react-icons/hi2";
 
 const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
   return (
-    <Transition appear show={isOpen?true:false} as={Fragment}>
+    <Transition appear show={isOpen ? true : false} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -48,45 +52,53 @@ const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
                 Fehler
               </DialogTitle>
               <div className="my-6">
-                <p className="text-base leading-relaxed">
+                <div className="text-base leading-relaxed">
                   {errorMessage?.message}
-                </p>
+                </div>
               </div>
 
-              <div className="mt-2 rounded-xl bg-red-100">
-                <Disclosure as="div" className="w-full max-w-md">
-                  {({ open }) => (
-                    <>
-                      <DisclosureButton className="w-full  flex justify-between items-center p-4">
-                        {" "}
-                        <p className="text-sm text-red-400 font-bold">
-                          Error {errorMessage?.error?.code}
-                        </p>
-                        {open ? (<HiChevronUp className="h-4 w-4 text-red-400" />) : (<HiChevronDown className="h-4 w-4 text-red-400" />)}
-                      </DisclosureButton>
-                      <div className="overflow-hidden">
-                        <AnimatePresence>
-                          {open && (
-                            <DisclosurePanel
-                              static
-                              as={motion.div}
-                              initial={{ opacity: 0, y: -24 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -24 }}
-                              transition={{ duration: 0.2, ease: easeOut }}
-                              className="origin-top"
-                            >
-                              <p className="text-sm text-red-400 mb-4 px-4">
-                                {errorMessage?.error?.message}
-                              </p>
-                            </DisclosurePanel>
+                {errorMessage?.component}
+
+              {errorMessage?.error?.message && (
+                <div className="mt-2 rounded-xl bg-red-100">
+                  <Disclosure as="div" className="w-full max-w-md">
+                    {({ open }) => (
+                      <>
+                        <DisclosureButton className="w-full  flex justify-between items-center p-4">
+                          {" "}
+                          <p className="text-sm text-red-400 font-bold">
+                            Error {errorMessage?.error?.code}
+                          </p>
+                          {open ? (
+                            <HiChevronUp className="h-4 w-4 text-red-400" />
+                          ) : (
+                            <HiChevronDown className="h-4 w-4 text-red-400" />
                           )}
-                        </AnimatePresence>
-                      </div>
-                    </>
-                  )}
-                </Disclosure>
-              </div>
+                        </DisclosureButton>
+                        <div className="overflow-hidden">
+                          <AnimatePresence>
+                            {open && (
+                              <DisclosurePanel
+                                static
+                                as={motion.div}
+                                initial={{ opacity: 0, y: -24 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -24 }}
+                                transition={{ duration: 0.2, ease: easeOut }}
+                                className="origin-top"
+                              >
+                                <p className="text-sm text-red-400 mb-4 px-4">
+                                  {errorMessage?.error?.message}
+                                </p>
+                              </DisclosurePanel>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </>
+                    )}
+                  </Disclosure>
+                </div>
+              )}
 
               <div className="mt-4 flex justify-end">
                 <button

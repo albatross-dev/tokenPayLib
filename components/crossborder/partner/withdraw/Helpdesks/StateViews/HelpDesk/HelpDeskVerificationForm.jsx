@@ -1,11 +1,14 @@
 import React, { useContext, useEffect } from "react";
-import OvexKYCForm from "./PartnerKYCForms/OvexKYCForm";
 import { FormProvider, useForm } from "react-hook-form";
-import BitcoinVNHelpDeskKYCForm from "./PartnerKYCForms/BitcoinVNHelpDeskKYCForm";
-import KoyweHelpDeskKYCForm from "./PartnerKYCForms/KoyweHelpDeskKYCForm";
-import KotaniPayHelpDeskKYCForm from "./PartnerKYCForms/KotaniPayHelpDeskKYCForm";
+import OvexKYCForm from "./PartnerKYCForms/Vendor/OvexKYCForm";
+import BitcoinVNHelpDeskKYCForm from "./PartnerKYCForms/Vendor/BitcoinVNHelpDeskKYCForm";
+import KoyweHelpDeskKYCForm from "./PartnerKYCForms/Vendor/KoyweHelpDeskKYCForm";
+import KotaniPayHelpDeskKYCForm from "./PartnerKYCForms/Vendor/KotaniPayHelpDeskKYCForm";
 import { useTranslation } from "next-i18next";
 import { AuthContext } from "../../../../../../../../context/UserContext";
+import OvexKYCFormConsumer from "./PartnerKYCForms/Consumer/OvexKYCForm";
+import BitcoinVNHelpDeskKYCFormConsumer from "./PartnerKYCForms/Consumer/BitcoinVNHelpDeskKYCForm";
+import KotaniPayHelpDeskKYCFormConsumer from "./PartnerKYCForms/Consumer/KotaniPayHelpDeskKYCForm";
 
 function FormRenderer({ method, setValue, methods }) {
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -14,16 +17,20 @@ function FormRenderer({ method, setValue, methods }) {
 
   console.log("user", user);
 
-  if(user?.type === "vendor"){
+  if (user?.type === "vendor") {
     switch (method?.type) {
       case "ovex":
         return <OvexKYCForm setValue={setValue} methods={methods} />;
       case "bitcoin_vn_helpdesk":
-        return <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />;
+        return (
+          <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />
+        );
       case "koywe_helpdesk":
         return <KoyweHelpDeskKYCForm setValue={setValue} methods={methods} />;
       case "kotanipay_helpdesk":
-        return <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />;
+        return (
+          <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />
+        );
       case "coinhako_helpdesk":
         return (
           <div className="mb-4 bg-gray-100 rounded p-4">
@@ -37,14 +44,39 @@ function FormRenderer({ method, setValue, methods }) {
           </div>
         );
     }
-  }else{
-    return (
-      <div className="mb-4 bg-gray-100 rounded p-4">
-        {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
-      </div>
-    );
+  } else {
+    switch (method?.type) {
+      case "ovex":
+        return <OvexKYCFormConsumer setValue={setValue} methods={methods} />;
+      case "bitcoin_vn_helpdesk":
+        return (
+          <BitcoinVNHelpDeskKYCFormConsumer
+            setValue={setValue}
+            methods={methods}
+          />
+        );
+      case "kotanipay_helpdesk":
+        return (
+          <KotaniPayHelpDeskKYCFormConsumer
+            setValue={setValue}
+            methods={methods}
+          />
+        );
+      case "coinhako_helpdesk":
+        return (
+          <div className="mb-4 bg-gray-100 rounded p-4">
+            {tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}
+          </div>
+        );
+      case "koywe_helpdesk":
+      default:
+        return (
+          <div className="mb-4 bg-gray-100 rounded p-4">
+            {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
+          </div>
+        );
+    }
   }
-  
 }
 
 export default function HelpDeskVerificationForm({

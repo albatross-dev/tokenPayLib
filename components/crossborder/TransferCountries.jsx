@@ -76,7 +76,7 @@ export default function TransferCountries({
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-16">
+    <div className="w-full max-w-4xl mx-auto">
       <div className="bg-white shadow-md rounded-lg border">
         <div className="flex flex-row justify-between items-center p-4 border-b">
           <h2 className="text-2xl font-bold">{t(selectedContinent)}</h2>

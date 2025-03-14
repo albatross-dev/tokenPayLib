@@ -19,8 +19,9 @@ import FiatReceivingSelector from "@/tokenPayLib/components/crossborder/FiatRece
 import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanceSelector";
 import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
 import { FIAT_INFO_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import Banner from "../UI/Banner";
 
-export default function WithdrawPage({maintenance}) {
+export default function WithdrawPage({ maintenance }) {
   const [state, setState] = useState("loading");
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -51,18 +52,40 @@ export default function WithdrawPage({maintenance}) {
     async function getCountryData() {
       try {
         let countryRes = await axios.get(
-          `/api/countries?where[countryCode][equals]=${user.vendorCountry}`
+          `/api/countries?where[countryCode][equals]=${user?.vendorCountry || user?.billingAddress?.country}`
         );
 
         if (countryRes.data.docs.length === 0) {
-          setErrorMessage({ message: tCrossborder("withdrawPage.errors.countryNotFound") });
+          setErrorMessage({
+            message: tCrossborder("withdrawPage.errors.countryNotFound"),
+            component: (
+              <Banner
+                href={"/settings"}
+                color={"bg-red-400"}
+                rounded={"rounded"}
+              >
+                <div suppressHydrationWarning>{t("no_country")}</div>
+              </Banner>
+            ),
+          });
           setIsErrorPopupOpen(true);
         } else {
           setSelectedCountry(countryRes.data.docs[0]);
           setState("loaded");
         }
       } catch (err) {
-        setErrorMessage({ message: tCrossborder("withdrawPage.errors.fetchCountryData") });
+        setErrorMessage({
+          message: tCrossborder("withdrawPage.errors.fetchCountryData"),
+          component: (
+            <Banner
+              href={"/settings"}
+              color={"bg-red-400"}
+              rounded={"rounded"}
+            >
+              <div suppressHydrationWarning>{t("no_country")}</div>
+            </Banner>
+          ),
+        });
         sendErrorReport("WithdrawPage - Fetching country data failed", err);
         setIsErrorPopupOpen(true);
       }
@@ -98,7 +121,10 @@ export default function WithdrawPage({maintenance}) {
           setExchangeRate(response.data.rate);
         } catch (error) {
           console.error("Error fetching exchange rate:", error);
-          sendErrorReport("WithdrawPage - Fetching exchange rate failed", error);
+          sendErrorReport(
+            "WithdrawPage - Fetching exchange rate failed",
+            error
+          );
           return;
         }
         setLoadedExchangeRate(true);
@@ -140,7 +166,9 @@ export default function WithdrawPage({maintenance}) {
     } else if (inputAmount > maxAmount) {
       setAmount(inputAmount);
       setError(
-        `${tCrossborder("withdrawPage.errors.amountExceedsBalance")} ${maxAmount} ${
+        `${tCrossborder(
+          "withdrawPage.errors.amountExceedsBalance"
+        )} ${maxAmount} ${
           STANDARD_STABLE_MAP[selectedCurrency.symbol]
             ? STANDARD_STABLE_MAP[selectedCurrency.symbol]?.icon
             : selectedCurrency.name
@@ -164,8 +192,10 @@ export default function WithdrawPage({maintenance}) {
 
   function renderBalanceSelection() {
     return (
-      <div className="relative z-[10] p-4  flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
-        <h2 className="text-2xl">{tCrossborder("withdrawPage.balanceSelection.heading")}</h2>
+      <div className="relative z-[10] p-4  flex flex-col gap-4  max-w-4xl mx-auto">
+        <h2 className="text-2xl">
+          {tCrossborder("withdrawPage.balanceSelection.heading")}
+        </h2>
         {selectedCountry && (
           <FiatBalanceSelector
             availableMethods={selectedCountry?.paymentTypes}
@@ -186,7 +216,7 @@ export default function WithdrawPage({maintenance}) {
 
   function renderCurrencyConversionSelection() {
     return (
-      <div className="relative z-[10] p-4 flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+      <div className="relative z-[10] p-4 flex flex-col gap-4  max-w-4xl mx-auto">
         <BackButton></BackButton>
         {selectedCountry && (
           <FiatReceivingSelector
@@ -207,7 +237,7 @@ export default function WithdrawPage({maintenance}) {
     console.log("selectedMethod", selectedMethod);
     return (
       <div className="relative p-4">
-        <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+        <div className="relative z-[10] text-darkBlue flex flex-col gap-4  max-w-4xl mx-auto">
           <BackButton clearData={clearData}></BackButton>
 
           <h2 className="text-2xl">
@@ -216,7 +246,9 @@ export default function WithdrawPage({maintenance}) {
             {tCrossborder("withdrawPage.transactionDetails.selectedCountry2")}
           </h2>
 
-          <p className="text-xl font-bold">{tCrossborder("withdrawPage.transactionDetails.balance")}</p>
+          <p className="text-xl font-bold">
+            {tCrossborder("withdrawPage.transactionDetails.balance")}
+          </p>
           <CurrencyDisplay
             selectedCurrency={selectedCurrency}
             mainCurrencySymbol={preferredStableCoin}
@@ -230,7 +262,7 @@ export default function WithdrawPage({maintenance}) {
           {/* Betrag auswählen, nur erlauben wenn Währung ausgewählt ist */}
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-bold">
-            {tCrossborder("withdrawPage.transactionDetails.selectAmount")}
+              {tCrossborder("withdrawPage.transactionDetails.selectAmount")}
             </h2>
             <div className="relative">
               <input
@@ -254,7 +286,9 @@ export default function WithdrawPage({maintenance}) {
             {error && <p className="text-red-500 text-sm">{error}</p>}
             {!selectedCurrency && (
               <p className="text-red-500 text-sm">
-                {tCrossborder("withdrawPage.transactionDetails.selectCurrencyFirst")}
+                {tCrossborder(
+                  "withdrawPage.transactionDetails.selectCurrencyFirst"
+                )}
               </p>
             )}
           </div>
@@ -311,19 +345,29 @@ export default function WithdrawPage({maintenance}) {
                 </div>
                 <div className="flex-1 gap-2 flex flex-col">
                   <p>
-                    <strong>{tCrossborder("withdrawPage.transactionDetails.capital")}</strong>{" "}
+                    <strong>
+                      {tCrossborder("withdrawPage.transactionDetails.capital")}
+                    </strong>{" "}
                     {selectedCountry?.countryInfo.capital}
                   </p>
                   <p>
-                    <strong>{tCrossborder("withdrawPage.transactionDetails.population")}</strong>{" "}
+                    <strong>
+                      {tCrossborder(
+                        "withdrawPage.transactionDetails.population"
+                      )}
+                    </strong>{" "}
                     {selectedCountry?.countryInfo.population.toLocaleString()}
                   </p>
                   <p>
-                    <strong>{tCrossborder("withdrawPage.transactionDetails.currency")}</strong>{" "}
+                    <strong>
+                      {tCrossborder("withdrawPage.transactionDetails.currency")}
+                    </strong>{" "}
                     {selectedCountry?.countryInfo.currency}
                   </p>
                   <p>
-                    <strong>{tCrossborder("withdrawPage.transactionDetails.gdp")}</strong>{" "}
+                    <strong>
+                      {tCrossborder("withdrawPage.transactionDetails.gdp")}
+                    </strong>{" "}
                     {selectedCountry?.countryInfo.gdp.toLocaleString()} USD
                   </p>
                 </div>
@@ -338,7 +382,7 @@ export default function WithdrawPage({maintenance}) {
   function renderPartnerPanel() {
     return (
       <div>
-        <div className="relative z-[10] text-darkBlue flex flex-col gap-4 mt-12 max-w-4xl mx-auto">
+        <div className="relative z-[10] text-darkBlue flex flex-col gap-4  max-w-4xl mx-auto">
           <div className="p-4">
             <BackButton></BackButton>
           </div>
@@ -402,15 +446,15 @@ export default function WithdrawPage({maintenance}) {
       <div className="flex flex-col max-w-7xl w-full mx-auto p-4 md:p-10 gap-4">
         <div>
           <BalanceOverview></BalanceOverview>
-          <h1 className="text-xl font-bold mt-4">{tCrossborder("withdrawPage.heading")}</h1>
+          <h1 className="text-xl font-bold mt-4">
+            {tCrossborder("withdrawPage.heading")}
+          </h1>
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.withdraw?.page && (
-            <Maintainance></Maintainance>
-          )}
+          {maintenance?.withdraw?.page && <Maintainance></Maintainance>}
           {state === "loading" && (
-            <div className="flex h-full items-center justify-center mb-16 w-full">
+            <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader></Loader>
             </div>
           )}

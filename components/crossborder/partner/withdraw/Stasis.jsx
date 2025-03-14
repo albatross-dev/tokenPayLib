@@ -16,6 +16,7 @@ import { client } from "@/pages/_app";
 import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
 import { STABLE_FIAT_MAP, STABLECOIN_TO_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import fetchBankAccounts from "../../../../utilities/partner/stasis/fetchBankAccounts";
 
 const POOL_FEE = 0.004;
 
@@ -40,18 +41,9 @@ export default function Stasis({ amount, account, user, preferredStableCoin }) {
 
   useEffect(() => {
     fetchTokenBalance(selectedToken);
-    fetchBankAccounts();
+    fetchBankAccounts(setBankAccounts);
   }, [account, user.euroEAccount]);
 
-  const fetchBankAccounts = async () => {
-    try {
-      const response = await axios.get("/api/vendor/stasis/getBankAccounts");
-      setBankAccounts(response.data);
-    } catch (error) {
-      sendErrorReport("Stasis - Withdraw - Fetching bank accounts failed", error);
-      console.error("Error fetching bank accounts", error);
-    }
-  };
 
   const handleInputChange = (e) => {
     setNewBankAccount({ ...newBankAccount, [e.target.name]: e.target.value });
@@ -75,7 +67,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }) {
 
     setIsProcessing(true);
     try {
-      await axios.post("/api/vendor/stasis/createBankAccount", newBankAccount);
+      await axios.post("/api/fiatTransaction/stasis/createBankAccount", newBankAccount);
       await fetchBankAccounts();
       setView("select");
       setErrors({ ...errors, bankAccount: "" });
@@ -200,7 +192,6 @@ export default function Stasis({ amount, account, user, preferredStableCoin }) {
         </button>
       )}
       <div
-        as="h3"
         className="text-2xl font-bold leading-6 text-gray-900 flex-grow"
       >
         {view === "add"
