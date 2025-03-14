@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { BsArrowUpRight } from "react-icons/bs";
+
 /**
  * Banner component that renders a styled link with an arrow icon.
  *
