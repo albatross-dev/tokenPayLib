@@ -20,6 +20,7 @@ import { useActiveAccount } from "thirdweb/react";
 import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { LogLevel } from "@/tokenPayLib/utilities/error-reporter/reporter";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
+import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder";
 
 function CountriesInfo({
   countries,
@@ -83,7 +84,8 @@ function CountriesInfo({
    * @returns {Object} - an object with the withdrawModality as key and an array of fiat currencies as value
    */
   function aggregatePaymentTypeInfo(paymentPartners) {
-    const paymentTypes = paymentPartners.reduce((acc, partner) => {
+    let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
+    const paymentTypes = filledInPartners.reduce((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
       }

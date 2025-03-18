@@ -8,6 +8,7 @@ import AnimateHeight from 'react-animate-height';
 import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
+import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
 
 export default function TransferCountries({
   countries,
@@ -60,7 +61,8 @@ export default function TransferCountries({
    * @returns {Object} - an object with the withdrawModality as key and an array of fiat currencies as value
    */
   function aggregatePaymentTypeInfo(paymentPartners){
-    const paymentTypes = paymentPartners.reduce((acc, partner) => {
+    let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
+    const paymentTypes = filledInPartners.reduce((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
       }
