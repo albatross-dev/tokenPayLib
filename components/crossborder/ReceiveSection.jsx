@@ -20,7 +20,7 @@ import { useActiveAccount } from "thirdweb/react";
 import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { LogLevel } from "@/tokenPayLib/utilities/error-reporter/reporter";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
-import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder";
+import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
 
 function CountriesInfo({
   countries,

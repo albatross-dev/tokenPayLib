@@ -1,3 +1,4 @@
+import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
 import sortMethodByCurrencyWithdraw from "@/tokenPayLib/utilities/crossborder/sortMethodByCurrency";
 import { STABLE_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import { useTranslation } from "next-i18next";
@@ -35,7 +36,8 @@ export default function FiatBalanceSelector({
           <div
             key={currency}
             onClick={() => {
-              setAvailableMethods(methodsByCurrency[currency]);
+              let filledInPartners = duplicateByPaymentModality(methodsByCurrency[currency], "withdrawModality");
+              setAvailableMethods(filledInPartners);
               setPreferredStableCoin(currency);
               swiperInstance.slideTo(nextSlide);
             }}

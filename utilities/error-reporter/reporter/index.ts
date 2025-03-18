@@ -226,7 +226,7 @@ export class Reporter {
 
     // check if error is known and if so do not log it
     for(const knownError of knownErrors) {
-      if(exception.name === knownError.name && exception.message === knownError.message) {
+      if(exception?.name === knownError?.name && exception?.message === knownError?.message) {
         console.log("ommited known error",exception.name ,exception.message);
         return;
       }

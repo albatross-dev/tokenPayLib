@@ -8,7 +8,7 @@ import AnimateHeight from 'react-animate-height';
 import { useEffect, useRef, useState } from 'react';
 import { useSprings, animated } from '@react-spring/web';
 import { useTranslation } from 'react-i18next';
-import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
+import duplicateByPaymentModality from '@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality';
 
 export default function TransferCountries({
   countries,

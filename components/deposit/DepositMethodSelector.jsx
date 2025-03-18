@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
 import { sendErrorReport } from "@/context/UserContext";
+import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
 
 export default function DepositMethodSelector({
   methods,
@@ -64,7 +65,9 @@ export default function DepositMethodSelector({
 
       const sortedMethods = {};
 
-      for (let method of methods) {
+      let filledInPartners = duplicateByPaymentModality(methods, "onrampModality");
+
+      for (let method of filledInPartners) {
         // If the onramp modality is not yet available in the sorted methods add its entry
         if (!sortedMethods[method.onrampModality]) {
           sortedMethods[method.onrampModality] = {
