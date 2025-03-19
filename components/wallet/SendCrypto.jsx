@@ -2,7 +2,6 @@ import React, { useEffect, useState, Fragment, useContext } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import TokenSelectorSimple from "@/tokenPayLib/components/wallet/TokenSelectorSimple";
-import { formatCrypto, TokensByChainId } from "@/utilities/currencies";
 import { polygon } from "thirdweb/chains";
 import numberWithZeros from "@/utilities/numberWithZeros";
 import LoadingButton from "./LoadingButton";
@@ -20,6 +19,8 @@ import moment from "moment";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 import Loader from "@/tokenPayLib/components/UI/Loader";
+import { formatCrypto, TokensByChainId } from "@/tokenPayLib/utilities/crypto/currencies";
+
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
