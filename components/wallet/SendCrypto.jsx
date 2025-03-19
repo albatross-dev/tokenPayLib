@@ -1,7 +1,7 @@
+"use client";
 import React, { useEffect, useState, Fragment, useContext } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import TokenSelectorSimple from "@/tokenPayLib/components/wallet/TokenSelectorSimple";
 import { polygon } from "thirdweb/chains";
 import numberWithZeros from "@/utilities/numberWithZeros";
 import LoadingButton from "./LoadingButton";
@@ -24,13 +24,12 @@ import {
   TokensByChainId,
 } from "@/tokenPayLib/utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
-import { tokenPayAbstractionSimpleTransfer } from "@/thirdweb/tokenPay";
+import { tokenPayAbstractionSimpleTransfer } from "../../assets/TokenPayAbstraction";
+import TokenSelector from "../Forms/TokenSelector";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
-
-
 
 async function fetchBalance(contractAddress, abi, accountAddress) {
   try {
@@ -74,7 +73,13 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
   const [newTxHash, setNewTxHash] = useState(null);
   const { t: tAccount } = useTranslation("wallet");
 
-    const columns = [
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const columns = [
     {
       accessorKey: "amount",
       header: tAccount("sendCrypto.table.amount"),
@@ -317,15 +322,14 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                 ) : (
                   <div className="flex flex-col items-center">
                     <div className="max-w-xl w-full mx-auto flex flex-col mt-4">
-                      <div>
-                        {tAccount("sendCrypto.dialog.step1")}
-                      </div>
-                      <TokenSelectorSimple
+                      <div>{tAccount("sendCrypto.dialog.step1")}</div>
+                      <TokenSelector
                         onSelect={async (selectedToken) => {
                           fetchTokenBalance(selectedToken);
                         }}
                         tokens={originTokens}
                         selectedToken={selectedToken}
+                        selectText={tAccount("sendCrypto.dialog.select")}
                       />
                       {errors.selectedToken && (
                         <p className="text-red-500 text-sm mt-1">
@@ -333,7 +337,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                         </p>
                       )}
                       <div className="mt-4 mb-2">
-                      {tAccount("sendCrypto.dialog.step2")}
+                        {tAccount("sendCrypto.dialog.step2")}
                       </div>
                       <div className="flex flex-row gap-2">
                         <input
@@ -344,8 +348,9 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                             if (!selectedToken) {
                               setErrors((prevErrors) => ({
                                 ...prevErrors,
-                                amount:
-                                tAccount("sendCrypto.errors.selectTokenFirst"),
+                                amount: tAccount(
+                                  "sendCrypto.errors.selectTokenFirst"
+                                ),
                               }));
                             } else {
                               setAmount(e.target.value);
@@ -383,7 +388,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                         </p>
                       )}
                       <div className="mt-4 mb-2">
-                      {tAccount("sendCrypto.dialog.step3")}
+                        {tAccount("sendCrypto.dialog.step3")}
                       </div>
                       <input
                         type="text"
@@ -427,21 +432,23 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
         </Dialog>
       </Transition>
       <div>
-        <div></div>
-        <SimpleList
+        {isClient && ( <SimpleList
           collection={"cryptoTransfer"}
           columns={columns}
+          suppressHydrationWarning
           loader={newTxHash}
         >
           <button
             onClick={() => {
               setIsOpen(true);
             }}
+            suppressHydrationWarning
             className="btn-primary"
           >
             {tAccount("sendCrypto.table.newTransaction")}
           </button>
-        </SimpleList>
+        </SimpleList>)}
+       
       </div>
     </>
   );
