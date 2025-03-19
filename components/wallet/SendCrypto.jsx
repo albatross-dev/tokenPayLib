@@ -19,73 +19,18 @@ import moment from "moment";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 import Loader from "@/tokenPayLib/components/UI/Loader";
-import { formatCrypto, TokensByChainId } from "@/tokenPayLib/utilities/crypto/currencies";
-
+import {
+  formatCrypto,
+  TokensByChainId,
+} from "@/tokenPayLib/utilities/crypto/currencies";
+import { useTranslation } from "react-i18next";
+import { tokenPayAbstractionSimpleTransfer } from "@/thirdweb/tokenPay";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-const columns = [
-  {
-    accessorKey: "amount",
-    header: "Betrag",
-    cell: (props) => {
-      return <div className="table-cell ">{props.getValue()}</div>;
-    },
-  },
-  {
-    accessorKey: "currencyName",
-    header: " Krypto-Währung",
-    cell: (props) => {
-      return <div className="table-cell ">{props.getValue()}</div>;
-    },
-  },
-  {
-    accessorKey: "receivingWallet",
-    header: "Empfänger",
-    cell: (props) => {
-      return (
-        <div className="table-cell ">
-          <AddressDisplay value={props.getValue()}></AddressDisplay>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "sendingWallet",
-    header: "Sender",
-    cell: (props) => {
-      return (
-        <div className="table-cell ">
-          <AddressDisplay value={props.getValue()}></AddressDisplay>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "transactionHash",
-    header: "Hash",
-    cell: (props) => {
-      return (
-        <div className="table-cell ">
-          <AddressDisplay value={props.getValue()}></AddressDisplay>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Datum",
-    cell: (props) => {
-      return (
-        <div className="table-cell whitespace-nowrap">
-          {moment(props.getValue()).format("DD.MM.YYYY, HH:mm")}
-        </div>
-      );
-    },
-  },
-];
+
 
 async function fetchBalance(contractAddress, abi, accountAddress) {
   try {
@@ -127,6 +72,68 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
   const [errors, setErrors] = useState({});
   const { user } = useContext(AuthContext);
   const [newTxHash, setNewTxHash] = useState(null);
+  const { t: tAccount } = useTranslation("wallet");
+
+    const columns = [
+    {
+      accessorKey: "amount",
+      header: tAccount("sendCrypto.table.amount"),
+      cell: (props) => {
+        return <div className="table-cell ">{props.getValue()}</div>;
+      },
+    },
+    {
+      accessorKey: "currencyName",
+      header: tAccount("sendCrypto.table.currency"),
+      cell: (props) => {
+        return <div className="table-cell ">{props.getValue()}</div>;
+      },
+    },
+    {
+      accessorKey: "receivingWallet",
+      header: tAccount("sendCrypto.table.receiver"),
+      cell: (props) => {
+        return (
+          <div className="table-cell ">
+            <AddressDisplay value={props.getValue()}></AddressDisplay>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "sendingWallet",
+      header: tAccount("sendCrypto.table.sender"),
+      cell: (props) => {
+        return (
+          <div className="table-cell ">
+            <AddressDisplay value={props.getValue()}></AddressDisplay>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "transactionHash",
+      header: tAccount("sendCrypto.table.hash"),
+      cell: (props) => {
+        return (
+          <div className="table-cell ">
+            <AddressDisplay value={props.getValue()}></AddressDisplay>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: tAccount("sendCrypto.table.date"),
+      cell: (props) => {
+        return (
+          <div className="table-cell whitespace-nowrap">
+            {moment(props.getValue()).format("DD.MM.YYYY, HH:mm")}
+          </div>
+        );
+      },
+    },
+  ];
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -142,7 +149,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
     if (!selectedToken) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        amount: "Bitte wählen Sie zuerst eine Krypto- Krypto-Währung aus.",
+        amount: tAccount("sendCrypto.errors.selectTokenFirst"),
       }));
       return;
     }
@@ -157,16 +164,15 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
     let errors = {};
 
     if (!selectedToken) {
-      errors.selectedToken =
-        "Bitte wählen Sie eine Krypto- Krypto-Währung aus.";
+      errors.selectedToken = tAccount("sendCrypto.errors.selectToken");
     }
 
     if (!amount || amount <= 0) {
-      errors.amount = "Bitte geben Sie einen Betrag größer als 0 ein.";
+      errors.amount = tAccount("sendCrypto.errors.enterAmount");
     }
 
     if (!targetAddress || !/^0x[a-fA-F0-9]{40}$/.test(targetAddress)) {
-      errors.targetAddress = "Bitte geben Sie eine gültige Wallet-Adresse ein.";
+      errors.targetAddress = tAccount("sendCrypto.errors.validWallet");
     }
 
     setErrors(errors);
@@ -218,11 +224,11 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
           sendingWallet: account?.address,
           currencyDecimals: selectedToken.decimals,
           receivingWallet: targetAddress,
-        }
+        };
 
-        if(user.type === "vendor"){
+        if (user.type === "vendor") {
           transferData.vendor = user.id;
-        }else{
+        } else {
           transferData.consumer = user.id;
         }
 
@@ -291,7 +297,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                   as="h3"
                   className="text-2xl my-2d font-bold leading-6 text-gray-900"
                 >
-                  Krypto-Währungen versenden
+                  {tAccount("sendCrypto.dialog.title")}
                 </DialogTitle>
 
                 {isLoading === "processing" ? (
@@ -302,17 +308,17 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                   <div className="flex items-center flex-col justify-center gap-4 h-[30rem]">
                     <IoShieldCheckmarkSharp className="text-gray-700 w-16 h-16 m-2" />
                     <div className="w-full border-b pb-2 text-4xl text-center text-gray-700 font-bold">
-                      Zahlung erfolgreich abgeschlossen!
+                      {tAccount("sendCrypto.dialog.successTitle")}
                     </div>
                     <div className="text-center">
-                      Ihr Geldtransfer wurde erfolgreich abgeschlossen.
+                      {tAccount("sendCrypto.dialog.successText")}
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
                     <div className="max-w-xl w-full mx-auto flex flex-col mt-4">
                       <div>
-                        1. Welche Krypto- Krypto-Währung wollen Sie verschicken?
+                        {tAccount("sendCrypto.dialog.step1")}
                       </div>
                       <TokenSelectorSimple
                         onSelect={async (selectedToken) => {
@@ -327,7 +333,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                         </p>
                       )}
                       <div className="mt-4 mb-2">
-                        2. Welchen Betrag wollen Sie verschicken?
+                      {tAccount("sendCrypto.dialog.step2")}
                       </div>
                       <div className="flex flex-row gap-2">
                         <input
@@ -339,7 +345,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                               setErrors((prevErrors) => ({
                                 ...prevErrors,
                                 amount:
-                                  "Bitte wählen Sie zuerst eine Krypto- Krypto-Währung aus.",
+                                tAccount("sendCrypto.errors.selectTokenFirst"),
                               }));
                             } else {
                               setAmount(e.target.value);
@@ -362,7 +368,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                           onClick={handleMaxClick}
                           disabled={!selectedToken}
                         >
-                          Max.{" "}
+                          {tAccount("sendCrypto.dialog.max")}
                           {formatCrypto(
                             selectedTokenBalance || 0,
                             selectedToken?.decimals || 18,
@@ -377,7 +383,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                         </p>
                       )}
                       <div className="mt-4 mb-2">
-                        3. An wen wollen Sie Krypto-Währungen versenden?
+                      {tAccount("sendCrypto.dialog.step3")}
                       </div>
                       <input
                         type="text"
@@ -410,7 +416,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                           Object.keys(errors).length > 0 || !selectedToken
                         }
                       >
-                        Jetzt senden
+                        {tAccount("sendCrypto.dialog.sendButton")}
                       </LoadingButton>
                     </div>
                   </div>
@@ -433,7 +439,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
             }}
             className="btn-primary"
           >
-            Neue Transaktion
+            {tAccount("sendCrypto.table.newTransaction")}
           </button>
         </SimpleList>
       </div>

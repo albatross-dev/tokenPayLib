@@ -2,8 +2,11 @@ import React, { useState, useEffect, Fragment } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Image from "next/image";
 import { BiChevronDown } from "react-icons/bi"; // Import the chevron icon
+import { useTranslation } from "react-i18next";
+
 
 export default function TokenSelectorSimple({tokens,selectedToken, onSelect}) {
+  const { t: tAccount } = useTranslation("wallet");
 
   return (
     <Menu as="div" className="relative inline-block text-left w-full mt-4">
@@ -12,12 +15,12 @@ export default function TokenSelectorSimple({tokens,selectedToken, onSelect}) {
           {selectedToken ?     <>
               <Image src={selectedToken.icon} alt={selectedToken.name} className="h-6 w-6 mr-2" />
               <span className={``}>{selectedToken.name}</span>
-            </>: 
+            </> :
                 <>
                 <div className="h-6 w-6 mr-2 bg-gray-200 rounded-full" />
-                <span className={``}>Auswählen</span>
+                <span className={``}>{tAccount("tokenSelectorSimple.select")}</span>
               </>}
-    
+
         </div>
         <BiChevronDown className="h-6 w-6 text-gray-700" /> {/* Chevron Icon */}
       </MenuButton>
