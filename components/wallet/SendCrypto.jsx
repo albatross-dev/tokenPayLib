@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Fragment, useContext } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import TokenSelector from "@/components/TokenSelector";
+import TokenSelectorSimple from "@/tokenPayLib/components/wallet/TokenSelectorSimple";
 import { formatCrypto, TokensByChainId } from "@/utilities/currencies";
 import { polygon } from "thirdweb/chains";
 import numberWithZeros from "@/utilities/numberWithZeros";
@@ -313,7 +313,7 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
                       <div>
                         1. Welche Krypto- Krypto-Währung wollen Sie verschicken?
                       </div>
-                      <TokenSelector
+                      <TokenSelectorSimple
                         onSelect={async (selectedToken) => {
                           fetchTokenBalance(selectedToken);
                         }}
