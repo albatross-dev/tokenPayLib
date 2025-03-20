@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext, useWatch, useFormState } from "react-hook-form";
 import FormInput from "./FormInput";
 import DocumentUploadField from "./DocumentUploader";
 import { FiPlus } from "react-icons/fi";
@@ -213,7 +213,7 @@ const ArrayField = ({
     replace,
   } = useFieldArray({
     control: methods.control,
-    name: parentName ? `${parentName}.${field.name}` : field.name, // Map to the correct field array name
+    name: parentName ? `${parentName}.${field.name}` : field.name,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -256,8 +256,16 @@ const ArrayField = ({
     setIsAdding(true);
   };
 
+  const [triggerRerender, setTriggerRerender] = useState(false);
+
+  const formValues = methods.watch();
+  useEffect(() => {
+    console.log("Form state updated");
+    //setTriggerRerender((prev) => !prev);
+  }, [formValues]); // Track both dirty state and array length
+  
   return (
-    <div className="mb-4 flex flex-col gap-4">
+    <div key={triggerRerender} className="mb-4 flex flex-col gap-4">
       {arrayFields.map((item, index) => (
         <div
           key={item.id + "array_item"}
@@ -275,6 +283,7 @@ const ArrayField = ({
           <FieldRenderer
             fields={field.fields} // Render child fields recursively
             alwaysEditable={isAdding && index === arrayFields.length - 1} // is isAdding and last field then editable
+            arrayItemIndex={index} // Pass the index for conditional rendering
             parentName={`${parentName}.${field.name}[${index}]`} // Pass the parent name with the index for unique field names
           />
 

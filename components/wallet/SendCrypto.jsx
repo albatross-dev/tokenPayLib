@@ -24,7 +24,7 @@ import {
   TokensByChainId,
 } from "@/tokenPayLib/utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
-import { tokenPayAbstractionSimpleTransfer } from "@/thirdweb/tokenPay";
+import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
