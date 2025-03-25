@@ -261,7 +261,6 @@ const ArrayField = ({
   const formValues = methods.watch();
   useEffect(() => {
     console.log("Form state updated");
-    //setTriggerRerender((prev) => !prev);
   }, [formValues]); // Track both dirty state and array length
   
   return (
