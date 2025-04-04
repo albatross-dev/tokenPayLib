@@ -6,15 +6,20 @@
  */
 function duplicateByPaymentModality(paymentPartners, key) {
   const partners = [];
-  console.log("paymentPartners", paymentPartners);
+  console.log("paymentPartners", paymentPartners, key);
   paymentPartners.forEach((partner) => {
     if (partner[key].length > 1) {
+      // check if partner[key] is an array
+      if (!Array.isArray(partner[key])) {
+        partners.push(partner);
+      }else{
       partner[key].forEach((modality) => {
         partners.push({
           ...partner,
           [key]: modality,
         });
       });
+    }
     } else {
       partners.push(partner);
     }
