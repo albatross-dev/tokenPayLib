@@ -330,7 +330,7 @@ function CountriesInfo({
 }
 
 export default function ReceiveSection() {
-  const [selectedContinent, setSelectedContinent] = useState("Europe");
+  const [selectedContinent, setSelectedContinent] = useState("europe");
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [loading, setLoading] = useState(false);
   const [countryData, setCountryData] = useState(null);
@@ -354,6 +354,20 @@ export default function ReceiveSection() {
       const countriesResponse = await axios(
         `/api/countries?${QueryString.stringify(query)}`
       );
+
+      console.log("countriesResponse", countriesResponse.data.docs);
+
+      // sort by countryInfo.name
+      countriesResponse.data.docs.sort((a, b) => {
+        if (a.countryInfo.name < b.countryInfo.name) {
+          return -1;
+        }
+        if (a.countryInfo.name > b.countryInfo.name) {
+          return 1;
+        }
+        return 0;
+      });
+      
 
       setCountryData(countriesResponse.data.docs);
       setLoading(false);
