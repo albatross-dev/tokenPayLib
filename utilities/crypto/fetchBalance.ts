@@ -1,5 +1,5 @@
-
-import { getContract, readContract } from "thirdweb";
+import { ContractOptions, getContract, readContract } from "thirdweb";
+import { sendErrorReport } from "../../../context/UserContext";
 
 /**
  * Fetches the balance of a given account address from a specified contract on a specified blockchain.
@@ -9,32 +9,40 @@ import { getContract, readContract } from "thirdweb";
  * @param {string} contractAddress - The address of the contract to interact with.
  * @param {Array} abi - The ABI (Application Binary Interface) of the contract.
  * @param {string} accountAddress - The address of the account to fetch the balance for.
- * @returns {Promise<number>} - The balance of the account in the contract, or 0 in case of an error.
+ * @returns {Promise<bigint>} - The balance of the account in the contract, or 0 in case of an error.
  * @throws {Error} - Throws an error if the balance could not be fetched.
  */
-export default async function fetchBalance(client, chain, contractAddress, abi, accountAddress) {
+export default async function fetchBalance(
+  client: any,
+  chain: any,
+  contractAddress: string,
+  abi: any[],
+  accountAddress: string
+): Promise<bigint> {
 
   try {
-    const contract = getContract({
+    const contract: Readonly<ContractOptions<any[]>>    = getContract({
       client: client,
       chain,
       address: contractAddress,
       abi,
     });
 
-    const result = await readContract({
+    const result: bigint = await readContract({
       contract,
       method: "function balanceOf(address) view returns (uint256)",
       params: [accountAddress],
     });
 
-    if (!result) {
+    console.log("fetchBalance result", typeof result, result);
+
+     if (typeof result !== "bigint") {
       throw new Error("Failed to fetch balance");
     }
 
     return result;
   } catch (error) {
-    console.error(`Error fetching balance for ${accountAddress} ${name} ${contractAddress} on ${chain.name}:`, error);
-    return 0; // Return zero balance in case of an error
+    sendErrorReport(`Error fetching balance for ${accountAddress} ${contractAddress} on ${chain.name}`, error);
+    return BigInt(0); // Return zero balance in case of an error
   }
-}
+} 

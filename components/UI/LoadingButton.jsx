@@ -46,13 +46,15 @@ const LoadingButton = ({
       <>
         <div className="w-7"></div>
         {children}
-        <HiQuestionMarkCircle
-          onClick={(e) => {
-            e.stopPropagation();
-            openError();
-          }}
-          className="h-5 w-5 text-white ml-2"
-        />
+        {typeof openError === "function" && (
+          <HiQuestionMarkCircle
+            onClick={(e) => {
+              e.stopPropagation();
+              openError();
+            }}
+            className="h-5 w-5 text-white ml-2"
+          />
+        )}
       </>
     );
   } else {
