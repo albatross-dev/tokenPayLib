@@ -37,11 +37,24 @@ import convertAnyToAny, {
 } from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
 import { useEffect, useState } from "react";
 import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
+import axios from "axios";
+import { arbitrum, avalanche, base, ethereum, optimism, polygon } from "thirdweb/chains";
 
 const exchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE;
 
 let retryCounterAny = 0;
 let retryCounter = 0;
+
+const chainIdSlugDictionary = {
+  [ethereum.id]: "uniswapPoolsEthereum",
+  [polygon.id]: "uniswapPoolsPolygon",
+  [optimism.id]: "uniswapPoolsOptimism",
+  [avalanche.id]: "uniswapPoolsAvalanche",
+  [arbitrum.id]: "uniswapPoolsArbitrum",
+  [base.id]: "uniswapPoolsBase",
+}
+
+let oldActiveChainId;
 
 export default function TokenSwapSection({ origin, target, max, preAmount }) {
   const { t } = useTranslation("common");
@@ -51,6 +64,8 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
   const [balances, setBalances] = useState({});
   const [balanceUpdate, setBalanceUpdate] = useState(false);
   const [exchangeState, setExchangeState] = useState("normal");
+
+  const [loading, setLoading] = useState(false);
 
   // exchange
   const [selectedToken, setSelectedToken] = useState(null);
@@ -67,8 +82,9 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
   const [inputError, setError] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  async function setMaxAmountImmediately(ot){
+  const [paths, setPaths] = useState(null);
 
+  async function setMaxAmountImmediately(ot) {
     const balance = await fetchBalance(
       client,
       activeChain,
@@ -79,15 +95,30 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
 
     setSelectedTokenBalance(balance);
 
-    console.log("balance", balance)
+    console.log("balance", balance);
 
     // wait for 1 second
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    setAmount(
-      (Number(balance) || 1) /
-        numberWithZeros(ot?.decimals || 1)
-    );
+    setAmount((Number(balance) || 1) / numberWithZeros(ot?.decimals || 1));
+  }
+
+  async function fetchPaths() {
+    // fetch paths from backend
+    console.log("fetching paths", activeChain.name);
+    try {
+      const pathsRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/${chainIdSlugDictionary[activeChain.id]}`
+      );
+
+      const paths = pathsRes.data;
+      console.log("paths", JSON.parse(paths.pools));
+      setPaths(JSON.parse(paths.pools))
+    } catch (e) {
+      console.error("Error fetching paths", e);
+      return;
+    }
+    
   }
 
   useEffect(() => {
@@ -173,9 +204,12 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
     return tokenObj;
   }
 
+
   useEffect(() => {
-    if (activeChain) {
+    if (activeChain?.id && activeChain?.id !== oldActiveChainId) {
       setOriginTokens(getOriginTokens());
+      fetchPaths();
+      oldActiveChainId = activeChain.id;
     }
   }, [activeChain]);
 
@@ -266,7 +300,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
         if (retryCounterAny < 3) {
           handleExchangeAny(amount);
           console.log("retrying exchange", retryCounterAny);
-        }else{
+        } else {
           retryCounterAny = 0;
           console.error("Error converting to EUROE", error);
           setExchangeState("error");
@@ -274,7 +308,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
             setExchangeState("normal");
           }, 4000);
         }
-      
       },
       activeChain,
       selectedTargetToken
@@ -284,7 +317,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
 
   // handle exchanges from the modals
   async function handleExchange(amount) {
-    
     setLoading((prevState) => ({
       ...prevState,
       [selectedToken.symbol]: "processing",
@@ -338,7 +370,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
     ).map((tokenId) => {
       return [tokenId, TokensByChainId[activeChain.id][tokenId]];
     });
-
 
     targetTokenArr = targetTokenArr.filter((item) => {
       return item[1] !== undefined;

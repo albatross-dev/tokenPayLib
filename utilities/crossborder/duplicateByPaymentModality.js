@@ -6,8 +6,12 @@
  */
 function duplicateByPaymentModality(paymentPartners, key) {
   const partners = [];
-  console.log("paymentPartners", paymentPartners);
   paymentPartners.forEach((partner) => {
+    // check if partner[key] is an array
+    if (!Array.isArray(partner[key])) {
+      partner[key] = [partner[key]];
+    }
+
     if (partner[key].length > 1) {
       partner[key].forEach((modality) => {
         partners.push({
@@ -20,7 +24,6 @@ function duplicateByPaymentModality(paymentPartners, key) {
     }
   });
 
-  console.log("partners", partners);
   return partners;
 }
 

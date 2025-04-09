@@ -53,6 +53,8 @@ export default function DepositPanel({
           user={user}
           country={country}
           method={method}
+          startCurrency={startCurrency}
+          endCurrency={endCurrency}
         />
       );
     case "stasis":

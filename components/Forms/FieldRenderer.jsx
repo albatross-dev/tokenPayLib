@@ -131,6 +131,7 @@ const FieldRenderer = ({
                   control={methods.control}
                   disabled={alwaysEditable ? false : field.disabled}
                   required={parsedRequired}
+                  validCountries={fields.validCountries}
                   id={fieldName}
                   {...methods.register(fieldName, { required: parsedRequired })}
                 />

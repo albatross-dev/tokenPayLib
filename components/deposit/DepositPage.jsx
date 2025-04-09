@@ -321,28 +321,6 @@ export default function DepositPage({ maintenance }) {
     }
   };
 
-  console.log("/deposit::index.jsx selectedCountry: ", selectedCountry);
-  console.log("/deposit::index.jsx methodsByCurrency: ", methodsByCurrency);
-  console.log(
-    "/deposit::index.jsx availableMethodsForStableCoin: ",
-    availableMethodsForStableCoin
-  );
-  console.log(
-    "/deposit::index.jsx availableFiatCurrencies: ",
-    availableFiatCurrencies
-  );
-  console.log(
-    "/deposit::index.js availableDepositMethods:",
-    availableDepositMethods
-  );
-  console.log("/deposit::index.jsx selectedMethod: ", selectedMethod);
-  console.log("/deposit::index.jsx preferredStableCoin: ", preferredStableCoin);
-  console.log(
-    "/deposit::index.jsx preferredFiatCurrency: ",
-    preferredFiatCurrency
-  );
-  console.log("/deposit::index.jsx amount: ", amount);
-
   return (
     <>
       <ErrorPopup
@@ -362,7 +340,7 @@ export default function DepositPage({ maintenance }) {
         <div className="border bg-white rounded w-full p-4 relative">
           {maintenance?.deposit?.page && <Maintainance></Maintainance>}
           {state === "loading" && (
-            <div className="flex h-full items-center justify-center my-16 w-full">
+            <div className="flex h-full items-center justify-center mb-16 w-full">
               <Loader></Loader>
             </div>
           )}

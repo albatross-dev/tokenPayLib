@@ -6,6 +6,7 @@ import Stasis from "@/tokenPayLib/components/crossborder/partner/withdraw/Stasis
 import CryptoPartner from "@/tokenPayLib/components/crossborder/partner/withdraw/PartnerCrypto";
 import Unlimit from "@/tokenPayLib/components/crossborder/partner/withdraw/Unlimit";
 import HelpDesk from "./partner/withdraw/Helpdesks/HelpDesk";
+import Koywe from "./partner/withdraw/Koywe";
 
 export default function TransferPanel({
   method,
@@ -100,6 +101,15 @@ export default function TransferPanel({
           country={selectedCountry}
         ></CryptoPartner>
       );
+    case "koywe": 
+      return (
+        <Koywe
+           amount={amount}
+          account={account}
+          user={user}
+          method={selectedMethod}
+          country={selectedCountry}></Koywe>
+      )
     default:
       return <div>Unknown</div>;
   }

@@ -1,5 +1,5 @@
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi"; // Import the chevron icon
 import { useTranslation } from "next-i18next";
@@ -52,6 +52,7 @@ countriesISO.registerLocale(frLocale); // Register the language you need
  * @param {Function} props.onSelect - Callback function to handle the selection of a country.
  * @param {boolean} [props.onlyIso=false] - If true, only the ISO code of the selected country is passed to the onSelect callback.
  * @param {boolean} [props.disabled=false] - If true, the dropdown is disabled and only displays the selected country.
+ * @param {array} [props.validCountries] - The list of valid countries to display in the dropdown. A list of ISO codes
  * 
  * @returns {JSX.Element} The rendered CountrySelector component.
  */
@@ -61,13 +62,31 @@ export default function CountrySelector({
   onSelect,
   onlyIso = false,
   disabled,
+  validCountries,
 }) {
   const { t, i18n } = useTranslation("common");
+
+  const [displayCountries, setDisplayCountries] = useState(countries);
 
   // if selectedCountry is a string then we need to find the country object
   if (typeof selectedCountry === "string") {
     selectedCountry = countries[selectedCountry];
   }
+
+  useEffect(() => {
+    console.log("typeof validCountries", typeof validCountries);
+    if(countries && typeof validCountries === "array"){
+      const filteredCountries = Object.keys(countries).reduce((acc, key) => {
+        if (validCountries.includes(countries[key].iso)) {
+          acc[key] = countries[key];
+        }
+        return acc;
+      }, {});
+      setDisplayCountries(filteredCountries);
+    }else{
+      setDisplayCountries(countries);
+    }
+  }, [validCountries,countries]);
 
   function select(country) {
     if (onlyIso) {

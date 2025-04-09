@@ -6,6 +6,7 @@ import axios from "axios";
 import { HiChevronDoubleRight } from "react-icons/hi2";
 import { useTranslation } from "next-i18next";
 import { sendErrorReport } from "@/context/UserContext";
+import Link from "next/link";
 
 export default function BitcoinVN({
   amount,
@@ -204,11 +205,30 @@ export default function BitcoinVN({
     </div>
   );
 
+  const renderUnverified = () => (
+    <div className="w-full">
+    <h2 className="text-xl font-semibold mb-4">
+      {tCrossborder("deposit.bitcoinvn.kyc.heading")}
+    </h2>
+    <p className="text-gray-600">
+      {tCrossborder("deposit.bitcoinvn.kyc.description")}
+    </p>
+    <Link
+      href="/kyc/bitcoinvn"
+      className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
+    >
+      {tCrossborder("deposit.bitcoinvn.kyc.button")}
+    </Link>
+  </div>
+  )
+
   // ################
   // # Render Logic #
   // ################
 
-  return state === "loading"
+  return user.bitcoinVNStatus !== "verified"
+    ? renderUnverified() 
+    : state === "loading"
     ? renderLoading()
     : state === "error"
     ? renderError()

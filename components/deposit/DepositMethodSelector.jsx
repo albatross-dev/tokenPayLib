@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "@/tokenPayLib/utilities/partner/bitcoinvn";
 import { sendErrorReport } from "@/context/UserContext";
 import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
+import { getSwyptQuote } from "../crossborder/methods/SwyptQuote"; // Ensure this path is correct
 
 export default function DepositMethodSelector({
   methods,
@@ -19,8 +20,11 @@ export default function DepositMethodSelector({
   startCurrency,
   endCurrency,
 }) {
+  // Keep 't' from common if needed for other translations like modality names
   const { t } = useTranslation("common");
-  const [loading, setLoading] = useState(true);
+  // Get tCrossborder for specific component texts
+  const { t: tCrossborder } = useTranslation("crossborder");
+  const [loading, setLoading] = useState(false); // Start not loading until amount > 0
   const [modalityMethodMap, setModalityMethodMap] = useState(null);
   const [error, setError] = useState(null);
 
@@ -29,307 +33,379 @@ export default function DepositMethodSelector({
   // ###################
 
   const fetchExchangeRate = useCallback(
-    async (startCurrency, endCurrency) => {
+    async (startCurrency, endCurrencyCode) => {
+      // Renamed endCurrency parameter to endCurrencyCode for clarity
       try {
         const response = await axios.post(`/api/fiatTransaction/exchangeRate`, {
           startCurrency,
-          endCurrency,
+          endCurrency: endCurrencyCode, // Use the code here
         });
 
         return response.data.rate;
       } catch (error) {
-        sendErrorReport("DepositMethodSelector - Fetching exchange rate failed", error);
+        sendErrorReport(
+          "DepositMethodSelector - Fetching exchange rate failed",
+          error
+        );
         console.error("Error fetching exchange rate:", error);
         return null;
       }
     },
-    [startCurrency, endCurrency]
+    [] // Dependencies removed as start/end currency codes are passed directly now
   );
 
   useEffect(() => {
     const update = async () => {
       setLoading(true);
+      setError(null); // Reset error on new update
       setSelectedMethod(null);
+      setModalityMethodMap(null); // Clear previous map
+
+      const endCurrencyCode = getFiatCurrencyCode(endCurrency); // Get code once
 
       // Fetch the current exchange rate
-      const exchangeRate = await fetchExchangeRate(
-        startCurrency,
-        getFiatCurrencyCode(endCurrency)
-      );
+      const exchangeRate = await fetchExchangeRate(startCurrency, endCurrencyCode);
 
       if (!exchangeRate) {
-        setError("Failed to get exchange rates");
+        setError(tCrossborder("deposit.depositmethodselector.errorExchangeRate")); // Use translation key
         setLoading(false);
         return;
       }
 
       const sortedMethods = {};
+      // Use optional chaining in case methods is null/undefined
+      let filledInPartners = duplicateByPaymentModality(
+        methods || [], // Ensure methods is an array
+        "onrampModality"
+      );
 
-      let filledInPartners = duplicateByPaymentModality(methods, "onrampModality");
+      // Use Promise.all to fetch quotes concurrently
+      const methodPromises = filledInPartners.map(async (method) => {
+        let predictedOnrampAmount = 0;
+        let minAmount = method.onrampMinAmount;
+        let maxAmount = method.onrampMaxAmount;
+        let apiError = null; // Track API errors per method
 
-      for (let method of filledInPartners) {
-        // If the onramp modality is not yet available in the sorted methods add its entry
-        if (!sortedMethods[method.onrampModality]) {
-          sortedMethods[method.onrampModality] = {
+        try { // Wrap API calls in try-catch
+          switch (method.type) {
+            case "swypt":
+              if (amount >= minAmount && amount <= maxAmount) {
+
+                console.log("Fetching Swypt data with", startCurrency, );
+                const swyptQuoteRes = await getSwyptQuote(
+                  amount,
+                  startCurrency,
+                  endCurrency, // Use code
+                  "Polygon", // Consider making chain dynamic if needed
+                  "onramp"
+                );
+
+                const swyptQuote = swyptQuoteRes?.data; // Use optional chaining
+
+                if (swyptQuote && swyptQuote.outputAmount) {
+                  predictedOnrampAmount =
+                    swyptQuote.outputAmount -
+                    swyptQuote.outputAmount * 0.004; // Assuming 0.4% fee post-quote
+                } else {
+                  // Fallback if quote fails or lacks data
+                  predictedOnrampAmount =
+                    amount * exchangeRate -
+                    amount * exchangeRate * (method.onrampFee / 100) - // Assuming onrampFee is percentage
+                    amount * exchangeRate * 0.004;
+                }
+              }
+              break;
+            case "bitcoin_vn": {
+              const bitcoinVNMeta = await getMetaData({
+                depositMethod: startCurrency,
+                settleMethod: endCurrency,
+              });
+
+              if (bitcoinVNMeta) {
+                 minAmount = bitcoinVNMeta.min; // Update method-specific limits
+                 maxAmount = bitcoinVNMeta.max;
+                 // Optionally update the method object itself if needed elsewhere:
+                 // method.onrampMinAmount = minAmount;
+                 // method.onrampMaxAmount = maxAmount;
+              }
+
+              if (amount >= minAmount && amount <= maxAmount) {
+                const bitcoinVNQoute = await getQuote({
+                  depositMethod: startCurrency,
+                  settleMethod: endCurrency,
+                  depositAmount: amount,
+                });
+
+                if (bitcoinVNQoute && bitcoinVNQoute.settleAmount) {
+                  predictedOnrampAmount =
+                    bitcoinVNQoute.settleAmount -
+                    bitcoinVNQoute.settleAmount * 0.004; // Assuming 0.4% fee post-quote
+                } else {
+                  // Fallback
+                   predictedOnrampAmount =
+                    amount * exchangeRate -
+                    amount * exchangeRate * (method.onrampFee / 100) - // Use configured fee
+                    amount * exchangeRate * 0.004;
+                }
+              }
+              break;
+            }
+            case "unlimit":
+            case "onramp_money": {
+              if (amount >= minAmount && amount <= maxAmount) {
+                 predictedOnrampAmount =
+                  amount * exchangeRate -
+                  amount * exchangeRate * (method.onrampFee / 100);
+              }
+              break;
+            }
+            default: {
+              if (amount >= minAmount && amount <= maxAmount) {
+                predictedOnrampAmount =
+                  amount * exchangeRate -
+                  amount * exchangeRate * 0.004 - // General fee assumption
+                  amount * exchangeRate * (method.onrampFee / 100); // Configured fee
+              }
+              break;
+            }
+          }
+        } catch(err) {
+            console.error(`Error processing method ${method.name} (${method.type}):`, err);
+            // Set a flag or specific value to indicate an error for this method's prediction
+            predictedOnrampAmount = -1; // Or some other indicator
+            apiError = tCrossborder("deposit.depositmethodselector.errorApiMethod", { methodType: method.type }); // Set specific error message
+        }
+
+        // Return processed data for aggregation
+        return {
+            ...method, // Keep original method data
+            predictedOnrampAmount,
+            onrampMinAmount: minAmount, // Ensure updated limits are returned
+            onrampMaxAmount: maxAmount,
+            apiError // Include potential error message
+        };
+      });
+
+      // Wait for all method processing to complete
+      const processedMethods = await Promise.all(methodPromises);
+
+      // Aggregate results into sortedMethods map
+      processedMethods.forEach((method) => {
+        if (!method) return; // Skip if something went wrong
+
+        const modality = method.onrampModality;
+        if (!sortedMethods[modality]) {
+          sortedMethods[modality] = {
             methods: [],
             cheapestMethod: null,
             nextLowerLimitMethod: null,
             nextMethodWithLimit: null,
+            hasApiError: false, // Flag if any method in modality failed
           };
         }
 
-        // Calculate predicted deposit amount for the method
-        switch (method.type) {
-          case "bitcoin_vn": {
-            // Get bitcoinvn min and max onramp amount
-            const bitcoinVNMeta = await getMetaData({
-              depositMethod: startCurrency,
-              settleMethod: endCurrency,
+        // Add the processed method
+        sortedMethods[modality].methods.push(method);
+        if (method.apiError) {
+            sortedMethods[modality].hasApiError = true; // Mark modality if any method had API error
+        }
+
+         // Logic to determine cheapest, next lower, next higher
+         // Run this *after* all methods for a modality are collected
+      });
+
+       // --- Refined Logic to find cheapest/next after processing all methods ---
+       for (const modality in sortedMethods) {
+            let cheapest = null;
+            let nextLower = null;
+            let nextHigher = null;
+
+            sortedMethods[modality].methods.forEach(method => {
+                 // Skip methods that had an API error during quote fetch
+                if (method.apiError) return;
+
+                // Check for Cheapest (positive prediction, within limits implicitly checked by prediction > 0)
+                if (method.predictedOnrampAmount > 0) {
+                    if (!cheapest || method.predictedOnrampAmount > cheapest.predictedOnrampAmount) {
+                        cheapest = method;
+                    }
+                } else { // predictedOnrampAmount <= 0 or -1 (API error handled above)
+                    // Check for Next Higher Limit (amount is BELOW min)
+                    if (amount < method.onrampMinAmount) {
+                       if (!nextHigher || method.onrampMinAmount < nextHigher.onrampMinAmount) {
+                            // Find the one with the *lowest* minimum amount above the current amount
+                           nextHigher = method;
+                       }
+                    }
+                    // Check for Next Lower Limit (amount is ABOVE max)
+                    else if (amount > method.onrampMaxAmount) {
+                        if (!nextLower || method.onrampMaxAmount > nextLower.onrampMaxAmount) {
+                            // Find the one with the *highest* maximum amount below the current amount
+                           nextLower = method;
+                        }
+                    }
+                }
             });
 
-            // If a min and max was received use it for this method
-            if (bitcoinVNMeta) {
-              const { min, max } = bitcoinVNMeta;
-              method.onrampMinAmount = min;
-              method.onrampMaxAmount = max;
-            }
+            sortedMethods[modality].cheapestMethod = cheapest;
+            sortedMethods[modality].nextLowerLimitMethod = nextLower;
+            sortedMethods[modality].nextMethodWithLimit = nextHigher; // Renamed for clarity (next higher limit needed)
+       }
+       // --- End Refined Logic ---
 
-            // If the amount is in the range of min and max
-            //  request a quote for the amount
-            if (
-              amount >= method.onrampMinAmount &&
-              amount <= method.onrampMaxAmount
-            ) {
-              const bitcoinVNQoute = await getQuote({
-                depositMethod: startCurrency,
-                settleMethod: endCurrency,
-                depositAmount: amount,
-              });
-              console.log(
-                "(DepositMethodSelector) bitcoinVNQoute: ",
-                bitcoinVNQoute
-              );
-
-              if (bitcoinVNQoute) {
-                // If a qoute was received use it to predict the onramp amount
-                method.predictedOnrampAmount =
-                  bitcoinVNQoute.settleAmount -
-                  bitcoinVNQoute.settleAmount * 0.004;
-              } else {
-                // If no qoute was received use the retrieved exchange rate
-                //  and the configured fee to predict the onramp amount
-                method.predictedOnrampAmount =
-                  amount * exchangeRate -
-                  amount * exchangeRate * method.onrampFee -
-                  amount * exchangeRate * 0.004;
-              }
-            } else {
-              // If the given amount is not in
-              //  the range of min and max set the prediction to 0
-              method.predictedOnrampAmount = 0;
-            }
-
-            break;
-          }
-          case "unlimit":
-          case "onramp_money": {
-            if (
-              amount < method.onrampMinAmount ||
-              amount > method.onrampMaxAmount
-            ) {
-              method.predictedOnrampAmount = 0;
-            } else {
-              method.predictedOnrampAmount =
-                amount * exchangeRate -
-                amount * exchangeRate * (method.onrampFee / 100);
-            }
-
-            break;
-          }
-          default: {
-            if (
-              amount < method.onrampMinAmount ||
-              amount > method.onrampMaxAmount
-            ) {
-              method.predictedOnrampAmount = 0;
-            } else {
-              method.predictedOnrampAmount =
-                amount * exchangeRate -
-                amount * exchangeRate * 0.004 -
-                amount * exchangeRate * (method.onrampFee / 100);
-            }
-
-            break;
-          }
-        }
-
-        // Add the method to the modalitys list of methods
-        sortedMethods[method.onrampModality].methods.push(method);
-
-        if (method.predictedOnrampAmount > 0) {
-          // If there is no cheapest method or the predicted amount
-          //  of the cheapest method is smaller than the current
-          //  methods predicted amount set the current method as
-          //  the cheapest method.
-          if (
-            !sortedMethods[method.onrampModality].cheapestMethod ||
-            sortedMethods[method.onrampModality].cheapestMethod
-              .predictedOnrampAmount < method.predictedOnrampAmount
-          ) {
-            sortedMethods[method.onrampModality].cheapestMethod = method;
-          }
-        } else {
-          // If the predicted onramp amount is zero but the amount is
-          //  below the methods max onramp amount and there is no next
-          //  closest method min limit set or the min amount for this method
-          //  is below the current limit, set the current method as the next
-          //  closest limit.
-          if (
-            method.onrampMaxAmount >= amount &&
-            method.onrampMinAmount > amount &&
-            (!sortedMethods[method.onrampModality].nextMethodWithLimit ||
-              method.onrampMinAmount <
-                sortedMethods[method.onrampModality].nextMethodWithLimit)
-          ) {
-            sortedMethods[method.onrampModality].nextMethodWithLimit = method;
-          }
-
-          // If the amount is above the current methods max onramp amount
-          //  check if the current method represents the next closest max
-          //  amount that is below amount and set it as the next lower
-          //  limit if this is the case.
-          if (
-            method.onrampMaxAmount < amount &&
-            (!sortedMethods[method.onrampModality].nextLowerLimitMethod ||
-              sortedMethods[method.onrampModality].nextLowerLimitMethod
-                .onrampMaxAmount < method.onrampMaxAmount)
-          ) {
-            sortedMethods[method.onrampModality].nextLowerLimitMethod = method;
-          }
-        }
-      }
 
       setModalityMethodMap(sortedMethods);
       setLoading(false);
     };
 
-    if (amount > 0) {
+    if (amount > 0 && startCurrency && endCurrency) {
       update();
+    } else {
+      setLoading(false); // Ensure loading stops if amount is 0 or currencies missing
+      setModalityMethodMap(null); // Clear map if amount is 0
     }
-  }, [amount]);
+    // Dependencies adjusted: fetchExchangeRate is stable due to useCallback([])
+  }, [amount, startCurrency, endCurrency, fetchExchangeRate, setSelectedMethod, tCrossborder]); // Added tCrossborder
+
 
   // ####################
   // # Render Functions #
   // ####################
 
   const renderHeader = () => (
-    <h2 className='text-xl font-bold mb-2 mt-8'>Zahlungsmethode auswählen</h2>
+    <h2 className="text-xl font-bold mb-2 mt-8">
+      {tCrossborder("deposit.depositmethodselector.header")}
+    </h2>
   );
 
   const renderPromptEnterAmount = () => (
-    <div className='flex p-4 border w-full rounded'>
-      <div className='fex text-xl font-bold items-center gap-2 flex-1'>
-        <div className='text-sm px-2 rounded'>
-         Bitte wählen Sie einen Betrag aus
-        </div>
+    <div className="flex p-4 border w-full rounded items-center justify-between">
+      <div className="text-sm font-medium text-gray-700"> {/* Adjusted styling */}
+        {tCrossborder("deposit.depositmethodselector.promptEnterAmount")}
       </div>
-      <div className='flex flex-row items-center font-bold gap-6'>
-        <IoWarning className='text-gray-600' />
-      </div>
+      <IoWarning className="text-gray-500 text-xl" /> {/* Adjusted styling */}
     </div>
   );
 
   const renderLoading = () => (
     <div>
-      <div className='flex flex-col gap-2 justify-center items-center py-4 w-full'>
-        <div className='flex p-4 border w-full rounded'>
-          <div className='flex text-xl font-bold items-center gap-2 flex-1'>
-            <MiniLoader />
-            <div className='text-sm px-2 animate-pulse rounded bg-gray-200'>
-              Wir finden das beste Angebot für Sie
-            </div>
+      {/* Simplified loading indicator */}
+      <div className='flex p-4 border w-full rounded items-center gap-3'>
+          <MiniLoader />
+          <div className='text-sm text-gray-600'>
+           {tCrossborder("deposit.depositmethodselector.loadingMessage")}
           </div>
-          <div className='flex flex-row items-center font-bold gap-6'>
-            <div className='w-12 h-4 px-2 animate-pulse rounded bg-gray-200' />
-          </div>
-        </div>
       </div>
     </div>
   );
 
+   const renderError = () => (
+    <div className='flex p-4 border border-red-300 bg-red-50 w-full rounded items-center gap-3'>
+       <IoWarning className="text-red-500 text-xl" />
+       <div className='text-sm text-red-700 font-medium'>
+         {error || tCrossborder("deposit.depositmethodselector.errorGeneral")} {/* Display specific or general error */}
+       </div>
+   </div>
+   );
+
+
   const renderOnrampMethods = () => {
+    if (!modalityMethodMap || Object.keys(modalityMethodMap).length === 0) {
+      // Handle case where no methods are processed or available
+      return <div className="text-sm text-gray-500 mt-4">{tCrossborder("deposit.depositmethodselector.noMethodsConfigured")}</div>;
+    }
+
+    const endCurrencyCode = getFiatCurrencyCode(endCurrency); // Get code once for rendering
+    const endCurrencySymbol = getFiatCurrencySymbol(endCurrencyCode); // Get symbol once
+
     return Object.keys(modalityMethodMap).map((modality) => {
-      const { cheapestMethod, nextLowerLimitMethod, nextMethodWithLimit } =
-        modalityMethodMap[modality];
+      const {
+        cheapestMethod,
+        nextLowerLimitMethod,
+        nextMethodWithLimit, // This is the next *higher* limit
+        hasApiError, // Use the flag
+      } = modalityMethodMap[modality];
+
+      const isSelected = selectedMethod && selectedMethod.onrampModality === modality;
+      const canSelect = !!cheapestMethod; // Can only select if there's a valid cheapest method for the amount
+
+      // Calculate differences only if needed
+      const lowerLimitDiff = nextLowerLimitMethod
+        ? (amount - nextLowerLimitMethod.onrampMaxAmount)
+        : 0;
+      const higherLimitDiff = nextMethodWithLimit
+        ? (nextMethodWithLimit.onrampMinAmount - amount)
+        : 0;
 
       return (
-        <div className='bg-white w-full mt-4'>
+        <div key={modality} className="bg-white w-full mt-4">
           <div
-            onClick={() => cheapestMethod && setSelectedMethod(cheapestMethod)}
-            className={`border flex flex-row p-4 gap-2 items-center border-gray-200 rounded-md ${
-              selectedMethod && selectedMethod.onrampModality === modality
-                ? "bg-uhuBlue text-white"
-                : cheapestMethod
-                ? "text-gray-800 cursor-pointer"
-                : "text-gray-500 border-gray-200"
+            onClick={() => canSelect && setSelectedMethod(cheapestMethod)}
+            className={`border flex flex-col sm:flex-row p-4 gap-2 items-start sm:items-center border-gray-200 rounded-md transition-colors duration-150 ${
+              isSelected
+                ? "bg-uhuBlue text-white ring-2 ring-uhuBlue ring-offset-1" // Clearer selection
+                : canSelect
+                ? "text-gray-800 hover:bg-gray-100 cursor-pointer" // Hover only if selectable
+                : "text-gray-500 bg-gray-50 border-gray-200" // Visually distinct non-selectable
             }`}
+            aria-disabled={!canSelect}
+            role={canSelect ? "button" : undefined} // Role only if clickable
           >
+            {/* Modality Name */}
             <h3
-              className={`text-xl font-bold ${
-                !cheapestMethod && "text-gray-500"
+              className={`text-lg sm:text-xl font-bold flex-shrink-0 ${
+                !canSelect && "text-gray-400" // Dim name if not selectable
               }`}
             >
-              {t(modality)}
+              {t(modality)} {/* Assuming modality name comes from 'common' */}
             </h3>
 
-            {/* Cheapest Method for this modality*/}
-            {cheapestMethod ? (
-              <div className='flex flex-row justify-between items-center flex-grow'>
-                <div className='text-[9px] bg-uhuBlue text-white px-1 rounded'>
-                  via <span className='font-bold'>{cheapestMethod.name}</span>
+            {/* Details Section */}
+            <div className="flex flex-col items-start sm:items-end sm:text-right flex-grow w-full sm:w-auto">
+              {/* Cheapest Method Info */}
+              {cheapestMethod ? (
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-3 gap-y-1 w-full">
+                   <div className="text-xs bg-uhuBlue text-white px-1.5 py-0.5 rounded font-medium w-fit"> {/* Improved label */}
+                    {tCrossborder("deposit.depositmethodselector.viaLabel")}{" "}
+                    <span className='font-bold'>{cheapestMethod.name}</span>
+                   </div>
+                   <div className="text-sm sm:text-base">
+                    {tCrossborder("deposit.depositmethodselector.approxLabel")}{" "}
+                    <span className='font-bold'>
+                      {cheapestMethod.predictedOnrampAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 5 })} {/* Format number */}
+                      {" " + endCurrencySymbol}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                   ≈{" "}
-                  <span className='font-bold'>
-                    {cheapestMethod.predictedOnrampAmount.toFixed(5)}
-                    {" " +
-                      getFiatCurrencySymbol(getFiatCurrencyCode(endCurrency))}
-                  </span>
-                </div>
-              </div>
-            ) : error ? (
-              <div className='bg-gray-200 px-1 rounded text-sm'>
-                <p className='text-red-600 font-bold'>{error}</p>
-              </div>
-            ) : (
-              <div className='bg-gray-200 text-gray-500 px-1 rounded text-sm'>
-                Keine verfügbare Methode
-              </div>
-            )}
+              ) : hasApiError ? ( // Check if any method under this modality had API error
+                 <div className='bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded text-xs font-medium w-fit'>
+                    {tCrossborder("deposit.depositmethodselector.errorApiModality")}
+                 </div>
+              ) : ( // No cheapest and no specific API error flagged for modality
+                 <div className='bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded text-xs font-medium w-fit'>
+                   {tCrossborder("deposit.depositmethodselector.noMethodAvailable")}
+                 </div>
+              )}
+
+              {/* Limit Messages - shown only if there's NO cheapest method */}
+              {!cheapestMethod && nextLowerLimitMethod && (
+                <p className='text-xs text-red-600 mt-1 text-right w-full'>
+                  {tCrossborder("deposit.depositmethodselector.amountExceedsMaxBy", {
+                    difference: lowerLimitDiff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    currency: getFiatCurrencySymbol(startCurrency), // Use start currency symbol
+                  })}
+                </p>
+              )}
+              {!cheapestMethod && nextMethodWithLimit && (
+                <p className='text-xs text-blue-600 mt-1 text-right w-full'>
+                  {tCrossborder("deposit.depositmethodselector.amountUntilNextMethod", {
+                    difference: higherLimitDiff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    currency: getFiatCurrencySymbol(startCurrency), // Use start currency symbol
+                  })}
+                </p>
+              )}
+            </div> {/* End Details Section */}
           </div>
-
-          {/* If the amount is bigger than the highest amount display the difference */}
-          {!cheapestMethod && nextLowerLimitMethod && (
-            <p className='flex flex-row items-center justify-end text-sm'>
-              Ihr gewählter Betrag übersteigt den maximal Betrag um&nbsp;
-              <span className='font-bold text-red-600'>
-                {amount - nextLowerLimitMethod.onrampMaxAmount}&nbsp;
-                {getFiatCurrencySymbol(startCurrency)}
-              </span>
-            </p>
-          )}
-
-          {/* Display next higher method limit */}
-          {nextMethodWithLimit && (
-            <p className='flex flex-row items-center justify-end text-sm'>
-              Noch&nbsp;
-              <span className='text-uhuBlue font-bold'>
-                {nextMethodWithLimit.onrampMinAmount - amount}&nbsp;
-                {getFiatCurrencySymbol(startCurrency)}
-              </span>
-              &nbsp;bis zur nächsten Methode
-            </p>
-          )}
         </div>
       );
     });
@@ -340,12 +416,14 @@ export default function DepositMethodSelector({
   // ################
 
   return (
-    <div>
+    <div className="w-full"> {/* Ensure component takes full width */}
       {renderHeader()}
       {amount <= 0
         ? renderPromptEnterAmount()
         : loading
         ? renderLoading()
+        : error // Check for global errors first (e.g., exchange rate)
+        ? renderError()
         : renderOnrampMethods()}
     </div>
   );

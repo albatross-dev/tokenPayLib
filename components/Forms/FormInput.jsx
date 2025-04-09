@@ -124,6 +124,7 @@ const FormInput = React.forwardRef((props, ref) => {
                                     countries={props.options} // Assuming field.options contains the countries
                                     selectedCountry={value}
                                     onlyIso={props.onlyIso}
+                                    validCountries={props.validCountries}
                                     onSelect={(country) => {console.log("country",country);onChange(country)}}
                                     disabled={props.disabled}
                                 />
