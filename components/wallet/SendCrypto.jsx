@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import numberWithZeros from "@/utilities/numberWithZeros";
+import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import axios from "axios";
 import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import SimpleList from "@/tokenPayLib/components/UI/SimpleList";
@@ -14,6 +14,7 @@ import { getSendCryptoColumns } from "./sendCryptoColumns";
 import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
 import SendCryptoDialog from "./SendCryptoDialog";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
+import { useUhuConfig } from "../contexts/UhuConfigContext";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,

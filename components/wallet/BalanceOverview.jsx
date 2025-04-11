@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { formatNumberWithCurrency } from "@/utilities/currencies";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
-import numberWithZeros from "@/utilities/numberWithZeros";
+import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import Image from "next/image";
 
 import { createThirdwebClient, getContract, readContract } from "thirdweb";

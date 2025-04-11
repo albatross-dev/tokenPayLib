@@ -7,7 +7,7 @@ import Loader from "@/tokenPayLib/components/UI/Loader";
 import { useActiveAccount } from "thirdweb/react";
 import currencies, { formatCrypto } from "@/utilities/currencies";
 import { polygon } from "thirdweb/chains";
-import numberWithZeros from "@/utilities/numberWithZeros";
+import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import axios from "axios";
 import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
 import fetchBalance from "@/tokenPayLib/utilities/crypto/fetchBalance";

@@ -17,7 +17,7 @@ import Image from "next/image";
 import TransferPanel from "@/tokenPayLib/components/crossborder/TransferPanel";
 import FiatReceivingSelector from "@/tokenPayLib/components/crossborder/FiatReceivingSelector";
 import FiatBalanceSelector from "@/tokenPayLib/components/crossborder/FiatBalanceSelector";
-import Maintainance from "@/tokenPayLib/components/UI/Maintainance";
+import Maintenance from "@/tokenPayLib/components/UI/Maintenance";
 import { FIAT_INFO_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import Banner from "../UI/Banner";
 
@@ -452,7 +452,7 @@ export default function WithdrawPage({ maintenance }) {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.withdraw?.page && <Maintainance></Maintainance>}
+          {maintenance?.withdraw?.page && <Maintenance></Maintenance>}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader></Loader>
