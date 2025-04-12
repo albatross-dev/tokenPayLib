@@ -1,10 +1,14 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-export default function TransactionManual() {
+interface TransactionManualProps {
+  handleNewTransaction: () => void;
+}
+
+export default function TransactionManual({ handleNewTransaction }: TransactionManualProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  <div className="flex flex-col items-center justify-center mt-8 gap-2">
+  return <div className="flex flex-col items-center justify-center mt-8 gap-2">
     <div className="font-bold">
       {tCrossborder("withdraw.otcStates.manuelInfo")}
     </div>

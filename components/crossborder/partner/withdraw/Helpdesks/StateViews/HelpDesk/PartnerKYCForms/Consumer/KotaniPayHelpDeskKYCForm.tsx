@@ -1,58 +1,11 @@
-import FieldRenderer from "@/tokenPayLib/components/Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
-import { AuthContext } from "@/context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
-
-interface FormFieldBase {
-  name?: string;
-  label?: string;
-  type?: string;
-  required?: boolean;
-  disabled?: boolean;
-  width?: string;
-}
-
-interface FormFieldUI {
-  type: "ui";
-  content: React.ReactNode;
-}
-
-interface FormFieldArray {
-  type: "array";
-  name: string;
-  label: string;
-  newLabel: string;
-  removeLabel: string;
-  fields: FormFieldBase[];
-}
-
-interface FormFieldRow {
-  type: "row";
-  fields: FormFieldBase[];
-}
-
-interface FormFieldCustom {
-  type: "custom";
-  name: string;
-  label: string;
-  content: (methods: UseFormReturn) => React.ReactNode;
-}
-
-interface FormFieldCheckbox {
-  type: "checkbox";
-  name: string;
-  label: string;
-}
-
-interface FormFieldCountry extends FormFieldBase {
-  type: "country";
-  onlyIso: boolean;
-}
-
-type FormField = FormFieldBase | FormFieldUI | FormFieldArray | FormFieldRow | FormFieldCustom | FormFieldCheckbox | FormFieldCountry;
+import { FormField } from "../../../../../../../../Forms/types";
+import { AuthContext } from "../../../../../../../../../../context/UserContext";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 
 interface KotaniPayHelpDeskKYCFormProps {
   setValue: UseFormSetValue<any>;
@@ -96,6 +49,7 @@ export default function KotaniPayHelpDeskKYCFormConsumer({ setValue, methods }: 
           width: "w-1/2",
         },
         {
+          type: "text",
           name: "surname",
           label: tCrossborder("withdraw.helpDeskKYC.kotanipay.representativeSurname"),
           required: false,

@@ -1,7 +1,11 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-export default function TransactionDone({ handleNewTransaction }) {
+interface TransactionDoneProps {
+  handleNewTransaction: () => void;
+}
+
+export default function TransactionDone({ handleNewTransaction }: TransactionDoneProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   return (

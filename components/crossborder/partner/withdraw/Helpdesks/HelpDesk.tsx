@@ -1,4 +1,3 @@
-import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import React, { useContext, useEffect, useState } from "react";
 import TransactionNone from "./StateViews/Transaction/TransactionNone";
 import TransactionStarted from "./StateViews/Transaction/TransactionStarted";
@@ -12,49 +11,54 @@ import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestE
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
 import axios from "axios";
-import currencies from "@/tokenPayLib/utilities/crypto/currencies";
-import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
-import { client } from "@/pages/_app";
+import { client } from "../../../../../../pages/_app";
 import { polygon } from "thirdweb/chains";
-import preprocessDataForServer from "@/tokenPayLib/utilities/forms/preprocessData";
-import getFormData from "@/tokenPayLib/utilities/forms/getFormData";
 import { useTranslation } from "next-i18next";
+import { DeskState, HelpDeskProps, TransactionState } from "./types";
+import { AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
+import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
+import currencies from "../../../../../utilities/crypto/currencies";
+import getFormData from "../../../../../utilities/forms/getFormData";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../../assets/TokenPayAbstraction";
+import { FiatTransaction } from "../../../../../types/payload-types";
+import { ErrorMessage } from "../../../../../types/errorMessage.types";
+import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 
-const DESK_STATE_LOADING = "loading";
-const DESK_STATE_ONGOING = "ongoing";
-const DESK_STATE_UNVERIFIED = "unverified";
-const DESK_STATE_VERIFIED = "verified";
-const DESK_STATE_VERIFICATION_REQUESTED = "in_progress";
-const DESK_STATE_FAILED = "verificationRequestError";
+const DESK_STATE_LOADING: DeskState = "loading";
+const DESK_STATE_ONGOING: DeskState = "ongoing";
+const DESK_STATE_UNVERIFIED: DeskState = "unverified";
+const DESK_STATE_VERIFIED: DeskState = "verified";
+const DESK_STATE_VERIFICATION_REQUESTED: DeskState = "in_progress";
+const DESK_STATE_FAILED: DeskState = "verificationRequestError";
 
-const TRANSACTION_STATE_STARTED = "started";
-const TRANSACTION_STATE_PENDING = "pending";
-const TRANSACTION_STATE_DONE = "done";
-const TRANSACTION_STATE_MANUEL = "manuel";
-const TRANSACTION_STATE_PAYMENT_PENDING = "paymentPending";
+const TRANSACTION_STATE_STARTED: TransactionState = "started";
+const TRANSACTION_STATE_PENDING: TransactionState = "pending";
+const TRANSACTION_STATE_DONE: TransactionState = "done";
+const TRANSACTION_STATE_MANUEL: TransactionState = "manuel";
+const TRANSACTION_STATE_PAYMENT_PENDING: TransactionState = "paymentPending";
 
-export default function HelpDesk({ country, amount, account, method }) {
+const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method }) => {
   const { user, refreshAuthentication } = useContext(AuthContext);
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
   // state for the helpdesk request form
-  const [state, setState] = useState(DESK_STATE_LOADING);
+  const [state, setState] = useState<DeskState>(DESK_STATE_LOADING);
 
   // state for an ongoing transaction
-  const [transaction, setTransaction] = useState(null);
+  const [transaction, setTransaction] = useState<FiatTransaction | null>(null);
 
   // error for the helpdesk request form
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // error message for the payment
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
 
   // state for the transaction details textarea
   const [textareaContent, setTextareaContent] = useState("");
 
   // state for tracking the payment progress
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
 
   // state should update
   const [shouldUpdate, setShouldUpdate] = useState(true);
@@ -62,18 +66,16 @@ export default function HelpDesk({ country, amount, account, method }) {
   // set the correct state based on the user's verification status
   // and or ongoing transactions
   useEffect(() => {
-    if(!shouldUpdate){
+    if (!shouldUpdate) {
       return;
     }
     switch (method?.type) {
       case "ovex":
         if (user?.currentOvexTransaction) {
-          console.log("setState", DESK_STATE_ONGOING);
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentOvexTransaction);
         } else {
-          console.log("setState", user?.ovexState);
-          setState(user?.ovexState);
+          setState(user?.ovexState as DeskState);
         }
         break;
       case "bitcoin_vn_helpdesk":
@@ -81,7 +83,7 @@ export default function HelpDesk({ country, amount, account, method }) {
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentBitcoinVNHelpdeskTransaction);
         } else {
-          setState(user?.bitcoinVNHelpdeskState);
+          setState(user?.bitcoinVNHelpdeskState as DeskState);
         }
         break;
       case "koywe_helpdesk":
@@ -89,7 +91,7 @@ export default function HelpDesk({ country, amount, account, method }) {
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentKoyweHelpdeskTransaction);
         } else {
-          setState(user?.koyweHelpdeskState);
+          setState(user?.koyweHelpdeskState as DeskState);
         }
         break;
       case "kotanipay_helpdesk":
@@ -97,7 +99,7 @@ export default function HelpDesk({ country, amount, account, method }) {
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentKotaniPayHelpdeskTransaction);
         } else {
-          setState(user?.kotaniPayHelpdeskState);
+          setState(user?.kotaniPayHelpdeskState as DeskState);
         }
         break;
       case "coinhako_helpdesk":
@@ -105,7 +107,7 @@ export default function HelpDesk({ country, amount, account, method }) {
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentCoinhakoHelpdeskTransaction);
         } else {
-          setState(user?.coinhakoHelpdeskState);
+          setState(user?.coinhakoHelpdeskState as DeskState);
         }
         break;
       case "roma":
@@ -113,13 +115,12 @@ export default function HelpDesk({ country, amount, account, method }) {
           setState(DESK_STATE_ONGOING);
           setTransaction(user?.currentRomaTransaction);
         } else {
-          setState(user?.romaState);
+          setState(user?.romaState as DeskState);
         }
         break;
       default:
         break;
     }
-    console.log("user changed");
   }, [user]);
 
   useEffect(() => {
@@ -128,16 +129,10 @@ export default function HelpDesk({ country, amount, account, method }) {
     return () => clearInterval(interval);
   }, []);
 
-  // ! ||--------------------------------------------------------------------------------||
-  // ! ||                                Help desk actions                               ||
-  // ! ||--------------------------------------------------------------------------------||
-
   /**
    * Handle the verification request for the helpdesk
    */
-  async function handleVerificationRequest(data) {
-    console.log("verification request");
-    console.log("setState", DESK_STATE_LOADING);
+  async function handleVerificationRequest(data: Record<string, any>) {
     setShouldUpdate(false);
     setState(DESK_STATE_LOADING);
     try {
@@ -145,43 +140,33 @@ export default function HelpDesk({ country, amount, account, method }) {
         const processedData = preprocessDataForServer(data);
         const formData = getFormData(processedData);
 
-        let patchRes = await axios.patch(`/api/${user.type}/${user.id}`, formData, {
+        await axios.patch(`/api/${user!.type}/${user!.id}`, formData, {
           headers: { "Content-Type": undefined },
         });
-        console.log("patchRes", patchRes);
 
         setShouldUpdate(true);
-
       } catch (e) {
         sendErrorReport("HelpDesk - Verification request failed patch user", e);
         console.error(e);
-        console.log("setState", DESK_STATE_FAILED);
         setState(DESK_STATE_FAILED);
         return;
       }
 
-      let sendData = {
+      const sendData = {
         partnerType: method.type,
       };
-      await axios.post(
-        "/api/fiatTransaction/helpDeskVerificationRequest",
-        sendData
-      );
+      await axios.post("/api/fiatTransaction/helpDeskVerificationRequest", sendData);
       refreshAuthentication();
-      console.log("setState", DESK_STATE_VERIFICATION_REQUESTED);
       setState(DESK_STATE_VERIFICATION_REQUESTED);
     } catch (e) {
       sendErrorReport("HelpDesk - Verification request failed custom endpoint", e);
       console.error(e);
-      console.log("setState", DESK_STATE_FAILED);
       setState(DESK_STATE_FAILED);
     }
   }
 
   /**
    * Handle the start of a transaction
-   * This will send the transaction details to the server
-   * and start the transaction
    */
   async function handleStartTransaction() {
     if (!textareaContent.trim()) {
@@ -189,28 +174,27 @@ export default function HelpDesk({ country, amount, account, method }) {
       return;
     }
 
-    setError(""); // Clear any previous error messages
-    console.log("setState", DESK_STATE_LOADING);
-    setState("loading");
+    setError(null);
+    setState(DESK_STATE_LOADING);
     try {
       await axios.post("/api/fiatTransaction/helpDeskRequest", {
         partnerType: method.type,
         currencyName: country.preferredStableCoin,
         currency: country.preferredStableCoin,
         currencyDecimals: currencies[country.preferredStableCoin].decimals,
-        finalCurrency: country.currency,
+        finalCurrency: country.countryInfo.currency,
         amount: amount,
         country: country.countryCode,
         fromCountry: user?.vendorCountry || user?.country,
         transactionDetails: textareaContent,
       });
-      setState("ongoing");
+      setState(DESK_STATE_ONGOING);
 
       refreshAuthentication();
     } catch (e) {
       sendErrorReport("HelpDesk - Start transaction failed", e);
       console.error(e);
-      setState("verificationRequestError");
+      setState(DESK_STATE_FAILED);
     }
   }
 
@@ -222,28 +206,24 @@ export default function HelpDesk({ country, amount, account, method }) {
       setIsLoading("processing");
       const acceptedCrypto = currencies[method.acceptedCrypto];
       const amountWithDecimals = amount * Math.pow(10, acceptedCrypto.decimals);
-      console.log("amountWithDecimals", amount);
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
         account,
         polygon,
-        amountWithDecimals,
+        BigInt(amountWithDecimals),
         acceptedCrypto,
-        transaction.burnAddress
+        transaction!.burnAddress
       );
 
       await axios.post("/api/fiatTransaction/paymentUpdate", {
         transaction: transaction,
         transactionHash: transactionHash,
       });
-
-      console.log("transactionHash", transactionHash);
     } catch (error) {
       sendErrorReport("HelpDesk - Send payment failed", error);
-      console.log("error handle send", error);
       setErrorMessage({
         message: tCrossborder("withdraw.helpDesk.errorTryLater"),
-        error: error,
+        error: error as Error,
       });
       setIsLoading("error");
       setTimeout(() => {
@@ -263,12 +243,8 @@ export default function HelpDesk({ country, amount, account, method }) {
     <div className="mb-16">
       {state === DESK_STATE_ONGOING && transaction && (
         <>
-          {transaction.status === TRANSACTION_STATE_STARTED && (
-            <TransactionStarted />
-          )}
-          {transaction.status === TRANSACTION_STATE_PENDING && (
-            <TransactionPending />
-          )}
+          {transaction.status === TRANSACTION_STATE_STARTED && <TransactionStarted />}
+          {transaction.status === TRANSACTION_STATE_PENDING && <TransactionPending />}
           {transaction.status === TRANSACTION_STATE_PAYMENT_PENDING && (
             <TransactionPaymentPending
               handleSend={handleSend}
@@ -277,20 +253,13 @@ export default function HelpDesk({ country, amount, account, method }) {
               errorMessage={errorMessage}
             />
           )}
-          {transaction.status === TRANSACTION_STATE_DONE && <TransactionDone />}
-          {transaction.status === TRANSACTION_STATE_MANUEL && (
-            <TransactionManual />
-          )}
-          {transaction === null && (
-            <TransactionNone handleNewTransaction={handleNewTransaction} />
-          )}
+          {transaction.status === TRANSACTION_STATE_DONE && <TransactionDone handleNewTransaction={handleNewTransaction} />}
+          {transaction.status === TRANSACTION_STATE_MANUEL && <TransactionManual handleNewTransaction={handleNewTransaction} />}
+          {transaction === null && <TransactionNone />}
         </>
       )}
       {state === DESK_STATE_UNVERIFIED && (
-        <HelpDeskVerificationForm
-          method={method}
-          handleVerificationRequest={handleVerificationRequest}
-        />
+        <HelpDeskVerificationForm method={method} handleVerificationRequest={handleVerificationRequest} />
       )}
       {state === DESK_STATE_VERIFIED && (
         <HelpDeskRequestForm
@@ -300,11 +269,11 @@ export default function HelpDesk({ country, amount, account, method }) {
           handleStartTransaction={handleStartTransaction}
         />
       )}
-      {state === DESK_STATE_VERIFICATION_REQUESTED && (
-        <VerificationInProgress />
-      )}
+      {state === DESK_STATE_VERIFICATION_REQUESTED && <VerificationInProgress />}
       {state === DESK_STATE_LOADING && <LoadingHelpDesk />}
       {state === DESK_STATE_FAILED && <VerificationRequestError />}
     </div>
   );
-}
+};
+
+export default HelpDesk; 

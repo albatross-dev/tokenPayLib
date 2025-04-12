@@ -1,14 +1,22 @@
-import FieldRenderer from "@/tokenPayLib/components/Forms/FieldRenderer";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
+import { UseFormReturn } from "react-hook-form";
+import { UseFormSetValue } from "react-hook-form";
+import { FormField } from "../../../../../../../../Forms/types";
 
 
 let formDataPreloaded = false;
 
-export default function OvexKYCForm({ setValue, methods }) {
+interface OvexKYCFormProps {
+  setValue: UseFormSetValue<any>;
+  methods: UseFormReturn;
+}
+
+export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -29,7 +37,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
     }
   }, [user]);
 
-  const ovexB2BKYCInfo = [
+  const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
       content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}</div>,

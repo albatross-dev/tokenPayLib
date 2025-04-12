@@ -1,6 +1,6 @@
-import formatDateForInput from "@/tokenPayLib/utilities/forms/formatDateForInput";
 import { UseFormSetValue, Path } from "react-hook-form";
-import { Consumer, Vendor } from "../../../../../../../../../types/payload-types";
+import { Consumer, User, Vendor } from "../../../../../../../../../types/payload-types";
+import formatDateForInput from "../../../../../../../../../utilities/forms/formatDateForInput";
 
 // Recursive function to preprocess and set values in nested data structures
 const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, setValue: UseFormSetValue<T>): void => {
@@ -33,7 +33,7 @@ const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, se
         if (typeof value === "string" && !isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
           const formattedDate = formatDateForInput(value);
           console.log("formattedDate", key, value, formattedDate);
-          setValue(fullKey as Path<T>, formattedDate);
+          setValue(fullKey as Path<T>, formattedDate as any);
         } else {
           // Set the value normally for non-date fields
           setValue(fullKey as Path<T>, value as any);

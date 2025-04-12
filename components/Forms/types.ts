@@ -7,16 +7,21 @@ import { FiatInfo } from "../../utilities/stableCoinsMaps";
 // Base field interface that all field types will extend
 export interface BaseFieldProps {
   name?: string;
+  type: string;
+  content?: React.ReactNode | ((methods: UseFormReturn) => React.ReactNode);
+  fields?: FormField[];
   label?: string;
-  required?: boolean;
-  disabled?: boolean;
+  required?: boolean | ((methods: UseFormReturn) => boolean);
+  disabled?: boolean | ((methods: UseFormReturn) => boolean);
   explanation?: string;
-  visible?: boolean;
+  visible?: boolean | ((methods: UseFormReturn) => boolean);
   validation?: Record<string, any>;
   defaultValue?: any;
   width?: string | number;
   placeholder?: string;
   control?: Control;
+  newLabel?: string;
+  removeLabel?: string;
 }
 
 // Class override types for styling
@@ -51,7 +56,6 @@ export interface FormInputProps extends BaseFieldProps {
   className?: string;
   classOverrides?: ClassOverrides;
   error?: string;
-  fields?: FormField[];
 }
 
 // Field renderer types
@@ -68,7 +72,6 @@ export type FormField =
 
 export interface ArrayFieldProps {
   field: FormField;
-  
   methods: UseFormReturn;
   parentName: string;
 }

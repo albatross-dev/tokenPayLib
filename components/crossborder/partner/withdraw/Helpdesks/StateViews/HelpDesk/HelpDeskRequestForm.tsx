@@ -1,7 +1,14 @@
 import { useTranslation } from 'next-i18next';
 import React from 'react'
 
-export default function HelpDeskRequestForm({textareaContent, error, setTextareaContent, handleStartTransaction}) {
+interface HelpDeskRequestFormProps {  
+  textareaContent: string;
+  error: string | null;
+  setTextareaContent: (value: string) => void;
+  handleStartTransaction: () => void;
+}
+
+export default function HelpDeskRequestForm({textareaContent, error, setTextareaContent, handleStartTransaction}: HelpDeskRequestFormProps) {
 
   const { t: tCrossborder } = useTranslation("crossborder");
   

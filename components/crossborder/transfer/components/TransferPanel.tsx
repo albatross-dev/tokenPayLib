@@ -64,7 +64,6 @@ export default function TransferPanel({
           account={account}
           user={user}
           method={selectedMethod}
-          country={selectedCountry}
         />
       );
     case "bitcoin_vn_helpdesk":
@@ -87,7 +86,6 @@ export default function TransferPanel({
           account={account}
           user={user}
           preferredStableCoin={preferredStableCoin}
-          method={selectedMethod}
         />
       );
     case "stasis_crypto_only":
@@ -96,7 +94,6 @@ export default function TransferPanel({
           amount={amount}
           country={selectedCountry}
           method={selectedMethod}
-          preferredStableCoin={preferredStableCoin}
         />
       );
     case "koywe_crypto_only":
@@ -104,6 +101,7 @@ export default function TransferPanel({
         <CryptoPartner
           amount={amount}
           country={selectedCountry}
+          method={selectedMethod}
         />
       );
     case "koywe":

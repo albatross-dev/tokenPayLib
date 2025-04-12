@@ -1,7 +1,7 @@
-import buildPopover from "@/tokenPayLib/components/UI/buildPopover";
 import React from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import buildPopover from "../../../../../../../../UI/buildPopover";
 
 interface AcceptTermsCheckboxProps {
   methods: UseFormReturn<any>;
@@ -58,7 +58,7 @@ export default function AcceptTermsCheckbox({ methods, partnerTerms, partnerName
           >
             {tCrossborder("withdraw.helpDeskKYC.acceptTerms.tokenPayTermsLabel")}
           </a>{" "}
-          {tCrossborder("withdraw.helpDeskKYC.acceptTerms.paragraphReference")} <InformationPopover />
+          {tCrossborder("withdraw.helpDeskKYC.acceptTerms.paragraphReference")} <InformationPopover t={tCrossborder} />
         </div>
       </label>
       {methods.formState.errors.acceptTerms && (

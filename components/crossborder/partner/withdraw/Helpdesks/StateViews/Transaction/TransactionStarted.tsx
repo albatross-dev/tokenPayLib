@@ -1,6 +1,6 @@
-import Loader from '@/tokenPayLib/components/UI/Loader';
 import { useTranslation } from 'next-i18next';
 import React from 'react'
+import Loader from '../../../../../../UI/Loader';
 
 export default function TransactionStarted() {
 

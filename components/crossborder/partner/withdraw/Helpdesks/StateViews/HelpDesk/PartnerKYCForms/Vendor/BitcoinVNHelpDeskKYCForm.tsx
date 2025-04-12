@@ -1,14 +1,21 @@
-import FieldRenderer from "@/tokenPayLib/components/Forms/FieldRenderer";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { AuthContext } from "@/context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
-
+import { FormField } from "../../../../../../../../Forms/types";
+import { UseFormReturn } from "react-hook-form";
+import { UseFormSetValue } from "react-hook-form";
+import { AuthContext } from "../../../../../../../../../../context/UserContext";
 let formDataPreloaded = false;
 
-export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }) {
+interface BitcoinVNHelpDeskKYCFormProps {
+  setValue: UseFormSetValue<any>;
+  methods: UseFormReturn;
+}
+
+export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinVNHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -27,7 +34,7 @@ export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }) {
     }
   }, [user]);
 
-  const ovexB2BKYCInfo = [
+  const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
       content: (

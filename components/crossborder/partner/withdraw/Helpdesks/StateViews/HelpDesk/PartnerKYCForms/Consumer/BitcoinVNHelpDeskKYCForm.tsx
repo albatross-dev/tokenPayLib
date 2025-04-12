@@ -4,22 +4,9 @@ import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
+import { FormField } from "../../../../../../../../Forms/types";
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 
-interface FormField {
-  type: "ui" | "array" | "custom";
-  content?: React.ReactNode | ((methods: UseFormReturn) => React.ReactNode);
-  name?: string;
-  label?: string;
-  newLabel?: string;
-  removeLabel?: string;
-  fields?: {
-    name: string;
-    label: string;
-    type: string;
-    required: boolean;
-  }[];
-}
 
 interface BitcoinVNHelpDeskKYCFormProps {
   setValue: UseFormSetValue<any>;

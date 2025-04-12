@@ -3,10 +3,23 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import React, { Fragment, useState, useRef, useEffect } from 'react';
 
-export default function buildPopover(getButton, getContent, classInject) {
-  return function PopoverComponent({ t }) {  // Accept t as a prop
-    const [position, setPosition] = useState('bottom-left');
-    const popoverButtonRef = useRef(null);
+type Position = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'bottom-full';
+
+interface PopoverProps {
+  t: (key: string) => string;
+}
+
+type ButtonRenderer = (t: (key: string) => string) => React.ReactNode;
+type ContentRenderer = (t: (key: string) => string) => React.ReactNode;
+
+export default function buildPopover(
+  getButton: ButtonRenderer,
+  getContent: ContentRenderer,
+  classInject?: string
+): React.FC<PopoverProps> {
+  return function PopoverComponent({ t }) {
+    const [position, setPosition] = useState<Position>('bottom-left');
+    const popoverButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
       const updatePosition = () => {
@@ -42,14 +55,14 @@ export default function buildPopover(getButton, getContent, classInject) {
       };
     }, []);
 
-    const getPopoverPanelPosition = () => {
+    const getPopoverPanelPosition = (): string => {
       let classAll = "shadow-lg bg-white z-[99]";
 
       if (typeof window !== 'undefined' && window.innerWidth < 768) {
         return 'left-0 bottom-0 w-full rounded-t-[2rem] fixed pb-18 pt-8 ' + classAll;
       }
 
-      let classBase = "transform absolute rounded sm:w-96 max-h-96 overflow-scroll  md:px-4 sm:px-0 " + classAll;
+      let classBase = "transform absolute rounded sm:w-96 max-h-96 overflow-scroll md:px-4 sm:px-0 " + classAll;
 
       switch (position) {
         case 'top-left':
@@ -66,18 +79,18 @@ export default function buildPopover(getButton, getContent, classInject) {
     };
 
     return (
-      <Popover className={`relative ${classInject}`}>
+      <Popover className={`relative ${classInject || ''}`}>
         {({ open, close }) => (
           <>
             <PopoverButton
               ref={popoverButtonRef}
-              className={`w-full md:w-auto ${classInject} focus:outline-none focus:border-none focus:ring-0`}
+              className={`w-full md:w-auto ${classInject || ''} focus:outline-none focus:border-none focus:ring-0`}
             >
               {getButton(t)}
             </PopoverButton>
 
             {open && typeof window !== 'undefined' && window.innerWidth < 768 && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-[98]" onClick={close} />
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-[98]" onClick={() => close()} />
             )}
 
             <Transition
@@ -89,12 +102,15 @@ export default function buildPopover(getButton, getContent, classInject) {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <PopoverPanel className={` ${getPopoverPanelPosition()} `}>
+              <PopoverPanel className={getPopoverPanelPosition()}>
                 <div className="sm:hidden flex justify-between p-4">
                   <InformationCircleIcon className="h-8 w-8 text-fullPurple" />
-                  <XMarkIcon className="h-8 w-8 cursor-pointer" onClick={close} />
+                  <XMarkIcon 
+                    className="h-8 w-8 cursor-pointer" 
+                    onClick={() => close()}
+                  />
                 </div>
-                {getContent(t)} {/* Call getContent with t */}
+                {getContent(t)}
                 <div className="sm:hidden h-16"></div>
               </PopoverPanel>
             </Transition>
@@ -103,4 +119,4 @@ export default function buildPopover(getButton, getContent, classInject) {
       </Popover>
     );
   };
-}
+} 

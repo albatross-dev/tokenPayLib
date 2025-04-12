@@ -1,7 +1,17 @@
 import { HiQuestionMarkCircle, HiLockClosed, HiCheck } from "react-icons/hi2";
 import React from "react";
 
-const LoadingButton = ({
+export type LoadingButtonStates = "processing" | "error" | "success" | "normal";
+
+interface LoadingButtonProps {
+  isLoading: LoadingButtonStates;
+  onClick?: () => void;
+  children: React.ReactNode;
+  openError?: () => void;
+  active?: boolean;
+}
+
+const LoadingButton: React.FC<LoadingButtonProps> = ({
   isLoading,
   onClick,
   children,
@@ -10,7 +20,7 @@ const LoadingButton = ({
 }) => {
   let buttonStyles =
     "bw-full h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent w-full md:w-auto text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ";
-  let buttonContent = children;
+  let buttonContent: React.ReactNode = children;
 
   if (isLoading === "processing") {
     buttonStyles += "bg-uhuBlue opacity-50 cursor-not-allowed";
@@ -48,7 +58,7 @@ const LoadingButton = ({
         {children}
         {typeof openError === "function" && (
           <HiQuestionMarkCircle
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               openError();
             }}
@@ -81,18 +91,19 @@ const LoadingButton = ({
       {buttonContent}
       {isLoading === "success" ? (
         <HiCheck className="h-5 w-5 text-white ml-2" />
-      ):(isLoading !== "processing" && isLoading !== "error" ? (
-        active ? (
-          <div></div>
-        ) : (
-          <HiLockClosed className="h-5 w-5 text-white ml-2" />
-        )
       ) : (
-        <></>
-      ))}
-      {}
+        isLoading !== "processing" && isLoading !== "error" ? (
+          active ? (
+            <div></div>
+          ) : (
+            <HiLockClosed className="h-5 w-5 text-white ml-2" />
+          )
+        ) : (
+          <></>
+        )
+      )}
     </button>
   );
 };
 
-export default LoadingButton;
+export default LoadingButton; 

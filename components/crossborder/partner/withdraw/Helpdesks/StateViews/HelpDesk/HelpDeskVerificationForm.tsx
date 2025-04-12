@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import React, { useContext } from "react";
+import { FieldValues, FormProvider, useForm, UseFormReturn, UseFormSetValue } from "react-hook-form";
 import OvexKYCForm from "./PartnerKYCForms/Vendor/OvexKYCForm";
 import BitcoinVNHelpDeskKYCForm from "./PartnerKYCForms/Vendor/BitcoinVNHelpDeskKYCForm";
 import KoyweHelpDeskKYCForm from "./PartnerKYCForms/Vendor/KoyweHelpDeskKYCForm";
@@ -9,8 +9,15 @@ import { AuthContext } from "../../../../../../../../context/UserContext";
 import OvexKYCFormConsumer from "./PartnerKYCForms/Consumer/OvexKYCForm";
 import BitcoinVNHelpDeskKYCFormConsumer from "./PartnerKYCForms/Consumer/BitcoinVNHelpDeskKYCForm";
 import KotaniPayHelpDeskKYCFormConsumer from "./PartnerKYCForms/Consumer/KotaniPayHelpDeskKYCForm";
+import { PaymentTypesArray } from "../../../../../../../types/payload-types";
 
-function FormRenderer({ method, setValue, methods }) {
+interface FormRendererProps {
+  method: PaymentTypesArray[number];
+  setValue: UseFormSetValue<FieldValues>;
+  methods: UseFormReturn<FieldValues>;
+}
+
+function FormRenderer({ method, setValue, methods }: FormRendererProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   const { user } = useContext(AuthContext);
@@ -79,10 +86,15 @@ function FormRenderer({ method, setValue, methods }) {
   }
 }
 
+interface HelpDeskVerificationFormProps {
+  handleVerificationRequest: (data: any) => void;
+  method: PaymentTypesArray[number];
+}
+
 export default function HelpDeskVerificationForm({
   handleVerificationRequest,
   method,
-}) {
+}: HelpDeskVerificationFormProps) {
   const methods = useForm();
   const { handleSubmit, setValue } = methods;
 
