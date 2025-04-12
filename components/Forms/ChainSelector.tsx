@@ -15,8 +15,9 @@ import BASE_LOGO from "@/tokenPayLib/assets/chain-icons/base-logo.svg";
 import AVALANCHE_LOGO from "@/tokenPayLib/assets/chain-icons/avax-logo.svg";
 import BSC_LOGO from "@/tokenPayLib/assets/chain-icons/bsc-logo.svg";
 import { CheckoutSession, Router } from "../../types/payload-types";
-import { ChainDetails } from "../../types/chaindetails.types";
 import { ExchangeType } from "../../utilities/exchangeTypes";
+import { ChainDetails, ChainSelectorProps } from "./types";
+
 
 const chains: ChainDetails[] = [
   { chainId: 137, name: "Polygon", chain: polygon, logo: POLYGON_LOGO },
@@ -49,14 +50,6 @@ const chainsPublic: ChainDetails[] = [
 ];
 
 const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
-
-type ChainSelectorProps = {
-  checkoutSession?: CheckoutSession | undefined;
-  chain?: ChainDetails | undefined;
-  chainList?: ChainDetails[] | undefined;
-  returnOnly?: boolean | undefined;
-  onChain?: (chain: ChainDetails) => void | undefined;
-};
 
 /**
  * ChainSelector component allows users to select a blockchain network from a dropdown menu.

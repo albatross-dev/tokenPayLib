@@ -17,5 +17,5 @@ export interface SimpleToken {
   decimals: number;
   contractAddress: string;
   abi: any[];
-  icon: string | React.FunctionComponent<React.SVGAttributes<SVGElement>>;
+  icon: string;
 }

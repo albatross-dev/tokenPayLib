@@ -19,11 +19,6 @@ import { max } from "date-fns";
 import { convertAnyToAnyDirect } from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
 import { sendErrorReport } from "@/context/UserContext";
 
-export const STANDARD_STABLE_MAP = {
-  USDC: { symbol: "USD", icon: "$" },
-  EURS: { symbol: "EUR", icon: "€" },
-};
-
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });

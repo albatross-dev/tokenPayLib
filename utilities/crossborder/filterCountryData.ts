@@ -1,16 +1,4 @@
-interface Country {
-  useWhiteList: boolean;
-  receivingFromCountryWhiteList: { countryCode: string }[];
-  receivingFromCountryBlackList?: { countryCode: string }[];
-  paymentTypes: PaymentMethod[];
-}
-
-interface PaymentMethod {
-  withdrawOnly: boolean;
-  useWhiteListPaymentMethod: boolean;
-  whiteList: { countryCode: string }[];
-  blackList?: { countryCode: string }[];
-}
+import { Country } from "../../types/payload-types";
 
 /**
  * Filter the country data based on the origin country

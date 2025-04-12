@@ -1,9 +1,14 @@
 
+export interface FiatInfo {
+  id: string;
+  symbol: string;
+}
+
 /**
  * Maps fiat currency codes to their respective currency symbols.
  */
-export const FIAT_INFO_MAP: {
-  [key: string]: { id: string; symbol: string };
+const FIAT_INFO_MAP: {
+  [key: string]: FiatInfo;
 } = {
   USD: { id: "USD", symbol: "$" },
   EUR: { id: "EUR", symbol: "€" },
@@ -52,8 +57,8 @@ export const FIAT_INFO_MAP: {
 /**
  * Maps stablecoin ticker symbols to their corresponding fiat currency codes.
  */
-export const STABLE_FIAT_MAP: {
-  [key: string]: { id: string; symbol: string };
+const STABLE_FIAT_MAP: {
+  [key: string]: FiatInfo;
 } = {
   USDC: { id: "USD", symbol: "$" },
   USDT: { id: "USD", symbol: "$" },
@@ -66,7 +71,7 @@ export const STABLE_FIAT_MAP: {
  * Maps stablecoin ticker symbols to their corresponding fiat currency codes.
  * The type annotation enforces the allowed keys and values.
  */
-export const STABLECOIN_TO_FIAT_MAP: { [key: string]: "USD" | "EUR" } = {
+const STABLECOIN_TO_FIAT_MAP: { [key: string]: "USD" | "EUR" } = {
   USDC: "USD",
   USDT: "USD",
   EURS: "EUR",
@@ -77,7 +82,7 @@ export const STABLECOIN_TO_FIAT_MAP: { [key: string]: "USD" | "EUR" } = {
  * Maps fiat currency codes to their respective currency symbols.
  * The type annotation enforces that the values are strings.
  */
-export const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
+const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
   USD: "$",
   EUR: "€",
   VND: "₫",
@@ -121,6 +126,20 @@ export const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
   ZAR: "R",
   ZMW: "ZK",
 };
+
+export const STANDARD_STABLE_MAP: { [key: string]: FiatInfo } = {
+  USDC: getFiatInfo("USD"),
+  EURS: getFiatInfo("EUR"),
+};
+
+export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefined => {
+  return STANDARD_STABLE_MAP[stableCoin];
+}
+
+
+export function getFiatInfo(fiatCode: string): FiatInfo | undefined {
+  return FIAT_INFO_MAP[fiatCode];
+}
 
 /**
  * Retrieves the fiat currency code for a given stablecoin ticker.

@@ -23,6 +23,7 @@ import baseCurrencies from "./currencies/base";
 import arbitrumCurrencies from "./currencies/arbitrum";
 import ethereumCurrencies from "./currencies/ethereum";
 import optimismCurrencies from "./currencies/optimism";
+import { SimpleToken } from "../../types/token.types";
 
 export const LogoByShortName: Record<string, string> = {
   USDC: usdc,

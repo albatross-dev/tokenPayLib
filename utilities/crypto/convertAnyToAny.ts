@@ -78,7 +78,7 @@ export function getQuoteContract(chain: Chain): ContractOptions {
   });
 }
 
-export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, account: any, success: () => void, error: (e: Error) => void, chain: any, target: Token) {
+export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, account: any, success: () => void, error: (e: Error) => void, chain: any, target: SimpleToken) {
 
   const finalAmount = Number(amount.toFixed(0));
 
