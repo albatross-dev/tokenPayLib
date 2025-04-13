@@ -1,5 +1,4 @@
 import { FiatCodes } from "../types/derivedPayload.types";
-
 export interface FiatInfo {
   id: FiatCodes;
   symbol: string;
@@ -131,6 +130,9 @@ const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
 export const STANDARD_STABLE_MAP: { [key: string]: FiatInfo } = {
   USDC: getFiatInfo("USD"),
   EURS: getFiatInfo("EUR"),
+  EUROE: getFiatInfo("EUR"),
+  USDT: getFiatInfo("USD"),
+  UHU: getFiatInfo("EUR"),
 };
 
 export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefined => {

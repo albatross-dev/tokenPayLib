@@ -8,7 +8,7 @@ import {
 } from "../../../types/payload-types";
 import { Account } from "thirdweb/wallets";
 import Loader from "../../UI/Loader";
-import DepositPanel from "../DepositPanel";
+import DepositPanel from "./DepositPanel";
 
 interface DepositSlideProps {
   selectedMethod: PaymentTypesArray[number] | null;

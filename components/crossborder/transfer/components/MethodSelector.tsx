@@ -19,12 +19,6 @@ export interface SwyptQuoteResponse {
   };
 }
 
-interface LocalCurrency {
-  symbol: string;
-  icon: string;
-  id: string;
-}
-
 interface QuotePaymentType extends PaymentMethodType {
   predictedAmount: number;
 }

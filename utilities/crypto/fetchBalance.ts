@@ -1,4 +1,4 @@
-import { ContractOptions, getContract, readContract } from "thirdweb";
+import { Chain, ContractOptions, getContract, readContract, ThirdwebClient } from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
 
 /**
@@ -13,15 +13,15 @@ import { sendErrorReport } from "../../../context/UserContext";
  * @throws {Error} - Throws an error if the balance could not be fetched.
  */
 export default async function fetchBalance(
-  client: any,
-  chain: any,
+  client: ThirdwebClient,
+  chain: Chain,
   contractAddress: string,
   abi: any[],
   accountAddress: string
 ): Promise<bigint> {
 
   try {
-    const contract: Readonly<ContractOptions<any[]>>    = getContract({
+    const contract: Readonly<ContractOptions<any[]>> = getContract({
       client: client,
       chain,
       address: contractAddress,

@@ -48,7 +48,7 @@ export const ERC20ABI = erc20abi;
 
 export function formatNumberWithCurrency(
   number: number,
-  currency: string,
+  currency?: string,
   includeSymbol: boolean = true
 ): string {
   if (includeSymbol) {
@@ -228,7 +228,9 @@ const currenciesStable: Record<string, SimpleToken> = {
   },
 };
 
-export const TokensByChainId: Record<string, Record<string, SimpleToken>> = {
+type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
+
+export const TokensByChainId: Record<chainTypesIds, Record<string, SimpleToken>> = {
   137: currencies,
   1: currenciesEthereum,
   10: currenciesOP,

@@ -13,6 +13,7 @@ import duplicateByPaymentModality from "../../../utilities/crossborder/duplicate
 import { getSwyptQuote } from "../../crossborder/methods/SwyptQuote";
 import { PaymentTypesArray } from "../../../types/payload-types";
 import React from "react";
+import { FiatCodes } from "../../../types/derivedPayload.types";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
@@ -29,19 +30,17 @@ interface DepositMethodSelectorProps {
   amount: number;
   selectedMethod: QuotePaymentType | null;
   setSelectedMethod: (method: QuotePaymentType | null) => void;
-  startCurrency: string;
+  startCurrency: FiatCodes;
   endCurrency: string;
 }
 
-interface ModalityMethodMap {
-  [key: string]: {
-    methods: QuotePaymentType[];
-    cheapestMethod: QuotePaymentType | null;
-    nextLowerLimitMethod: QuotePaymentType | null;
-    nextMethodWithLimit: QuotePaymentType | null;
-    hasApiError: boolean;
-  };
-}
+interface ModalityMethodMap extends Record<QuotePaymentType["onrampModality"][number], {
+  methods: QuotePaymentType[];
+  cheapestMethod: QuotePaymentType | null;
+  nextLowerLimitMethod: QuotePaymentType | null;
+  nextMethodWithLimit: QuotePaymentType | null;
+  hasApiError: boolean;
+}> {}
 
 export default function DepositMethodSelector({
   methods,
@@ -95,7 +94,7 @@ export default function DepositMethodSelector({
         return;
       }
 
-      const sortedMethods: ModalityMethodMap = {};
+      let sortedMethods: ModalityMethodMap;
       let filledInPartners = duplicateByPaymentModality(
         methods || [],
         "onrampModality"
@@ -202,7 +201,7 @@ export default function DepositMethodSelector({
       processedMethods.forEach((method) => {
         if (!method) return;
 
-        const modality: string = method.onrampModality;
+        const modality: QuotePaymentType["onrampModality"][number] = method.onrampModality[0];
         if (!sortedMethods[modality]) {
           sortedMethods[modality] = {
             methods: [],
@@ -304,7 +303,7 @@ export default function DepositMethodSelector({
     const endCurrencyCode = getFiatCurrencyCode(endCurrency);
     const endCurrencySymbol = getFiatCurrencySymbol(endCurrencyCode);
 
-    return Object.keys(modalityMethodMap).map((modality) => {
+    return Object.keys(modalityMethodMap).map((modality: QuotePaymentType["onrampModality"][number]) => {
       const {
         cheapestMethod,
         nextLowerLimitMethod,
@@ -312,7 +311,7 @@ export default function DepositMethodSelector({
         hasApiError,
       } = modalityMethodMap[modality];
 
-      const isSelected = selectedMethod && selectedMethod.onrampModality === modality;
+      const isSelected = selectedMethod && selectedMethod.onrampModality[0] === modality;
       const canSelect = !!cheapestMethod;
 
       const lowerLimitDiff = nextLowerLimitMethod
