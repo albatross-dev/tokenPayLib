@@ -1,5 +1,3 @@
-
-
 /**
  * Loader component that displays a processing animation.
  * 
@@ -14,13 +12,23 @@
 import React, { useState, useEffect, useId } from 'react'
 import { useTranslation } from "next-i18next";
 
-export default function Loader() {
-  const [textSlide, setTextSlide] = useState(0);
+interface TextSlideControl {
+  textSlide: number;
+  setTextSlide: React.Dispatch<React.SetStateAction<number>>;
+}
+
+interface ProcessingAnimationProps {
+  textSlideC: TextSlideControl;
+  loading: boolean;
+}
+
+export default function Loader(): JSX.Element {
+  const [textSlide, setTextSlide] = useState<number>(0);
   return (
     <ProcessingAnimation
-          textSlideC={{ textSlide, setTextSlide }}
-          loading={true}
-        />
+      textSlideC={{ textSlide, setTextSlide }}
+      loading={true}
+    />
   )
 }
 
@@ -29,19 +37,15 @@ export default function Loader() {
  * Important is that it has the texts in the common translation file in i18n.
  *
  * @component
- * @param {Object} props - The component props.
- * @param {Object} props.textSlideC - The text slide control object.
- * @param {number} props.textSlideC.textSlide - The current text slide index.
- * @param {Function} props.textSlideC.setTextSlide - The function to set the text slide index.
- * @param {boolean} props.loading - The loading state.
+ * @param {ProcessingAnimationProps} props - The component props.
  * @returns {JSX.Element} The ProcessingAnimation component.
  */
-export const ProcessingAnimation = ({ textSlideC, loading }) => {
+export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({ textSlideC, loading }) => {
   const { textSlide, setTextSlide } = textSlideC;
 
-  const {t} = useTranslation("common");
+  const { t } = useTranslation("common");
 
-  const texts = [
+  const texts: string[] = [
     t("fact_1"),
     t("fact_2"),
     t("fact_3"),
@@ -53,12 +57,11 @@ export const ProcessingAnimation = ({ textSlideC, loading }) => {
     t("fact_9"),
     t("fact_10"),
     t("fact_11"),
-    t("fact_12"),
-    t("fact_13"),
+    t("fact_12")
   ];
   
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout | undefined;
     if (loading) {
       interval = setInterval(() => {
         setTextSlide((prev) => {
@@ -70,9 +73,9 @@ export const ProcessingAnimation = ({ textSlideC, loading }) => {
     }
 
     return () => clearInterval(interval);
-  }, [loading, setTextSlide]);
+  }, [loading, setTextSlide, texts.length]);
 
-  let id = useId();
+  const id = useId();
 
   return (
     <div

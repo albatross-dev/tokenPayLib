@@ -5,11 +5,33 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  ColumnDef,
 } from "@tanstack/react-table";
 import axios from "axios";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
-import { sendErrorReport } from "@/context/UserContext";
+import { sendErrorReport } from "../../../context/UserContext";
+import { Collection } from "../../types/derivedPayload.types";
+import { TableQuery } from "./SimpleList";
+
+interface TableProps {
+  tableQuery: TableQuery;
+  setTableQuery: React.Dispatch<React.SetStateAction<TableQuery>>;
+  columns: ColumnDef<any, any>[];
+  collection: Collection;
+  loader: boolean;
+}
+
+interface FetchedData {
+  docs: any[];
+  page: number;
+  limit: number;
+  totalDocs: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  updatedAt?: string;
+  status?: string;
+}
 
 export default function Table({
   tableQuery,
@@ -17,11 +39,11 @@ export default function Table({
   columns,
   collection,
   loader,
-}) {
-  const queryClient = useQueryClient()
-  const {t} = useTranslation("common"); 
-  
-  async function fetchData(query, collection) {
+}: TableProps): JSX.Element {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation("common");
+
+  async function fetchData(query: TableQuery, collection: Collection): Promise<FetchedData> {
     try {
       const res = await axios(
         `/api/${collection}?${QueryString.stringify(query)}`
@@ -32,6 +54,11 @@ export default function Table({
       console.log("Table - Fetching data failed", error);
       return {
         docs: [],
+        page: 1,
+        limit: 20,
+        totalDocs: 0,
+        hasNextPage: false,
+        hasPrevPage: false
       };
     }
   }
@@ -54,13 +81,13 @@ export default function Table({
       }
       return data;
     },
-    placeholderData: (previousData, previousQuery) => previousData,
+    placeholderData: (previousData) => previousData,
   });
 
   useEffect(() => {
     //invalidate query when loader changes
-    queryClient.invalidateQueries([collection, tableQuery]);
-  }, [loader]);
+    queryClient.invalidateQueries({ queryKey: [collection, tableQuery] });
+  }, [loader, collection, queryClient, tableQuery]);
 
   const table = useReactTable({
     data: fetchedData?.docs || [],
@@ -70,9 +97,9 @@ export default function Table({
   });
 
   return (
-    <div className="flex-shrink flex flex-col  overflow-y-auto">
-      <div className="flex-shrink  overflow-y-auto flex-col flex">
-        <table className="min-w-full divide-y divide-gray-300 border-t border-t-gray-300 flex-shrink ">
+    <div className="flex-shrink flex flex-col overflow-y-auto">
+      <div className="flex-shrink overflow-y-auto flex-col flex">
+        <table className="min-w-full divide-y divide-gray-300 border-t border-t-gray-300 flex-shrink">
           <thead className="sticky">
             <tr>
               {columns.map((column, index) => (
@@ -81,29 +108,27 @@ export default function Table({
                   scope="col"
                   className="py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                 >
-                  {column.header}
+                  {column.header?.toString()}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 flex-shrink h-full overflow-y-auto">
             {table.getRowModel().rows.map((row) => {
-              const isOlderThan30Min =
-                moment().diff(moment(row.original.updatedAt), "minutes") > 30;
+              const isOlderThan30Min = row.original.updatedAt ?
+                moment().diff(moment(row.original.updatedAt), "minutes") > 30 : false;
               return (
                 <tr
                   key={row.id}
                   className={`${
-                    isOlderThan30Min && row.original.tatus === "pending"
+                    isOlderThan30Min && row.original.status === "pending"
                       ? "bg-red-100"
                       : ""
                   }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
-                      {...{
-                        key: cell.id,
-                      }}
+                      key={cell.id}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -124,7 +149,7 @@ export default function Table({
             {fetchedData.limit * fetchedData.page > fetchedData.totalDocs
               ? fetchedData.totalDocs
               : fetchedData.limit * fetchedData.page}{" "}
-            {t("SimpleList.results",{num: fetchedData.totalDocs})}
+            {t("SimpleList.results", { num: fetchedData.totalDocs })}
           </span>
           <button
             onClick={() =>
@@ -151,9 +176,7 @@ export default function Table({
             {t("SimpleList.next")}
           </button>
         </div>
-      ) : (
-        ""
-      )}
+      ) : null}
     </div>
   );
 }

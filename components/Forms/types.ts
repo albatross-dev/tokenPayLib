@@ -8,7 +8,7 @@ import { Availability } from "../../utilities/CountriesConfig";
 // Base field interface that all field types will extend
 export interface BaseFieldProps {
   name?: string;
-  type: string;
+  type: InputType;
   content?: React.ReactNode | ((methods: UseFormReturn) => React.ReactNode);
   fields?: FormField[];
   label?: string;

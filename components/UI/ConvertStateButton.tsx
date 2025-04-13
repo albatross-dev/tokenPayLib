@@ -8,10 +8,12 @@ interface ConvertStateButtonProps {
   children: React.ReactNode;
 }
 
+export type ConvertStateButtonState = "normal" | "processing" | "error";
+
 interface ConvertStateButtonWideProps {
   enabled: boolean;
   onClick: () => void;
-  state?: "normal" | "processing" | "error";
+  state?: ConvertStateButtonState;
   children: React.ReactNode;
 }
 

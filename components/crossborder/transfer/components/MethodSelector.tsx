@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import BitcoinVNQuote, {
+import {
   getBitcoinVNMetaData,
   getBitcoinVNQuote,
 } from "../../methods/BitcoinVNQuote";
-import DefaultQuote from "../../methods/DefaultQuote";
-import MiniLoader from "../../../../components/UI/MiniLoader";
+import MiniLoader from "../../../UI/MiniLoader";
 import { useTranslation } from "react-i18next";
 import { IoWarning } from "react-icons/io5";
-import SwyptQuote, { getSwyptQuote } from "../../methods/SwyptQuote";
-import { Country, PaymentTypesArray } from "../../../../types/payload-types";
+import { getSwyptQuote } from "../../methods/SwyptQuote";
+import { PaymentTypesArray } from "../../../../types/payload-types";
 import { FiatInfo } from "../../../../utilities/stableCoinsMaps";
-import { Currency } from "../../../../types/currency.types";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 

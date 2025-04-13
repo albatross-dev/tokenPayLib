@@ -1,7 +1,10 @@
+import React from "react";
+import AddressDisplay from "../UI/AddressDisplay";
+import { TFunction } from "next-i18next";
+import { ColumnDef } from '@tanstack/react-table';
 import moment from "moment";
-import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 
-export const getSendCryptoColumns = (tAccount) => [
+export const getSendCryptoColumns = (tAccount: TFunction): ColumnDef<any, any>[] => [
   {
     accessorKey: "amount",
     header: tAccount("sendCrypto.table.amount"),

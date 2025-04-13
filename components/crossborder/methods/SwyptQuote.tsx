@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import MiniLoader from "../../../components/UI/MiniLoader";
+import MiniLoader from "../../UI/MiniLoader";
 import { sendErrorReport } from "../../../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import { PaymentTypesArray } from "../../../types/payload-types";
@@ -51,7 +51,7 @@ export async function getSwyptQuote(
       cryptoCurrency,
       network,
     });
-    return result.data;
+    return result.data as SwyptQuoteResponse;
   } catch (error) {
     sendErrorReport("SwyptQuote - Fetching quote failed", error);
     console.error("Error fetching Swypt quote:", error);

@@ -1,18 +1,18 @@
-import Loader from "../../UI/Loader";
+import Loader from "../UI/Loader";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import ErrorPopup from "../../Modals/ErrorPopup";
+import ErrorPopup from "../Modals/ErrorPopup";
 import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
 import axios from "axios";
-import { AuthContext, sendErrorReport } from "../../../../context/UserContext";
-import BalanceOverview from "../BalanceOverview";
+import { AuthContext, sendErrorReport } from "../../../context/UserContext";
+import BalanceOverview from "../crossborder/BalanceOverview";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { sortMethodByCurrencyDeposit } from "../../../utilities/crossborder/sortMethodByCurrency";
-import { Country, PaymentTypesArray } from "../../../types/payload-types";
+import { sortMethodByCurrencyDeposit } from "../../utilities/crossborder/sortMethodByCurrency";
+import { Country, PaymentTypesArray } from "../../types/payload-types";
 import { Swiper as SwiperType } from 'swiper';
-import Banner from "../../UI/Banner";
-import Maintenance from "../../UI/Maintenance";
+import Banner from "../UI/Banner";
+import Maintenance from "../UI/Maintenance";
 
 // Import slide components
 import CryptoSelectionSlide from "./slides/CryptoSelectionSlide";

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { GateFiSDK } from '@gatefi/js-sdk';
+import { GateFiDisplayModeEnum, GateFiSDK } from '@gatefi/js-sdk';
 import { useTranslation } from "next-i18next";
 import {
   useActiveAccount,
@@ -14,13 +14,13 @@ const UnlimitWidget = () => {
     // Initialize the GateFi SDK in embedded mode
     const instance = new GateFiSDK({
       merchantId: "7bd7c0da-4acc-40d0-b3c9-7d658affbddd", // Replace with your actual merchant ID
-      displayMode: "embedded",
+      displayMode: GateFiDisplayModeEnum.Embedded,
       nodeSelector: "#crypto-widget-container", // The ID of the container div
       walletAddress: account.address,
       walletLock: true,
       defaultCrypto:{
         currency: "USDC",
-        amount: 1000
+        amount: "1000"
       },
       styles: {
         type: "light",

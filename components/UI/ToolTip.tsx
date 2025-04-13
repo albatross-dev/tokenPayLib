@@ -4,7 +4,7 @@ import { BsFillQuestionCircleFill } from "react-icons/bs";
 
 
 
-const Tooltip = ({ text }) => {
+const Tooltip = ({ text }: { text: string }): JSX.Element => {
   const [showTooltip, setShowTooltip] = useState(false);
   const { t } = useTranslation("common"); 
 

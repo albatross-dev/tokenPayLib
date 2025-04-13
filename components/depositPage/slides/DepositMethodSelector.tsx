@@ -10,24 +10,35 @@ import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "../../../utilities/partner/bitcoinvn";
 import { sendErrorReport } from "../../../../context/UserContext";
 import duplicateByPaymentModality from "../../../utilities/crossborder/duplicateByPaymentModality";
-import { getSwyptQuote } from "../methods/SwyptQuote";
+import { getSwyptQuote } from "../../crossborder/methods/SwyptQuote";
 import { PaymentTypesArray } from "../../../types/payload-types";
+import React from "react";
+
+export type PaymentMethodType = PaymentTypesArray[number];
+
+
+interface QuotePaymentType extends PaymentMethodType {
+  predictedAmount: number;
+  apiError: string | null;
+  predictedOnrampAmount: number;
+  onrampMinAmount: number;
+}
 
 interface DepositMethodSelectorProps {
-  methods: PaymentTypesArray;
+  methods: QuotePaymentType[];
   amount: number;
-  selectedMethod: PaymentTypesArray[number] | null;
-  setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
+  selectedMethod: QuotePaymentType | null;
+  setSelectedMethod: (method: QuotePaymentType | null) => void;
   startCurrency: string;
   endCurrency: string;
 }
 
 interface ModalityMethodMap {
   [key: string]: {
-    methods: PaymentTypesArray;
-    cheapestMethod: PaymentTypesArray[number] | null;
-    nextLowerLimitMethod: PaymentTypesArray[number] | null;
-    nextMethodWithLimit: PaymentTypesArray[number] | null;
+    methods: QuotePaymentType[];
+    cheapestMethod: QuotePaymentType | null;
+    nextLowerLimitMethod: QuotePaymentType | null;
+    nextMethodWithLimit: QuotePaymentType | null;
     hasApiError: boolean;
   };
 }
@@ -101,15 +112,13 @@ export default function DepositMethodSelector({
             case "swypt":
               if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
                 console.log("Fetching Swypt data with", startCurrency);
-                const swyptQuoteRes = await getSwyptQuote(
+                const swyptQuote = await getSwyptQuote(
                   Number(amount),
                   startCurrency,
                   endCurrency,
                   "Polygon",
                   "onramp"
                 );
-
-                const swyptQuote = swyptQuoteRes?.data;
 
                 if (swyptQuote && swyptQuote.outputAmount) {
                   predictedOnrampAmount =
@@ -211,9 +220,9 @@ export default function DepositMethodSelector({
       });
 
       for (const modality in sortedMethods) {
-        let cheapest: PaymentTypesArray | null = null;
-        let nextLower: PaymentTypesArray | null = null;
-        let nextHigher: PaymentTypesArray | null = null;
+        let cheapest: QuotePaymentType | null = null;
+        let nextLower: QuotePaymentType | null = null;
+        let nextHigher: QuotePaymentType | null = null;
 
         sortedMethods[modality].methods.forEach((method) => {
           if (method.apiError) return;

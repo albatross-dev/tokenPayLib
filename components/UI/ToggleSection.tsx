@@ -1,3 +1,4 @@
+import React, { useEffect, useState, ReactNode } from 'react';
 import {
   Disclosure,
   DisclosureButton,
@@ -5,10 +6,19 @@ import {
 } from '@headlessui/react';
 import { FiChevronDown } from 'react-icons/fi';
 import AnimateHeight from 'react-animate-height';
-import { useEffect, useState } from 'react';
 
-export default function ToggleSection({ title, content, storageKey }) {
-  const [isOpen, setIsOpen] = useState(() => {
+interface ToggleSectionProps {
+  title: ReactNode;
+  content: ReactNode;
+  storageKey: string;
+}
+
+export default function ToggleSection({ 
+  title, 
+  content, 
+  storageKey 
+}: ToggleSectionProps): JSX.Element {
+  const [isOpen, setIsOpen] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const storedState = localStorage.getItem(storageKey);
       return storedState ? JSON.parse(storedState) : true; // Default open

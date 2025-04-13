@@ -1,3 +1,5 @@
+import React from "react";
+
 export const stateDict = {
   DepositPending: "Einzahlung ausstehend",
   DepositConfirmed: "Einzahlung bestätigt",
@@ -10,7 +12,7 @@ export const stateDict = {
   done: "Abgeschlossen",
 };
 
-export default function StateDisplay({ state }) {
+export default function StateDisplay({ state }: { state: string }): JSX.Element {
   return (
     <div className="bg-uhuBlue rounded px-2 py-1 text-white font-bold">
       {stateDict[state]}

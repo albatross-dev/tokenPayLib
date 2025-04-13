@@ -5,9 +5,9 @@ import {
   Country,
   PaymentTypesArray,
   Vendor,
-} from "../../../../types/payload-types";
+} from "../../../types/payload-types";
 import { Account } from "thirdweb/wallets";
-import Loader from "../../../UI/Loader";
+import Loader from "../../UI/Loader";
 import DepositPanel from "../DepositPanel";
 
 interface DepositSlideProps {

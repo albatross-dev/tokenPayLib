@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import { FiArrowLeft } from "react-icons/fi";
-import { getFiatCurrencySymbol } from "../../../../utilities/stableCoinsMaps";
-import { Country, PaymentTypesArray } from "../../../../types/payload-types";
+import { getFiatCurrencySymbol } from "../../../utilities/stableCoinsMaps";
+import { Country, PaymentTypesArray } from "../../../types/payload-types";
 import DepositMethodSelector from '../DepositMethodSelector';
 
 interface DepositDetailsSlideProps {

@@ -7,7 +7,6 @@ import {
   Transition,
 } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import { STANDARD_STABLE_MAP } from "./CurrencySelector";
 import { IoClose } from "react-icons/io5";
 import { RxUpdate } from "react-icons/rx";
 import {
@@ -24,27 +23,32 @@ import { encodePacked } from "thirdweb/utils";
 import { IoIosSwap } from "react-icons/io";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { formatCrypto } from "../../utilities/crypto/currencies";
-import { ConvertStateButtonWide } from "../UI/ConvertStateButton";
+import {
+  ConvertStateButtonState,
+  ConvertStateButtonWide,
+} from "../UI/ConvertStateButton";
 import { client } from "../../../pages/_app";
 import { useUhuConfig } from "../contexts/UhuConfigContext";
 import Maintenance from "../UI/Maintenance";
+import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
+import { SimpleToken } from "../../types/token.types";
 
 interface ConvertPopupProps {
   show: boolean;
   closeModal: () => void;
-  token: Token;
-  targetToken: Token;
+  token: SimpleToken;
+  targetToken: SimpleToken;
   onSuccess: () => void;
   showSwapButton?: boolean;
 }
 
-const ConvertPopup: React.FC<ConvertPopupProps> = ({ 
-  show, 
-  closeModal, 
-  token, 
-  targetToken, 
-  onSuccess, 
-  showSwapButton = false 
+const ConvertPopup: React.FC<ConvertPopupProps> = ({
+  show,
+  closeModal,
+  token,
+  targetToken,
+  onSuccess,
+  showSwapButton = false,
 }) => {
   const { t } = useTranslation();
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -53,23 +57,27 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
   const account = useActiveAccount();
   const [balanceUpdate, setBalanceUpdate] = useState<boolean>(false);
 
-  const [selectedTargetToken, setSelectedTargetToken] = useState<Token>(targetToken);
+  const [selectedTargetToken, setSelectedTargetToken] =
+    useState<SimpleToken>(targetToken);
   const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] =
     useState<bigint>(BigInt(0));
 
-  const [selectedToken, setSelectedToken] = useState<Token>(token);
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint>(BigInt(0));
+  const [selectedToken, setSelectedToken] = useState<SimpleToken>(token);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint>(
+    BigInt(0)
+  );
   const [amount, setAmount] = useState<number | undefined>(undefined);
   const [quote, setQuote] = useState<any>(null);
   const [inputError, setError] = useState<string>("");
-  const [exchangeState, setExchangeState] = useState<string>("normal");
+  const [exchangeState, setExchangeState] =
+    useState<ConvertStateButtonState>("normal");
   const [retryCounter, setRetryCounter] = useState<number>(0);
 
   const { maintenance } = useUhuConfig();
 
   useEffect(() => {
     async function update() {
-      console.log("update token", token)
+      console.log("update token", token);
       if (token && targetToken) {
         setSelectedToken(token);
         setSelectedTokenBalance(BigInt(0));
@@ -90,23 +98,32 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
     setSelectedToken(selectedTargetToken);
     setSelectedTargetToken(temp);
     setAmount(0);
-    setQuote(null);
   }
 
   useEffect(() => {
     async function fetchQuote() {
+      if (!activeChain) {
+        console.error("No active chain available");
+        return;
+      }
+
+      if (!selectedToken || !selectedTargetToken || !amount) {
+        console.error("Missing required parameters");
+        return;
+      }
+
       console.log("fetchQuote", selectedToken, selectedTargetToken, amount);
       let contract = getContract({
         client: client,
         chain: activeChain,
         address: uniswapAddresses[activeChain.id].quote,
-        abi: QuoteV2Abi,
+        abi: QuoteV2Abi as any,
       });
 
       const path =
-        PATHS[activeChain.id][
-          (selectedToken.id || selectedToken.symbol).toUpperCase()
-        ][selectedTargetToken.id.toUpperCase()];
+        PATHS[activeChain.id][selectedToken.id.toUpperCase()][
+          selectedTargetToken.id.toUpperCase()
+        ];
 
       const encodedPath = encodePacked(path[0], path[1]);
 
@@ -135,15 +152,18 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
         }.`
       );
     } else {
-      if (selectedToken && selectedTargetToken && amount) {
+      if (selectedToken && selectedTargetToken && amount && activeChain) {
         fetchQuote();
       }
       setError(""); // Clear error if valid
     }
-  }, [selectedToken, selectedTargetToken, amount]);
+  }, [selectedToken, selectedTargetToken, amount, activeChain]);
 
   // fetch all necessary balances
-  async function fetchBalances(selectedToken: Token, selectedTargetToken: Token) {
+  async function fetchBalances(
+    selectedToken: SimpleToken,
+    selectedTargetToken: SimpleToken
+  ) {
     console.log(
       "fetchBalances",
       account,
@@ -201,17 +221,17 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
       account,
       () => {
         fetchBalances(selectedToken, selectedToken);
-        setAmount(0)
+        setAmount(0);
         onSuccess();
         closeModal();
         setExchangeState("normal");
       },
       (error) => {
         setRetryCounter(retryCounter + 1);
-        if(retryCounter < 3) {
+        if (retryCounter < 3) {
           handleExchangeAny(amount);
           console.log("retrying exchange");
-        }else{
+        } else {
           console.error("Error converting to EUROE", error);
           setExchangeState("error");
           setRetryCounter(0);
@@ -251,13 +271,15 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="relative max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              {maintenance !== "loading" && maintenance.common.crossborder && <Maintenance />}
+              {maintenance !== "loading" &&
+                maintenance &&
+                maintenance.common.crossborder && <Maintenance />}
               <DialogTitle
                 as="h3"
                 className="text-lg flex items-center justify-between font-medium leading-6 text-gray-900"
               >
                 <div className="flex items-center gap-2">
-                {tCrossborder("convertPopup.convert")}{" "}
+                  {tCrossborder("convertPopup.convert")}{" "}
                   <span className="font-bold">
                     {STANDARD_STABLE_MAP[selectedToken?.name]
                       ? STANDARD_STABLE_MAP[selectedToken?.name]?.symbol
@@ -267,8 +289,12 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                   <span className="font-bold">
                     {STANDARD_STABLE_MAP[selectedTargetToken?.name]?.symbol}
                   </span>
-                  {showSwapButton && <IoIosSwap className="w-6 h-6 p-1 cursor-pointer bg-uhuBlue rounded-full text-white flex items-center justify-center" onClick={swapTokens}/>}
-             
+                  {showSwapButton && (
+                    <IoIosSwap
+                      className="w-6 h-6 p-1 cursor-pointer bg-uhuBlue rounded-full text-white flex items-center justify-center"
+                      onClick={swapTokens}
+                    />
+                  )}
                 </div>
                 <IoClose
                   className="w-5 h-5 cursor-pointer"
@@ -278,16 +304,20 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
 
               <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
                 <div>{tCrossborder("convertPopup.howMuch")}</div>
-                <div  className="flex gap-2 bg-gray-200 items-center rounded-full cursor-pointer text-sm px-[6px] py-[2px]"  onClick={async () => {
+                <div
+                  className="flex gap-2 bg-gray-200 items-center rounded-full cursor-pointer text-sm px-[6px] py-[2px]"
+                  onClick={async () => {
                     setBalanceUpdate(true);
                     await fetchBalances(selectedToken, selectedTargetToken);
                     setBalanceUpdate(false);
-                  }}>
-                <div className="text-[11px]">{tCrossborder("convertPopup.reloadRate")}</div>
-                <RxUpdate
-                  className={`w-4 h-4 ${balanceUpdate && "animate-spin"}`}
-                
-                />
+                  }}
+                >
+                  <div className="text-[11px]">
+                    {tCrossborder("convertPopup.reloadRate")}
+                  </div>
+                  <RxUpdate
+                    className={`w-4 h-4 ${balanceUpdate && "animate-spin"}`}
+                  />
                 </div>
               </div>
               <input
@@ -315,10 +345,11 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                     6
                   )}
                 </div>
-                <div>  {STANDARD_STABLE_MAP[selectedToken?.name]
-                        ? STANDARD_STABLE_MAP[selectedToken?.name]?.icon
-                        : selectedToken?.name}
-              
+                <div>
+                  {" "}
+                  {STANDARD_STABLE_MAP[selectedToken?.name]
+                    ? STANDARD_STABLE_MAP[selectedToken?.name]?.symbol
+                    : selectedToken?.name}
                 </div>
                 <div className="flex-1"></div>
                 <button
@@ -336,14 +367,16 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                     {t("you_will_receive_roughly")}
                   </div>
                   <div className="text-5xl font-bold flex gap-2 items-end">
-                    {(Number(quote ? quote[0] : 0) /
-                      numberWithZeros(selectedTargetToken?.decimals || 1) -
+                    {(
+                      Number(quote ? quote[0] : 0) /
+                        numberWithZeros(selectedTargetToken?.decimals || 1) -
                       (Number(quote ? quote[0] : 0) /
                         numberWithZeros(selectedTargetToken?.decimals || 1)) *
-                        0.004).toFixed(6)}
+                        0.004
+                    ).toFixed(6)}
                     <span className="text-base">
                       {STANDARD_STABLE_MAP[selectedTargetToken?.name]
-                        ? STANDARD_STABLE_MAP[selectedTargetToken?.name]?.icon
+                        ? STANDARD_STABLE_MAP[selectedTargetToken?.name]?.symbol
                         : selectedTargetToken?.name}
                     </span>
                   </div>
@@ -353,19 +386,19 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                       numberWithZeros(selectedTargetToken?.decimals || 1)}{" "}
                     <span className="text-base">
                       {STANDARD_STABLE_MAP[selectedTargetToken?.name]
-                        ? STANDARD_STABLE_MAP[selectedTargetToken?.name]?.icon
+                        ? STANDARD_STABLE_MAP[selectedTargetToken?.name]?.symbol
                         : selectedTargetToken?.name}
                     </span>
                   </div>
                 </div>
                 <div className="self-end">
                   <ConvertStateButtonWide
-                    enabled={
+                    enabled={Boolean(
                       selectedTargetToken &&
-                      selectedToken &&
-                      amount &&
-                      !inputError
-                    }
+                        selectedToken &&
+                        amount &&
+                        !inputError
+                    )}
                     state={exchangeState}
                     onClick={handleConfirmExchange}
                   >
@@ -381,4 +414,4 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
   );
 };
 
-export default ConvertPopup; 
+export default ConvertPopup;

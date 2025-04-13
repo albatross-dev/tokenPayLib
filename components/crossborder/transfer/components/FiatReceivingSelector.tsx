@@ -1,15 +1,16 @@
 import CryptoIcon from "../../../../assets/CryptoIcon";
-import { FIAT_INFO_MAP } from "../../../../utilities/stableCoinsMaps";
+import { getFiatInfo } from "../../../../utilities/stableCoinsMaps";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Currency, PaymentTypesArray } from "../../../../types/payload-types";
 import { SwiperClass } from "swiper/react";
+import { FiatCodes } from "../../../../types/derivedPayload.types";
 
 interface FiatReceivingSelectorProps {
   availableMethods: PaymentTypesArray;
   allMethods: PaymentTypesArray;
   setAvailableMethods: (methods: PaymentTypesArray) => void;
-  setPayoutCurrency: (currency: string) => void;
+  setPayoutCurrency: (currency: FiatCodes | "crypto") => void;
   setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
   swiperInstance: SwiperClass | null;
   nextSlide: number;
@@ -53,7 +54,7 @@ export default function FiatReceivingSelector({
       <h2 className="text-2xl">
         {tCrossborder("receivingSelector.targetCurrency")}
       </h2>
-      {Array.from(allCurrencies).map((currency) => {
+      {Array.from(allCurrencies).map((currency: FiatCodes | "crypto") => {
         return currency === "crypto" ? (
           <div
             key={currency}
@@ -81,9 +82,9 @@ export default function FiatReceivingSelector({
             className="flex items-center border justify-between gap-4 hover:bg-gray-100 p-4 rounded-lg cursor-pointer"
           >
             <div className="font-bold text-xl flex items-center justify-center bg-uhuBlue text-white p-2 rounded-full h-10 w-10">
-              {FIAT_INFO_MAP[currency]?.symbol}
+              {getFiatInfo(currency)?.symbol}
             </div>
-            <h2 className="text-xl font-bold">{FIAT_INFO_MAP[currency]?.id}</h2>
+            <h2 className="text-xl font-bold">{getFiatInfo(currency)?.id}</h2>
           </div>
         );
       })}

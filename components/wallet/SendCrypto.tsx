@@ -3,11 +3,11 @@ import React, { useEffect, useState, useContext } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 import axios from "axios";
-import { AuthContext, sendErrorReport } from "@/context/UserContext";
-import SimpleList from "@/tokenPayLib/components/UI/SimpleList";
-import { formatCrypto, TokensByChainId } from "@/tokenPayLib/utilities/crypto/currencies";
+import { AuthContext, sendErrorReport } from "../../../context/UserContext";
+import SimpleList from "../UI/SimpleList";
+import { formatCrypto, TokensByChainId } from "../../utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
 import { tokenPayAbstractionSimpleTransfer } from "../../assets/TokenPayAbstraction";
 import { getSendCryptoColumns } from "./sendCryptoColumns";
@@ -15,12 +15,17 @@ import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
 import SendCryptoDialog from "./SendCryptoDialog";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
 import { useUhuConfig } from "../contexts/UhuConfigContext";
+import { FiatTransactionRequest } from "../../types/derivedPayload.types";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
+interface SendCryptoProps {
+  setErrorMessage: (error: { message: string; error: any }) => void;
+}
+
+export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [selectedToken, setSelectedToken] = useState(null);
   const [amount, setAmount] = useState(0);
   const [originTokens, setOriginTokens] = useState({});
@@ -93,12 +98,12 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
           client,
           account,
           polygon,
-          Number(amount) * 10 ** selectedToken.decimals,
+          BigInt(Number(amount) * 10 ** selectedToken.decimals) ,
           selectedToken,
           targetAddress
         );
 
-        let transferData = {
+        let transferData: FiatTransactionRequest = {
           amount: Number(amount),
           currency: selectedToken.contractAddress,
           currencyName: selectedToken.id,
@@ -166,7 +171,6 @@ export default function SendCrypto({ setErrorMessage, setIsErrorPopupOpen }) {
           <SimpleList
             collection={"cryptoTransfer"}
             columns={getSendCryptoColumns(tAccount)}
-            suppressHydrationWarning
             loader={newTxHash}
           >
             <button

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { STANDARD_STABLE_MAP } from "../../CurrencySelector";
-import currencies from "../../../../utilities/crypto/currencies";
-import { PaymentTypesArray } from '../../../../types/payload-types';
+import { STANDARD_STABLE_MAP } from "../../crossborder/CurrencySelector";
+import currencies from "../../../utilities/crypto/currencies";
+import { PaymentTypesArray } from '../../../types/payload-types';
 
 interface CryptoSelectionSlideProps {
   methodsByCurrency: Record<string, PaymentTypesArray>;

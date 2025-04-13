@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import { formatNumberWithCurrency } from "@/utilities/currencies";
-import currencies from "@/tokenPayLib/utilities/crypto/currencies";
-import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
-import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
+import { formatNumberWithCurrency } from "../../../utilities/currencies";
+import currencies from "../../utilities/crypto/currencies";
+import MiniLoader from "../UI/MiniLoader";
 import Image from "next/image";
 
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
-import { UhuConfigContext } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { sendErrorReport } from "@/context/UserContext";
+import { sendErrorReport } from "../../../context/UserContext";
+import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -34,6 +34,9 @@ export default function BalanceOverview() {
 
   useEffect(() => {
     setIsClient(true);
+
+
+    if (uhuConfig === "loading") return;
 
     const fetchBalances = async () => {
       if (!account?.address) return;
@@ -61,7 +64,7 @@ export default function BalanceOverview() {
               return {
                 symbol,
                 balance,
-                currency: currency.currency,
+                currency: currency.id,
                 icon: currency.icon,
                 decimals: currency.decimals,
               };

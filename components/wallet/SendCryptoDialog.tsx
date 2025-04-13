@@ -7,9 +7,9 @@ import {
   Transition,
 } from "@headlessui/react";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
-import Loader from "@/tokenPayLib/components/UI/Loader";
+import Loader from "../UI/Loader";
 import TokenSelector from "../Forms/TokenSelector";
-import { formatCrypto } from "@/tokenPayLib/utilities/crypto/currencies";
+import { formatCrypto } from "../../utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "../UI/LoadingButton";
 
@@ -89,6 +89,7 @@ export default function SendCryptoDialog({
                   <div className="max-w-xl w-full mx-auto flex flex-col mt-4">
                     <div>{tAccount("sendCrypto.dialog.step1")}</div>
                     <TokenSelector
+                      type="token"
                       onSelect={fetchTokenBalance}
                       tokens={originTokens}
                       selectedToken={selectedToken}
@@ -168,7 +169,7 @@ export default function SendCryptoDialog({
                     <LoadingButton
                       isLoading={isLoading}
                       onClick={handleSend}
-                      disabled={Object.keys(errors).length > 0 || !selectedToken}
+                      active={Object.keys(errors).length > 0 || !selectedToken}
                     >
                       {tAccount("sendCrypto.dialog.sendButton")}
                     </LoadingButton>

@@ -8,7 +8,7 @@ import { polygon } from "thirdweb/chains";
 import { AuthContext, sendErrorReport } from "../../../../../context/UserContext";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
-import TokenSelector from "../../../../components/Forms/TokenSelector";
+import TokenSelector from "../../../Forms/TokenSelector";
 import { useActiveAccount } from "thirdweb/react";
 import { TokensByChainId } from "../../../../utilities/crypto/currencies";
 import { parseUnits } from "ethers/lib/utils";
@@ -21,7 +21,7 @@ import {
 } from "../../../../utilities/crypto/convertAnyToAny";
 import numberWithZeros from "../../../../utilities/math/numberWithZeros";
 import { encodePacked } from "thirdweb/utils";
-import MiniLoader from "../../../../components/UI/MiniLoader";
+import MiniLoader from "../../../UI/MiniLoader";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
 import { Account } from "thirdweb/wallets";

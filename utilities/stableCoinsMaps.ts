@@ -1,8 +1,7 @@
-import { PaymentTypesArray } from "../types/payload-types";
-import { FiatCodes } from "../types/request.types";
+import { FiatCodes } from "../types/derivedPayload.types";
 
 export interface FiatInfo {
-  id: string;
+  id: FiatCodes;
   symbol: string;
 }
 

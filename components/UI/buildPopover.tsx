@@ -1,12 +1,13 @@
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
+import { TFunction } from 'next-i18next';
 import React, { Fragment, useState, useRef, useEffect } from 'react';
 
 type Position = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | 'bottom-full';
 
 interface PopoverProps {
-  t: (key: string) => string;
+  t: TFunction;
 }
 
 type ButtonRenderer = (t: (key: string) => string) => React.ReactNode;
@@ -17,7 +18,7 @@ export default function buildPopover(
   getContent: ContentRenderer,
   classInject?: string
 ): React.FC<PopoverProps> {
-  return function PopoverComponent({ t }) {
+  return function PopoverComponent({ t }: PopoverProps) {
     const [position, setPosition] = useState<Position>('bottom-left');
     const popoverButtonRef = useRef<HTMLButtonElement>(null);
 

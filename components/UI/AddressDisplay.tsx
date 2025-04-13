@@ -1,12 +1,19 @@
 import { FiCopy, FiCheck } from "react-icons/fi";
 import React, { useState } from "react";
 
+interface AddressDisplayProps {
+  value: string;
+  concat?: boolean;
+  concatVal?: number;
+  className?: string;
+}
+
 export default function AddressDisplay({
   value,
   concat = true,
   concatVal = 6,
   className = "flex items-center justify-center bg-gray-100 rounded",
-}) {
+}: AddressDisplayProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -19,7 +26,7 @@ export default function AddressDisplay({
   };
 
   // Function to format the address
-  const formatValue = (value) => {
+  const formatValue = (value: string): string => {
     if(!concat) return value;
     if (value && value.length > 8) {
       return `${value.slice(0, concatVal)}...${value.slice(-concatVal)}`;
