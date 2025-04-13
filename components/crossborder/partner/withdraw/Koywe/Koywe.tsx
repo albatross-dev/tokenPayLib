@@ -1,7 +1,17 @@
-import Loader from "@/tokenPayLib/components/UI/Loader";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Account } from "thirdweb/wallets";
+import { Consumer, PaymentTypesArray, Country, Vendor } from "../../../../../types/payload-types";
+import Loader from "../../../../UI/Loader";
+import React from "react";
+interface KoyweProps {
+  amount: number;
+  account: Account;
+  user: Consumer | Vendor;
+  method: PaymentTypesArray[number];
+  country: Country;
+}
 
 export default function Koywe({
   amount,
@@ -9,7 +19,7 @@ export default function Koywe({
   user,
   method,
   country
-}) {
+}: KoyweProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   // 'loading' | 'error' | 'overview' | 'created'

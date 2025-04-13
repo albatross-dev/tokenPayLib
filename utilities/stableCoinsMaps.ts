@@ -1,3 +1,5 @@
+import { PaymentTypesArray } from "../types/payload-types";
+import { FiatCodes } from "../types/request.types";
 
 export interface FiatInfo {
   id: string;
@@ -137,7 +139,7 @@ export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefin
 }
 
 
-export function getFiatInfo(fiatCode: string): FiatInfo | undefined {
+export function getFiatInfo(fiatCode: FiatCodes): FiatInfo | undefined {
   return FIAT_INFO_MAP[fiatCode];
 }
 
@@ -153,6 +155,6 @@ export function getFiatCurrencyCode(stablecoin: string): "USD" | "EUR" | undefin
  * Retrieves the currency symbol for a given fiat currency code.
  * Handles case-insensitivity.
  */
-export function getFiatCurrencySymbol(fiatCode: string): string | undefined {
+export function getFiatCurrencySymbol(fiatCode: FiatCodes): string | undefined {
   return FIAT_SYMBOLS_MAP[fiatCode];
 }

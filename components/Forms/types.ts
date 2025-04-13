@@ -3,6 +3,7 @@ import { SimpleToken } from "../../types/token.types";
 import { Chain } from "thirdweb";
 import { CheckoutSession } from "../../types/payload-types";
 import { FiatInfo } from "../../utilities/stableCoinsMaps";
+import { Availability } from "../../utilities/CountriesConfig";
 
 // Base field interface that all field types will extend
 export interface BaseFieldProps {

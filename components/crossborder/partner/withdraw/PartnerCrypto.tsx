@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   createThirdwebClient,
   getContract,
@@ -7,54 +7,68 @@ import {
   sendAndConfirmTransaction,
 } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { AuthContext, sendErrorReport } from "@/context/UserContext";
 import { IoClose } from "react-icons/io5";
-
 import axios from "axios";
-import { IoShieldCheckmarkSharp } from "react-icons/io5";
-import TokenSelector from "@/tokenPayLib/components/Forms/TokenSelector";
 import { useActiveAccount } from "thirdweb/react";
-import { TokensByChainId } from "@/tokenPayLib/utilities/crypto/currencies";
 import { parseUnits } from "ethers/lib/utils";
-import Image from "next/image";
-import { PATHS } from "@/tokenPayLib/utilities/crypto/getPath";
 import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
-
-import convertAnyToAny, {
-  convertAnyToAnyDirect,
-  uniswapAddresses,
-} from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
-import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
-import { encodePacked } from "thirdweb/utils";
-import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
 import { IoIosInformationCircle } from "react-icons/io";
-import { tokenPayAbstractionSimpleTransfer } from "@/tokenPayLib/assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
-import { STABLE_FIAT_MAP } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import { encodePacked } from "thirdweb/utils";
+import { AuthContext, sendErrorReport } from "../../../../../context/UserContext";
+import numberWithZeros from "../../../../utilities/math/numberWithZeros";
+import { TokensByChainId } from "../../../../utilities/crypto/currencies";
+import { SimpleToken } from "../../../../types/token.types";
+import { convertAnyToAnyDirect, uniswapAddresses } from "../../../../utilities/crypto/convertAnyToAny";
+import { PATHS } from "../../../../utilities/crypto/getPath";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../assets/TokenPayAbstraction";
+import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
+import { PaymentTypesArray } from "../../../../types/payload-types";
+import { Country } from "../../../../types/payload-types";
+import { FiatTransactionRequest } from "../../../../types/request.types";
+
+export type TransactionState = "transaction" | "success"; 
+
+export interface CryptoPartnerProps {
+  amount: number;
+  country: Country;
+  method: PaymentTypesArray[number];
+}
+
+
+export interface ValidationErrors {
+  selectedToken?: string;
+  amountToSend?: string;
+  targetAddress?: string;
+  conversionError?: string;
+}
+
+
+
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-export default function CryptoPartner({ amount, country, method }) {
-  const [defaultToken, setDefaultToken] = useState(
+const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }) => {
+  const [defaultToken, setDefaultToken] = useState<SimpleToken>(
     TokensByChainId[polygon.id][method.acceptedCrypto]
   );
   const [differentToken, setDifferentToken] = useState(false);
-  const [selectedToken, setSelectedToken] = useState(null);
+  const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [amountToSend, setAmountToSend] = useState(amount);
-  const [targetTokens, setTargetTokens] = useState(null);
+  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken> | null>(null);
   const [targetAddress, setTargetAddress] = useState("");
-  const [errors, setErrors] = useState({});
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState(null);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const account = useActiveAccount();
-  const [newTxHash, setNewTxHash] = useState(null);
+  const [newTxHash, setNewTxHash] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loadingQuote, setLoadingQuote] = useState(false);
-  const [quote, setQuote] = useState(null);
-  const [state, setState] = useState("transaction");
+  const [quote, setQuote] = useState<[bigint, bigint, bigint, bigint] | null>(null);
+  const [state, setState] = useState<TransactionState>("transaction");
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -72,20 +86,12 @@ export default function CryptoPartner({ amount, country, method }) {
         abi: QuoteV2Abi,
       });
 
+      if (!selectedToken) return;
+
       const path =
         PATHS[polygon.id][defaultToken.id.toUpperCase()][
-          (selectedToken.id || selectedToken.symbol).toUpperCase()
+          (selectedToken.id).toUpperCase()
         ];
-
-      console.log(
-        "fetch Quote",
-        contract,
-        path,
-        defaultToken,
-        selectedToken,
-        amount,
-        BigInt(amount * numberWithZeros(selectedToken?.decimals || 1))
-      );
 
       const encodedPath = encodePacked(path[0], path[1]);
 
@@ -97,8 +103,7 @@ export default function CryptoPartner({ amount, country, method }) {
           BigInt(amount * numberWithZeros(selectedToken?.decimals || 1)),
         ],
       });
-      setQuote(quote);
-      console.log("quote", quote);
+      setQuote(quote as any);
       setLoadingQuote(false);
     }
 
@@ -107,7 +112,7 @@ export default function CryptoPartner({ amount, country, method }) {
     }
   }, [selectedToken, differentToken]);
 
-  const fetchTokenBalance = async (selectedToken) => {
+  const fetchTokenBalance = async (selectedToken: SimpleToken) => {
     try {
       const contract = getContract({
         client,
@@ -132,8 +137,8 @@ export default function CryptoPartner({ amount, country, method }) {
     }
   };
 
-  const validateForm = () => {
-    const validationErrors = {};
+  const validateForm = (): boolean => {
+    const validationErrors: ValidationErrors = {};
 
     if (differentToken) {
       if (!selectedToken) {
@@ -159,8 +164,8 @@ export default function CryptoPartner({ amount, country, method }) {
     return Object.keys(validationErrors).length === 0;
   };
 
-  function processTargetTokens(token) {
-    if (!token) return;
+  function processTargetTokens(token: SimpleToken | null): Record<string, SimpleToken> | null {
+    if (!token) return null;
     let targetTokenArr = Object.keys(
       PATHS[polygon.id][token.id.toUpperCase()]
     ).map((tokenId) => {
@@ -173,15 +178,12 @@ export default function CryptoPartner({ amount, country, method }) {
 
     let targetTokens = Object.fromEntries(targetTokenArr);
     setTargetTokens(targetTokens);
-    console.log("targetTokens", targetTokenArr);
-    setSelectedToken(targetTokenArr[0][1]);
+    setSelectedToken(targetTokenArr[0][1] as SimpleToken);
 
     return targetTokens;
   }
 
-  const handleTransfer = async (token, amount, address) => {
-    console.log("handle transfer", amount, token, address);
-
+  const handleTransfer = async (token: SimpleToken, amount: bigint, address: string): Promise<string> => {
     const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
       client,
       account,
@@ -198,11 +200,11 @@ export default function CryptoPartner({ amount, country, method }) {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    if (differentToken) {
+    if (differentToken && quote && selectedToken) {
       try {
         await convertAnyToAnyDirect(
           defaultToken,
-          BigInt(amount * numberWithZeros(defaultToken?.decimals || 1)),
+          amount * numberWithZeros(defaultToken?.decimals || 1),
           account,
           () => {},
           (error) => {
@@ -212,24 +214,24 @@ export default function CryptoPartner({ amount, country, method }) {
           selectedToken
         );
 
-        const feePercentage = 4n; // Represent 0.004 as 4/1000
-        const divisor = 1000n;
+        const feePercentage = BigInt(4);
+        const divisor = BigInt(1000);
         const sendAmount = quote[0] - (quote[0] * feePercentage) / divisor;
 
         let transactionHash = await handleTransfer(
           selectedToken,
-          sendAmount.toString(),
+          sendAmount,
           targetAddress
         );
 
-        let transactionData = {
+        let transactionData: FiatTransactionRequest = {
           partner: "crypto",
           amount: Number(amount),
           currency: defaultToken.contractAddress,
           currencyName: defaultToken.id,
           transactionHash: transactionHash,
           UUID: transactionHash,
-          sendingWallet: account?.address,
+          sendingWallet: account?.address || "",
           currencyDecimals: defaultToken.decimals,
           receivingWallet: targetAddress,
           toAccountBankName: "",
@@ -239,7 +241,7 @@ export default function CryptoPartner({ amount, country, method }) {
           fromNetwork: "polygon",
           type: "Withdraw",
           finalCurrency: selectedToken.id,
-          finalAmount: Number(sendAmount),
+          finalamount: Number(sendAmount),
         };
 
         if (user.type === "vendor") {
@@ -250,7 +252,7 @@ export default function CryptoPartner({ amount, country, method }) {
 
         await axios.post("/api/fiatTransaction", transactionData);
       } catch (error) {
-        const errors = {};
+        const errors: ValidationErrors = {};
         sendErrorReport(
           `PartnerCrypto - withdraw - Error transfering token`,
           error
@@ -259,14 +261,13 @@ export default function CryptoPartner({ amount, country, method }) {
           "withdraw.partnerCrypto.errorConvertCrypto"
         );
         setErrors(errors);
-        console.error("Error transfering token", error);
         setIsLoading(false);
         return;
       }
     } else {
       let transactionHash = await handleTransfer(
         defaultToken,
-        parseUnits(amount.toString(), defaultToken.decimals),
+        BigInt(amount * numberWithZeros(defaultToken?.decimals || 1)),
         targetAddress
       );
 
@@ -292,7 +293,6 @@ export default function CryptoPartner({ amount, country, method }) {
     }
 
     setState("success");
-
     setIsLoading(false);
     setIsOpen(true);
   };
@@ -302,22 +302,22 @@ export default function CryptoPartner({ amount, country, method }) {
       {state === "transaction" && (
         <div>
           <h2 className="text-2xl font-bold mb-4">
-            {STABLE_FIAT_MAP[defaultToken.name]?.id}{" "}
+            {getFiatInfoForStableCoin(defaultToken.name)?.id}{" "}
             {tCrossborder("withdraw.partnerCrypto.sendHeader")}
           </h2>
           <div className="flex flex-row gap-2 items-center bg-gray-100 rounded p-4">
             <div className="relative w-8 h-8 bg-uhuBlue flex items-center text-white font-bold justify-center rounded-full">
-              {STABLE_FIAT_MAP[defaultToken.name]?.symbol}
+              {getFiatInfoForStableCoin(defaultToken.name)?.symbol}
             </div>
-            <div>{STABLE_FIAT_MAP[defaultToken.name]?.id}</div>
+            <div>{getFiatInfoForStableCoin(defaultToken.name)?.id}</div>
             <div className="flex-1"></div>
             <div className="bg-uhuBlue text-[11px] text-white rounded px-1 text">
               via <span className="font-bold">{defaultToken.name}</span>
             </div>
             <div className="font-bold">
-              {parseFloat(amount).toLocaleString()}
+              {parseFloat(amount.toString()).toLocaleString()}
             </div>
-            <div>{STABLE_FIAT_MAP[defaultToken.name]?.symbol}</div>
+            <div>{getFiatInfoForStableCoin(defaultToken.name)?.symbol}</div>
           </div>
           <div className="mt-4 text-sm text-gray-700">
             {tCrossborder("withdraw.partnerCrypto.walletInfo")}
@@ -370,4 +370,6 @@ export default function CryptoPartner({ amount, country, method }) {
       )}
     </div>
   );
-}
+};
+
+export default CryptoPartner; 

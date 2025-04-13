@@ -5,9 +5,9 @@ import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 
-import { requiredDocuments, visibleDocuments } from "../../../../../../../../../../pages/signup";
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
+import { requiredDocuments, visibleDocuments } from "../../../../../../../../../utilities/kyc/requiredDocumentsInfo";
 let formDataPreloaded = false;
 
 interface KotaniPayHelpDeskKYCFormProps {

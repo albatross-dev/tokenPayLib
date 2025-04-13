@@ -3,11 +3,11 @@ import OnRamp from "../../../../components/crossborder/partner/withdraw/OnRamp";
 import Swypt from "../../partner/withdraw/Swypt/Swypt";
 import RawCrypto from "../../../../components/crossborder/partner/withdraw/Crypto";
 import BitcoinVN from "../../partner/withdraw/BitcoinVN/BitcoinVN";
-import Stasis from "../../../../components/crossborder/partner/withdraw/Stasis";
-import CryptoPartner from "../../../../components/crossborder/partner/withdraw/PartnerCrypto";
+import Stasis from "../../partner/withdraw/Stasis/Stasis";
+import CryptoPartner from "../../partner/withdraw/PartnerCrypto";
 import Unlimit from "../../../../components/crossborder/partner/withdraw/Unlimit";
 import HelpDesk from "../../partner/withdraw/Helpdesks/HelpDesk";
-import Koywe from "../../partner/withdraw/Koywe";
+import Koywe from "../../partner/withdraw/Koywe/Koywe";
 import { Account } from "thirdweb/wallets";
 import React from "react";
 
@@ -110,7 +110,7 @@ export default function TransferPanel({
           amount={amount}
           account={account}
           user={user}
-          method={selectedMethod}
+          method={method}
           country={selectedCountry}
         />
       );

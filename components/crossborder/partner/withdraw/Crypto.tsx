@@ -177,7 +177,7 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
       client,
       account as Account,
       polygon,
-      amount,
+      BigInt(amount),
       token,
       address
     );
@@ -333,6 +333,7 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
                     />
                   </div>
                   <TokenSelector
+                    type="crypto"
                     tokens={targetTokens}
                     selectedToken={selectedToken}
                     onSelect={(token: SimpleToken) => {

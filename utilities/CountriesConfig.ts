@@ -1,16 +1,47 @@
+import { Country } from "../components/Forms/types";
+import { SimpleToken } from "../types/token.types";
 import currencies from "../utilities/crypto/currencies";
 
 export const TYPE_CRYPTO = "crypto";
 export const TYPE_FIAT = "fiat";
 
+export type AllCountryCode =
+  | "DE" | "GB" | "US" | "AF" | "AL" | "DZ" | "AD" | "AO" | "AG" | "AR"
+  | "AM" | "AU" | "AT" | "AZ" | "BS" | "BH" | "BD" | "BB" | "BE" | "BZ"
+  | "BJ" | "BT" | "BO" | "BA" | "BW" | "BR" | "BN" | "BG" | "BF" | "BI"
+  | "CV" | "KH" | "CM" | "CA" | "CF" | "TD" | "CL" | "CN" | "CO" | "KM"
+  | "CG" | "CD" | "CR" | "CI" | "HR" | "CU" | "CY" | "CZ" | "DK" | "DJ"
+  | "DM" | "DO" | "EC" | "EG" | "SV" | "GQ" | "ER" | "EE" | "SZ" | "ET"
+  | "FJ" | "FI" | "FR" | "GA" | "GM" | "GE" | "GH" | "GR" | "GD" | "GT"
+  | "GN" | "GW" | "GY" | "HT" | "HN" | "HU" | "IS" | "IN" | "ID" | "IQ"
+  | "IE" | "IL" | "IT" | "JM" | "JP" | "JO" | "KZ" | "KE" | "KI" | "KR"
+  | "KW" | "KG" | "LA" | "LV" | "LB" | "LS" | "LR" | "LY" | "LI" | "LT"
+  | "LU" | "MG" | "MW" | "MY" | "MV" | "ML" | "MT" | "MH" | "MR" | "MU"
+  | "MX" | "FM" | "MD" | "MC" | "MN" | "ME" | "MA" | "MZ" | "NA" | "NR"
+  | "NP" | "NL" | "NZ" | "NI" | "NE" | "NG" | "MK" | "NO" | "OM" | "PK"
+  | "PW" | "PA" | "PG" | "PY" | "PE" | "PH" | "PL" | "PT" | "QA" | "RO"
+  | "RW" | "KN" | "LC" | "VC" | "WS" | "SM" | "ST" | "SA" | "SN" | "RS"
+  | "SC" | "SL" | "SG" | "SK" | "SI" | "SB" | "SO" | "ZA" | "SS" | "ES"
+  | "LK" | "SD" | "SR" | "SE" | "CH" | "TJ" | "TZ" | "TH" | "TL" | "TG"
+  | "TO" | "TT" | "TN" | "TR" | "TM" | "TV" | "UG" | "AE" | "UY" | "UZ"
+  | "VU" | "VE" | "VN" | "YE" | "ZM" | "ZW";
+
 export const CRYPTOS = [currencies["EUROE"]];
 
-const availableToAll = {
+export interface CountryWithAvailability extends Country {
+  available: Availability;
+}
+
+export interface Availability {
+  [key: string]: SimpleToken[];
+}
+
+const availableToAll: Availability = {
   [TYPE_FIAT]: [],
   [TYPE_CRYPTO]: CRYPTOS,
 };
 
-export const ALL_COUNTRIES_N = {
+export const ALL_COUNTRIES_N: Record<AllCountryCode, Country> = {
   DE: {
     name: "Germany",
     flag: "🇩🇪",
@@ -1316,7 +1347,7 @@ export const ALL_COUNTRIES_N = {
   },
 };
 
-export const ALL_COUNTRIES = {
+export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
   DE: {
     name: "Germany",
     flag: "🇩🇪",
@@ -2629,8 +2660,7 @@ export const ALL_COUNTRIES = {
   },
 };
 
-
-const countries = {
+const countries: Record<AllCountryCode, Record<AllCountryCode, CountryWithAvailability>> = {
   DE: ALL_COUNTRIES, // Germany
   GB: ALL_COUNTRIES, // United Kingdom
   US: ALL_COUNTRIES, // United States

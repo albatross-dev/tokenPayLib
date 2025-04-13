@@ -12,27 +12,7 @@ import { Country, PaymentTypesArray } from "../../../../types/payload-types";
 import { FiatInfo } from "../../../../utilities/stableCoinsMaps";
 import { Currency } from "../../../../types/currency.types";
 
-export type PaymentMethodType = PaymentTypesArray[number]["type"];
-
-export interface PaymentMethod {
-  id: string;
-  acceptedCrypto?: "USDC" | "EURS";
-  name: string;
-  withdrawModality: ("mobile_money" | "bank_account" | "credit_card" | "crypto")[];
-  onrampModality: ("mobile_money" | "credit_card" | "bank_account")[];
-  currencies?: {
-    currency?: PaymentTypesArray[number]["currencies"][number]["currency"];
-    id?: string;
-  }[];
-  currency: PaymentTypesArray[number]["currencies"][number]["currency"];
-  onrampFee: number;
-  onrampMinAmount: number;
-  onrampMaxAmount: number;
-  minAmount: number;
-  maxAmount: number;
-  fee: number;
-  type: PaymentMethodType;
-}
+export type PaymentMethodType = PaymentTypesArray[number];
 
 export interface SwyptQuoteResponse {
   data: {
@@ -47,7 +27,7 @@ interface LocalCurrency {
   id: string;
 }
 
-interface QuotePaymentType extends PaymentMethod {
+interface QuotePaymentType extends PaymentMethodType {
   predictedAmount: number;
 }
 

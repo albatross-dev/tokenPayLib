@@ -1,9 +1,17 @@
-const { sendErrorReport } = require("../../../../context/UserContext");
+import axios from "axios";
+import { sendErrorReport } from "../../../../context/UserContext";
+import { BankAccount } from "../../../components/crossborder/partner/universal/stasis.types";
+import { Consumer, Vendor} from "../../../types/payload-types";
+
+interface FetchBankAccountsProps {
+  setBankAccounts: (bankAccounts: BankAccount[]) => void;
+  user: Vendor | Consumer;
+}
 
   /**
    * Fetches the users bank accounts from the backend via stasis and sets them in the state.
    */
-  const fetchBankAccounts = async (setBankAccounts, setErrors) => {
+  const fetchBankAccounts = async ({setBankAccounts, user}: FetchBankAccountsProps) => {
     if (!user.stasisClientUUID) {
       console.log('Stasis client UUID is missing');
       return;

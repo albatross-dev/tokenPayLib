@@ -1,7 +1,7 @@
-const preprocessDataForServer = (data) => {
+const preprocessDataForServer = (data: Record<string, any>) => {
   const processedData = { ...data };
 
-  const recursiveProcess = (obj) => {
+  const recursiveProcess = (obj: Record<string, any>) => {
     Object.keys(obj).forEach((key) => {
       const value = obj[key];
 

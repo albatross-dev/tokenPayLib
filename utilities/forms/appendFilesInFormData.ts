@@ -1,6 +1,7 @@
-const appendFilesRecursively = (processedData, data) => {
+
+const appendFilesRecursively = (processedData: Record<string, any>, data: Record<string, any>) => {
   const formData = new FormData();
-  const handleDataRecursively = (key, value, parent, formKey = "") => {
+  const handleDataRecursively = (key: string, value: any, parent: any, formKey = "") => {
     if (Array.isArray(value)) {
       value.forEach((item, index) => {
         handleDataRecursively(`${key}[${index}]`, item, value, formKey);

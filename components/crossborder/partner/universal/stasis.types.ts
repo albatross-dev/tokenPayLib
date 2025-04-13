@@ -1,5 +1,3 @@
-import { Account } from "thirdweb/wallets";
-
 export interface BankAccount {
   uuid: string;
   name: string;
