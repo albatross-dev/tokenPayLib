@@ -1,3 +1,4 @@
+import { TFunction } from "i18next";
 import { useState } from "react";
 
 interface Errors {
@@ -8,7 +9,7 @@ interface Errors {
 }
 
 interface UseSendCryptoFormProps {
-  tAccount: (key: string) => string;
+  tAccount: TFunction
 }
 
 interface UseSendCryptoFormReturn {

@@ -1,6 +1,7 @@
 import { Swiper } from 'swiper';
 import { Consumer, Country, Maintenance, PaymentTypesArray, Vendor } from '../../types/payload-types';
 import { Account } from 'thirdweb/wallets';
+import { FiatCodes } from '../../types/derivedPayload.types';
 
 export interface WithdrawPageProps {
   maintenance?: Maintenance
@@ -23,13 +24,14 @@ export interface CurrencyConversionSlideProps extends SlideProps {
   availableMethods: PaymentTypesArray;
   setSelectedMethod: (method: PaymentTypesArray[number]) => void;
   setAvailableMethods: (methods: PaymentTypesArray) => void;
-  setPayoutCurrency: (currency: string) => void;
+  setPayoutCurrency: (currency: FiatCodes | "crypto") => void;
 }
 
 export interface TransactionDetailsSlideProps extends SlideProps {
   selectedCountry: Country;
   selectedCurrency: any; // Replace with proper type
   preferredStableCoin: string;
+  payoutCurrency: FiatCodes | "crypto";
   maxAmount: number;
   amount: string;
   handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

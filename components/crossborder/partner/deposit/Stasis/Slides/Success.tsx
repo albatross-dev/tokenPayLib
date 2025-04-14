@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import { IoShieldCheckmarkSharp, IoCopy } from "react-icons/io5";
-import { PaymentInfo } from './types';
+import { PaymentInfo } from  '../../../universal/stasis.types';
 
 interface SuccessProps {
   amount: number;

@@ -56,7 +56,14 @@ let oldActiveChainId: number;
 
 type exchangeStateType = "normal" | "processing" | "error";
 
-export default function TokenSwapSection({ origin, target, max, preAmount }) {
+interface TokenSwapSectionProps {
+  origin?: string;
+  target?: string;
+  max?: boolean;
+  preAmount?: number;
+}
+
+export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
@@ -420,12 +427,13 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
         <div>{t("choose_chain")}</div>
       </div>
-      <ChainSelector />
+      <ChainSelector type="chain" />
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
         <div>{t("choose_origin_currency")}</div>
       </div>
 
       <TokenSelector
+        type="token"
         onSelect={(token) => {
           setAmount(0);
           setSelectedToken(token);
@@ -492,6 +500,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }) {
       </div>
 
       <TokenSelector
+        type="token"
         onSelect={(selectedToken) => {
           setSelectedTargetToken(selectedToken);
         }}

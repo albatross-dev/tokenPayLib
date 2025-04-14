@@ -1,9 +1,8 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import LoadingButton from "../../../../UI/LoadingButton";
-import { NewBankAccount, LoadingState, StasisErrors } from './types';
-
+import { LoadingState, NewBankAccount, StasisErrors } from '../../../universal/stasis.types';
+import LoadingButton from '../../../../../UI/LoadingButton';
 interface AddBankProps {
   newBankAccount: NewBankAccount;
   onBankAccountChange: (account: NewBankAccount) => void;
@@ -23,11 +22,13 @@ export function AddBank({
 
   const isFormComplete = () => {
     return (
+      Boolean(
       newBankAccount.name &&
       newBankAccount.iban &&
       newBankAccount.bank_code &&
       newBankAccount.bank_name &&
       newBankAccount.holder_name
+      )
     );
   };
 
@@ -146,9 +147,8 @@ export function AddBank({
 
       <LoadingButton
         active={isFormComplete()}
-        isLoading={loadingState === "processing"}
+        isLoading={loadingState}
         onClick={onAddBankAccount}
-        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
       >
         <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addBank.button")}
       </LoadingButton>

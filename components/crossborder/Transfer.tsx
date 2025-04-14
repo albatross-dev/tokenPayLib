@@ -9,24 +9,51 @@ import TypePopover from "./TypePopover";
 import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
 import SimpleList from "@/tokenPayLib/components/UI/SimpleList";
 
+interface TransactionData {
+  transactionHash: string;
+  amount: number;
+  currencyName: string;
+  type: string;
+  toAccountIdentifier?: string;
+  createdAt: string;
+  shredCount?: number;
+  shardList?: any[];
+}
+
+interface TableQuery {
+  type?: {
+    equals: string;
+  };
+}
+
+interface CellProps {
+  getValue: () => any;
+  row: {
+    original: TransactionData;
+  };
+}
+
+interface Column {
+  accessorKey: keyof TransactionData;
+  header: string;
+  cell: (props: CellProps) => JSX.Element;
+}
+
 export default function Transfer() {
   const { user, setUser } = useContext(AuthContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTransactionData, setSelectedTransactionData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedTransactionData, setSelectedTransactionData] = useState<TransactionData | null>(null);
+  const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
 
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const [paymentsTableQuery, setPaymentsTableQuery] = useState({});
-
-
-  // Function to open the modal with the payment's data
-  const openModalWithTransactionData = (transactionData) => {
+  const openModalWithTransactionData = (transactionData: TransactionData): void => {
     setSelectedTransactionData(transactionData);
     setIsModalOpen(true);
   };
 
-  const columns = [
+  const columns: Column[] = [
     {
       accessorKey: "transactionHash",
       header: tCrossborder("transfer.information"),
@@ -35,7 +62,7 @@ export default function Transfer() {
           <BsArrowUpRight
             onClick={() => openModalWithTransactionData(props.row.original)}
             className="w-4 h-4 mr-2 ml-2 cursor-pointer"
-          ></BsArrowUpRight>
+          />
         );
       },
     },
@@ -48,7 +75,7 @@ export default function Transfer() {
             {props.row.original.type === "Withdraw" && "-"}
             {props.row.original.shredCount
               ? props.getValue() *
-                (props.row.original.shardList.length
+                (props.row.original.shardList?.length
                   ? props.row.original.shardList.length /
                     props.row.original.shredCount
                   : 0)
@@ -82,9 +109,9 @@ export default function Transfer() {
       header: tCrossborder("transfer.receiver"),
       cell: (props) => {
         return (
-          <div className="table-cell ">
+          <div className="table-cell">
             {props.getValue() ? (
-              <AddressDisplay value={props.getValue()}></AddressDisplay>
+              <AddressDisplay value={props.getValue()} />
             ) : (
               "-"
             )}
@@ -92,7 +119,6 @@ export default function Transfer() {
         );
       },
     },
-
     {
       accessorKey: "createdAt",
       header: tCrossborder("transfer.date"),
@@ -113,25 +139,24 @@ export default function Transfer() {
           isOpen={isModalOpen}
           closeModal={() => setIsModalOpen(false)}
           transactionData={selectedTransactionData}
-        ></TransactionModal>
-        <SimpleList standardQuery={paymentsTableQuery} collection={"fiatTransaction"} columns={columns}>
+        />
+        <SimpleList standardQuery={paymentsTableQuery} collection="fiatTransaction" columns={columns}>
           <ExportPopover
             minDate={moment(user?.createdAt).format("YYYY-MM-DD")}
-          ></ExportPopover>
-            <TypePopover
-              onSelect={(type)=>{
-                console.log("TypePopover",type)
-                if(type === 'all'){
-                  setPaymentsTableQuery({});
-                }else{
-                  setPaymentsTableQuery({
-                    type: {
-                      equals: type,
-                    },
-                  });
-                }
-              }}
-            ></TypePopover>
+          />
+          <TypePopover
+            onSelect={(type: string) => {
+              if(type === 'all') {
+                setPaymentsTableQuery({});
+              } else {
+                setPaymentsTableQuery({
+                  type: {
+                    equals: type,
+                  },
+                });
+              }
+            }}
+          />
         </SimpleList>
       </div>
     </>

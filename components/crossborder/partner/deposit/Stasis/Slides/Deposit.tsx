@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
-import LoadingButton from "../../../../UI/LoadingButton";
-import { BankAccount, CryptoAccount, LoadingState, StasisErrors } from './types';
+import LoadingButton from '../../../../../UI/LoadingButton';
+import { BankAccount, CryptoAccount, LoadingState, StasisErrors } from  '../../../universal/stasis.types';
 
 interface DepositProps {
   amount: number;
@@ -56,10 +56,9 @@ export function Deposit({
         )}
 
         <LoadingButton
-          isLoading={loadingState === "processing"}
+          isLoading={loadingState}
           active={true}
           onClick={onSend}
-          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
         >
           {tCrossborder("deposit.stasis.deposit.button")}
         </LoadingButton>

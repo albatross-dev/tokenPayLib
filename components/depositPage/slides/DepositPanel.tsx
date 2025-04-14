@@ -1,12 +1,12 @@
 import { Account } from "thirdweb/wallets";
-import BitcoinVN from "../../partner/deposit/BitcoinVN";
 import OnRamp from "../../crossborder/partner/deposit/OnRamp";
-import Swypt from "../../partner/deposit/Swypt";
 import Unlimit from "../../crossborder/partner/deposit/Unlimit";
 import { Consumer, Vendor, PaymentTypesArray, Country } from "../../../types/payload-types";
 import React from "react";
-import DepositError from "./DepositError";
 import Stasis from "../../crossborder/partner/deposit/Stasis/Stasis";
+import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
+import BitcoinVN from "../../crossborder/partner/deposit/BitcoinVN/BitcoinVN";
+import DepositError from "../DepositError";
 
 interface DepositPanelProps {
   method: PaymentTypesArray[number];

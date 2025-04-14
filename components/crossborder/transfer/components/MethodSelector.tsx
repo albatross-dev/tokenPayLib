@@ -25,7 +25,7 @@ interface QuotePaymentType extends PaymentMethodType {
 
 interface MethodSelectorProps {
   selectable: boolean;
-  methods: QuotePaymentType[];
+  methods: PaymentTypesArray;
   exchangeRate: number;
   loadedExchangeRate: boolean;
   finalCurrency: FiatInfo | null;
@@ -60,13 +60,15 @@ export default function MethodSelector({
   const { t: tCrossborder } = useTranslation("crossborder");
   const [loading, setLoading] = useState(true);
 
+  const quoteMethods = methods as QuotePaymentType[];
+
   useEffect(() => {
     async function update() {
       setLoading(true);
       console.log("update started");
       // sort the methods by payment modality
       const sortedMethods: SortedMethodsType = {};
-      for (const method of methods) {
+      for (const method of quoteMethods) {
         for (const modality of method.withdrawModality) {
           if (!sortedMethods[modality]) {
             sortedMethods[modality] = {

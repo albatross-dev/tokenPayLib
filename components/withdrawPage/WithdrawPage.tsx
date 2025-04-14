@@ -33,7 +33,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
   const [selectedCurrency, setSelectedCurrency] = useState<any>(null);
   const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>([]);
   const [preferredStableCoin, setPreferredStableCoin] = useState<string>('');
-  const [payoutCurrency, setPayoutCurrency] = useState<string | null>(null);
+  const [payoutCurrency, setPayoutCurrency] = useState<FiatCodes | "crypto" | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1);
   const [loadedExchangeRate, setLoadedExchangeRate] = useState<boolean>(false);
   const [maxAmount, setMaxAmount] = useState<number>(0);
@@ -248,6 +248,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                       selectedCountry={selectedCountry!}
                       selectedCurrency={selectedCurrency}
                       preferredStableCoin={preferredStableCoin}
+                      payoutCurrency={payoutCurrency}
                       maxAmount={maxAmount}
                       amount={amount}
                       handleAmountChange={handleAmountChange}

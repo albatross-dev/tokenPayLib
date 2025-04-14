@@ -1,25 +1,34 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import { formatNumberWithCurrency } from "@/utilities/currencies";
 import currencies, {
   formatCrypto,
-} from "@/tokenPayLib/utilities/crypto/currencies";
-import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
-import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
+  formatNumberWithCurrency,
+} from "../../utilities/crypto/currencies";
+import MiniLoader from "../UI/MiniLoader";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 import Image from "next/image";
 
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
-import { UhuConfigContext } from "@/tokenPayLib/components/contexts/UhuConfigContext";
+import { UhuConfigContext } from "../contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
 import { HiInformationCircle } from "react-icons/hi2";
-import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
+import UniversalModal from "../Modals/UniversalModal";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ConvertPopup from "./ConverterPopup";
-import { sendErrorReport } from "@/context/UserContext";
+import { sendErrorReport } from "../../../context/UserContext";
+import { SimpleToken } from "../../types/token.types";
+interface Balance {
+  symbol: string;
+  balance: number;
+  currency: string;
+  icon: string;
+  decimals: number;
+}
+
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -27,29 +36,29 @@ const client = createThirdwebClient({
 
 export default function BalanceOverview() {
   const account = useActiveAccount();
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState<boolean>(false);
   const { uhuConfig } = useContext(UhuConfigContext);
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
-  const [balances, setBalances] = useState([]);
-  const [totalEuroBalance, setTotalEuroBalance] = useState(0);
-  const [totalUsdBalance, setTotalUsdBalance] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [balances, setBalances] = useState<Balance[]>([]);
+  const [totalEuroBalance, setTotalEuroBalance] = useState<number>(0);
+  const [totalUsdBalance, setTotalUsdBalance] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
-  const [isConverterOpen, setIsConverterOpen] = useState(false);
-  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
+  const [isConverterOpen, setIsConverterOpen] = useState<boolean>(false);
+  const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false);
 
-  const [isUSDInfoModalOpen, setIsUSDInfoModalOpen] = useState(false);
+  const [isUSDInfoModalOpen, setIsUSDInfoModalOpen] = useState<boolean>(false);
 
-  const euroWhitelist = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
-  const usdWhitelist = ["USDC", "USDT"]; // Whitelisted USD stablecoins
+  const euroWhitelist: string[] = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
+  const usdWhitelist: string[] = ["USDC", "USDT"]; // Whitelisted USD stablecoins
 
-  const fetchBalances = async () => {
+  const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
 
     const balancePromises = Object.entries(currencies).map(
-      async ([symbol, currency]) => {
+      async ([symbol, currency]: [string, SimpleToken]) => {
         const contract = getContract({
           client: client,
           chain: polygon,
@@ -71,7 +80,7 @@ export default function BalanceOverview() {
             return {
               symbol,
               balance,
-              currency: currency.currency,
+              currency: currency.id,
               icon: currency.icon,
               decimals: currency.decimals,
             };
@@ -83,12 +92,12 @@ export default function BalanceOverview() {
           );
           console.error(`Error fetching balance for ${symbol}:`, error);
         }
-        return null; // Return null for currencies with no balance or errors
+        return null;
       }
     );
 
     const resolvedBalances = (await Promise.all(balancePromises)).filter(
-      (balance) => balance !== null
+      (balance): balance is Balance => balance !== null
     );
 
     let euroBalanceSum = 0;
@@ -96,10 +105,12 @@ export default function BalanceOverview() {
 
     resolvedBalances.forEach((balance) => {
       if (euroWhitelist.includes(balance.symbol)) {
-        euroBalanceSum +=
-          balance.symbol === "UHU"
-            ? balance.balance * (uhuConfig?.uhuEuroPrice || 0)
-            : balance.balance;
+        if (uhuConfig !== "loading") {
+          euroBalanceSum +=
+            balance.symbol === "UHU"
+              ? balance.balance * (uhuConfig?.uhuEuroPrice || 0)
+              : balance.balance;
+        }
       }
       if (usdWhitelist.includes(balance.symbol)) {
         usdBalanceSum += balance.balance;
@@ -111,16 +122,17 @@ export default function BalanceOverview() {
     setTotalUsdBalance(usdBalanceSum);
 
     if (loading) {
-      setLoading(false); // Stop the loader after the first fetch
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     setIsClient(true);
-
-    fetchBalances();
-    const interval = setInterval(fetchBalances, 10000); // Refresh every 10 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
+    if (uhuConfig !== "loading") {
+      fetchBalances();
+      const interval = setInterval(fetchBalances, 10000);
+      return () => clearInterval(interval);
+    }
   }, [account, client, uhuConfig, loading]);
 
   return (

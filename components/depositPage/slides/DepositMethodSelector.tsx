@@ -26,10 +26,10 @@ interface QuotePaymentType extends PaymentMethodType {
 }
 
 interface DepositMethodSelectorProps {
-  methods: QuotePaymentType[];
+  methods: PaymentTypesArray;
   amount: number;
-  selectedMethod: QuotePaymentType | null;
-  setSelectedMethod: (method: QuotePaymentType | null) => void;
+  selectedMethod: PaymentTypesArray[number] | null;
+  setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
   startCurrency: FiatCodes;
   endCurrency: string;
 }
@@ -94,7 +94,29 @@ export default function DepositMethodSelector({
         return;
       }
 
-      let sortedMethods: ModalityMethodMap;
+      let sortedMethods: ModalityMethodMap = {
+        mobile_money: {
+          methods: [],
+          cheapestMethod: null,
+          nextLowerLimitMethod: null,
+          nextMethodWithLimit: null,
+          hasApiError: false,
+        },
+        credit_card: {  
+          methods: [],
+          cheapestMethod: null,
+          nextLowerLimitMethod: null,
+          nextMethodWithLimit: null,
+          hasApiError: false,
+        },
+        bank_account: {
+          methods: [],
+          cheapestMethod: null,
+          nextLowerLimitMethod: null,
+          nextMethodWithLimit: null,
+          hasApiError: false,
+        },
+      };
       let filledInPartners = duplicateByPaymentModality(
         methods || [],
         "onrampModality"
@@ -202,7 +224,7 @@ export default function DepositMethodSelector({
         if (!method) return;
 
         const modality: QuotePaymentType["onrampModality"][number] = method.onrampModality[0];
-        if (!sortedMethods[modality]) {
+        if (modality && !sortedMethods[modality]) {
           sortedMethods[modality] = {
             methods: [],
             cheapestMethod: null,

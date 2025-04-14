@@ -9,7 +9,7 @@ import { AuthContext, sendErrorReport } from "../../../context/UserContext";
 import SimpleList from "../UI/SimpleList";
 import { formatCrypto, TokensByChainId } from "../../utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
-import { tokenPayAbstractionSimpleTransfer } from "../../assets/TokenPayAbstraction";
+import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
 import { getSendCryptoColumns } from "./sendCryptoColumns";
 import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
 import SendCryptoDialog from "./SendCryptoDialog";
@@ -39,7 +39,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [isClient, setIsClient] = useState(false);
   const { user } = useContext(AuthContext);
   const { t: tAccount } = useTranslation("wallet");
-  const { errors, validate, setFieldError, clearFieldError } = useSendCryptoForm(tAccount);
+  const { errors, validate, setFieldError, clearFieldError } = useSendCryptoForm({tAccount});
 
   useEffect(() => {
     setIsClient(true);

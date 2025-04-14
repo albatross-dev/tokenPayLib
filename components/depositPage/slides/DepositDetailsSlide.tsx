@@ -3,17 +3,18 @@ import { useTranslation } from "next-i18next";
 import { FiArrowLeft } from "react-icons/fi";
 import { getFiatCurrencySymbol } from "../../../utilities/stableCoinsMaps";
 import { Country, PaymentTypesArray } from "../../../types/payload-types";
-import DepositMethodSelector from '../DepositMethodSelector';
+import DepositMethodSelector from './DepositMethodSelector';
+import { FiatCodes } from '../../../types/derivedPayload.types';
 
 interface DepositDetailsSlideProps {
   selectedCountry: Country | null;
-  amount: number;
+  amount: string;
   onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string;
   availableDepositMethods: PaymentTypesArray;
   selectedMethod:   PaymentTypesArray[number] | null;
   setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
-  preferredFiatCurrency: string;
+  preferredFiatCurrency: FiatCodes;
   preferredStableCoin: string | null;
   onBack: () => void;
   onNext: () => void;
@@ -69,7 +70,7 @@ const DepositDetailsSlide: React.FC<DepositDetailsSlideProps> = ({
 
       <DepositMethodSelector
         methods={availableDepositMethods}
-        amount={amount}
+        amount={Number(amount)}
         setSelectedMethod={setSelectedMethod}
         selectedMethod={selectedMethod}
         startCurrency={preferredFiatCurrency}

@@ -1,9 +1,9 @@
 import React, { use, useContext, useEffect, useRef, useState } from "react";
 import QueryString from "qs";
 import axios from "axios";
-import Loader from "@/tokenPayLib/components/UI/Loader";
-import ContinentsMap from "@/tokenPayLib/components/UI/ContinentMap";
-import WalletQRCode from "@/tokenPayLib/components/UI/WalletQRCode";
+import Loader from "../UI/Loader";
+import ContinentsMap from "../UI/ContinentMap";
+import WalletQRCode from "../UI/WalletQRCode";
 import { useSprings, animated } from "@react-spring/web";
 import {
   Disclosure,
@@ -14,38 +14,73 @@ import { FiChevronDown, FiSearch } from "react-icons/fi";
 import AnimateHeight from "react-animate-height";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
-import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
+import UniversalModal from "../Modals/UniversalModal";
+import AddressDisplay from "../UI/AddressDisplay";
 import { useActiveAccount } from "thirdweb/react";
-import { AuthContext, sendErrorReport } from "@/context/UserContext";
-import { LogLevel } from "@/tokenPayLib/utilities/error-reporter/reporter";
-import LoadingButton from "@/tokenPayLib/components/UI/LoadingButton";
-import duplicateByPaymentModality from "@/tokenPayLib/utilities/crossborder/duplicateByPaymentModality";
+import { AuthContext, sendErrorReport } from "../../../context/UserContext";
+import { LogLevel } from "../../utilities/error-reporter/reporter";
+import LoadingButton from "../UI/LoadingButton";
+import duplicateByPaymentModality from "../../utilities/crossborder/duplicateByPaymentModality";
+
+interface Currency {
+  currency: string;
+}
+
+interface PaymentPartner {
+  withdrawModality: string;
+  currencies: Currency[];
+  fee: number;
+  minAmount: number;
+}
+
+interface CountryInfo {
+  name: string;
+  region: string;
+}
+
+interface Country {
+  countryInfo: CountryInfo;
+  countryCode: string;
+  paymentTypes: PaymentPartner[];
+}
+
+interface CountriesInfoProps {
+  countries: Country[];
+  selectedCountry: string | null;
+  selectedContinent: string;
+  countrySelected: (country: string) => void;
+}
+
+interface PaymentTypeInfo {
+  [key: string]: {
+    currency: string;
+    partner: PaymentPartner;
+  }[];
+}
+
+type LoadingState = "normal" | "processing" | "success" | "error";
 
 function CountriesInfo({
   countries,
   selectedCountry,
   selectedContinent,
   countrySelected,
-}) {
-  const containerRefs = useRef({});
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCountries, setFilteredCountries] = useState(countries);
-  const [isCountryInfoOpen, setIsCountryInfoOpen] = useState(false);
-  const [openCountry, setOpenCountry] = useState(
+}: CountriesInfoProps) {
+  const containerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filteredCountries, setFilteredCountries] = useState<Country[]>(countries);
+  const [isCountryInfoOpen, setIsCountryInfoOpen] = useState<boolean>(false);
+  const [openCountry, setOpenCountry] = useState<string | null>(
     countries?.length > 0 ? countries[0].countryInfo.name : null
-  ); // Initialize with the first country by default
+  );
 
-  const [modalSelectedCountry, setModalSelectedCountry] = useState(null);
-
-  const [isLoading, setIsLoading] = useState("normal");
+  const [modalSelectedCountry, setModalSelectedCountry] = useState<Country | null>(null);
+  const [isLoading, setIsLoading] = useState<LoadingState>("normal");
 
   const account = useActiveAccount();
-
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
   const { t } = useTranslation("common");
-  const { t: tCrossborder } = useTranslation("crossborder"); 
-  
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     setFilteredCountries(
@@ -58,8 +93,8 @@ function CountriesInfo({
   }, [searchTerm, countries]);
 
   useEffect(() => {
-    if (containerRefs.current[selectedCountry]) {
-      containerRefs.current[selectedCountry].scrollIntoView({
+    if (selectedCountry && containerRefs.current[selectedCountry]) {
+      containerRefs.current[selectedCountry]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
@@ -67,32 +102,24 @@ function CountriesInfo({
     }
   }, [selectedCountry]);
 
-  // React Spring animations for the appear effect
   const springs = useSprings(
     filteredCountries?.length || 0,
     filteredCountries?.map(() => ({
       from: { opacity: 0, transform: "translateY(10px)" },
       to: { opacity: 1, transform: "translateY(0)" },
       config: { tension: 220, friction: 20 },
-    }))
+    })) || []
   );
 
-  /**
-   * payment partner is a list of partners that contains the withdrawModality
-   * and an array of fiat currencies (currencies with currency) that are supported by the partner
-   * @param {Array} paymentPartners - an array of payment partners
-   * @returns {Object} - an object with the withdrawModality as key and an array of fiat currencies as value
-   */
-  function aggregatePaymentTypeInfo(paymentPartners) {
+  function aggregatePaymentTypeInfo(paymentPartners: PaymentPartner[]): PaymentTypeInfo {
     let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
-    const paymentTypes = filledInPartners.reduce((acc, partner) => {
+    const paymentTypes = filledInPartners.reduce<PaymentTypeInfo>((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
       }
-      // check if the currency is already in the array
       partner.currencies.forEach((currency) => {
         if (
-          !acc[partner.withdrawModality].find((c) => c === currency.currency)
+          !acc[partner.withdrawModality].find((c) => c.currency === currency.currency)
         ) {
           acc[partner.withdrawModality].push({
             currency: currency.currency,
@@ -126,7 +153,6 @@ function CountriesInfo({
               level: LogLevel.INFO,
               message: `User ${user.email} requested a transaction support for country ${modalSelectedCountry?.countryInfo.name}`,
             });
-            // set on success for 5 seconds
             setIsLoading("success");
             setTimeout(() => {
               setIsLoading("normal");
@@ -137,7 +163,7 @@ function CountriesInfo({
           }
         }}>{tCrossborder("receiveSection.helpRequested")}</LoadingButton>
         </div>}
-      ></UniversalModal>
+      />
       <div className="w-full max-w-4xl mx-auto mb-16">
         <div className="bg-white shadow-md rounded-lg border">
           <div className="flex flex-row justify-between items-center p-4 border-b">
@@ -174,10 +200,9 @@ function CountriesInfo({
                     <Disclosure defaultOpen={isOpen}>
                       {({ open }) => (
                         <div
-                          ref={(el) =>
-                            (containerRefs.current[country.countryInfo.name] =
-                              el)
-                          }
+                          ref={(el) => {
+                            containerRefs.current[country.countryInfo.name] = el;
+                          }}
                           className="border-b"
                         >
                           <DisclosureButton
@@ -330,10 +355,10 @@ function CountriesInfo({
 }
 
 export default function ReceiveSection() {
-  const [selectedContinent, setSelectedContinent] = useState("europe");
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [countryData, setCountryData] = useState(null);
+  const [selectedContinent, setSelectedContinent] = useState<string>("europe");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [countryData, setCountryData] = useState<Country[] | null>(null);
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -351,42 +376,38 @@ export default function ReceiveSection() {
           ],
         },
       };
-      const countriesResponse = await axios(
-        `/api/countries?${QueryString.stringify(query)}`
-      );
-
-      console.log("countriesResponse", countriesResponse.data.docs);
-
-      // sort by countryInfo.name
-      countriesResponse.data.docs.sort((a, b) => {
-        if (a.countryInfo.name < b.countryInfo.name) {
-          return -1;
-        }
-        if (a.countryInfo.name > b.countryInfo.name) {
-          return 1;
-        }
-        return 0;
-      });
       
+      try {
+        const countriesResponse = await axios.get<{ docs: Country[] }>(
+          `/api/countries?${QueryString.stringify(query)}`
+        );
 
-      setCountryData(countriesResponse.data.docs);
-      setLoading(false);
+        const sortedCountries = [...countriesResponse.data.docs].sort((a, b) => {
+          if (a.countryInfo.name < b.countryInfo.name) return -1;
+          if (a.countryInfo.name > b.countryInfo.name) return 1;
+          return 0;
+        });
+
+        setCountryData(sortedCountries);
+      } catch (error) {
+        sendErrorReport("ReceiveSection - Loading country data failed", error);
+      } finally {
+        setLoading(false);
+      }
     }
+
     if (selectedContinent) {
       loadCountryData();
     }
   }, [selectedContinent]);
 
-  function handleCountrySelect(continent) {
+  const handleCountrySelect = (continent: string): void => {
     setSelectedContinent(continent);
-  }
+  };
 
-  function handleCountrySelected(country) {
+  const handleCountrySelected = (country: string): void => {
     setSelectedCountry(country);
-    setAmount("");
-    setSelectedMethod(null);
-    setError("");
-  }
+  };
 
   return (
     <div className="p-4 w-full">

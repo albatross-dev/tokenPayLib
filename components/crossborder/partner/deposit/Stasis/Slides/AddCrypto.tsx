@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import LoadingButton from "../../../../UI/LoadingButton";
-import { LoadingState, StasisErrors } from './types';
 import { Account } from 'thirdweb/wallets';
+import { LoadingState, StasisErrors } from '../../../universal/stasis.types';
+import LoadingButton from '../../../../../UI/LoadingButton';
 
 interface AddCryptoProps {
   account: Account;
@@ -50,10 +50,9 @@ export function AddCrypto({
       </div>
 
       <LoadingButton
-        isLoading={loadingState === "processing"}
+        isLoading={loadingState}
         active={!!newCryptoAccountName}
         onClick={onAddCryptoAccount}
-        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center"
       >
         <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addCrypto.button")}
       </LoadingButton>

@@ -11,10 +11,8 @@ import { StasisProps } from "./slides/types";
 
 // Components
 import SelectBankAccount from "./slides/SelectBankAccount";
-import AddBankAccount from "./slides/AddBankAccount";
 import WithdrawView from "./slides/WithdrawView";
 import SuccessView from "./slides/SuccessView";
-import KYCRequired from "./slides/KYCRequired";
 import Loader from "../../../../UI/Loader";
 import { client } from "../../../../../../pages/_app";
 import fetchBalance from "../../../../../utilities/crypto/fetchBalance";
@@ -22,6 +20,7 @@ import fetchBankAccounts from "../../../../../utilities/partner/stasis/fetchBank
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
 import { BankAccount } from "../../universal/stasis.types";
 import { SimpleToken } from "../../../../../types/token.types";
+import { AddBank, StasisKYC } from "../../deposit/Stasis/Slides";
 
 const POOL_FEE = 0.004;
 
@@ -152,7 +151,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
     return (
       <div className="flex flex-col w-full max-w-4xl items-center justify-center p-4">
         {renderHeader()}
-        <KYCRequired />
+        <StasisKYC />
       </div>
     );
   }
@@ -191,7 +190,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
           }}
         />
       ) : view === "add" ? (
-        <AddBankAccount
+        <AddBank
           {...{
             amount,
             account,

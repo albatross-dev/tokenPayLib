@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { STANDARD_STABLE_MAP } from "../../crossborder/CurrencySelector";
 import currencies from "../../../utilities/crypto/currencies";
 import { PaymentTypesArray } from '../../../types/payload-types';
+import { STANDARD_STABLE_MAP } from '../../../utilities/stableCoinsMaps';
 
 interface CryptoSelectionSlideProps {
   methodsByCurrency: Record<string, PaymentTypesArray>;
@@ -16,14 +16,14 @@ const CryptoSelectionSlide: React.FC<CryptoSelectionSlideProps> = ({
 }) => {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  console.log("methodsByCurrency", methodsByCurrency);
+  const methodsByCurrencyKeys: string[] = Object.keys(methodsByCurrency);
 
   return (
     <div className="relative z-[10] p-4 flex flex-col gap-4  max-w-4xl mx-auto">
       <h2 className="text-2xl">
         {tCrossborder("depositPage.cryptoSelection.heading")}
       </h2>
-      {Object.keys(methodsByCurrency).map((currency) => {
+      {methodsByCurrencyKeys.map((currency) => {
         const currencyDetails = currencies[currency];
         const methods = methodsByCurrency[currency];
         console.log("methods", methods);
@@ -39,7 +39,7 @@ const CryptoSelectionSlide: React.FC<CryptoSelectionSlideProps> = ({
           >
             {STANDARD_STABLE_MAP[currency] ? (
               <div className={`flex items-center justify-center ${methods.length > 0 ? 'bg-uhuBlue' : 'bg-gray-400'} text-xl rounded-full text-white font-bold w-10 h-10`}>
-                {STANDARD_STABLE_MAP[currency].icon}
+                {STANDARD_STABLE_MAP[currency].symbol}
               </div>
             ) : (
               currencyDetails?.icon && <Image
@@ -50,7 +50,7 @@ const CryptoSelectionSlide: React.FC<CryptoSelectionSlideProps> = ({
             )}
             <h2 className="text-xl font-bold">
               {STANDARD_STABLE_MAP[currency]
-                ? STANDARD_STABLE_MAP[currency].symbol
+                ? STANDARD_STABLE_MAP[currency].id
                 : currencyDetails?.name.toUpperCase()}
             </h2>
           </div>

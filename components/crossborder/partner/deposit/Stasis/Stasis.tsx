@@ -3,10 +3,11 @@ import { IoArrowBack } from "react-icons/io5";
 import React, {useEffect, useState } from "react";
 import axios from "axios";
 import { Account } from "thirdweb/wallets";
-import { Vendor, Consumer } from "../../../../../types/payload-types";
-import { AddBank, AddCrypto, BankAccount, CryptoAccount, Deposit, LoadingState, NewBankAccount, PaymentInfo, SelectBank, SelectCrypto, StasisErrors, StasisKYC, Success } from "./Slides";
+import { Vendor, Consumer, PaymentTypesArray } from "../../../../../types/payload-types";
+import { AddBank, AddCrypto, Deposit, SelectBank, SelectCrypto, StasisKYC, Success } from "./Slides";
 import { sendErrorReport } from "../../../../../../context/UserContext";
 import Loader from "../../../../UI/Loader";
+import { BankAccount, CryptoAccount, LoadingState, NewBankAccount, PaymentInfo, StasisErrors } from "../../universal/stasis.types";
 
 interface StasisHeaderProps {
   view: string;

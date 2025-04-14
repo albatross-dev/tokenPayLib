@@ -1,6 +1,6 @@
 import React from 'react';
-import Loader from "../../../../UI/Loader";
 import { LoadingProps } from './types';
+import Loader from '../../../../../UI/Loader';
 
 export function Loading({}: LoadingProps) {
   return (

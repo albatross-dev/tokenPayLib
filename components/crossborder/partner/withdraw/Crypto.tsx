@@ -22,11 +22,11 @@ import {
 import numberWithZeros from "../../../../utilities/math/numberWithZeros";
 import { encodePacked } from "thirdweb/utils";
 import MiniLoader from "../../../UI/MiniLoader";
-import { tokenPayAbstractionSimpleTransfer } from "../../../../assets/TokenPayAbstraction";
 import { useTranslation } from "next-i18next";
 import { Account } from "thirdweb/wallets";
 import { SimpleToken } from "../../../../types/token.types";
-import { FiatTransactionRequest } from "../../../../types/request.types";
+import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
 
 interface RawCryptoProps {
   amount: number;
@@ -333,7 +333,7 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
                     />
                   </div>
                   <TokenSelector
-                    type="crypto"
+                    type="token"
                     tokens={targetTokens}
                     selectedToken={selectedToken}
                     onSelect={(token: SimpleToken) => {

@@ -2,16 +2,19 @@ import React from 'react';
 import { useTranslation } from 'next-i18next';
 import { FiArrowLeft } from 'react-icons/fi';
 import Image from 'next/image';
-import CurrencyDisplay, { STANDARD_STABLE_MAP } from '@/tokenPayLib/components/crossborder/CurrencySelector';
-import MethodSelector from '@/tokenPayLib/components/crossborder/transfer/components/MethodSelector';
-import { FIAT_INFO_MAP } from '@/tokenPayLib/utilities/stableCoinsMaps';
 import { TransactionDetailsSlideProps } from '../types';
+import { getFiatInfo, STANDARD_STABLE_MAP } from '../../../utilities/stableCoinsMaps';
+import CurrencyDisplay from '../../crossborder/CurrencySelector';
+import MethodSelector from '../../crossborder/transfer/components/MethodSelector';
+import { CdnMedia } from '../../../types/payload-types';
+import { FiatCodes } from '../../../types/derivedPayload.types';
 
 const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
   selectedCountry,
   selectedCurrency,
   preferredStableCoin,
   maxAmount,
+  payoutCurrency,
   amount,
   handleAmountChange,
   error,
@@ -19,6 +22,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
   exchangeRate,
   loadedExchangeRate,
   setSelectedMethod,
+  goToSlide,
   selectedMethod,
   clearData,
   back
@@ -75,7 +79,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
             />
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {STANDARD_STABLE_MAP[selectedCurrency?.symbol]
-                ? STANDARD_STABLE_MAP[selectedCurrency?.symbol]?.icon
+                ? STANDARD_STABLE_MAP[selectedCurrency?.symbol]?.symbol
                 : selectedCurrency?.name}
             </div>
           </div>
@@ -91,14 +95,14 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
         {selectedMethod?.type !== 'crypto' && (
           <MethodSelector
             methods={availableMethods}
-            selectable={availableMethods && amount > 0}
-            amount={amount}
+            selectable={availableMethods && Number(amount) > 0}
+            amount={Number(amount)}
             exchangeRate={exchangeRate}
             loadedExchangeRate={loadedExchangeRate}
             setSelectedMethod={setSelectedMethod}
             selectedMethod={selectedMethod}
             sendingCurrency={STANDARD_STABLE_MAP[preferredStableCoin]}
-            finalCurrency={FIAT_INFO_MAP[payoutCurrency]}
+            finalCurrency={getFiatInfo(payoutCurrency as FiatCodes)}
           />
         )}
 
@@ -119,7 +123,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
             {selectedCountry?.countryInfo.background && (
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
-                  src={selectedCountry?.countryInfo.background?.url}
+                  src={(selectedCountry?.countryInfo.background as CdnMedia).url}
                   fill={true}
                   objectFit="cover"
                   alt="Country background"
@@ -155,7 +159,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
                   <strong>
                     {tCrossborder('withdrawPage.transactionDetails.currency')}
                   </strong>{' '}
-                  {selectedCountry?.countryInfo.currency}
+                  {selectedCountry?.countryInfo.currency[Symbol.for(selectedCountry?.countryInfo.currency)]}
                 </p>
                 <p>
                   <strong>

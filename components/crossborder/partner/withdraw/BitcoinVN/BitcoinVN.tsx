@@ -13,10 +13,10 @@ import TransactionCreated from "./slides/TransactionCreated";
 import Success from "./slides/Success";
 import currencies from "../../../../../utilities/crypto/currencies";
 import { client } from "../../../../../../pages/_app";
-import { tokenPayAbstractionSimpleTransfer } from "../../../../../assets/TokenPayAbstraction";
 import { sendErrorReport } from "../../../../../../context/UserContext";
-import { FiatTransactionRequest } from "../../../../../types/request.types";
 import { Vendor, Consumer } from "../../../../../types/payload-types";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
+import { FiatTransactionRequest } from "../../../../../types/derivedPayload.types";
 
 const POOL_FEE = 0.004;
 
@@ -89,8 +89,8 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
         client,
         account,
         polygon,
-        Number(amount) * 10 ** selectedToken.decimals,
-        selectedToken.contractAddress,
+        BigInt(Number(amount) * 10 ** selectedToken.decimals),
+        selectedToken,
         transaction?.depositData.address || ""
       );
 

@@ -1,4 +1,3 @@
-export * from './types';
 export * from './AddBank';
 export * from './AddCrypto';
 export * from './Deposit';

@@ -19,10 +19,11 @@ import { AuthContext, sendErrorReport } from "../../../../../../context/UserCont
 import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
 import currencies from "../../../../../utilities/crypto/currencies";
 import getFormData from "../../../../../utilities/forms/getFormData";
-import { tokenPayAbstractionSimpleTransfer } from "../../../../../assets/TokenPayAbstraction";
+
 import { FiatTransaction } from "../../../../../types/payload-types";
 import { ErrorMessage } from "../../../../../types/errorMessage.types";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
 
 const DESK_STATE_LOADING: DeskState = "loading";
 const DESK_STATE_ONGOING: DeskState = "ongoing";

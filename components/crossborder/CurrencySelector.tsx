@@ -1,29 +1,53 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import { formatNumberWithCurrency } from "@/utilities/currencies";
-import currencies from "@/tokenPayLib/utilities/crypto/currencies";
-import MiniLoader from "@/tokenPayLib/components/UI/MiniLoader";
-import numberWithZeros from "@/tokenPayLib/utilities/math/numberWithZeros";
 import Image from "next/image";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
-import { UhuConfigContext } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import UniversalModal from "@/tokenPayLib/components/Modals/UniversalModal";
 import { HiInformationCircle } from "react-icons/hi2";
 import ConvertPopup from "./ConverterPopup";
-import { max } from "date-fns";
-import { convertAnyToAnyDirect } from "@/tokenPayLib/utilities/crypto/convertAnyToAny";
-import { sendErrorReport } from "@/context/UserContext";
+import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
+import { sendErrorReport } from "../../../context/UserContext";
+import UniversalModal from "../Modals/UniversalModal";
+import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import currencies from "../../utilities/crypto/currencies";
+import MiniLoader from "../UI/MiniLoader";
+import { SimpleToken } from "../../types/token.types";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
+
+interface Currency {
+  contractAddress: string;
+  abi: any;
+  currency: string;
+  icon: string;
+  decimals: number;
+}
+
+interface Balance {
+  symbol: string;
+  balance: number;
+  currency: string;
+  icon: string;
+  decimals: number;
+}
+
+interface CurrencyDisplayProps {
+  onCurrencySelected: (currency: Balance, balance: number) => void;
+  mainCurrencySymbol: string;
+  selectedCurrency: Balance | null;
+}
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-async function getBalance(account, symbol, currency) {
+async function getBalance(
+  account: any,
+  symbol: string,
+  currency: SimpleToken
+): Promise<Balance | null> {
   if (!account) return null;
 
   const contract = getContract({
@@ -45,7 +69,7 @@ async function getBalance(account, symbol, currency) {
     return {
       symbol,
       balance,
-      currency: currency.currency,
+      currency: currency.id,
       icon: currency.icon,
       decimals: currency.decimals,
     };
@@ -53,31 +77,31 @@ async function getBalance(account, symbol, currency) {
     sendErrorReport(`CurrencySelector - Error fetching balance for ${symbol}:`, error);
     console.error(`Error fetching balance for ${symbol}:`, error);
   }
-  return null; // Return null for currencies with no balance or errors
+  return null;
 }
 
 export default function CurrencyDisplay({
   onCurrencySelected,
   mainCurrencySymbol,
   selectedCurrency,
-}) {
+}: CurrencyDisplayProps) {
   const account = useActiveAccount();
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState<boolean>(false);
   const { uhuConfig } = useContext(UhuConfigContext);
-  const [balances, setBalances] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [balances, setBalances] = useState<Balance[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const [mainCurrency, setMainCurrency] = useState(null);
-  const [alternateCoinInfoOpen, setAlternateCoinInfoOpen] = useState(false);
+  const [mainCurrency, setMainCurrency] = useState<Balance | null>(null);
+  const [alternateCoinInfoOpen, setAlternateCoinInfoOpen] = useState<boolean>(false);
 
-  const [convertCurrency, setConvertCurrency] = useState(null);
-  const [maxConvBalance, setMaxConvBalance] = useState(0);
-  const [isConverterOpen, setIsConverterOpen] = useState(false);
+  const [convertCurrency, setConvertCurrency] = useState<string | null>(null);
+  const [maxConvBalance, setMaxConvBalance] = useState<number>(0);
+  const [isConverterOpen, setIsConverterOpen] = useState<boolean>(false);
 
-  async function getMainCurrencyBalance() {
-    let c = currencies[mainCurrencySymbol];
+  async function getMainCurrencyBalance(): Promise<void> {
+    let c = currencies[mainCurrencySymbol as keyof typeof currencies];
     let cBalance = await getBalance(account, mainCurrencySymbol, c);
     if (cBalance) {
       setMainCurrency(cBalance);
@@ -85,7 +109,7 @@ export default function CurrencyDisplay({
     }
   }
 
-  const fetchBalances = async () => {
+  const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
 
     const balancePromises = Object.entries(currencies).map(
@@ -95,7 +119,7 @@ export default function CurrencyDisplay({
       }
     );
     let resolvedBalances = (await Promise.all(balancePromises)).filter(
-      (balance) => balance !== null
+      (balance): balance is Balance => balance !== null
     );
     // allow only balances bigger 0.0001
     resolvedBalances = resolvedBalances.filter(
@@ -111,7 +135,7 @@ export default function CurrencyDisplay({
     setBalances(resolvedBalances.sort((a, b) => b.balance - a.balance));
 
     if (loading) {
-      setLoading(false); // Stop the loader after the first fetch
+      setLoading(false);
     }
   };
 
@@ -126,11 +150,11 @@ export default function CurrencyDisplay({
 
     fetchBalances();
 
-    const interval = setInterval(fetchBalances, 10000); // Refresh every 10 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
+    const interval = setInterval(fetchBalances, 10000);
+    return () => clearInterval(interval);
   }, [account, client, uhuConfig, loading, mainCurrencySymbol]);
 
-  const handleConvertClick = (currency, balance) => {
+  const handleConvertClick = (currency: string, balance: number): void => {
     setConvertCurrency(currency);
     setMaxConvBalance(balance);
     setIsConverterOpen(true);
@@ -156,9 +180,8 @@ export default function CurrencyDisplay({
           fetchBalances();
           getMainCurrencyBalance();
         }}
-        token={currencies[convertCurrency]}
+        token={currencies[convertCurrency as string]}
         targetToken={currencies[mainCurrencySymbol]}
-        maxAmount={maxConvBalance}
       ></ConvertPopup>
 
       <div className='w-full'>
@@ -183,7 +206,7 @@ export default function CurrencyDisplay({
               <div className='flex text-xl font-bold items-center gap-2 flex-1'>
                 {STANDARD_STABLE_MAP[mainCurrency?.symbol] ? (
                   <div className='w-8 h-8 flex items-center justify-center bg-uhuBlue text-white rounded-full'>
-                    {STANDARD_STABLE_MAP[mainCurrency?.symbol].icon}
+                    {STANDARD_STABLE_MAP[mainCurrency?.symbol].symbol}
                   </div>
                 ) : (
                   <Image
@@ -221,7 +244,7 @@ export default function CurrencyDisplay({
                   <div className='flex items-center gap-2 flex-1'>
                     {STANDARD_STABLE_MAP[balance.symbol] ? (
                       <div className='w-6 h-6 flex items-center justify-center bg-uhuBlue text-white rounded-full'>
-                        {STANDARD_STABLE_MAP[balance.symbol].icon}
+                        {STANDARD_STABLE_MAP[balance.symbol].symbol}
                       </div>
                     ) : (
                       <Image

@@ -2,10 +2,11 @@ import React from 'react';
 import { useTranslation } from "next-i18next";
 import { FiArrowLeft } from "react-icons/fi";
 import { getFiatCurrencySymbol } from "../../../utilities/stableCoinsMaps";
+import { FiatCodes } from '../../../types/derivedPayload.types';
 
 interface FiatSelectionSlideProps {
-  availableFiatCurrencies: string[];
-  onSelectCurrency: (currency: string) => void;
+  availableFiatCurrencies: FiatCodes[];
+  onSelectCurrency: (currency: FiatCodes) => void;
   onBack: () => void;
 }
 

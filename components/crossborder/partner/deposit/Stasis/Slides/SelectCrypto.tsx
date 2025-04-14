@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import { CryptoAccount } from './types';
+import { CryptoAccount } from '../../../universal/stasis.types';
 
 interface SelectCryptoProps {
   cryptoAccounts: CryptoAccount[];

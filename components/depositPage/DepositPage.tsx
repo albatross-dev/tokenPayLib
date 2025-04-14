@@ -19,6 +19,7 @@ import CryptoSelectionSlide from "./slides/CryptoSelectionSlide";
 import FiatSelectionSlide from "./slides/FiatSelectionSlide";
 import DepositDetailsSlide from "./slides/DepositDetailsSlide";
 import DepositSlide from "./slides/DepositSlide";
+import { FiatCodes } from "../../types/derivedPayload.types";
 
 interface MaintenanceProps {
   deposit?: {
@@ -51,9 +52,9 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   // The currency the user wants to receive
   const [preferredStableCoin, setPreferredStableCoin] = useState<string | null>(null);
   // The currency in which the user wants to pay
-  const [preferredFiatCurrency, setPreferredFiatCurrency] = useState<string>("");
+  const [preferredFiatCurrency, setPreferredFiatCurrency] = useState<FiatCodes>();
   // The amount the user wants to receive
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>("");
 
   const [error, setError] = useState<string>("");
   const [state, setState] = useState<string>("loading");
@@ -98,10 +99,10 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
     let inputAmount = parseFloat(e.target.value);
 
     if (isNaN(inputAmount) || inputAmount < 0) {
-      setAmount(0);
+      setAmount("");
       setError("");
     } else {
-      setAmount(inputAmount);
+      setAmount(inputAmount.toString());
       setError("");
     }
   }
@@ -265,7 +266,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
                   isActive ? (
                     <DepositSlide
                       selectedMethod={selectedMethod}
-                      amount={amount}
+                      amount={Number(amount)}
                       preferredFiatCurrency={preferredFiatCurrency}
                       preferredStableCoin={preferredStableCoin}
                       account={account}

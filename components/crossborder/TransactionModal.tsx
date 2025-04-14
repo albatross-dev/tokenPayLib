@@ -1,10 +1,24 @@
-import { Dialog, Transition } from "@headlessui/react";
+import React from "react";
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { BsX } from "react-icons/bs";
 import { useTranslation } from "next-i18next";
-import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
+import AddressDisplay from "../UI/AddressDisplay";
 
-const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
+interface TransactionData {
+  [key: string]: string | number | boolean | null;
+  vendor?: any;
+  requestChatId?: string;
+  requestMessageId?: string;
+}
+
+interface TransactionModalProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  transactionData: TransactionData | null;
+}
+
+const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, closeModal, transactionData }) => {
   if (!transactionData) return null;
 
   delete transactionData.vendor;
@@ -17,7 +31,7 @@ const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
         {/* Overlay */}
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -27,12 +41,12 @@ const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
+        </TransitionChild>
 
         {/* Modal content */}
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -41,8 +55,8 @@ const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 flex justify-between items-center text-gray-900"
                 >
@@ -51,29 +65,29 @@ const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
                     className="w-6 h-6 cursor-pointer"
                     onClick={closeModal}
                   />
-                </Dialog.Title>
+                </DialogTitle>
                 <div className="mt-4">
                   <table className="min-w-full divide-y divide-gray-200">
                     <tbody className="bg-white divide-y divide-gray-200">
                       {/* ... additional rows */}
                       {/* Dynamically create rows for items */}
-                      {Object.keys(transactionData).map((key, index) => (
+                      {Object.entries(transactionData).map(([key, value], index) => (
                         <tr key={index}>
                           <td className="py-2 whitespace-nowrap text-sm font-medium text-gray-500">
                             {t(key)}{" "}
                           </td>
                           <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
-                            {typeof transactionData[key] === "string" ? (
-                              transactionData[key]?.startsWith("0x") ? (
+                            {typeof value === "string" ? (
+                              value?.startsWith("0x") ? (
                                 <AddressDisplay
-                                  value={transactionData[key]}
+                                  value={value}
                                   concat={true}
                                 />
                               ) : (
-                                transactionData[key]
+                                value
                               )
                             ) : (
-                              transactionData[key]
+                              value
                             )}
                           </td>
                         </tr>
@@ -81,8 +95,8 @@ const TransactionModal = ({ isOpen, closeModal, transactionData }) => {
                     </tbody>
                   </table>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

@@ -3,22 +3,44 @@ import { BsChevronDown, BsFileEarmarkArrowDown } from "react-icons/bs";
 import { Popover, Transition } from "@headlessui/react";
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
-import buildQuery from "@/utilities/buildQuery";
 import { useTranslation } from "next-i18next";
 import axios from "axios";
 import qs from "qs";
 
-export default function ExportPopover({ minDate }) {
-  const [selectedDayRange, setSelectedDayRange] = useState({
+interface DayObject {
+  year: number;
+  month: number;
+  day: number;
+}
+
+interface DateRange {
+  from: DayObject | null;
+  to: DayObject | null;
+}
+
+interface ExportPopoverProps {
+  minDate: DayObject;
+}
+
+interface TransactionData {
+  [key: string]: any;
+  checkoutConfig?: {
+    [key: string]: any;
+  };
+}
+
+type ButtonState = 'inactive' | 'active' | 'loading';
+
+export default function ExportPopover({ minDate }: ExportPopoverProps) {
+  const [selectedDayRange, setSelectedDayRange] = useState<DateRange>({
     from: null,
     to: null,
   });
   const { t } = useTranslation("common");
-    
   
-  const [buttonState, setButtonState] = useState("inactive"); // can be 'inactive', 'active', or 'loading'
+  const [buttonState, setButtonState] = useState<ButtonState>("inactive");
 
-  const handleDataExport = async () => {
+  const handleDataExport = async (): Promise<void> => {
     if (buttonState !== "active") return;
 
     setButtonState("loading");
@@ -31,7 +53,7 @@ export default function ExportPopover({ minDate }) {
     setButtonState("active");
   };
 
-  const handleDateChange = (range) => {
+  const handleDateChange = (range: DateRange): void => {
     setSelectedDayRange(range);
     if (range.from && range.to) {
       setButtonState("active");
@@ -85,8 +107,11 @@ export default function ExportPopover({ minDate }) {
   );
 }
 
-// Assuming setData function is somewhere in your utilities
-async function setData(dateRange) {
+async function setData(dateRange: DateRange): Promise<TransactionData[]> {
+  if (!dateRange.from || !dateRange.to) {
+    throw new Error('Date range is incomplete');
+  }
+
   let from = new Date(
     dateRange.from.year,
     dateRange.from.month - 1,
@@ -109,20 +134,20 @@ async function setData(dateRange) {
     and: [
       { createdAt: { greater_than_equal: from.toISOString() } },
       { createdAt: { less_than: adjustedTo.toISOString() } },
-      // optional status filter
-
     ],
   };
 
   let rangeQuery = qs.stringify({ where: query }, { addQueryPrefix: true });
 
   // Fetch data
-  const response = await axios.get(`/api/fiatTransaction${rangeQuery}`);
+  const response = await axios.get<{ docs: TransactionData[] }>(`/api/fiatTransaction${rangeQuery}`);
 
   return response.data.docs;
 }
 
-function convertToCSV(arr) {
+function convertToCSV(arr: TransactionData[]): string {
+  if (arr.length === 0) return '';
+  
   // Remove unwanted keys
   const unwantedKeys = [
     "updatedAt",
@@ -141,13 +166,14 @@ function convertToCSV(arr) {
 
   // Process the data
   const processedData = arr.map((obj) => {
+    const newObj = { ...obj };
     unwantedKeys.forEach((key) => {
-      delete obj[key];
-      if (obj.checkoutConfig) {
-        delete obj.checkoutConfig[key];
+      delete newObj[key];
+      if (newObj.checkoutConfig) {
+        delete newObj.checkoutConfig[key];
       }
     });
-    return obj;
+    return newObj;
   });
 
   // Convert to CSV
@@ -159,8 +185,9 @@ function convertToCSV(arr) {
   return csv.join("\n");
 }
 
-
-function triggerDownload(selectedDayRange,csvData) {
+function triggerDownload(selectedDayRange: DateRange, csvData: string): void {
+  if (!selectedDayRange.from || !selectedDayRange.to) return;
+  
   const blob = new Blob([csvData], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);

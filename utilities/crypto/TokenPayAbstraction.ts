@@ -1,4 +1,4 @@
-import CustomRouterAbi from "./customSwapRouterAbi.json";
+import CustomRouterAbi from "../../assets/customSwapRouterAbi.json";
 import { getContract, prepareContractCall, sendAndConfirmTransaction, ThirdwebClient } from "thirdweb";
 import { Chain } from "thirdweb/chains";
 import { Account } from "thirdweb/wallets";

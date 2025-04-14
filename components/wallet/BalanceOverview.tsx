@@ -154,7 +154,7 @@ export default function BalanceOverview() {
           <MiniLoader />
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 py-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 py-4">
           {balances.map((balance, index) => (
             <div
               key={index}
@@ -167,7 +167,7 @@ export default function BalanceOverview() {
                   alt={`${balance.symbol} icon`}
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-1 flex-col">
                 <span className="font-medium text-sm">{balance.symbol}</span>
                 <div
                   className="relative text-sm md:text-base text-gray-500"

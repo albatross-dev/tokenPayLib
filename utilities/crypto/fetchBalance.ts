@@ -46,3 +46,29 @@ export default async function fetchBalance(
     return BigInt(0); // Return zero balance in case of an error
   }
 } 
+
+export async function fetchTotalSupply(
+  client: ThirdwebClient,
+  chain: Chain,
+  contractAddress: string,
+  abi: any[]
+): Promise<bigint> {
+  try {
+    const contract: Readonly<ContractOptions<any[]>> = getContract({
+      client: client,
+      chain,
+      address: contractAddress,
+      abi,
+    });
+
+    const result: bigint = await readContract({
+      contract,
+      method: "function totalSupply() view returns (uint256)",
+    });
+
+    return result;
+  } catch (error) {
+    sendErrorReport(`Error fetching total supply for ${contractAddress} on ${chain.name}`, error);
+    return BigInt(0); // Return zero balance in case of an error
+  }
+} 

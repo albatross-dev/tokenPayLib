@@ -21,11 +21,11 @@ import { TokensByChainId } from "../../../../utilities/crypto/currencies";
 import { SimpleToken } from "../../../../types/token.types";
 import { convertAnyToAnyDirect, uniswapAddresses } from "../../../../utilities/crypto/convertAnyToAny";
 import { PATHS } from "../../../../utilities/crypto/getPath";
-import { tokenPayAbstractionSimpleTransfer } from "../../../../assets/TokenPayAbstraction";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
 import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
 import { PaymentTypesArray } from "../../../../types/payload-types";
 import { Country } from "../../../../types/payload-types";
-import { FiatTransactionRequest } from "../../../../types/request.types";
+import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 
 export type TransactionState = "transaction" | "success"; 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from "next-i18next";
-import Loader from "../../../../UI/Loader";
 import { PoolingProps } from './types';
+import Loader from '../../../../../UI/Loader';
 
 export function Pooling({}: PoolingProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
