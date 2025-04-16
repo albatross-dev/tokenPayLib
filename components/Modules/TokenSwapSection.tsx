@@ -173,7 +173,7 @@ export default function TokenSwapSection({
         address: (exchangeType === "internal"
           ? uniswapAddresses
           : uniswapAddressesPublic)[activeChain.id].quote,
-        abi: QuoteV2Abi,
+        abi: QuoteV2Abi as Array<any>,
       });
 
       const path =

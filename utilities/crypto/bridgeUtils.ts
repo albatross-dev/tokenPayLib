@@ -158,7 +158,7 @@ export async function deposit(params: DepositParams): Promise<void> {
       client: client,
       chain: chain,
       address: spokePoolAddress,
-      abi: CustomWrapperABI,
+      abi: CustomWrapperABI as Array<any>,
     });
 
     depositCall = prepareContractCall({

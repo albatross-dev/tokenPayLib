@@ -24,8 +24,9 @@ import arbitrumCurrencies from "./currencies/arbitrum";
 import ethereumCurrencies from "./currencies/ethereum";
 import optimismCurrencies from "./currencies/optimism";
 import { SimpleToken } from "../../types/token.types";
+import { StaticImageData } from "next/image";
 
-export const LogoByShortName: Record<string, string> = {
+export const LogoByShortName: Record<string, string | StaticImageData> = {
   USDC: usdc,
   "USDC.E": usdc,
   USDT: tether,
@@ -76,7 +77,11 @@ export const numberFormatter = new Intl.NumberFormat("de-DE", {
   //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 });
 
-export function formatCrypto(amount: number, decimals: number, fractionDigits = 2): string {
+export function formatCrypto(
+  amount: number,
+  decimals: number,
+  fractionDigits = 2
+): string {
   return new Intl.NumberFormat("de-DE", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -89,14 +94,16 @@ const currencies: Record<string, SimpleToken> = polygonCurrencies;
 
 export const currenciesBase: Record<string, SimpleToken> = baseCurrencies;
 
-export const currenciesArbitrum: Record<string, SimpleToken> = arbitrumCurrencies
+export const currenciesArbitrum: Record<string, SimpleToken> =
+  arbitrumCurrencies;
 
-export const currenciesEthereum: Record<string, SimpleToken> = ethereumCurrencies;
+export const currenciesEthereum: Record<string, SimpleToken> =
+  ethereumCurrencies;
 
 export const currenciesOP: Record<string, SimpleToken> = optimismCurrencies;
 
 export const currenciesAvax: Record<string, SimpleToken> = {
-  "USDC": {
+  USDC: {
     name: "USDC",
     id: "usdc",
     decimals: 6,
@@ -156,7 +163,7 @@ export const ALPHA: SimpleToken = {
   id: "alpha",
   decimals: 18,
   contractAddress: "0x6Fd7c66784508cdE319F80c54fC760C42eC400b7",
-  abi: erc20abi,
+  abi: erc20abi as Array<any>,
   icon: alpha,
 };
 
@@ -165,7 +172,7 @@ export const UHU: SimpleToken = {
   id: "uhu",
   decimals: 18,
   contractAddress: "0x8d5482c83bb5b49e2b4b97bcf264342eac164c00",
-  abi: erc20abi,
+  abi: erc20abi as Array<any>,
   icon: alpha,
 };
 
@@ -175,7 +182,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "usdc",
     decimals: 6,
     contractAddress: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: usdc,
   },
   "USDC.E": {
@@ -183,7 +190,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "usdc.e",
     decimals: 6,
     contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: usdc,
   },
   USDT: {
@@ -191,7 +198,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "usdt",
     decimals: 6,
     contractAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-    abi: realusdtabi,
+    abi: realusdtabi as Array<any>,
     icon: tether,
   },
   EUROE: {
@@ -199,7 +206,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "euroe",
     decimals: 6,
     contractAddress: "0x820802Fa8a99901F52e39acD21177b0BE6EE2974",
-    abi: realusdtabi,
+    abi: realusdtabi as Array<any>,
     icon: euroe,
   },
   EURS: {
@@ -207,7 +214,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "eurs",
     decimals: 2,
     contractAddress: "0xE111178A87A3BFf0c8d18DECBa5798827539Ae99",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: eurs,
   },
   WBTC: {
@@ -215,7 +222,7 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "wbtc",
     decimals: 8,
     contractAddress: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: wbtc,
   },
   WETH: {
@@ -223,14 +230,17 @@ const currenciesStable: Record<string, SimpleToken> = {
     id: "weth",
     decimals: 18,
     contractAddress: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: ETHEREUM_LOGO,
   },
 };
 
 type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
 
-export const TokensByChainId: Record<chainTypesIds, Record<string, SimpleToken>> = {
+export const TokensByChainId: Record<
+  chainTypesIds,
+  Record<string, SimpleToken>
+> = {
   137: currencies,
   1: currenciesEthereum,
   10: currenciesOP,

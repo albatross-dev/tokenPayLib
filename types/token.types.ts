@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export interface Token {
   contractAddress: string;
   abi: any[];
@@ -17,5 +19,5 @@ export interface SimpleToken {
   decimals: number;
   contractAddress: string;
   abi: any[];
-  icon: string;
+  icon: string | StaticImageData;
 }

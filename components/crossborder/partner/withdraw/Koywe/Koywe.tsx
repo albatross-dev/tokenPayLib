@@ -2,7 +2,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Account } from "thirdweb/wallets";
-import { Consumer, PaymentTypesArray, Country, Vendor } from "../../../../../types/payload-types";
+import {
+  Consumer,
+  PaymentTypesArray,
+  Country,
+  Vendor,
+} from "../../../../../types/payload-types";
 import Loader from "../../../../UI/Loader";
 import React from "react";
 interface KoyweProps {
@@ -18,7 +23,7 @@ export default function Koywe({
   account,
   user,
   method,
-  country
+  country,
 }: KoyweProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -75,17 +80,13 @@ export default function Koywe({
     </div>
   );
 
-  const renderKoyweWithdraw = () => (
-    <div>Withdraw </div>
-  )
+  const renderKoyweWithdraw = () => <div>Withdraw </div>;
 
-  const renderSuccess = () => (
-    <div>Success </div>
-  )
+  const renderSuccess = () => <div>Success </div>;
 
   return (
     <div className="flex flex-col w-full max-w-4xl  items-center justify-center p-4">
-      {user.koyweState === "unverified" || user.koyweState === undefined
+      {/* {user.koyweState === "unverified" || user.koyweState === undefined
         ? renderKoyweKYCLink()
         : user.koyweState === "in_progress"
         ? renderLoading()
@@ -98,7 +99,7 @@ export default function Koywe({
           ? renderLoading()
           : renderError()
         )
-        : renderLoading()}
+        : renderLoading()} */}
     </div>
-  )
+  );
 }

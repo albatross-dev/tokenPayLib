@@ -1,60 +1,60 @@
-import weth from "@/tokenPayLib/assets/payment-icons/polygon/weth.svg"
-import bnb from "@/tokenPayLib/assets/payment-icons/polygon/bnb.svg"
-import dai from "@/tokenPayLib/assets/payment-icons/polygon/dai.svg"
-import uni from "@/tokenPayLib/assets/payment-icons/polygon/uni.svg"
-import link from "@/tokenPayLib/assets/payment-icons/polygon/link.svg"
-import matic from "@/tokenPayLib/assets/payment-icons/polygon/matic.svg"
-import shib from "@/tokenPayLib/assets/payment-icons/polygon/shib.svg"
-import aave from "@/tokenPayLib/assets/payment-icons/polygon/aave.svg"
-import mxen from "@/tokenPayLib/assets/payment-icons/polygon/mxen.png"
-import crv from "@/tokenPayLib/assets/payment-icons/polygon/crv.svg"
-import oneInch from "@/tokenPayLib/assets/payment-icons/polygon/1inch.png"
-import sushi from "@/tokenPayLib/assets/payment-icons/polygon/sushi.svg"
-import bonsai from "@/tokenPayLib/assets/payment-icons/polygon/bonsai.webp"
-import rndr from "@/tokenPayLib/assets/payment-icons/polygon/rndr.svg"
-import luna from "@/tokenPayLib/assets/payment-icons/polygon/luna.svg"
-import sol from "@/tokenPayLib/assets/payment-icons/polygon/sol.png"
-import ldo from "@/tokenPayLib/assets/payment-icons/polygon/ldo.png"
-import usdn from "@/tokenPayLib/assets/payment-icons/polygon/usdn.svg"
-import sand from "@/tokenPayLib/assets/payment-icons/polygon/sand.svg"
-import mana from "@/tokenPayLib/assets/payment-icons/polygon/mana.svg"
-import polydoge from "@/tokenPayLib/assets/payment-icons/polygon/polydoge.png"
-import elon from "@/tokenPayLib/assets/payment-icons/polygon/elon.png"
-import paxg from "@/tokenPayLib/assets/payment-icons/polygon/paxg.svg"
-import mkr from "@/tokenPayLib/assets/payment-icons/polygon/mkr.png"
-import ageur from "@/tokenPayLib/assets/payment-icons/polygon/ageur.png"
-import gone from "@/tokenPayLib/assets/payment-icons/polygon/gone.png"
-import gns from "@/tokenPayLib/assets/payment-icons/polygon/gns.png"
-import frax from "@/tokenPayLib/assets/payment-icons/polygon/frax.svg"
-import snx from "@/tokenPayLib/assets/payment-icons/polygon/snx.svg"
-import quick from "@/tokenPayLib/assets/payment-icons/polygon/quick.svg"
-import cou from "@/tokenPayLib/assets/payment-icons/polygon/cou.png"
-import grt from "@/tokenPayLib/assets/payment-icons/polygon/grt.svg"
-import jpyc from "@/tokenPayLib/assets/payment-icons/polygon/jpyc.svg"
-import ust from "@/tokenPayLib/assets/payment-icons/polygon/ust.png"
-import busd from "@/tokenPayLib/assets/payment-icons/polygon/busd.svg"
-import bal from "@/tokenPayLib/assets/payment-icons/polygon/bal.svg"
-import agix from "@/tokenPayLib/assets/payment-icons/polygon/agix.png"
-import comp from "@/tokenPayLib/assets/payment-icons/polygon/comp.svg"
-import amp from "@/tokenPayLib/assets/payment-icons/polygon/amp.svg"
-import eure from "@/tokenPayLib/assets/payment-icons/polygon/eure.png"
-import ghst from "@/tokenPayLib/assets/payment-icons/polygon/ghst.png"
-import dinero from "@/tokenPayLib/assets/payment-icons/polygon/dinero.png"
-import rai from "@/tokenPayLib/assets/payment-icons/polygon/rai.svg"
-import ape from "@/tokenPayLib/assets/payment-icons/polygon/ape.png"
-import cro from "@/tokenPayLib/assets/payment-icons/polygon/cro.png"
-import dimo from "@/tokenPayLib/assets/payment-icons/polygon/dimo.png"
-import ankr from "@/tokenPayLib/assets/payment-icons/polygon/ankr.svg"
-import pointless from "@/tokenPayLib/assets/payment-icons/polygon/pointless.webp"
-import fet from "@/tokenPayLib/assets/payment-icons/polygon/fet.png"
-import jeur from "@/tokenPayLib/assets/payment-icons/polygon/jeur.png"
-import xsgd from "@/tokenPayLib/assets/payment-icons/polygon/xsgd.png"
-import wgc from "@/tokenPayLib/assets/payment-icons/polygon/wgc.png"
-import plunc from "@/tokenPayLib/assets/payment-icons/polygon/plunc.png"
-import pyr from "@/tokenPayLib/assets/payment-icons/polygon/pyr.svg"
-import stg from "@/tokenPayLib/assets/payment-icons/polygon/stg.png"
-import mdxn from "@/tokenPayLib/assets/payment-icons/polygon/mdxn.png"
-import avax from "@/tokenPayLib/assets/payment-icons/polygon/avax.png"
+import weth from "@/tokenPayLib/assets/payment-icons/polygon/weth.svg";
+import bnb from "@/tokenPayLib/assets/payment-icons/polygon/bnb.svg";
+import dai from "@/tokenPayLib/assets/payment-icons/polygon/dai.svg";
+import uni from "@/tokenPayLib/assets/payment-icons/polygon/uni.svg";
+import link from "@/tokenPayLib/assets/payment-icons/polygon/link.svg";
+import matic from "@/tokenPayLib/assets/payment-icons/polygon/matic.svg";
+import shib from "@/tokenPayLib/assets/payment-icons/polygon/shib.svg";
+import aave from "@/tokenPayLib/assets/payment-icons/polygon/aave.svg";
+import mxen from "@/tokenPayLib/assets/payment-icons/polygon/mxen.png";
+import crv from "@/tokenPayLib/assets/payment-icons/polygon/crv.svg";
+import oneInch from "@/tokenPayLib/assets/payment-icons/polygon/1inch.png";
+import sushi from "@/tokenPayLib/assets/payment-icons/polygon/sushi.svg";
+import bonsai from "@/tokenPayLib/assets/payment-icons/polygon/bonsai.webp";
+import rndr from "@/tokenPayLib/assets/payment-icons/polygon/rndr.svg";
+import luna from "@/tokenPayLib/assets/payment-icons/polygon/luna.svg";
+import sol from "@/tokenPayLib/assets/payment-icons/polygon/sol.png";
+import ldo from "@/tokenPayLib/assets/payment-icons/polygon/ldo.png";
+import usdn from "@/tokenPayLib/assets/payment-icons/polygon/usdn.svg";
+import sand from "@/tokenPayLib/assets/payment-icons/polygon/sand.svg";
+import mana from "@/tokenPayLib/assets/payment-icons/polygon/mana.svg";
+import polydoge from "@/tokenPayLib/assets/payment-icons/polygon/polydoge.png";
+import elon from "@/tokenPayLib/assets/payment-icons/polygon/elon.png";
+import paxg from "@/tokenPayLib/assets/payment-icons/polygon/paxg.svg";
+import mkr from "@/tokenPayLib/assets/payment-icons/polygon/mkr.png";
+import ageur from "@/tokenPayLib/assets/payment-icons/polygon/ageur.png";
+import gone from "@/tokenPayLib/assets/payment-icons/polygon/gone.png";
+import gns from "@/tokenPayLib/assets/payment-icons/polygon/gns.png";
+import frax from "@/tokenPayLib/assets/payment-icons/polygon/frax.svg";
+import snx from "@/tokenPayLib/assets/payment-icons/polygon/snx.svg";
+import quick from "@/tokenPayLib/assets/payment-icons/polygon/quick.svg";
+import cou from "@/tokenPayLib/assets/payment-icons/polygon/cou.png";
+import grt from "@/tokenPayLib/assets/payment-icons/polygon/grt.svg";
+import jpyc from "@/tokenPayLib/assets/payment-icons/polygon/jpyc.svg";
+import ust from "@/tokenPayLib/assets/payment-icons/polygon/ust.png";
+import busd from "@/tokenPayLib/assets/payment-icons/polygon/busd.svg";
+import bal from "@/tokenPayLib/assets/payment-icons/polygon/bal.svg";
+import agix from "@/tokenPayLib/assets/payment-icons/polygon/agix.png";
+import comp from "@/tokenPayLib/assets/payment-icons/polygon/comp.svg";
+import amp from "@/tokenPayLib/assets/payment-icons/polygon/amp.svg";
+import eure from "@/tokenPayLib/assets/payment-icons/polygon/eure.png";
+import ghst from "@/tokenPayLib/assets/payment-icons/polygon/ghst.png";
+import dinero from "@/tokenPayLib/assets/payment-icons/polygon/dinero.png";
+import rai from "@/tokenPayLib/assets/payment-icons/polygon/rai.svg";
+import ape from "@/tokenPayLib/assets/payment-icons/polygon/ape.png";
+import cro from "@/tokenPayLib/assets/payment-icons/polygon/cro.png";
+import dimo from "@/tokenPayLib/assets/payment-icons/polygon/dimo.png";
+import ankr from "@/tokenPayLib/assets/payment-icons/polygon/ankr.svg";
+import pointless from "@/tokenPayLib/assets/payment-icons/polygon/pointless.webp";
+import fet from "@/tokenPayLib/assets/payment-icons/polygon/fet.png";
+import jeur from "@/tokenPayLib/assets/payment-icons/polygon/jeur.png";
+import xsgd from "@/tokenPayLib/assets/payment-icons/polygon/xsgd.png";
+import wgc from "@/tokenPayLib/assets/payment-icons/polygon/wgc.png";
+import plunc from "@/tokenPayLib/assets/payment-icons/polygon/plunc.png";
+import pyr from "@/tokenPayLib/assets/payment-icons/polygon/pyr.svg";
+import stg from "@/tokenPayLib/assets/payment-icons/polygon/stg.png";
+import mdxn from "@/tokenPayLib/assets/payment-icons/polygon/mdxn.png";
+import avax from "@/tokenPayLib/assets/payment-icons/polygon/avax.png";
 
 import alpha from "@/tokenPayLib/assets/payment-icons/polygon/alpha.png";
 import tether from "@/tokenPayLib/assets/payment-icons/polygon/tether.png";
@@ -99,7 +99,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "euroe",
     decimals: 6,
     contractAddress: "0x820802Fa8a99901F52e39acD21177b0BE6EE2974",
-    abi: realusdtabi,
+    abi: realusdtabi as Array<any>,
     icon: euroe,
   },
   UHU: {
@@ -107,7 +107,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "uhu",
     decimals: 18,
     contractAddress: "0x8d5482c83bb5b49e2b4b97bcf264342eac164c00",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: alpha,
   },
   EURS: {
@@ -115,7 +115,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "eurs",
     decimals: 2,
     contractAddress: "0xE111178A87A3BFf0c8d18DECBa5798827539Ae99",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: eurs,
   },
   WBTC: {
@@ -123,7 +123,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "wbtc",
     decimals: 8,
     contractAddress: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: wbtc,
   },
   WETH: {
@@ -131,7 +131,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "weth",
     decimals: 18,
     contractAddress: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-    abi: erc20abi,
+    abi: erc20abi as Array<any>,
     icon: ETHEREUM_LOGO,
   },
   WMATIC: {
@@ -139,7 +139,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "wmatic",
     decimals: 18,
     contractAddress: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: matic,
   },
   DAI: {
@@ -147,7 +147,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     name: "(PoS) Dai Stablecoin",
     decimals: 18,
     contractAddress: "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: dai,
   },
   UNI: {
@@ -155,7 +155,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "uni",
     decimals: 18,
     contractAddress: "0xb33eaad8d922b1083446dc23f610c2567fb5180f",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: uni,
   },
   NSFW: {
@@ -163,7 +163,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "nsfw",
     decimals: 18,
     contractAddress: "0x8f006d1e1d9dc6c98996f50a4c810f17a47fbf19",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any>,
     icon: null,
   },
   LINK: {
@@ -171,7 +171,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     id: "link",
     decimals: 18,
     contractAddress: "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39",
-    abi: realusdcabi,
+    abi: realusdcabi as Array<any> as Array<any>,
     icon: link,
   },
   MATIC: {
@@ -646,6 +646,6 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     abi: realusdcabi,
     icon: avax,
   },
-}
+};
 
 export default polygonCurrencies;

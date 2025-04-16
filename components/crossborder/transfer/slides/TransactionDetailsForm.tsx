@@ -107,10 +107,10 @@ export default function TransactionDetailsForm({
             />
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
-              {getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
+              {Boolean(getFiatInfoForStableCoin(selectedCurrency?.symbol || ""))
                 ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
                     ?.symbol
-                : selectedCurrency?.icon}
+                : selectedCurrency?.symbol}
             </div>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}

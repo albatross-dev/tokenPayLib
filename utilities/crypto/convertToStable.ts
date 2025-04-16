@@ -16,7 +16,14 @@ import { Token } from "../../types/token.types";
 const SwapRouterAddressPolygon = "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45";
 const QuoteV2AddressPolygon = "0x61fFE014bA17989E743c5F6cB21bF9697530B21e";
 
-async function convertToStablePolygon(token: Token, amount: number, account: Account, success: () => void, error: (e: Error) => void, targetToken: string): Promise<void> {
+async function convertToStablePolygon(
+  token: Token,
+  amount: number,
+  account: Account,
+  success: () => void,
+  error: (e: Error) => void,
+  targetToken: string
+): Promise<void> {
   console.log(
     `Converting ${amount} ${token.symbol} ${token.contract.contractAddress} to EUROE`
   );
@@ -27,21 +34,21 @@ async function convertToStablePolygon(token: Token, amount: number, account: Acc
       client: client,
       chain: polygon,
       address: SwapRouterAddressPolygon,
-      abi: SwapRouterAbi,
+      abi: SwapRouterAbi as Array<any>,
     });
 
     const quoteContract = getContract({
       client: client,
       chain: polygon,
       address: QuoteV2AddressPolygon,
-      abi: QuoteV2Abi,
+      abi: QuoteV2Abi as Array<any>,
     });
 
     const tokenContract = getContract({
       client: client,
       chain: polygon,
       address: token.contract.contractAddress,
-      abi: token.contract.abi,
+      abi: token.contract.abi as Array<any>,
     });
 
     // Approve token
@@ -91,10 +98,7 @@ async function convertToStablePolygon(token: Token, amount: number, account: Acc
 
     success();
   } catch (e) {
-    sendErrorReport(
-      `Error converting ${amount} ${token.symbol} to EUROE`,
-      e
-    );
+    sendErrorReport(`Error converting ${amount} ${token.symbol} to EUROE`, e);
     console.error(`Error converting ${amount} ${token.symbol} to EUROE`, e);
     error(e);
   }

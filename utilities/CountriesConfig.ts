@@ -1156,6 +1156,12 @@ export const ALL_COUNTRIES_N: Record<AllCountryCode, Country> = {
 
     iso: "PL",
   },
+  PS: {
+    name: "State of Palestine",
+    flag: "🇵🇸",
+    restrictions: true,
+    iso: "PS",
+  },
   PT: {
     name: "Portugal",
     flag: "🇵🇹",

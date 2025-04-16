@@ -13,7 +13,7 @@ import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
 import { client } from "../../../pages/_app";
 
 import { ethereum, optimism, arbitrum, base, polygon } from "thirdweb/chains";
-import getPath, {getEncodedPath} from "./getPath";
+import getPath, { getEncodedPath } from "./getPath";
 import { ExchangeType } from "../../utilities/exchangeTypes";
 
 import { ERC20ABI } from "./currencies";
@@ -21,9 +21,13 @@ import { sendErrorReport } from "../../../context/UserContext";
 import { SimpleToken, Token } from "../../types/token.types";
 import { TransactionReceipt } from "thirdweb/transaction";
 
-const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
+const exchangeType: ExchangeType = process.env
+  .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
 
-export const uniswapAddresses: Record<string, {router: string, quote: string}> = {
+export const uniswapAddresses: Record<
+  string,
+  { router: string; quote: string }
+> = {
   [ethereum.id]: {
     router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
     quote: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
@@ -44,9 +48,12 @@ export const uniswapAddresses: Record<string, {router: string, quote: string}> =
     router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
     quote: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
   },
-}
+};
 
-export const uniswapAddressesPublic: Record<string, {router: string, quote: string}> = {
+export const uniswapAddressesPublic: Record<
+  string,
+  { router: string; quote: string }
+> = {
   [ethereum.id]: {
     router: "0x53e57D69737FC5Cc7E6DF1253c67d748E082938c",
     quote: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
@@ -67,29 +74,49 @@ export const uniswapAddressesPublic: Record<string, {router: string, quote: stri
     router: "0x224498FF598EcBCBde689b593E64Ac48e9b3BE15",
     quote: "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
   },
-}
+};
 
-export function getQuoteContract(chain: Chain): ContractOptions {
+export function getQuoteContract(chain: Chain): ContractOptions<any[]> {
   return getContract({
     client: client,
     chain: chain,
     address: uniswapAddresses[chain.id].quote,
-    abi: QuoteV2Abi,
+    abi: QuoteV2Abi as Array<any>,
   });
 }
 
-export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, account: any, success: () => void, error: (e: Error) => void, chain: any, target: SimpleToken) {
-
+export async function convertAnyToAnyDirect(
+  token: SimpleToken,
+  amount: number,
+  account: any,
+  success: () => void,
+  error: (e: Error) => void,
+  chain: any,
+  target: SimpleToken
+) {
   const finalAmount = Number(amount.toFixed(0));
 
-  console.log("convertAnyToAnyDirect", token, finalAmount, account, chain, target, exchangeType);
+  console.log(
+    "convertAnyToAnyDirect",
+    token,
+    finalAmount,
+    account,
+    chain,
+    target,
+    exchangeType
+  );
 
   try {
     const swapRouterContract = getContract({
       client: client,
       chain: chain,
-      address: (exchangeType==="internal"?uniswapAddresses:uniswapAddressesPublic)[chain.id].router,
-      abi: (exchangeType==="internal"?SwapRouterAbi:CustomRouterAbi),
+      address: (exchangeType === "internal"
+        ? uniswapAddresses
+        : uniswapAddressesPublic)[chain.id].router,
+      abi:
+        exchangeType === "internal"
+          ? (SwapRouterAbi as Array<any>)
+          : (CustomRouterAbi as Array<any>),
     });
 
     const quoteContract = getQuoteContract(chain);
@@ -108,7 +135,9 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
       contract: tokenContract,
       method: "approve",
       params: [
-        (exchangeType==="internal"?uniswapAddresses:uniswapAddressesPublic)[chain.id].router, // Router Address
+        (exchangeType === "internal"
+          ? uniswapAddresses
+          : uniswapAddressesPublic)[chain.id].router, // Router Address
         BigInt(finalAmount),
       ],
     });
@@ -119,7 +148,11 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
     });
 
     let path = getPath(token.id.toUpperCase(), chain, target.id.toUpperCase());
-    let encodedPath: string = getEncodedPath(token.id.toUpperCase(), chain, target.id.toUpperCase());
+    let encodedPath: string = getEncodedPath(
+      token.id.toUpperCase(),
+      chain,
+      target.id.toUpperCase()
+    );
     console.log("path", path, encodedPath);
 
     // Quote the exchange
@@ -133,7 +166,7 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
 
     let exactInputCall: PreparedTransaction<any>;
 
-    if(exchangeType==="internal"){
+    if (exchangeType === "internal") {
       const exactInputParams = {
         path: encodedPath,
         recipient: account.address,
@@ -146,8 +179,8 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
         method: "exactInput",
         params: [exactInputParams],
       });
-    }else{
-      if(path[1].length === 3){
+    } else {
+      if (path[1].length === 3) {
         const exactInputParams = {
           amountIn: BigInt(finalAmount),
           tokenIn: path[1][0],
@@ -156,8 +189,12 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
           amountOutMinimum: BigInt(0),
         };
 
-        console.log("swapExactInputSingle", exactInputParams, swapRouterContract);
-  
+        console.log(
+          "swapExactInputSingle",
+          exactInputParams,
+          swapRouterContract
+        );
+
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputSingle",
@@ -166,10 +203,10 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
             path[1][0],
             path[1][2],
             path[1][1],
-            BigInt(0)
+            BigInt(0),
           ],
         });
-      }else{
+      } else {
         const exactInputParams = {
           amountIn: BigInt(finalAmount),
           tokenIn: path[1][0],
@@ -181,7 +218,7 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
         };
 
         console.log("swapExactInputMulti", exactInputParams);
-  
+
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputMulti",
@@ -192,7 +229,7 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
             path[1][4],
             path[1][1],
             path[1][3],
-            BigInt(0)
+            BigInt(0),
           ],
         });
       }
@@ -207,26 +244,55 @@ export async function convertAnyToAnyDirect(token: SimpleToken, amount: number, 
     success();
   } catch (e) {
     sendErrorReport("convertAnyToAnyDirect", e);
-    console.error(`Error converting ${finalAmount} ${token.id} to ${target.id}`, e);
+    console.error(
+      `Error converting ${finalAmount} ${token.id} to ${target.id}`,
+      e
+    );
     error(e);
   }
 }
 
-async function convertAnyToAny(token: Token, amount: number, account: any, success: () => void, error: (e: Error) => void, chain: any, target: string, internal=false) {
-
+async function convertAnyToAny(
+  token: Token,
+  amount: number,
+  account: any,
+  success: () => void,
+  error: (e: Error) => void,
+  chain: any,
+  target: string,
+  internal = false
+) {
   const finalAmount = Number(amount.toFixed(0));
 
+  console.log(
+    "convertAnyToAny",
+    token,
+    finalAmount,
+    account,
+    success,
+    error,
+    chain,
+    target
+  );
 
-  console.log("convertAnyToAny", token, finalAmount, account, success, error, chain, target);
-
-  console.log("swap router contract address", ((exchangeType==="internal"||internal)?uniswapAddresses:uniswapAddressesPublic)[chain.id].router)
+  console.log(
+    "swap router contract address",
+    (exchangeType === "internal" || internal
+      ? uniswapAddresses
+      : uniswapAddressesPublic)[chain.id].router
+  );
 
   try {
     const swapRouterContract = getContract({
       client: client,
       chain: chain,
-      address: ((exchangeType==="internal"||internal)?uniswapAddresses:uniswapAddressesPublic)[chain.id].router,
-      abi: ((exchangeType==="internal"||internal)?SwapRouterAbi:CustomRouterAbi),
+      address: (exchangeType === "internal" || internal
+        ? uniswapAddresses
+        : uniswapAddressesPublic)[chain.id].router,
+      abi:
+        exchangeType === "internal" || internal
+          ? (SwapRouterAbi as Array<any>)
+          : (CustomRouterAbi as Array<any>),
     });
 
     const quoteContract = getQuoteContract(chain);
@@ -235,7 +301,7 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
       client: client,
       chain: chain,
       address: token.contract.contractAddress,
-      abi: ERC20ABI,
+      abi: ERC20ABI as Array<any>,
     });
 
     console.log("swapRouterContract", swapRouterContract);
@@ -245,7 +311,9 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
       contract: tokenContract,
       method: "approve",
       params: [
-        ((exchangeType==="internal"||internal)?uniswapAddresses:uniswapAddressesPublic)[chain.id].router, // Router Address
+        (exchangeType === "internal" || internal
+          ? uniswapAddresses
+          : uniswapAddressesPublic)[chain.id].router, // Router Address
         BigInt(finalAmount),
       ],
     });
@@ -258,7 +326,14 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
     let path = getPath(token.symbol || token.id, chain, target);
     let encodedPath = getEncodedPath(token.symbol || token.id, chain, target);
 
-    console.log("path", path, encodedPath, token.symbol || token.id, chain, target);
+    console.log(
+      "path",
+      path,
+      encodedPath,
+      token.symbol || token.id,
+      chain,
+      target
+    );
 
     console.log("path", path, encodedPath);
 
@@ -272,11 +347,10 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
     console.log("quote", quote);
 
     // Prepare and send the exactInput transaction
-   
 
     let exactInputCall: PreparedTransaction<any>;
 
-    if((exchangeType==="internal"||internal)){
+    if (exchangeType === "internal" || internal) {
       const exactInputParams = {
         path: encodedPath,
         recipient: account.address,
@@ -284,15 +358,15 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
         amountOutMinimum: 0,
       };
 
-      console.log("exactInputParams", exactInputParams)
+      console.log("exactInputParams", exactInputParams);
 
       exactInputCall = prepareContractCall({
         contract: swapRouterContract,
         method: "exactInput",
         params: [exactInputParams],
       });
-    }else{
-      if(path[1].length === 3){
+    } else {
+      if (path[1].length === 3) {
         const exactInputParams = {
           amountIn: BigInt(finalAmount),
           tokenIn: path[1][0],
@@ -301,8 +375,12 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
           amountOutMinimum: BigInt(0),
         };
 
-        console.log("swapExactInputSingle", exactInputParams, swapRouterContract);
-  
+        console.log(
+          "swapExactInputSingle",
+          exactInputParams,
+          swapRouterContract
+        );
+
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputSingle",
@@ -311,10 +389,10 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
             path[1][0],
             path[1][2],
             path[1][1],
-            BigInt(0)
+            BigInt(0),
           ],
         });
-      }else{
+      } else {
         const exactInputParams = {
           amountIn: BigInt(finalAmount),
           tokenIn: path[1][0],
@@ -326,7 +404,7 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
         };
 
         console.log("swapExactInputMulti", exactInputParams);
-  
+
         exactInputCall = prepareContractCall({
           contract: swapRouterContract,
           method: "swapExactInputMulti",
@@ -337,7 +415,7 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
             path[1][4],
             path[1][1],
             path[1][3],
-            BigInt(0)
+            BigInt(0),
           ],
         });
       }
@@ -345,18 +423,22 @@ async function convertAnyToAny(token: Token, amount: number, account: any, succe
 
     console.log("exactInputCall", exactInputCall);
 
-    
     let res: TransactionReceipt = await sendAndConfirmTransaction({
       account,
       transaction: exactInputCall,
     });
-   
+
     console.log("res", res);
 
     success();
   } catch (e) {
     sendErrorReport("convertAnyToAny", e);
-    console.error(`Error converting ${finalAmount} ${token.symbol || token.id} to ${target}`, e);
+    console.error(
+      `Error converting ${finalAmount} ${
+        token.symbol || token.id
+      } to ${target}`,
+      e
+    );
     error(e);
   }
 }

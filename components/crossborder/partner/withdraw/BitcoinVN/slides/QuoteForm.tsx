@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 import { HiChevronDoubleRight } from "react-icons/hi2";
 import CustomDropdown from "../../../../../Forms/CustomDropdown";
-import { getBuyWithFiatQuote } from "thirdweb/dist/types/pay/buyWithFiat/getQuote";
 import { getFiatInfoForStableCoin } from "../../../../../../utilities/stableCoinsMaps";
 
 interface QuoteFormProps {

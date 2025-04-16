@@ -15,11 +15,17 @@ import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
 import { IoIosInformationCircle } from "react-icons/io";
 import { useTranslation } from "next-i18next";
 import { encodePacked } from "thirdweb/utils";
-import { AuthContext, sendErrorReport } from "../../../../../context/UserContext";
+import {
+  AuthContext,
+  sendErrorReport,
+} from "../../../../../context/UserContext";
 import numberWithZeros from "../../../../utilities/math/numberWithZeros";
 import { TokensByChainId } from "../../../../utilities/crypto/currencies";
 import { SimpleToken } from "../../../../types/token.types";
-import { convertAnyToAnyDirect, uniswapAddresses } from "../../../../utilities/crypto/convertAnyToAny";
+import {
+  convertAnyToAnyDirect,
+  uniswapAddresses,
+} from "../../../../utilities/crypto/convertAnyToAny";
 import { PATHS } from "../../../../utilities/crypto/getPath";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
 import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
@@ -27,14 +33,13 @@ import { PaymentTypesArray } from "../../../../types/payload-types";
 import { Country } from "../../../../types/payload-types";
 import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 
-export type TransactionState = "transaction" | "success"; 
+export type TransactionState = "transaction" | "success";
 
 export interface CryptoPartnerProps {
   amount: number;
   country: Country;
   method: PaymentTypesArray[number];
 }
-
 
 export interface ValidationErrors {
   selectedToken?: string;
@@ -43,31 +48,39 @@ export interface ValidationErrors {
   conversionError?: string;
 }
 
-
-
-
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }) => {
+const CryptoPartner: React.FC<CryptoPartnerProps> = ({
+  amount,
+  country,
+  method,
+}) => {
   const [defaultToken, setDefaultToken] = useState<SimpleToken>(
     TokensByChainId[polygon.id][method.acceptedCrypto]
   );
   const [differentToken, setDifferentToken] = useState(false);
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [amountToSend, setAmountToSend] = useState(amount);
-  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken> | null>(null);
+  const [targetTokens, setTargetTokens] = useState<Record<
+    string,
+    SimpleToken
+  > | null>(null);
   const [targetAddress, setTargetAddress] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint | null>(null);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<
+    bigint | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const account = useActiveAccount();
   const [newTxHash, setNewTxHash] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loadingQuote, setLoadingQuote] = useState(false);
-  const [quote, setQuote] = useState<[bigint, bigint, bigint, bigint] | null>(null);
+  const [quote, setQuote] = useState<[bigint, bigint, bigint, bigint] | null>(
+    null
+  );
   const [state, setState] = useState<TransactionState>("transaction");
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -83,14 +96,14 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
         client: client,
         chain: polygon,
         address: uniswapAddresses[polygon.id].quote,
-        abi: QuoteV2Abi,
+        abi: QuoteV2Abi as Array<any>,
       });
 
       if (!selectedToken) return;
 
       const path =
         PATHS[polygon.id][defaultToken.id.toUpperCase()][
-          (selectedToken.id).toUpperCase()
+          selectedToken.id.toUpperCase()
         ];
 
       const encodedPath = encodePacked(path[0], path[1]);
@@ -164,7 +177,9 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
     return Object.keys(validationErrors).length === 0;
   };
 
-  function processTargetTokens(token: SimpleToken | null): Record<string, SimpleToken> | null {
+  function processTargetTokens(
+    token: SimpleToken | null
+  ): Record<string, SimpleToken> | null {
     if (!token) return null;
     let targetTokenArr = Object.keys(
       PATHS[polygon.id][token.id.toUpperCase()]
@@ -183,7 +198,11 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
     return targetTokens;
   }
 
-  const handleTransfer = async (token: SimpleToken, amount: bigint, address: string): Promise<string> => {
+  const handleTransfer = async (
+    token: SimpleToken,
+    amount: bigint,
+    address: string
+  ): Promise<string> => {
     const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
       client,
       account,
@@ -372,4 +391,4 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
   );
 };
 
-export default CryptoPartner; 
+export default CryptoPartner;

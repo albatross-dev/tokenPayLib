@@ -61,7 +61,7 @@ const CrossChainSection: React.FC = () => {
       client: client,
       chain: getChainById(activeChain.id),
       address: TokensByChainId[activeChain.id]["USDC"].contractAddress,
-      abi: ERC20ABI,
+      abi: ERC20ABI as Array<any>,
     });
 
     const resultStableBalance = await readContract({

@@ -1,5 +1,10 @@
 import CustomRouterAbi from "../../assets/customSwapRouterAbi.json";
-import { getContract, prepareContractCall, sendAndConfirmTransaction, ThirdwebClient } from "thirdweb";
+import {
+  getContract,
+  prepareContractCall,
+  sendAndConfirmTransaction,
+  ThirdwebClient,
+} from "thirdweb";
 import { Chain } from "thirdweb/chains";
 import { Account } from "thirdweb/wallets";
 import { SimpleToken } from "../../types/token.types";
@@ -12,7 +17,8 @@ export interface TokenContract {
   approve: (address: string, amount: bigint) => Promise<any>;
 }
 
-export const TokenPayAbstractionAddress = "0x224498ff598ecbcbde689b593e64ac48e9b3be15";
+export const TokenPayAbstractionAddress =
+  "0x224498ff598ecbcbde689b593e64ac48e9b3be15";
 export const TokenPayAbstractionAbi = CustomRouterAbi;
 
 /**
@@ -26,7 +32,7 @@ export function getTokenPayAbstractionContract(
     client,
     chain,
     address: TokenPayAbstractionAddress,
-    abi: TokenPayAbstractionAbi,
+    abi: TokenPayAbstractionAbi as Array<any>,
   });
 }
 
@@ -82,4 +88,4 @@ export async function tokenPayAbstractionSimpleTransfer(
   });
 
   return result;
-} 
+}

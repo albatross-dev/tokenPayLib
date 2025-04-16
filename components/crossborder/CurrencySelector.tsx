@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
@@ -29,7 +29,7 @@ export interface Balance {
   symbol: string;
   balance: number;
   currency: string;
-  icon: string;
+  icon: string | StaticImageData;
   decimals: number;
 }
 
@@ -74,7 +74,10 @@ async function getBalance(
       decimals: currency.decimals,
     };
   } catch (error) {
-    sendErrorReport(`CurrencySelector - Error fetching balance for ${symbol}:`, error);
+    sendErrorReport(
+      `CurrencySelector - Error fetching balance for ${symbol}:`,
+      error
+    );
     console.error(`Error fetching balance for ${symbol}:`, error);
   }
   return null;
@@ -94,7 +97,8 @@ export default function CurrencyDisplay({
   const { t: tCrossborder } = useTranslation("crossborder");
 
   const [mainCurrency, setMainCurrency] = useState<Balance | null>(null);
-  const [alternateCoinInfoOpen, setAlternateCoinInfoOpen] = useState<boolean>(false);
+  const [alternateCoinInfoOpen, setAlternateCoinInfoOpen] =
+    useState<boolean>(false);
 
   const [convertCurrency, setConvertCurrency] = useState<string | null>(null);
   const [maxConvBalance, setMaxConvBalance] = useState<number>(0);
@@ -167,9 +171,9 @@ export default function CurrencyDisplay({
         closeModal={() => {
           setAlternateCoinInfoOpen(false);
         }}
-        type='info'
-        title='Lorem'
-        message='Ipsum'
+        type="info"
+        title="Lorem"
+        message="Ipsum"
       ></UniversalModal>
       <ConvertPopup
         show={isConverterOpen}
@@ -184,16 +188,16 @@ export default function CurrencyDisplay({
         targetToken={currencies[mainCurrencySymbol]}
       ></ConvertPopup>
 
-      <div className='w-full'>
+      <div className="w-full">
         {loading || mainCurrency === null ? (
-          <div className='flex flex-col gap-2 justify-center items-center py-4 w-full'>
-            <div className='flex p-4 border w-full rounded'>
-              <div className='flex text-xl font-bold items-center gap-2 flex-1'>
+          <div className="flex flex-col gap-2 justify-center items-center py-4 w-full">
+            <div className="flex p-4 border w-full rounded">
+              <div className="flex text-xl font-bold items-center gap-2 flex-1">
                 <MiniLoader />
-                <div className='w-12 h-4 animate-pulse rounded bg-gray-200'></div>
+                <div className="w-12 h-4 animate-pulse rounded bg-gray-200"></div>
               </div>
-              <div className='flex flex-row items-center font-bold gap-6'>
-                <div className='w-12 h-4 animate-pulse rounded bg-gray-200'></div>
+              <div className="flex flex-row items-center font-bold gap-6">
+                <div className="w-12 h-4 animate-pulse rounded bg-gray-200"></div>
               </div>
             </div>
             <div
@@ -202,16 +206,16 @@ export default function CurrencyDisplay({
           </div>
         ) : (
           <div>
-            <div className='flex p-4 border rounded'>
-              <div className='flex text-xl font-bold items-center gap-2 flex-1'>
+            <div className="flex p-4 border rounded">
+              <div className="flex text-xl font-bold items-center gap-2 flex-1">
                 {STANDARD_STABLE_MAP[mainCurrency?.symbol] ? (
-                  <div className='w-8 h-8 flex items-center justify-center bg-uhuBlue text-white rounded-full'>
+                  <div className="w-8 h-8 flex items-center justify-center bg-uhuBlue text-white rounded-full">
                     {STANDARD_STABLE_MAP[mainCurrency?.symbol].symbol}
                   </div>
                 ) : (
                   <Image
                     src={mainCurrency?.icon}
-                    className='h-4 w-4 bg-white rounded-full'
+                    className="h-4 w-4 bg-white rounded-full"
                     alt={`${mainCurrency?.symbol} icon`}
                     width={32}
                     height={32}
@@ -220,18 +224,18 @@ export default function CurrencyDisplay({
                 {STANDARD_STABLE_MAP[mainCurrency?.symbol] ? (
                   <div>{STANDARD_STABLE_MAP[mainCurrency?.symbol].id}</div>
                 ) : (
-                  <div className='font-medium text-sm'>
+                  <div className="font-medium text-sm">
                     {mainCurrency?.symbol}
                   </div>
                 )}
               </div>
-              <div className='flex flex-row items-center font-bold gap-6'>
-                <div className=''>
+              <div className="flex flex-row items-center font-bold gap-6">
+                <div className="">
                   {isClient && Number(mainCurrency?.balance).toFixed(5)}
                 </div>
               </div>
             </div>
-            <div className='flex flex-col gap-4 py-4 max-h-72 overflow-auto'>
+            <div className="flex flex-col gap-4 py-4 max-h-72 overflow-auto">
               {balances.map((balance, index) => (
                 <div
                   key={index}
@@ -241,15 +245,15 @@ export default function CurrencyDisplay({
                       : "bg-uhuGray hover:bg-gray-50"
                   }`}
                 >
-                  <div className='flex items-center gap-2 flex-1'>
+                  <div className="flex items-center gap-2 flex-1">
                     {STANDARD_STABLE_MAP[balance.symbol] ? (
-                      <div className='w-6 h-6 flex items-center justify-center bg-uhuBlue text-white rounded-full'>
+                      <div className="w-6 h-6 flex items-center justify-center bg-uhuBlue text-white rounded-full">
                         {STANDARD_STABLE_MAP[balance.symbol].symbol}
                       </div>
                     ) : (
                       <Image
                         src={balance.icon}
-                        className='h-6 w-6 bg-white rounded-full'
+                        className="h-6 w-6 bg-white rounded-full"
                         alt={`${balance.symbol} icon`}
                         width={32}
                         height={32}
@@ -259,21 +263,21 @@ export default function CurrencyDisplay({
                     {STANDARD_STABLE_MAP[balance.symbol] ? (
                       <div>{STANDARD_STABLE_MAP[balance.symbol].id}</div>
                     ) : (
-                      <div className='flex flex-row items-center gap-2 font-medium text-sm'>
+                      <div className="flex flex-row items-center gap-2 font-medium text-sm">
                         {balance.symbol}
                         <div
-                          className='flex flex-row gap-2 items-center text-gray-500 cursor-pointer'
+                          className="flex flex-row gap-2 items-center text-gray-500 cursor-pointer"
                           onClick={() => {
                             setAlternateCoinInfoOpen(true);
                           }}
                         >
-                          <HiInformationCircle className='h-6 w-6' />
+                          <HiInformationCircle className="h-6 w-6" />
                         </div>
                       </div>
                     )}
                   </div>
-                  <div className='flex flex-row items-center  gap-6'>
-                    <div className='text-sm md:text-base'>
+                  <div className="flex flex-row items-center  gap-6">
+                    <div className="text-sm md:text-base">
                       {isClient && Number(balance.balance).toFixed(5)}
                     </div>
                   </div>
@@ -284,10 +288,9 @@ export default function CurrencyDisplay({
                         Number(balance.balance)
                       );
                     }}
-                    className='px-2 py-1 bg-uhuBlue cursor-pointer rounded-full font-bold text-white'
+                    className="px-2 py-1 bg-uhuBlue cursor-pointer rounded-full font-bold text-white"
                   >
                     {tCrossborder("durrencyDisplay.convert")}
-                    
                   </div>
                 </div>
               ))}

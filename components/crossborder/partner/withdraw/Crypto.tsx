@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  createThirdwebClient,
-  getContract,
-  readContract
-} from "thirdweb";
+import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { AuthContext, sendErrorReport } from "../../../../../context/UserContext";
+import {
+  AuthContext,
+  sendErrorReport,
+} from "../../../../../context/UserContext";
 import { IoClose } from "react-icons/io5";
 import axios from "axios";
 import TokenSelector from "../../../Forms/TokenSelector";
@@ -44,24 +43,34 @@ const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProps) {
+export default function RawCrypto({
+  amount,
+  preferredStableCoin,
+}: RawCryptoProps) {
   const [defaultToken, setDefaultToken] = useState<SimpleToken>(
     TokensByChainId[polygon.id][preferredStableCoin]
   );
   const [differentToken, setDifferentToken] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [amountToSend, setAmountToSend] = useState<number>(amount);
-  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken> | null>(null);
+  const [targetTokens, setTargetTokens] = useState<Record<
+    string,
+    SimpleToken
+  > | null>(null);
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint | null>(null);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<
+    bigint | null
+  >(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useContext(AuthContext);
   const account = useActiveAccount();
   const [newTxHash, setNewTxHash] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loadingQuote, setLoadingQuote] = useState<boolean>(false);
-  const [quote, setQuote] = useState<[bigint, bigint, boolean, bigint] | null>(null);
+  const [quote, setQuote] = useState<[bigint, bigint, boolean, bigint] | null>(
+    null
+  );
   const [state, setState] = useState<"transaction" | "success">("transaction");
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -77,7 +86,7 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
         client: client,
         chain: polygon,
         address: uniswapAddresses[polygon.id].quote,
-        abi: QuoteV2Abi,
+        abi: QuoteV2Abi as Array<any>,
       });
 
       const path =
@@ -138,22 +147,30 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
     const validationErrors: FormErrors = {};
 
     if (differentToken && !selectedToken) {
-      validationErrors.selectedToken = tCrossborder("withdraw.crypto.errorSelectCrypto");
+      validationErrors.selectedToken = tCrossborder(
+        "withdraw.crypto.errorSelectCrypto"
+      );
     }
 
     if (!amountToSend || amountToSend <= 0) {
-      validationErrors.amountToSend = tCrossborder("withdraw.crypto.errorEmail");
+      validationErrors.amountToSend = tCrossborder(
+        "withdraw.crypto.errorEmail"
+      );
     }
 
     if (!targetAddress || !/^0x[a-fA-F0-9]{40}$/.test(targetAddress)) {
-      validationErrors.targetAddress = tCrossborder("withdraw.crypto.errorWallet");
+      validationErrors.targetAddress = tCrossborder(
+        "withdraw.crypto.errorWallet"
+      );
     }
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
-  function processTargetTokens(token: SimpleToken | null): Record<string, SimpleToken> | null {
+  function processTargetTokens(
+    token: SimpleToken | null
+  ): Record<string, SimpleToken> | null {
     if (!token) return null;
     let targetTokenArr = Object.keys(
       PATHS[polygon.id][token.id.toUpperCase()]
@@ -172,7 +189,11 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
     return targetTokens;
   }
 
-  const handleTransfer = async (token: SimpleToken, amount: string, address: string): Promise<string> => {
+  const handleTransfer = async (
+    token: SimpleToken,
+    amount: string,
+    address: string
+  ): Promise<string> => {
     const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
       client,
       account as Account,
@@ -193,7 +214,7 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
       try {
         await convertAnyToAnyDirect(
           defaultToken,
-          (amount * numberWithZeros(defaultToken?.decimals || 1)),
+          amount * numberWithZeros(defaultToken?.decimals || 1),
           account as Account,
           () => {},
           (error) => {
@@ -241,11 +262,10 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
         await axios.post("/api/fiatTransaction", transactionData);
       } catch (error) {
         const errors: FormErrors = {};
-        sendErrorReport(
-          `Crypto - Withdraw - Error transfering token`,
-          error
+        sendErrorReport(`Crypto - Withdraw - Error transfering token`, error);
+        errors.conversionError = tCrossborder(
+          "withdraw.crypto.errorTransaction"
         );
-        errors.conversionError = tCrossborder("withdraw.crypto.errorTransaction");
         setErrors(errors);
         console.error("Error transfering token", error);
         setIsLoading(false);
@@ -411,4 +431,4 @@ export default function RawCrypto({ amount, preferredStableCoin }: RawCryptoProp
       )}
     </div>
   );
-} 
+}
