@@ -29,6 +29,7 @@ import tbtc from "@/tokenPayLib/assets/payment-icons/optimism/tbtc.png";
 import dola from "@/tokenPayLib/assets/payment-icons/optimism/dola.png";
 import zro from "@/tokenPayLib/assets/payment-icons/optimism/zro.png";
 import bal from "@/tokenPayLib/assets/payment-icons/optimism/bal.svg";
+import { SimpleToken } from "../../../types/token.types";
 
 const optimismCurrencies: Record<string, SimpleToken> = {
   WETH: {

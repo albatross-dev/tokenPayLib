@@ -17,8 +17,7 @@ import getChainById from "../../utilities/crypto/getChainById";
 import MiniLoader from "../UI/MiniLoader";
 import BridgeModalUniversal from "../Modals/BridgeModalUniversal";
 import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
-import { StaticImageData } from "next/image";
-import { ChainDetails } from "../../types/chaindetails.types";
+import { ChainDetails } from "../../types/chainDetails.types";
 
 interface LoadingState {
   [key: string]: "normal" | "processing" | "error";
@@ -36,8 +35,11 @@ const CrossChainSection: React.FC = () => {
 
   // bridge modal
   const [showBridgeModal, setShowBridgeModal] = useState<boolean>(false);
-  const [balanceOfStableLoading, setBalanceOfStableLoading] = useState<boolean>(false);
-  const [balanceOfStableData, setBalanceOfStableData] = useState<bigint>(BigInt(0));
+  const [balanceOfStableLoading, setBalanceOfStableLoading] =
+    useState<boolean>(false);
+  const [balanceOfStableData, setBalanceOfStableData] = useState<bigint>(
+    BigInt(0)
+  );
   const [selectedChain, setSelectedChain] = useState<ChainDetails | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
@@ -89,7 +91,6 @@ const CrossChainSection: React.FC = () => {
         token={TokensByChainId[activeChain?.id]["USDC"]}
         chain={activeChain}
         spokePool={tokenyByChain[activeChain?.id]?.spokePool}
-        spokePoolWrapper={tokenyByChain[activeChain?.id]?.spokePoolWrapper}
         maxAmount={Number(balanceOfStableData)}
         destinationChainId={selectedChain?.chainId}
         onStart={() => {
@@ -109,13 +110,12 @@ const CrossChainSection: React.FC = () => {
               fetchStableBalance();
             }, 1000);
             setShowSuccessModal(true);
-          }else{
+          } else {
             setLoading((prevState) => ({
               ...prevState,
               [selectedChain?.chainId]: "error",
             }));
           }
-         
         }}
       />
       <div className="bg-gray-100 p-4 my-4 rounded-lg">
@@ -124,10 +124,10 @@ const CrossChainSection: React.FC = () => {
         <div className="mb-2">{t("info_text_chain_p2")}</div>
       </div>
       <div>{t("active_chain")}</div>
-      <ChainSelector chainList={chainsBridge} />
+      <ChainSelector type="chain" chainList={chainsBridge} />
 
       <div className="flex mt-4 flex-row items-center justify-between bg-gray-100 rounded-lg p-4">
-        <div className="text-xl font-bold">Ihr USDC Guthaben</div>
+        <div className="text-xl font-bold">{t("info_usdc_balance")}</div>
         <div className="flex flex-row gap-2">
           <div className="font-bold text-xl">
             {balanceOfStableLoading ? (

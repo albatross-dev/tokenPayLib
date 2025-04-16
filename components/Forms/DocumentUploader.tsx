@@ -28,11 +28,7 @@ const isFile = (file: FileType): file is File => {
 
 /**
  * DocumentUploadField component for handling file uploads within a form.
- *
- * @component
- * @param {DocumentUploadFieldProps} props - Component props
- * @returns {JSX.Element} The rendered component
- *
+
  * @example
  * <DocumentUploadField
  *   name="document"
@@ -41,7 +37,7 @@ const isFile = (file: FileType): file is File => {
  *   required={true}
  * />
  */
-const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control, label, required }) => {
+const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control, label, required }: DocumentUploadFieldProps): JSX.Element => {
   const [filePreview, setFilePreview] = useState<FileType>(null);
   const [error, setError] = useState<string | null>(null);
   const hiddenInputRef = useRef<HTMLInputElement>(null);

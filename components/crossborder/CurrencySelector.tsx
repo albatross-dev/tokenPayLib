@@ -25,7 +25,7 @@ interface Currency {
   decimals: number;
 }
 
-interface Balance {
+export interface Balance {
   symbol: string;
   balance: number;
   currency: string;
@@ -218,7 +218,7 @@ export default function CurrencyDisplay({
                   />
                 )}
                 {STANDARD_STABLE_MAP[mainCurrency?.symbol] ? (
-                  <div>{STANDARD_STABLE_MAP[mainCurrency?.symbol].symbol}</div>
+                  <div>{STANDARD_STABLE_MAP[mainCurrency?.symbol].id}</div>
                 ) : (
                   <div className='font-medium text-sm'>
                     {mainCurrency?.symbol}
@@ -257,7 +257,7 @@ export default function CurrencyDisplay({
                     )}
 
                     {STANDARD_STABLE_MAP[balance.symbol] ? (
-                      <div>{STANDARD_STABLE_MAP[balance.symbol].symbol}</div>
+                      <div>{STANDARD_STABLE_MAP[balance.symbol].id}</div>
                     ) : (
                       <div className='flex flex-row items-center gap-2 font-medium text-sm'>
                         {balance.symbol}

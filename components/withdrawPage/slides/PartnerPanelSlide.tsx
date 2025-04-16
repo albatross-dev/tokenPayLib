@@ -2,7 +2,7 @@ import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import { PartnerPanelSlideProps } from '../types';
 import TransferPanel from '../../crossborder/transfer/components/TransferPanel';
-
+import { useTranslation } from 'next-i18next';
 const PartnerPanelSlide: React.FC<PartnerPanelSlideProps> = ({
   selectedMethod,
   amount,
@@ -12,6 +12,7 @@ const PartnerPanelSlide: React.FC<PartnerPanelSlideProps> = ({
   preferredStableCoin,
   back
 }) => {
+  const { t: tCrossborder } = useTranslation('crossborder');
   return (
     <div>
       <div className="relative z-[10] text-darkBlue flex flex-col gap-4 max-w-4xl mx-auto">
@@ -21,7 +22,7 @@ const PartnerPanelSlide: React.FC<PartnerPanelSlideProps> = ({
             className="flex items-center text-uhuBlue hover:text-blue-700 mb-4"
           >
             <FiArrowLeft className="mr-2" />
-            Back
+            {tCrossborder('withdrawPage.backButton')}
           </button>
         </div>
         <TransferPanel

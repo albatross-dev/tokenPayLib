@@ -2,6 +2,8 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 import { HiChevronDoubleRight } from "react-icons/hi2";
 import CustomDropdown from "../../../../../Forms/CustomDropdown";
+import { getBuyWithFiatQuote } from "thirdweb/dist/types/pay/buyWithFiat/getQuote";
+import { getFiatInfoForStableCoin } from "../../../../../../utilities/stableCoinsMaps";
 
 interface QuoteFormProps {
   quote: {
@@ -12,6 +14,7 @@ interface QuoteFormProps {
     settleAmount: number;
     settleMethod: string;
   };
+  amount: number;
   bankList: Array<{ value: string; label: string }>;
   formData: {
     bank: string;
@@ -26,6 +29,7 @@ interface QuoteFormProps {
 
 export default function QuoteForm({
   quote,
+  amount,
   bankList,
   formData,
   formError,
@@ -35,6 +39,7 @@ export default function QuoteForm({
 }: QuoteFormProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
+  console.log("amount", amount);
   return (
     <div className="max-w-4xl w-full mx-auto p-6 bg-white">
       <div className="mb-6">
@@ -49,7 +54,10 @@ export default function QuoteForm({
             </p>
             <p className="text-red-600">
               <strong>{tCrossborder("withdraw.bitcoinvn.validFor")}</strong>{" "}
-              {Math.round((new Date(quote.expiresAt).getTime() - new Date().getTime()) / 60000)}{" "}
+              {Math.round(
+                (new Date(quote.expiresAt).getTime() - new Date().getTime()) /
+                  60000
+              )}{" "}
               {tCrossborder("withdraw.bitcoinvn.minutes")}
             </p>
           </div>
@@ -57,7 +65,10 @@ export default function QuoteForm({
           <div className="w-full flex-1 flex flex-row gap-4">
             <div className="gap-1 flex-1 flex flex-col">
               <div className="font-bold text-6xl text-gray-600 whitespace-nowrap">
-                {quote.depositAmount} {quote.depositMethod.toUpperCase()}
+                {amount}{" "}
+                {getFiatInfoForStableCoin(
+                  quote.depositMethod.toUpperCase()
+                )?.id.toUpperCase()}
               </div>
               <div>{tCrossborder("withdraw.bitcoinvn.depositAmount")}</div>
             </div>
@@ -125,4 +136,4 @@ export default function QuoteForm({
       </form>
     </div>
   );
-} 
+}

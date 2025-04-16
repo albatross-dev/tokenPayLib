@@ -4,8 +4,10 @@ import { Country } from "../../types/payload-types";
  * Filter the country data based on the origin country
  * and also the payment methods
  */
-export default function filterCountryData(originCountryISO: string, countries: Country[]): Country[] {
-
+export default function filterCountryData(
+  originCountryISO: string,
+  countries: Country[]
+): Country[] {
   // if no origin country is set, return no countries
   if (!originCountryISO) {
     return [];
@@ -15,11 +17,13 @@ export default function filterCountryData(originCountryISO: string, countries: C
   let newCountries = countries.filter((country) => {
     if (country.useWhiteList) {
       return country.receivingFromCountryWhiteList.some(
-        (whiteCountry) => whiteCountry.countryCode === originCountryISO
+        (whiteCountry) =>
+          (whiteCountry as Country).countryCode === originCountryISO
       );
     } else {
       return !country.receivingFromCountryBlackList?.some(
-        (blackCountry) => blackCountry.countryCode === originCountryISO
+        (blackCountry) =>
+          (blackCountry as Country).countryCode === originCountryISO
       );
     }
   });
@@ -30,11 +34,13 @@ export default function filterCountryData(originCountryISO: string, countries: C
       if (method.withdrawOnly) return false;
       if (method.useWhiteListPaymentMethod) {
         return method.whiteList.some(
-          (whiteCountry) => whiteCountry.countryCode === originCountryISO
+          (whiteCountry) =>
+            (whiteCountry as Country).countryCode === originCountryISO
         );
       } else {
         return !method.blackList?.some(
-          (blackCountry) => blackCountry.countryCode === originCountryISO
+          (blackCountry) =>
+            (blackCountry as Country).countryCode === originCountryISO
         );
       }
     });
@@ -43,4 +49,4 @@ export default function filterCountryData(originCountryISO: string, countries: C
 
   // filter the countries by black and whitelist
   return newCountries;
-} 
+}

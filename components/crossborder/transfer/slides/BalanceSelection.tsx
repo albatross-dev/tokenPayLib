@@ -24,7 +24,7 @@ export default function BalanceSelection({
 
   return (
     <div className="relative z-[10] p-4 flex flex-col gap-4 max-w-4xl mx-auto">
-      <BackButton />
+      <BackButton onBack={() => swiperInstance?.slideTo(0)} />
       <h2 className="text-2xl">
         {tCrossborder("transferSection.ask_for_balance")}
       </h2>

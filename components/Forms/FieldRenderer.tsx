@@ -1,120 +1,190 @@
-import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { FormField, FieldRendererProps } from './types';
-import FormInput from './FormInput';
-import ArrayField from './ArrayField';
-import DocumentUploader from './DocumentUploader';
-import CountrySelector from './CountrySelector';
-import CurrencySelector from './CurrencySelector';
-import DateInputField from './DateInputField';
-import CustomDropdown from './CustomDropdown';
-import TokenSelector from './TokenSelector';
-import ChainSelector from './ChainSelector';
+import React from "react";
+import { FieldRendererProps, FormField } from "./types";
+import FormInput from "./FormInput";
+import ArrayField from "./ArrayField";
+import DocumentUploader from "./DocumentUploader";
+import CountrySelector from "./CountrySelector";
+import CurrencySelector from "./CurrencySelector";
+import DateInputField from "./DateInputField";
+import CustomDropdown from "./CustomDropdown";
+import TokenSelector from "./TokenSelector";
+import ChainSelector from "./ChainSelector";
+import DefaultInput from "./DefaultInput";
+import { useFormContext } from "react-hook-form";
+import DocumentUploadField from "./DocumentUploader";
 
-const FieldRenderer: React.FC<FieldRendererProps> = ({
+const FieldRenderer = ({
   fields,
-  methods,
+  style = "vertical",
   alwaysEditable = false,
-  arrayItemIndex,
-  parentName = '',
+  parentName = "", // Parent name for correct nested structure
+  arrayItemIndex = null,
+  step = "any",
 }) => {
-  const renderField = (field: FormField) => {
-    const fieldName = parentName ? `${parentName}.${field.name}` : field.name;
-
-    switch (field.type) {
-      case 'array':
-        return (
-          <ArrayField
-            key={fieldName}
-            field={field}
-            methods={methods}
-            parentName={parentName}
-          />
-        );
-      case 'file':
-        return (
-          <DocumentUploader
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'country':
-        return (
-          <CountrySelector
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'currency':
-        return (
-          <CurrencySelector
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'date':
-        return (
-          <DateInputField
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'select':
-        return (
-          <CustomDropdown
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'token':
-        return (
-          <TokenSelector
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      case 'chain':
-        return (
-          <ChainSelector
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-      default:
-        return (
-          <FormInput
-            key={fieldName}
-            {...field}
-            name={fieldName}
-            control={methods.control}
-          />
-        );
-    }
-  };
+  const methods = useFormContext();
 
   return (
-    <div className="space-y-4">
-      {fields.map((field) => (
-        <div key={field.name} className={field.visible === false ? 'hidden' : ''}>
-          {renderField(field)}
-        </div>
-      ))}
-    </div>
+    <>
+      {fields.map((field, index) => {
+        // Generate a unique field key
+        const fieldName = parentName
+          ? `${parentName}.${field.name ? field.name : index}`
+          : field.name;
+
+        // check if is visible field by checking if field.visible is a function and then run it
+        if (field.visible && typeof field.visible === "function") {
+          if (!field.visible(methods)) {
+            return null;
+          }
+        }
+
+        // parse required field, check if it is a function or boolean or undefined
+        let parsedRequired = false;
+        if (field.required) {
+          if (typeof field.required === "function") {
+            if (arrayItemIndex !== null) {
+              parsedRequired = field.required(methods, arrayItemIndex); // Execute the function with methods
+            } else {
+              parsedRequired = field.required(methods); // Execute the function with methods
+            }
+          } else {
+            parsedRequired = field.required; // Otherwise, it's a boolean
+          }
+        }
+
+        return (
+          <div
+            key={fieldName || index} // Use fieldName if available, otherwise use index for non-named fields like rows
+            className={`${
+              style === "horizontal" && "md:flex w-full items-center flex-row"
+            } ${field.type !== "row" && "mb-4"} ${field.width || ""}`}
+          >
+            {field.type !== "checkbox" &&
+              field.type !== "array" &&
+              field.type !== "row" &&
+              field.label && ( // Exclude the date type from the generic input rendering
+                <label
+                  htmlFor={fieldName}
+                  className={`block text-sm font-medium text-gray-700 ${
+                    style === "horizontal" && "md:w-64 md:text-end pr-6"
+                  }`}
+                >
+                  {field.label}
+                  {parsedRequired && <span className="text-red-500">*</span>}
+                </label>
+              )}
+
+            <div
+              className={`${
+                style === "horizontal" &&
+                field.type !== "checkbox" &&
+                field.type !== "array" &&
+                field.type !== "row" &&
+                field.type !== "ui" &&
+                "md:w-64"
+              }`}
+            >
+              {field.type === "checkbox" ? (
+                <div className="flex items-center">
+                  <input
+                    id={fieldName}
+                    name={fieldName}
+                    type="checkbox"
+                    {...methods.register(fieldName, {
+                      required: parsedRequired ? "!!!" : false, // Add validation rule
+                    })} // Register the checkbox with validation
+                    defaultChecked={methods.getValues(fieldName) || false} // Ensure defaultChecked is handled
+                    className="h-4 w-4 text-uhuBlue border-gray-300 rounded focus:ring-uhuBlue"
+                  />
+                  <label
+                    htmlFor={fieldName}
+                    className="ml-2 block text-sm cursor-pointer text-gray-900"
+                  >
+                    {field.label}{" "}
+                    {parsedRequired && <span className="text-red-500">*</span>}
+                  </label>
+                </div>
+              ) : field.type === "ui" ? (
+                field.content
+              ) : field.type === "custom" &&
+                typeof field.content === "function" ? (
+                field.content(methods) // Pass control and user to the custom component
+              ) : field.type === "select" ? (
+                <FormInput
+                  type="select"
+                  control={methods.control}
+                  options={field.options}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  required={parsedRequired}
+                  id={fieldName}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                />
+              ) : field.type === "country" ? (
+                <FormInput
+                  type="country"
+                  onlyIso={field.onlyIso}
+                  control={methods.control}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  required={parsedRequired}
+                  validCountries={fields.validCountries}
+                  id={fieldName}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                />
+              ) : field.type === "textarea" ? (
+                <textarea
+                  id={fieldName}
+                  name={fieldName}
+                  placeholder={field.placeholder?.toString()}
+                  {...methods.register(fieldName, { required: parsedRequired })}
+                  className="mt-1 p-2 w-full border rounded-md"
+                />
+              ) : field.type === "file" ? (
+                <DocumentUploadField
+                  name={fieldName}
+                  control={methods.control}
+                  label={field.label}
+                  required={parsedRequired}
+                />
+              ) : field.type === "row" ? (
+                <div className="flex flex-col md:flex-row md:gap-4">
+                  <FieldRenderer
+                    fields={field.fields} // Render nested fields recursively
+                    parentName={parentName} // Pass parentName for nested fields
+                    alwaysEditable={alwaysEditable}
+                  />
+                </div>
+              ) : field.type === "array" ? (
+                <ArrayField
+                  type={field.type}
+                  field={field}
+                  methods={methods}
+                  parentName={parentName} // Pass parentName for array fields
+                />
+              ) : field.type === "date" ? (
+                // Specific handling for date fields inside arrays
+                <DateInputField
+                  fieldName={fieldName}
+                  methods={methods}
+                  disabled={alwaysEditable ? false : field.disabled}
+                  parsedRequired={parsedRequired}
+                />
+              ) : (
+                <DefaultInput
+                  disabled={alwaysEditable ? false : field.disabled}
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  fieldName={fieldName}
+                  methods={methods}
+                  parsedRequired={parsedRequired}
+                  step={step}
+                />
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 };
 
-export default FieldRenderer; 
+export default FieldRenderer;

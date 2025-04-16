@@ -12,14 +12,15 @@ import { useActiveAccount } from "thirdweb/react";
 import { Chain } from "thirdweb";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { sendErrorReport } from "../../../context/UserContext";
-import { 
-  Token, 
-  QuoteData, 
-  Limits, 
-  fetchLimitsAndQuote, 
-  acrossBridgeDeposit 
+import {
+  QuoteData,
+  Limits,
+  fetchLimitsAndQuote,
+  acrossBridgeDeposit,
 } from "../../utilities/crypto/bridgeUtils";
 import { SimpleToken } from "../../types/token.types";
+import Loader from "../UI/Loader";
+import MiniLoader from "../UI/MiniLoader";
 
 interface BridgeModalUniversalProps {
   show: boolean;
@@ -28,7 +29,7 @@ interface BridgeModalUniversalProps {
   maxAmount: string | number;
   chain: Chain;
   spokePool: string;
-  spokePoolWrapper: string;
+  spokePoolWrapper?: string;
   onStart: () => void;
   onFinish: (success: boolean) => void;
   destinationChainId: number;
@@ -52,13 +53,17 @@ const BridgeModalUniversal = ({
   const [inputError, setInputError] = useState("");
   const account = useActiveAccount();
 
+  const [loading, setLoading] = useState(false);
+
   console.log("spokePool", spokePool);
 
   const { t } = useTranslation("common");
 
   useEffect(() => {
-    if(maxAmount) {
-      setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
+    if (typeof maxAmount === "number") {
+      setAmount(
+        (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0)
+      );
     }
   }, [maxAmount]);
 
@@ -69,9 +74,9 @@ const BridgeModalUniversal = ({
       timestamp: 0,
       exclusiveRelayer: "",
       exclusivityDeadline: 0,
-      status: 0
+      status: 0,
     });
-    
+
     console.log("all params", chain, token, amount, destinationChainId);
     if (chain && token && amount && destinationChainId) {
       fetchLimitsAndQuoteData();
@@ -84,10 +89,11 @@ const BridgeModalUniversal = ({
       setInputError("");
       return;
     }
-    
-    const maxAllowed = (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0);
+
+    const maxAllowed =
+      (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0);
     console.log("Amount:", amount, "Max allowed:", maxAllowed);
-    
+
     if (amount <= 0) {
       setInputError(t("greater_zero"));
     } else if (amount > maxAllowed) {
@@ -100,25 +106,36 @@ const BridgeModalUniversal = ({
   const fetchLimitsAndQuoteData = async () => {
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
-    
+
     if (!tokenAddress || !originChainId || amount === null) {
       return;
     }
-    
+
     try {
-      const { limits: limitsData, quote: quoteData } = await fetchLimitsAndQuote(
-        tokenAddress,
-        originChainId,
-        destinationChainId,
-        amount,
-        token.decimals
-      );
-      
+      setLoading(true);
+      const { limits: limitsData, quote: quoteData } =
+        await fetchLimitsAndQuote(
+          tokenAddress,
+          originChainId,
+          destinationChainId,
+          amount,
+          token.decimals
+        );
+      setLoading(false);
       setLimits(limitsData);
       setQuote(quoteData);
     } catch (error) {
       sendErrorReport("BridgeModalUniversal - Error fetching data", error);
+      setQuote({
+        status: 400,
+        code: "ERROR",
+        totalRelayFee: { total: 0 },
+        timestamp: 0,
+        exclusiveRelayer: "",
+        exclusivityDeadline: 0,
+      });
       console.error("Error fetching data:", error);
+      setLoading(false);
     }
   };
 
@@ -128,7 +145,7 @@ const BridgeModalUniversal = ({
 
   const handleConfirmBridge = () => {
     if (amount === null) return;
-    
+
     handleBridge(amount * numberWithZeros(token?.decimals || 0));
     closeModal();
   };
@@ -137,12 +154,12 @@ const BridgeModalUniversal = ({
     onStart();
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
-    
+
     if (!tokenAddress || !originChainId || !quote || !limits) {
       console.error("Missing required data for bridge operation");
       return;
     }
-    
+
     console.log(
       "accrossBridgeDeposit",
       tokenAddress,
@@ -152,7 +169,7 @@ const BridgeModalUniversal = ({
       account,
       token
     );
-    
+
     const success = await acrossBridgeDeposit({
       tokenAddress,
       originChainId,
@@ -164,9 +181,9 @@ const BridgeModalUniversal = ({
       quoteData: quote,
       limits,
       spokePool,
-      spokePoolWrapper
+      spokePoolWrapper,
     });
-    
+
     onFinish(success);
   }
 
@@ -219,7 +236,8 @@ const BridgeModalUniversal = ({
                 className="mt-2 p-2 w-full border rounded-md"
                 value={amount === null ? "" : amount}
                 onChange={(e) => {
-                  const value = e.target.value === "" ? null : Number(e.target.value);
+                  const value =
+                    e.target.value === "" ? null : Number(e.target.value);
                   setAmount(value);
                 }}
                 min={0}
@@ -230,40 +248,54 @@ const BridgeModalUniversal = ({
               )}
 
               {quote?.status === 400 && quote?.code === "AMOUNT_TOO_LOW" && (
-                <div className="mt-1 text-red-500">{t("bridge_amount_to_low")}</div>
-              )}
-
-              {limits && (
-                <div className="mt-4">
-                  <p className="text-gray-700">
-                    {t("maximum_instant_amount")}{" "}
-                    {limits.maxDepositInstant /
-                      numberWithZeros(token?.decimals || 0)}{" "}
-                    {token?.id}
-                  </p>
-                  <p className="text-gray-700">
-                    {t("maximum_short_term_amount")}{" "}
-                    {limits.maxDepositShortDelay /
-                      numberWithZeros(token?.decimals || 0)}{" "}
-                    {token.id}
-                  </p>
+                <div className="mt-1 text-red-500">
+                  {t("bridge_amount_to_low")}
                 </div>
               )}
 
-              {quote && quote?.status === 200 && (
-                <div className="mt-4">
-                  <p className="text-gray-700">
-                    {t("rate")}{" "}
-                    {quote.totalRelayFee.total /
-                      numberWithZeros(token?.decimals || 0)}{" "}
-                    {token.id}
-                  </p>
-                  <p className="text-gray-700">
-                    {t("time_of_exchange_rate")}{" "}
-                    {new Date(quote.timestamp * 1000).toLocaleString()}
-                  </p>
-                </div>
-              )}
+              <div className="rounded bg-gray-100 p-4 mt-4 flex flex-col gap-4">
+                {limits && !loading && (
+                  <div className="">
+                    <p className="text-gray-700">
+                      {t("maximum_instant_amount")}{" "}
+                      {limits.maxDepositInstant /
+                        numberWithZeros(token?.decimals || 0)}{" "}
+                      {token?.id}
+                    </p>
+                    <p className="text-gray-700">
+                      {t("maximum_short_term_amount")}{" "}
+                      {limits.maxDepositShortDelay /
+                        numberWithZeros(token?.decimals || 0)}{" "}
+                      {token.id}
+                    </p>
+                  </div>
+                )}
+
+                {quote && quote?.status === 200 && (
+                  <div className="">
+                    <p className="text-gray-700">
+                      {t("rate")}{" "}
+                      {quote.totalRelayFee.total /
+                        numberWithZeros(token?.decimals || 0)}{" "}
+                      {token.id}
+                    </p>
+                    <p className="text-gray-700">
+                      {t("time_of_exchange_rate")}{" "}
+                      {new Date(quote.timestamp * 1000).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+
+                {quote && quote?.status !== 200 && (
+                  <div className="mt-4 text-red-500">{quote?.code}</div>
+                )}
+
+                {loading && (
+                  <div className="">
+                    <MiniLoader />
+                  </div>
+                )}
+              </div>
 
               <div className="mt-4 flex justify-between">
                 <button
@@ -274,16 +306,19 @@ const BridgeModalUniversal = ({
                   {t("max")}
                 </button>
 
-               <button type="button"
-               disabled={quote?.status !== 200 || inputError !== ""}
-               className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-                 ${quote?.status !== 200 || inputError !== "" 
-                   ? "bg-gray-200 text-gray-500 cursor-not-allowed" 
-                   : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"}`}
-               onClick={handleConfirmBridge}
-             >
-               {t("confirm")}
-             </button>
+                <button
+                  type="button"
+                  disabled={quote?.status !== 200 || inputError !== ""}
+                  className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+                 ${
+                   quote?.status !== 200 || inputError !== ""
+                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                     : "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500"
+                 }`}
+                  onClick={handleConfirmBridge}
+                >
+                  {t("confirm")}
+                </button>
               </div>
             </DialogPanel>
           </TransitionChild>

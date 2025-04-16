@@ -13,6 +13,7 @@ import wsteth from "@/tokenPayLib/assets/payment-icons/base/wsteth.png";
 import zro from "@/tokenPayLib/assets/payment-icons/base/zro.png";
 
 import realusdcabi from "@/assets/realusdcabi.json";
+import { SimpleToken } from "../../../types/token.types";
 
 const baseCurrencies: Record<string, SimpleToken> = {
   WETH: {

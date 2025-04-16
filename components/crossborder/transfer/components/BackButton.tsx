@@ -4,9 +4,10 @@ import { useTranslation } from "next-i18next";
 
 interface BackButtonProps {
   clearData?: () => void;
+  onBack: () => void;
 }
 
-export default function BackButton({ clearData }: BackButtonProps) {
+export default function BackButton({ clearData, onBack }: BackButtonProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   return (
@@ -15,6 +16,7 @@ export default function BackButton({ clearData }: BackButtonProps) {
         if (clearData) {
           clearData();
         }
+        onBack();
       }}
       className="flex relative z-[10] items-center text-uhuBlue hover:text-blue-700 mb-4"
     >

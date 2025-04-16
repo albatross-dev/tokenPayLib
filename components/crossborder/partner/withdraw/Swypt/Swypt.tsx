@@ -8,7 +8,10 @@ import {
 } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { getSwyptQuote, SwyptQuoteResponse } from "../../../methods/SwyptQuote";
-import { swyptContract, swyptContractAddress } from "../../universal/swyptUtils";
+import {
+  swyptContract,
+  swyptContractAddress,
+} from "../../universal/swyptUtils";
 import { client } from "../../../../../../pages/_app";
 import { FormData, SwyptProps, SwyptState } from "./types";
 import { InputSlide } from "./slides/InputSlide";
@@ -118,7 +121,7 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
         partner: "swypt",
         amount: Number(amount),
         currency: selectedToken.contractAddress,
-        currencyName: selectedToken.id,
+        currencyName: selectedToken.id.toUpperCase(),
         transactionHash: transactionHash,
         UUID: transactionId,
         sendingWallet: account?.address,
@@ -163,4 +166,4 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
   );
 };
 
-export default Swypt; 
+export default Swypt;

@@ -22,6 +22,7 @@ const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
           setAvailableMethods={setAvailableMethods}
           setPreferredStableCoin={(coin) => {
             if (coin) {
+              console.log('coin', coin);
               setPreferredStableCoin(coin);
             }
           }}

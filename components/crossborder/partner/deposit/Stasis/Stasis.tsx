@@ -1,13 +1,32 @@
 import { useTranslation } from "next-i18next";
 import { IoArrowBack } from "react-icons/io5";
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Account } from "thirdweb/wallets";
-import { Vendor, Consumer, PaymentTypesArray } from "../../../../../types/payload-types";
-import { AddBank, AddCrypto, Deposit, SelectBank, SelectCrypto, StasisKYC, Success } from "./Slides";
+import {
+  Vendor,
+  Consumer,
+  PaymentTypesArray,
+} from "../../../../../types/payload-types";
+import {
+  AddBank,
+  AddCrypto,
+  Deposit,
+  SelectBank,
+  SelectCrypto,
+  StasisKYC,
+  Success,
+} from "./Slides";
 import { sendErrorReport } from "../../../../../../context/UserContext";
 import Loader from "../../../../UI/Loader";
-import { BankAccount, CryptoAccount, LoadingState, NewBankAccount, PaymentInfo, StasisErrors } from "../../universal/stasis.types";
+import {
+  BankAccount,
+  CryptoAccount,
+  NewBankAccount,
+  PaymentInfo,
+  StasisErrors,
+} from "../../universal/stasis.types";
+import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 
 interface StasisHeaderProps {
   view: string;
@@ -60,7 +79,8 @@ function StasisHeader({ view, setView }: StasisHeaderProps) {
 }
 
 export default function Stasis({ amount, account, user }: StasisProps) {
-  const [loadingState, setLoadingState] = useState<LoadingState>("normal");
+  const [loadingState, setLoadingState] =
+    useState<LoadingButtonStates>("normal");
   const [errors, setErrors] = useState<StasisErrors>({
     bankAccount: null,
     cryptoAccount: null,
@@ -72,37 +92,44 @@ export default function Stasis({ amount, account, user }: StasisProps) {
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
   const [cryptoAccounts, setCryptoAccounts] = useState<CryptoAccount[]>([]);
 
-  const [newBankAccount, setNewBankAccount] = useState<NewBankAccount>({
-    name: "",
-    iban: "",
-    bank_code: "",
-    bank_name: "",
-    holder_name: "",
-  });
-  const [newCryptoAccountName, setNewCryptoAccountName] = useState<string | null>(null);
+  const [newCryptoAccountName, setNewCryptoAccountName] = useState<
+    string | null
+  >(null);
 
-  const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
-  const [selectedCryptoAccount, setSelectedCryptoAccount] = useState<CryptoAccount | null>(null);
+  const [selectedBankAccount, setSelectedBankAccount] =
+    useState<BankAccount | null>(null);
+  const [selectedCryptoAccount, setSelectedCryptoAccount] =
+    useState<CryptoAccount | null>(null);
 
   const [reference, setReference] = useState<string>("");
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
-    fetchBankAccounts();
-    fetchCryptoAccounts();
+    async function fetchData() {
+      setLoadingState("processing");
+      await fetchBankAccounts();
+      await fetchCryptoAccounts();
+      setLoadingState("normal");
+    }
+    fetchData();
   }, [account]);
 
   const fetchBankAccounts = async () => {
     if (!user.stasisClientUUID) {
-      console.log('Stasis client UUID is missing');
+      console.log("Stasis client UUID is missing");
       return;
     }
     try {
-      const response = await axios.get("/api/fiatTransaction/stasis/getBankAccounts");
+      const response = await axios.get(
+        "/api/fiatTransaction/stasis/getBankAccounts"
+      );
       setBankAccounts(response.data);
     } catch (error) {
-      sendErrorReport("Stasis - Deposit - Fetching bank accounts failed", error);
+      sendErrorReport(
+        "Stasis - Deposit - Fetching bank accounts failed",
+        error
+      );
       setErrors({
         ...errors,
         bankAccount: tCrossborder("deposit.stasis.errors.bankAccountFetch"),
@@ -113,14 +140,19 @@ export default function Stasis({ amount, account, user }: StasisProps) {
 
   const fetchCryptoAccounts = async () => {
     if (!user.stasisClientUUID) {
-      console.log('Stasis client UUID is missing');
+      console.log("Stasis client UUID is missing");
       return;
     }
     try {
-      const response = await axios.get("/api/fiatTransaction/stasis/getCryptoAccounts");
+      const response = await axios.get(
+        "/api/fiatTransaction/stasis/getCryptoAccounts"
+      );
       setCryptoAccounts(response.data);
     } catch (error) {
-      sendErrorReport("Stasis - Deposit - Fetching crypto accounts failed", error);
+      sendErrorReport(
+        "Stasis - Deposit - Fetching crypto accounts failed",
+        error
+      );
       setErrors({
         ...errors,
         cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountFetch"),
@@ -129,31 +161,13 @@ export default function Stasis({ amount, account, user }: StasisProps) {
     }
   };
 
-  const handleAddBankAccount = async () => {
-    setLoadingState("processing");
-    try {
-      await axios.post("/api/fiatTransaction/stasis/createBankAccount", newBankAccount);
-      await fetchBankAccounts();
-      setView("selectBank");
-      setErrors({
-        ...errors,
-        bankAccount: null,
-      });
-      setLoadingState("normal");
-    } catch (error) {
-      sendErrorReport("Stasis - Deposit - Creating bank account failed", error);
-      setErrors({
-        ...errors,
-        bankAccount: tCrossborder("deposit.stasis.errors.bankAccountCreate"),
-      });
-    }
-  };
-
   const handleAddCryptoAccount = async () => {
     if (!account) {
       setErrors({
         ...errors,
-        cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountNotConnected"),
+        cryptoAccount: tCrossborder(
+          "deposit.stasis.errors.cryptoAccountNotConnected"
+        ),
       });
       return;
     }
@@ -179,11 +193,16 @@ export default function Stasis({ amount, account, user }: StasisProps) {
       setErrors({ ...errors, cryptoAccount: null });
       setLoadingState("normal");
     } catch (error) {
-      sendErrorReport("Stasis - Deposit - Creating crypto account failed", error);
+      sendErrorReport(
+        "Stasis - Deposit - Creating crypto account failed",
+        error
+      );
       console.error("Error creating crypto account", error);
       setErrors({
         ...errors,
-        cryptoAccount: tCrossborder("deposit.stasis.errors.cryptoAccountCreate"),
+        cryptoAccount: tCrossborder(
+          "deposit.stasis.errors.cryptoAccountCreate"
+        ),
       });
     }
   };
@@ -200,7 +219,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
 
   const handleSend = async () => {
     if (!selectedBankAccount || !selectedCryptoAccount) return;
-    
+
     setLoadingState("processing");
     try {
       const createDepositRes = await axios.post(
@@ -232,6 +251,10 @@ export default function Stasis({ amount, account, user }: StasisProps) {
     </div>
   );
 
+  if (loadingState === "processing") {
+    return renderLoader();
+  }
+
   const kycMissing = user.stasisKYBStatus !== "approved";
 
   return (
@@ -254,11 +277,12 @@ export default function Stasis({ amount, account, user }: StasisProps) {
         />
       ) : view === "addBank" ? (
         <AddBank
-          newBankAccount={newBankAccount}
-          onBankAccountChange={setNewBankAccount}
-          onAddBankAccount={handleAddBankAccount}
           loadingState={loadingState}
           errors={errors}
+          setLoadingState={setLoadingState}
+          fetchBankAccounts={fetchBankAccounts}
+          setErrors={setErrors}
+          setView={setView}
         />
       ) : view === "addCrypto" ? (
         <AddCrypto

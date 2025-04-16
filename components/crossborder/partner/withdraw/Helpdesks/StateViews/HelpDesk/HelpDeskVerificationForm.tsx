@@ -14,7 +14,7 @@ import { PaymentTypesArray } from "../../../../../../../types/payload-types";
 interface FormRendererProps {
   method: PaymentTypesArray[number];
   setValue: UseFormSetValue<FieldValues>;
-  methods: UseFormReturn<FieldValues>;
+  methods: UseFormReturn<FieldValues, any, undefined>;
 }
 
 function FormRenderer({ method, setValue, methods }: FormRendererProps) {

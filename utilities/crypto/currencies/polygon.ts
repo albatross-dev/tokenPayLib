@@ -67,8 +67,9 @@ import realusdtabi from "@/assets/realusdtabi.json";
 import realusdcabi from "@/assets/realusdcabi.json";
 import erc20abi from "@/tokenPayLib/assets/ERC20ABI.json";
 import ETHEREUM_LOGO from "@/tokenPayLib/assets/chain-icons/eth-logo.svg";
+import { SimpleToken } from "../../../types/token.types";
 
-const polygonCurrencies = {
+const polygonCurrencies: Record<string, SimpleToken> = {
   USDC: {
     name: "USDC",
     id: "usdc",

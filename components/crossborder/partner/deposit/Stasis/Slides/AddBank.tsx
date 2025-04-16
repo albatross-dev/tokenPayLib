@@ -1,34 +1,72 @@
-import React from 'react';
+import React, { useState } from "react";
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import { LoadingState, NewBankAccount, StasisErrors } from '../../../universal/stasis.types';
-import LoadingButton from '../../../../../UI/LoadingButton';
+import { NewBankAccount, StasisErrors } from "../../../universal/stasis.types";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "../../../../../UI/LoadingButton";
+import axios from "axios";
+import { sendErrorReport } from "../../../../../../../context/UserContext";
 interface AddBankProps {
-  newBankAccount: NewBankAccount;
-  onBankAccountChange: (account: NewBankAccount) => void;
-  onAddBankAccount: () => Promise<void>;
-  loadingState: LoadingState;
+  loadingState: LoadingButtonStates;
   errors: StasisErrors;
+  setLoadingState: (state: LoadingButtonStates) => void;
+  fetchBankAccounts: () => Promise<void>;
+  setErrors: (errors: StasisErrors) => void;
+  setView: (view: string) => void;
 }
 
 export function AddBank({
-  newBankAccount,
-  onBankAccountChange,
-  onAddBankAccount,
   loadingState,
-  errors
+  setLoadingState,
+  fetchBankAccounts,
+  errors,
+  setErrors,
+  setView,
 }: AddBankProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
+  const handleAddBankAccount = async () => {
+    setLoadingState("processing");
+    try {
+      await axios.post(
+        "/api/fiatTransaction/stasis/createBankAccount",
+        newBankAccount
+      );
+      await fetchBankAccounts();
+      setView("selectBank");
+      setErrors({
+        ...errors,
+        bankAccount: null,
+      });
+      setLoadingState("normal");
+    } catch (error) {
+      sendErrorReport("Stasis - Deposit - Creating bank account failed", error);
+      setErrors({
+        ...errors,
+        bankAccount: tCrossborder("deposit.stasis.errors.bankAccountCreate"),
+      });
+      setLoadingState("normal");
+    }
+  };
+
+  const [newBankAccount, setNewBankAccount] = useState<NewBankAccount>({
+    name: "",
+    iban: "",
+    bank_code: "",
+    bank_name: "",
+    holder_name: "",
+    bank_address: "",
+  });
+
   const isFormComplete = () => {
-    return (
-      Boolean(
+    return Boolean(
       newBankAccount.name &&
-      newBankAccount.iban &&
-      newBankAccount.bank_code &&
-      newBankAccount.bank_name &&
-      newBankAccount.holder_name
-      )
+        newBankAccount.iban &&
+        newBankAccount.bank_code &&
+        newBankAccount.bank_name &&
+        newBankAccount.holder_name &&
+        newBankAccount.bank_address
     );
   };
 
@@ -48,7 +86,7 @@ export function AddBank({
           required
           value={newBankAccount.name}
           onChange={(e) =>
-            onBankAccountChange({
+            setNewBankAccount({
               ...newBankAccount,
               name: e.target.value,
             })
@@ -70,7 +108,7 @@ export function AddBank({
           required
           value={newBankAccount.holder_name}
           onChange={(e) =>
-            onBankAccountChange({
+            setNewBankAccount({
               ...newBankAccount,
               holder_name: e.target.value,
             })
@@ -92,7 +130,7 @@ export function AddBank({
           required
           value={newBankAccount.iban}
           onChange={(e) =>
-            onBankAccountChange({
+            setNewBankAccount({
               ...newBankAccount,
               iban: e.target.value,
             })
@@ -114,7 +152,7 @@ export function AddBank({
           required
           value={newBankAccount.bank_code}
           onChange={(e) =>
-            onBankAccountChange({
+            setNewBankAccount({
               ...newBankAccount,
               bank_code: e.target.value,
             })
@@ -136,7 +174,7 @@ export function AddBank({
           required
           value={newBankAccount.bank_name}
           onChange={(e) =>
-            onBankAccountChange({
+            setNewBankAccount({
               ...newBankAccount,
               bank_name: e.target.value,
             })
@@ -145,12 +183,36 @@ export function AddBank({
         />
       </div>
 
+      <div className="mb-2">
+        <label
+          htmlFor="bank_address"
+          className="block text-sm font-medium text-gray-700"
+        >
+          {tCrossborder("deposit.stasis.addBank.bankAddress")}
+        </label>
+        <input
+          type="text"
+          name="bank_address"
+          id="bank_address"
+          required
+          value={newBankAccount.bank_address}
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onChange={(e) =>
+            setNewBankAccount({
+              ...newBankAccount,
+              bank_address: e.target.value,
+            })
+          }
+        />
+      </div>
+
       <LoadingButton
         active={isFormComplete()}
         isLoading={loadingState}
-        onClick={onAddBankAccount}
+        onClick={handleAddBankAccount}
       >
-        <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addBank.button")}
+        <IoAdd className="mr-2" />{" "}
+        {tCrossborder("deposit.stasis.addBank.button")}
       </LoadingButton>
 
       {errors.bankAccount && (
@@ -158,4 +220,4 @@ export function AddBank({
       )}
     </div>
   );
-} 
+}

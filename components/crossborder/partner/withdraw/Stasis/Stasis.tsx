@@ -18,26 +18,46 @@ import { client } from "../../../../../../pages/_app";
 import fetchBalance from "../../../../../utilities/crypto/fetchBalance";
 import fetchBankAccounts from "../../../../../utilities/partner/stasis/fetchBankAccounts";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
-import { BankAccount } from "../../universal/stasis.types";
+import { BankAccount, StasisErrors } from "../../universal/stasis.types";
 import { SimpleToken } from "../../../../../types/token.types";
 import { AddBank, StasisKYC } from "../../deposit/Stasis/Slides";
+import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 
 const POOL_FEE = 0.004;
 
-export default function Stasis({ amount, account, user, preferredStableCoin }: StasisProps) {
-  const [isLoading, setIsLoading] = useState<string>("normal");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [selectedToken, setSelectedToken] = useState<SimpleToken>(currencies[preferredStableCoin]);
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<BigInt | null>(null);
-  const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
+export default function Stasis({
+  amount,
+  account,
+  user,
+  preferredStableCoin,
+}: StasisProps) {
+  const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
+  const [errors, setErrors] = useState<StasisErrors>({
+    bankAccount: null,
+    cryptoAccount: null,
+    amount: null,
+    send: null,
+  });
+  const [selectedToken, setSelectedToken] = useState<SimpleToken>(
+    currencies[preferredStableCoin]
+  );
+  const [selectedTokenBalance, setSelectedTokenBalance] =
+    useState<BigInt | null>(null);
+  const [selectedBankAccount, setSelectedBankAccount] =
+    useState<BankAccount | null>(null);
   const [view, setView] = useState<string>("select"); // 'select', 'add', or 'withdraw'
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
-    fetchTokenBalance(selectedToken);
-    fetchBankAccounts({setBankAccounts, user});
+    async function fetchData() {
+      setIsLoading("processing");
+      await fetchTokenBalance(selectedToken);
+      await fetchBankAccounts({ setBankAccounts, user });
+      setIsLoading("normal");
+    }
+    fetchData();
   }, [account, user]);
 
   const fetchTokenBalance = async (selectedToken: SimpleToken) => {
@@ -55,18 +75,25 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
   };
 
   const validate = () => {
-    let newErrors: Record<string, string> = {};
+    let newErrors: StasisErrors = {
+      bankAccount: null,
+      cryptoAccount: null,
+      amount: null,
+      send: null,
+    };
     if (!amount || amount < 10) {
       newErrors.amount = tCrossborder("withdraw.stasis.errorLargerAmount");
     }
     if (Number(amount) > Number(selectedTokenBalance)) {
-      newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
+      //newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
     }
     if (!selectedBankAccount) {
-      newErrors.bankAccount = tCrossborder("withdraw.stasis.errorChooseBankAccount");
+      newErrors.bankAccount = tCrossborder(
+        "withdraw.stasis.errorChooseBankAccount"
+      );
     }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.values(newErrors).every((error) => error === null);
   };
 
   const handleSend = async () => {
@@ -78,17 +105,37 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
       return;
     }
 
+    console.log("validate", validate(), Boolean(account));
+
     if (validate() && account) {
       setIsLoading("processing");
       try {
-        const withdrawalResponse = await axios.post(
-          "/api/fiatTransaction/stasis/createWithdraw",
-          {
-            incoming_amount: Number(amount - amount * POOL_FEE),
-            bankAccountId: selectedBankAccount?.uuid,
-            preferredStableCoin: selectedToken
+        let withdrawalResponse;
+        try {
+          withdrawalResponse = await axios.post(
+            "/api/fiatTransaction/stasis/createWithdraw",
+            {
+              incoming_amount: Number(amount - amount * POOL_FEE),
+              bankAccountId: selectedBankAccount?.uuid,
+              preferredStableCoin: selectedToken,
+            }
+          );
+        } catch (e) {
+          console.error("Error creating withdrawal", e);
+          if (e.response.status === 404) {
+            setErrors({
+              ...errors,
+              send: tCrossborder("withdraw.stasis.errorAccountSetup"),
+            });
+          } else {
+            setErrors({
+              ...errors,
+              send: tCrossborder("withdraw.stasis.errorTryLater"),
+            });
           }
-        );
+          setIsLoading("normal");
+          return;
+        }
 
         const { order, transaction } = withdrawalResponse.data;
         const depositAddress = order.deposit_address;
@@ -147,6 +194,8 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
     );
   }
 
+  console.log("user?.stasisKYBStatus", user?.stasisKYBStatus);
+
   if (user?.stasisKYBStatus !== "approved") {
     return (
       <div className="flex flex-col w-full max-w-4xl items-center justify-center p-4">
@@ -170,68 +219,66 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
       {renderHeader()}
       {view === "select" ? (
         <SelectBankAccount
-          {...{
-            amount,
-            account,
-            user,
-            preferredStableCoin,
-            setView,
-            selectedToken,
-            selectedTokenBalance,
-            errors,
-            setErrors,
-            bankAccounts,
-            setBankAccounts,
-            selectedBankAccount,
-            setSelectedBankAccount,
-            isLoading,
-            setIsLoading,
-            handleSend
-          }}
+          amount={amount}
+          account={account}
+          user={user}
+          preferredStableCoin={preferredStableCoin}
+          setView={setView}
+          selectedToken={selectedToken}
+          selectedTokenBalance={Number(selectedTokenBalance)}
+          errors={errors}
+          setErrors={setErrors}
+          setSelectedBankAccount={setSelectedBankAccount}
+          bankAccounts={bankAccounts}
+          setBankAccounts={setBankAccounts}
+          selectedBankAccount={selectedBankAccount}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          handleSend={handleSend}
         />
       ) : view === "add" ? (
         <AddBank
-          {...{
-            amount,
-            account,
-            user,
-            preferredStableCoin,
-            setView,
-            selectedToken,
-            selectedTokenBalance,
-            errors,
-            setErrors,
-            bankAccounts,
-            setBankAccounts,
-            selectedBankAccount,
-            setSelectedBankAccount,
-            isLoading,
-            setIsLoading,
-            handleSend
+          loadingState={isLoading}
+          errors={errors}
+          setLoadingState={setIsLoading}
+          fetchBankAccounts={async () => {
+            try {
+              await fetchBankAccounts({ setBankAccounts, user });
+              setIsLoading("normal");
+            } catch (error) {
+              setErrors({
+                ...errors,
+                bankAccount: tCrossborder(
+                  "withdraw.stasis.errorFetchBankAccounts"
+                ),
+              });
+              setIsLoading("normal");
+              console.error("Error fetching bank accounts", error);
+            }
           }}
+          setErrors={setErrors}
+          setView={setView}
         />
       ) : (
         <WithdrawView
-          {...{
-            amount,
-            account,
-            user,
-            preferredStableCoin,
-            setView,
-            selectedToken,
-            selectedTokenBalance,
-            errors,
-            setErrors,
-            bankAccounts,
-            setBankAccounts,
-            selectedBankAccount,
-            setSelectedBankAccount,
-            isLoading,
-            setIsLoading,
-            handleSend
-          }}
+          amount={amount}
+          account={account}
+          user={user}
+          preferredStableCoin={preferredStableCoin}
+          setView={setView}
+          selectedToken={selectedToken}
+          selectedTokenBalance={Number(selectedTokenBalance)}
+          errors={errors}
+          setErrors={setErrors}
+          setSelectedBankAccount={setSelectedBankAccount}
+          bankAccounts={bankAccounts}
+          setBankAccounts={setBankAccounts}
+          selectedBankAccount={selectedBankAccount}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          handleSend={handleSend}
         />
       )}
     </div>
   );
-} 
+}

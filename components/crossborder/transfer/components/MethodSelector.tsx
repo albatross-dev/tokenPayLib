@@ -62,6 +62,8 @@ export default function MethodSelector({
 
   const quoteMethods = methods as QuotePaymentType[];
 
+  console.log("sortedMethods", sortedMethods);
+
   useEffect(() => {
     async function update() {
       setLoading(true);
@@ -86,17 +88,20 @@ export default function MethodSelector({
           case "bitcoin_vn":
             // set minAmount and maxAmount
             const bitcoinVNMetadata = await getBitcoinVNMetaData();
-            method.minAmount = bitcoinVNMetadata.min;
+            method.minAmount = bitcoinVNMetadata.min + amount * 0.005;
             method.maxAmount = bitcoinVNMetadata.max;
+
+            try {
+              const bitcoinVNQuote = await getBitcoinVNQuote(
+                amount - amount * 0.004
+              );
+              method.predictedAmount = bitcoinVNQuote.settleAmount;
+            } catch (error) {
+              method.predictedAmount = 0;
+            }
 
             if (amount < method.minAmount || amount > method.maxAmount) {
               method.predictedAmount = 0;
-            } else {
-              // applying poolbase fee of 0.4% to retreived amount
-              const bitcoinVNQuote = await getBitcoinVNQuote(amount);
-              method.predictedAmount =
-                bitcoinVNQuote.settleAmount -
-                bitcoinVNQuote.settleAmount * 0.004;
             }
             break;
           case "swypt":
@@ -113,13 +118,9 @@ export default function MethodSelector({
 
                 // Apply your platform fee (0.4%)
                 method.predictedAmount =
-                  swyptQuote.outputAmount -
-                  swyptQuote.outputAmount * 0.004;
+                  swyptQuote.outputAmount - swyptQuote.outputAmount * 0.004;
               } catch (error) {
-                console.error(
-                  "SwyptQuote - Error fetching quote:",
-                  error
-                );
+                console.error("SwyptQuote - Error fetching quote:", error);
                 method.predictedAmount = 0;
               }
             }
@@ -287,8 +288,8 @@ export default function MethodSelector({
             <div className="bg-white w-full mt-4" key={`modality_${index}`}>
               <div
                 className={`flex gap-2 items-center p-4 flex-row border rounded ${
-                  selectedMethod
-                    ? "bg-uhuBlue text-white"
+                  selectedMethod?.withdrawModality == modality
+                    ? "bg-uhuBlue text-white ring-1 ring-uhuBlue "
                     : sortedMethods[modality].cheapestMethod
                     ? "text-gray-800 cursor-pointer"
                     : "text-gray-500 border-gray-200"
@@ -331,9 +332,10 @@ export default function MethodSelector({
                     <div>
                       {tCrossborder("methodSelector.notEnoughMoney")}{" "}
                       <span className="font-bold text-red-500">
-                        {amount -
-                          sortedMethods[modality].nextLowerLimitMethod
-                            .maxAmount}{" "}
+                        {(
+                          amount -
+                          sortedMethods[modality].nextLowerLimitMethod.maxAmount
+                        ).toFixed(2)}{" "}
                         {sendingCurrency?.symbol}
                       </span>
                     </div>
@@ -347,8 +349,10 @@ export default function MethodSelector({
                     <div className="text-sm">
                       {tCrossborder("methodSelector.missingAmount")}{" "}
                       <span className="font-bold text-uhuBlue">
-                        {sortedMethods[modality].nextMethodWithLimit.minAmount -
-                          amount}{" "}
+                        {(
+                          sortedMethods[modality].nextMethodWithLimit
+                            .minAmount - amount
+                        ).toFixed(2)}{" "}
                         {sendingCurrency?.symbol}
                       </span>{" "}
                       {tCrossborder("methodSelector.missingAmount1")}
@@ -375,4 +379,4 @@ export default function MethodSelector({
       )}
     </div>
   );
-} 
+}

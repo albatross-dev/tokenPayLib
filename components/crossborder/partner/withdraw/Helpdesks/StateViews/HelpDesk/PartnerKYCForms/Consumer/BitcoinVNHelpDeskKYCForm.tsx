@@ -7,7 +7,6 @@ import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import { FormField } from "../../../../../../../../Forms/types";
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 
-
 interface BitcoinVNHelpDeskKYCFormProps {
   setValue: UseFormSetValue<any>;
   methods: UseFormReturn;
@@ -15,7 +14,10 @@ interface BitcoinVNHelpDeskKYCFormProps {
 
 let formDataPreloaded = false;
 
-export default function BitcoinVNHelpDeskKYCFormConsumer({ setValue, methods }: BitcoinVNHelpDeskKYCFormProps) {
+export default function BitcoinVNHelpDeskKYCFormConsumer({
+  setValue,
+  methods,
+}: BitcoinVNHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -36,20 +38,30 @@ export default function BitcoinVNHelpDeskKYCFormConsumer({ setValue, methods }: 
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}
+        </div>
+      ),
     },
     {
       type: "array",
       name: "stasisRepresentativeProofOfIdentity",
       label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocument"),
-      newLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentNewLabel"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"),
+      newLabel: tCrossborder(
+        "withdraw.helpDeskKYC.consumer.idDocumentNewLabel"
+      ),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"
+      ),
       fields: [
         {
           name: "representativeProofOfIdentityPage",
-          label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentFileLabel"),
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.consumer.idDocumentFileLabel"
+          ),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
@@ -73,5 +85,5 @@ export default function BitcoinVNHelpDeskKYCFormConsumer({ setValue, methods }: 
     },
   ];
 
-  return <FieldRenderer fields={ovexB2BKYCInfo} methods={methods} />;
-} 
+  return <FieldRenderer fields={ovexB2BKYCInfo} />;
+}

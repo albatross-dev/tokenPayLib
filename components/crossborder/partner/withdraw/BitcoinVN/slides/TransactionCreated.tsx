@@ -1,18 +1,12 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import LoadingButton from "../../../../../UI/LoadingButton";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "../../../../../UI/LoadingButton";
+import { BitcoinVNTransaction } from "../BitcoinVN";
 interface TransactionCreatedProps {
-  transaction: {
-    id: string;
-    depositData: {
-      address: string;
-    };
-    settleData: {
-      accountNumber: string;
-      bank: string;
-    };
-  };
-  isLoading: "normal" | "loading" | "success" | "error";
+  transaction: BitcoinVNTransaction;
+  isLoading: LoadingButtonStates;
   onSend: () => void;
 }
 
@@ -31,7 +25,7 @@ export default function TransactionCreated({
       <div className="space-y-4">
         <p>
           <strong>{tCrossborder("withdraw.bitcoinvn.transactionId")}</strong>{" "}
-          {transaction.id}
+          {transaction.shortId}
         </p>
         <p>
           <strong>{tCrossborder("withdraw.bitcoinvn.depositAddress")}</strong>{" "}
@@ -57,4 +51,4 @@ export default function TransactionCreated({
       </div>
     </div>
   );
-} 
+}

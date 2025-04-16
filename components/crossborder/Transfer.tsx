@@ -1,24 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/context/UserContext";
+import { AuthContext } from "../../../context/UserContext";
 import moment from "moment";
 import ExportPopover from "./ExportPopover";
 import { useTranslation } from "react-i18next";
 import TransactionModal from "./TransactionModal";
 import { BsArrowUpRight } from "react-icons/bs";
 import TypePopover from "./TypePopover";
-import AddressDisplay from "@/tokenPayLib/components/UI/AddressDisplay";
-import SimpleList from "@/tokenPayLib/components/UI/SimpleList";
+import AddressDisplay from "../UI/AddressDisplay";
+import SimpleList from "../UI/SimpleList";
+import { ColumnDef } from "@tanstack/react-table";
+import { FiatTransaction } from "../../types/payload-types";
 
-interface TransactionData {
-  transactionHash: string;
-  amount: number;
-  currencyName: string;
-  type: string;
-  toAccountIdentifier?: string;
-  createdAt: string;
-  shredCount?: number;
-  shardList?: any[];
-}
 
 interface TableQuery {
   type?: {
@@ -26,34 +18,21 @@ interface TableQuery {
   };
 }
 
-interface CellProps {
-  getValue: () => any;
-  row: {
-    original: TransactionData;
-  };
-}
-
-interface Column {
-  accessorKey: keyof TransactionData;
-  header: string;
-  cell: (props: CellProps) => JSX.Element;
-}
-
 export default function Transfer() {
   const { user, setUser } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedTransactionData, setSelectedTransactionData] = useState<TransactionData | null>(null);
+  const [selectedTransactionData, setSelectedTransactionData] = useState<FiatTransaction | null>(null);
   const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
 
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const openModalWithTransactionData = (transactionData: TransactionData): void => {
+  const openModalWithTransactionData = (transactionData: FiatTransaction): void => {
     setSelectedTransactionData(transactionData);
     setIsModalOpen(true);
   };
 
-  const columns: Column[] = [
+  const columns: ColumnDef<any, any>[] = [
     {
       accessorKey: "transactionHash",
       header: tCrossborder("transfer.information"),
@@ -140,9 +119,13 @@ export default function Transfer() {
           closeModal={() => setIsModalOpen(false)}
           transactionData={selectedTransactionData}
         />
-        <SimpleList standardQuery={paymentsTableQuery} collection="fiatTransaction" columns={columns}>
+        <SimpleList standardQuery={paymentsTableQuery} collection="fiatTransaction" columns={columns} loader={false}>
           <ExportPopover
-            minDate={moment(user?.createdAt).format("YYYY-MM-DD")}
+            minDate={{
+              year: moment(user?.createdAt).year(),
+              month: moment(user?.createdAt).month(),
+              day: moment(user?.createdAt).date(),
+            }}
           />
           <TypePopover
             onSelect={(type: string) => {

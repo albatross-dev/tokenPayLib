@@ -7,7 +7,10 @@ import numberWithZeros from "../../utilities/math/numberWithZeros";
 import axios from "axios";
 import { AuthContext, sendErrorReport } from "../../../context/UserContext";
 import SimpleList from "../UI/SimpleList";
-import { formatCrypto, TokensByChainId } from "../../utilities/crypto/currencies";
+import {
+  formatCrypto,
+  TokensByChainId,
+} from "../../utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
 import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
 import { getSendCryptoColumns } from "./sendCryptoColumns";
@@ -39,7 +42,8 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [isClient, setIsClient] = useState(false);
   const { user } = useContext(AuthContext);
   const { t: tAccount } = useTranslation("wallet");
-  const { errors, validate, setFieldError, clearFieldError } = useSendCryptoForm({tAccount});
+  const { errors, validate, setFieldError, clearFieldError } =
+    useSendCryptoForm({ tAccount });
 
   useEffect(() => {
     setIsClient(true);
@@ -73,12 +77,12 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
     );
 
     setSelectedTokenBalance(balance);
-    
+
     // Calculate max amount immediately
-    const calculatedMaxAmount = 
+    const calculatedMaxAmount =
       Number(balance) / numberWithZeros(selectedToken?.decimals || 1);
     setMaxAmount(calculatedMaxAmount);
-    
+
     // Check if balance is zero and show error message
     if (calculatedMaxAmount <= 0) {
       setFieldError("amount", tAccount("sendCrypto.errors.noBalance"));
@@ -90,7 +94,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const handleSend = async () => {
     // Validate with current data before proceeding
     const isValid = validate(selectedToken, amount, targetAddress, maxAmount);
-    
+
     if (isValid) {
       setIsLoading("processing");
       try {
@@ -98,7 +102,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
           client,
           account,
           polygon,
-          BigInt(Number(amount) * 10 ** selectedToken.decimals) ,
+          BigInt(Number(amount) * 10 ** selectedToken.decimals),
           selectedToken,
           targetAddress
         );
@@ -106,7 +110,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         let transferData: FiatTransactionRequest = {
           amount: Number(amount),
           currency: selectedToken.contractAddress,
-          currencyName: selectedToken.id,
+          currencyName: selectedToken.id.toUpperCase(),
           transactionHash: transactionHash,
           sendingWallet: account?.address,
           currencyDecimals: selectedToken.decimals,
@@ -125,7 +129,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         setAmount(0);
         setIsLoading("success");
         setNewTxHash(transactionHash);
-        
+
         setTimeout(() => {
           setIsLoading("normal");
         }, 20000);

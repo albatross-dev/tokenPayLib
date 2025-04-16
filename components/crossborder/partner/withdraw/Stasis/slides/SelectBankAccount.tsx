@@ -1,16 +1,17 @@
-import React from 'react';
+import React from "react";
 import { IoAdd } from "react-icons/io5";
 import { useTranslation } from "next-i18next";
 import { SlideProps } from "./types";
+import { BankAccount } from "../../../universal/stasis.types";
 
-export default function SelectBankAccount({ 
+export default function SelectBankAccount({
   bankAccounts,
   setView,
-  setSelectedBankAccount
+  setSelectedBankAccount,
 }: SlideProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const handleSelectBankAccount = (account: any) => {
+  const handleSelectBankAccount = (account: BankAccount) => {
     setSelectedBankAccount(account);
     setView("withdraw");
   };
@@ -22,7 +23,7 @@ export default function SelectBankAccount({
       </h2>
       {bankAccounts.length > 0 ? (
         <ul className="space-y-4">
-          {bankAccounts.map((account) => (
+          {bankAccounts.map((account: BankAccount) => (
             <li
               key={account.uuid}
               className="border p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
@@ -56,4 +57,4 @@ export default function SelectBankAccount({
       </button>
     </div>
   );
-} 
+}

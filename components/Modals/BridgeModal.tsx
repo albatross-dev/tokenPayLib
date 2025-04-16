@@ -12,12 +12,11 @@ import { useActiveAccount } from "thirdweb/react";
 import { Chain } from "thirdweb";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { sendErrorReport } from "../../../context/UserContext";
-import { 
-  Token, 
-  QuoteData, 
-  Limits, 
-  fetchLimitsAndQuote, 
-  acrossBridgeDeposit 
+import {
+  QuoteData,
+  Limits,
+  fetchLimitsAndQuote,
+  acrossBridgeDeposit,
 } from "../../utilities/crypto/bridgeUtils";
 import { SimpleToken } from "../../types/token.types";
 
@@ -52,9 +51,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
   const { t } = useTranslation("common");
 
   useEffect(() => {
-    setAmount(
-      (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0)
-    );
+    setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
   }, [maxAmount]);
 
   useEffect(() => {
@@ -64,9 +61,9 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
       timestamp: 0,
       exclusiveRelayer: "",
       exclusivityDeadline: 0,
-      status: 0
+      status: 0,
     });
-    
+
     if (chain && token && amount) {
       if (POLYGON_CHAIN_ID !== chain?.id) {
         fetchLimitsAndQuoteData();
@@ -78,20 +75,21 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
     const destinationChainId = POLYGON_CHAIN_ID;
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
-    
+
     if (!tokenAddress || !originChainId) {
       return;
     }
-    
+
     try {
-      const { limits: limitsData, quote: quoteData } = await fetchLimitsAndQuote(
-        tokenAddress,
-        originChainId,
-        destinationChainId,
-        amount,
-        token.decimals
-      );
-      
+      const { limits: limitsData, quote: quoteData } =
+        await fetchLimitsAndQuote(
+          tokenAddress,
+          originChainId,
+          destinationChainId,
+          amount,
+          token.decimals
+        );
+
       setLimits(limitsData);
       setQuote(quoteData);
     } catch (error) {
@@ -101,15 +99,11 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
   };
 
   const handleMaxClick = (): void => {
-    setAmount(
-      (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0)
-    );
+    setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
   };
 
   const handleConfirmBridge = (): void => {
-    handleBridge(
-      amount * numberWithZeros(token?.decimals || 0)
-    );
+    handleBridge(amount * numberWithZeros(token?.decimals || 0));
     closeModal();
   };
 
@@ -118,12 +112,12 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
     const destinationChainId = POLYGON_CHAIN_ID;
-    
+
     if (!tokenAddress || !originChainId || !quote || !limits) {
       console.error("Missing required data for bridge operation");
       return;
     }
-    
+
     console.log(
       "accrossBridgeDeposit",
       tokenAddress,
@@ -133,7 +127,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
       account,
       token
     );
-    
+
     let success = await acrossBridgeDeposit({
       tokenAddress,
       originChainId,
@@ -145,9 +139,9 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
       quoteData: quote,
       limits,
       spokePool,
-      spokePoolWrapper: spokePool // Using spokePool as the wrapper for this component
+      spokePoolWrapper: spokePool, // Using spokePool as the wrapper for this component
     });
-    
+
     onFinish(success);
   }
 
@@ -219,8 +213,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
                   </p>
                   <p className="text-gray-700">
                     {t("maximum_amount")}{" "}
-                    {limits.maxDeposit /
-                      numberWithZeros(token?.decimals || 0)}{" "}
+                    {limits.maxDeposit / numberWithZeros(token?.decimals || 0)}{" "}
                     {token.id}
                   </p>
                 </div>
@@ -265,4 +258,4 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
   );
 };
 
-export default BridgeModal; 
+export default BridgeModal;

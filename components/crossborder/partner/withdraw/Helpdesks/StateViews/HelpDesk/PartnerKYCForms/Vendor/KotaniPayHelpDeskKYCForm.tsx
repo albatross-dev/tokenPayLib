@@ -7,7 +7,10 @@ import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
-import { requiredDocuments, visibleDocuments } from "../../../../../../../../../utilities/kyc/requiredDocumentsInfo";
+import {
+  requiredDocuments,
+  visibleDocuments,
+} from "../../../../../../../../../utilities/kyc/requiredDocumentsInfo";
 let formDataPreloaded = false;
 
 interface KotaniPayHelpDeskKYCFormProps {
@@ -15,7 +18,10 @@ interface KotaniPayHelpDeskKYCFormProps {
   methods: UseFormReturn;
 }
 
-export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPayHelpDeskKYCFormProps) {
+export default function KotaniPayHelpDeskKYCForm({
+  setValue,
+  methods,
+}: KotaniPayHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -358,7 +364,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
                 "privateSettings.representativeInformation.vendorRepresentative"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
@@ -366,7 +372,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
                 "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -379,7 +385,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
                 "privateSettings.representativeInformation.vendorRepresentativeShareholder"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -401,7 +407,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
         </div>
       ),
     },
-      {
+    {
       type: "ui",
       content: (
         <div className="h-4">
@@ -568,5 +574,5 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
     },
   ];
 
-  return <FieldRenderer fields={ovexB2BKYCInfo} methods={methods} />;
+  return <FieldRenderer fields={ovexB2BKYCInfo} />;
 }

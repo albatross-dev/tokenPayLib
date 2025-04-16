@@ -15,9 +15,11 @@ import CurrencyConversionSlide from './slides/CurrencyConversionSlide';
 import TransactionDetailsSlide from './slides/TransactionDetailsSlide';
 import PartnerPanelSlide from './slides/PartnerPanelSlide';
 import { WithdrawPageProps } from './types';
-import { STANDARD_STABLE_MAP } from '../../utilities/stableCoinsMaps';
+import { FiatInfo, getFiatInfo, STANDARD_STABLE_MAP } from '../../utilities/stableCoinsMaps';
 import { FiatCodes } from '../../types/derivedPayload.types';
 import { Country, PaymentTypesArray } from '../../types/payload-types';
+import { SimpleToken } from '../../types/token.types';
+import currencies from '../../../utilities/currencies';
 
 const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
   const { t } = useTranslation('common');
@@ -30,7 +32,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<{ message: string; component: React.ReactNode } | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [selectedCurrency, setSelectedCurrency] = useState<any>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<SimpleToken | null>();
   const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>([]);
   const [preferredStableCoin, setPreferredStableCoin] = useState<string>('');
   const [payoutCurrency, setPayoutCurrency] = useState<FiatCodes | "crypto" | null>(null);
@@ -140,9 +142,9 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
       setAmount(inputAmount.toString());
       setError(
         `${tCrossborder('withdrawPage.errors.amountExceedsBalance')} ${maxAmount} ${
-          STANDARD_STABLE_MAP[selectedCurrency.symbol]
-            ? STANDARD_STABLE_MAP[selectedCurrency.symbol]?.symbol
-            : selectedCurrency.name
+          STANDARD_STABLE_MAP[selectedCurrency.id.toUpperCase()]
+            ? STANDARD_STABLE_MAP[selectedCurrency.id.toUpperCase()]?.symbol
+            : selectedCurrency.id
         }`
       );
     } else {
@@ -215,7 +217,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                     <BalanceSelectionSlide
                       selectedCountry={selectedCountry!}
                       setAvailableMethods={setAvailableMethods}
-                      setPreferredStableCoin={setPreferredStableCoin}
+                      setPreferredStableCoin={(coin: string)=>{setPreferredStableCoin(coin), setSelectedCurrency(currencies[coin])}}
                       swiperInstance={swiperInstance}
                       goToSlide={goToSlide}
                       back={back}
@@ -250,6 +252,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                       preferredStableCoin={preferredStableCoin}
                       payoutCurrency={payoutCurrency}
                       maxAmount={maxAmount}
+                      setMaxAmount={setMaxAmount}
                       amount={amount}
                       handleAmountChange={handleAmountChange}
                       error={error}

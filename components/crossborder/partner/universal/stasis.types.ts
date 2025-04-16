@@ -27,6 +27,7 @@ export interface NewBankAccount {
   bank_code: string;
   bank_name: string;
   holder_name: string;
+  bank_address: string;
 }
 
 export interface StasisErrors {
@@ -35,5 +36,3 @@ export interface StasisErrors {
   amount: string | null;
   send: string | null;
 }
-
-export type LoadingState = "normal" | "processing"; 

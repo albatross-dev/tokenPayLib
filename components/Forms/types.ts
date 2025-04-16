@@ -23,6 +23,9 @@ export interface BaseFieldProps {
   control?: Control;
   newLabel?: string;
   removeLabel?: string;
+  className?: string;
+  classOverrides?: ClassOverrides;
+  error?: string;
 }
 
 // Class override types for styling
@@ -47,21 +50,18 @@ export type InputType =
   | "file"
   | "date"
   | "tel"
+  | "ui"
+  | "row"
   | "currency"
+  | "array"
+  | "custom"
   | "token"
   | "chain";
 
-// FormInput specific props
-export interface FormInputProps extends BaseFieldProps {
-  type: InputType;
-  className?: string;
-  classOverrides?: ClassOverrides;
-  error?: string;
-}
 
 // Field renderer types
 export type FormField =
-  | FormInputProps
+  | BaseFieldProps
   | DocumentUploadFieldProps
   | CountrySelectorProps
   | CurrencySelectorProps
@@ -71,9 +71,9 @@ export type FormField =
   | ChainSelectorProps
   | ArrayFieldProps;
 
-export interface ArrayFieldProps {
+export interface ArrayFieldProps extends BaseFieldProps {
   field: FormField;
-  methods: UseFormReturn;
+  methods: UseFormReturn<FieldValues, any, undefined>;
   parentName: string;
 }
 
@@ -164,7 +164,7 @@ export interface ChainSelectorProps extends BaseFieldProps {
 
 export interface FieldRendererProps {
   fields: FormField[];
-  methods: UseFormReturn;
+  methods: UseFormReturn<FieldValues, any, undefined>;
   alwaysEditable?: boolean;
   arrayItemIndex?: number;
   parentName?: string;

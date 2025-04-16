@@ -15,7 +15,10 @@ interface BitcoinVNHelpDeskKYCFormProps {
   methods: UseFormReturn;
 }
 
-export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinVNHelpDeskKYCFormProps) {
+export default function BitcoinVNHelpDeskKYCForm({
+  setValue,
+  methods,
+}: BitcoinVNHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -66,9 +69,7 @@ export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinV
       type: "ui",
       content: (
         <div className="font-bold">
-          {tCrossborder(
-            "withdraw.helpDeskKYC.bitcoinvn.documentInstructions"
-          )}
+          {tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documentInstructions")}
         </div>
       ),
     },
@@ -77,11 +78,15 @@ export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinV
       name: "bitcoinVNDocs",
       label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDocs"),
       newLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.newDocument"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.removeDocument"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.bitcoinvn.removeDocument"
+      ),
       fields: [
         {
           name: "bitcoinVNDoc",
-          label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDoc"),
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.bitcoinvn.representativeDoc"
+          ),
           type: "file",
           required: true,
         },
@@ -109,5 +114,5 @@ export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinV
     },
   ];
 
-  return <FieldRenderer fields={ovexB2BKYCInfo} methods={methods} />;
+  return <FieldRenderer fields={ovexB2BKYCInfo} />;
 }

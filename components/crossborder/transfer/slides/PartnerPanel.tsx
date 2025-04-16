@@ -1,23 +1,25 @@
-import React, { useContext } from 'react';
-import BackButton from '../components/BackButton';
-import TransferPanel from '../components/TransferPanel';
+import React, { useContext } from "react";
+import BackButton from "../components/BackButton";
+import TransferPanel from "../components/TransferPanel";
 import { useActiveAccount } from "thirdweb/react";
-import { AuthContext } from '../../../../../context/UserContext';
-import { PaymentTypesArray } from '../../../../types/payload-types';
-import { Country } from '../../../../types/payload-types';
+import { AuthContext } from "../../../../../context/UserContext";
+import { PaymentTypesArray } from "../../../../types/payload-types";
+import { Country } from "../../../../types/payload-types";
 
 interface PartnerPanelProps {
   selectedMethod: PaymentTypesArray[number] | null;
   amount: number;
   selectedCountry: Country | null;
   preferredStableCoin: string;
+  onBack: () => void;
 }
 
 export default function PartnerPanel({
   selectedMethod,
   amount,
   selectedCountry,
-  preferredStableCoin
+  preferredStableCoin,
+  onBack,
 }: PartnerPanelProps) {
   const account = useActiveAccount();
   const { user } = useContext(AuthContext);
@@ -26,7 +28,7 @@ export default function PartnerPanel({
     <div>
       <div className="relative z-[10] text-darkBlue flex flex-col gap-4 max-w-4xl mx-auto">
         <div className="p-4">
-          <BackButton />
+          <BackButton onBack={onBack} />
         </div>
         {selectedMethod && selectedCountry && (
           <TransferPanel
@@ -42,4 +44,4 @@ export default function PartnerPanel({
       </div>
     </div>
   );
-} 
+}

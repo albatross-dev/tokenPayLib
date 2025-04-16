@@ -8,15 +8,17 @@ import { UseFormReturn } from "react-hook-form";
 import { UseFormSetValue } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
 
-
 let formDataPreloaded = false;
 
 interface KoyweHelpDeskKYCFormProps {
   setValue: UseFormSetValue<any>;
   methods: UseFormReturn;
-} 
+}
 
-export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDeskKYCFormProps) {
+export default function KoyweHelpDeskKYCForm({
+  setValue,
+  methods,
+}: KoyweHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -38,7 +40,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.generalInfo")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.generalInfo")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -76,7 +82,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.address")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.address")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -139,7 +149,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.bank")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.bank")}
+        </div>
+      ),
     },
     {
       name: "bankName",
@@ -168,7 +182,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.representative")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.representative")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -217,7 +235,9 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
       type: "ui",
       content: (
         <div className="mt-2 text-normal">
-          {tCrossborder("withdraw.helpDeskKYC.koywe.representativeAuthDocLabel")}
+          {tCrossborder(
+            "withdraw.helpDeskKYC.koywe.representativeAuthDocLabel"
+          )}
         </div>
       ),
     },
@@ -226,7 +246,9 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
       name: "representativeAuthorizationDocs",
       label: tCrossborder("withdraw.helpDeskKYC.koywe.authDocLabel"),
       newLabel: tCrossborder("withdraw.helpDeskKYC.koywe.authDocNewLabel"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.koywe.authDocRemoveLabel"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.koywe.authDocRemoveLabel"
+      ),
       fields: [
         {
           name: "representativeAuthorizationDocs",
@@ -238,7 +260,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.about")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.about")}
+        </div>
+      ),
     },
     {
       type: "number",
@@ -261,7 +287,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.about")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.about")}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -343,7 +373,7 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
                 "privateSettings.representativeInformation.vendorRepresentative"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
@@ -351,7 +381,7 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
                 "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -364,7 +394,7 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
                 "privateSettings.representativeInformation.vendorRepresentativeShareholder"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -378,7 +408,11 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.koywe.documents")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.koywe.documents")}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -404,7 +438,9 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
       name: "taxIdDocs",
       label: tCrossborder("withdraw.helpDeskKYC.koywe.taxIdDocLabel"),
       newLabel: tCrossborder("withdraw.helpDeskKYC.koywe.taxIdDocNewLabel"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.koywe.taxIdDocRemoveLabel"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.koywe.taxIdDocRemoveLabel"
+      ),
       fields: [
         {
           name: "taxIdDoc",
@@ -419,11 +455,15 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
       name: "vendorProofOfResidence",
       label: tCrossborder("withdraw.helpDeskKYC.koywe.residenceDocLabel"),
       newLabel: tCrossborder("withdraw.helpDeskKYC.koywe.residenceDocNewLabel"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.koywe.residenceDocRemoveLabel"),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.koywe.residenceDocRemoveLabel"
+      ),
       fields: [
         {
           name: "vendorProofOfResidencePage",
-          label: tCrossborder("withdraw.helpDeskKYC.koywe.residenceDocFileLabel"),
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.koywe.residenceDocFileLabel"
+          ),
           type: "file",
           required: true,
         },
@@ -455,5 +495,5 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
     },
   ];
 
-  return <FieldRenderer fields={ovexB2BKYCInfo} methods={methods} />;
+  return <FieldRenderer fields={ovexB2BKYCInfo} />;
 }

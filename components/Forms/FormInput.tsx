@@ -12,6 +12,7 @@ import CustomDropdown from "./CustomDropdown";
 import { Controller, Control } from "react-hook-form";
 import CountrySelector from "./CountrySelector";
 import { useTranslation } from "next-i18next";
+import { CountryDictionary } from "./types";
 
 interface ClassOverrides {
   textarea?: string;
@@ -20,9 +21,18 @@ interface ClassOverrides {
   input?: string;
 }
 
-type InputType = "text" | "textarea" | "select" | "country" | "switch" | "file" | "password" | string;
+type InputType =
+  | "text"
+  | "textarea"
+  | "select"
+  | "country"
+  | "switch"
+  | "file"
+  | "password"
+  | string;
 
-interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+interface FormInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   name: string;
   label?: string;
   type?: InputType;
@@ -37,6 +47,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement | HT
   disabled?: boolean;
   onlyIso?: boolean;
   validCountries?: string[];
+  countries?: CountryDictionary;
   accept?: string;
   checked?: boolean;
 }
@@ -49,8 +60,12 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement | HT
  * @param {FormInputProps} props - Component properties.
  * @returns {JSX.Element} The rendered FormInput component.
  */
-const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputProps>((props, ref) => {
-  const { textarea, select, advancedSelect, input } = props.classOverrides || {};
+const FormInput = forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  FormInputProps
+>((props, ref) => {
+  const { textarea, select, advancedSelect, input } =
+    props.classOverrides || {};
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [filePreviews, setFilePreviews] = useState<File[]>([]);
 
@@ -58,7 +73,10 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFilesSelected = (event: React.ChangeEvent<HTMLInputElement>, onChange?: (files: File[]) => void): void => {
+  const handleFilesSelected = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    onChange?: (files: File[]) => void
+  ): void => {
     const files = Array.from(event.target.files || []);
     setFilePreviews(files);
     if (onChange) {
@@ -71,7 +89,10 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
     fileInputRef.current?.click();
   };
 
-  const handleRemoveFile = (index: number, onChange: (files: File[]) => void): void => {
+  const handleRemoveFile = (
+    index: number,
+    onChange: (files: File[]) => void
+  ): void => {
     const updatedPreviews = filePreviews.filter((_, i) => i !== index);
     setFilePreviews(updatedPreviews);
     onChange(updatedPreviews);
@@ -100,12 +121,10 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
             rules={{
               required: props.required ? t("selection_required") : false,
             }}
-            render={({
-              field: { onChange, value },
-              fieldState: { error },
-            }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
                 <CustomDropdown
+                  name={props.name}
                   options={props.options}
                   value={value}
                   onChange={onChange}
@@ -126,13 +145,10 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
             rules={{
               required: props.required ? t("country_required") : false,
             }}
-            render={({
-              field: { onChange, value },
-              fieldState: { error },
-            }) => (
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
                 <CountrySelector
-                  countries={props.options}
+                  countries={props.countries}
                   selectedCountry={value}
                   onlyIso={props.onlyIso}
                   validCountries={props.validCountries}
@@ -143,9 +159,7 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
                   disabled={props.disabled}
                 />
                 {error && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {error.message}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
                 )}
               </>
             )}
@@ -173,7 +187,9 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
             name={props.name}
             control={props.control}
             rules={{
-              required: props.required ? `${props.label} ist erforderlich` : false,
+              required: props.required
+                ? `${props.label} ist erforderlich`
+                : false,
             }}
             render={({ field: { onChange }, fieldState: { error } }) => (
               <div>
@@ -232,7 +248,9 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
             <input
               {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
               ref={ref as React.Ref<HTMLInputElement>}
-              type={props.type === "password" && showPassword ? "text" : props.type}
+              type={
+                props.type === "password" && showPassword ? "text" : props.type
+              }
               className={twMerge(
                 `${props.error && "border-red-300"} ${
                   props.disabled && "text-gray-500 bg-gray-100"
@@ -240,7 +258,11 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
                 input
               )}
             />
-            <div className={`${props.type === "password" ? "" : "hidden"} absolute inset-y-0 right-0 pr-3 flex items-center`}>
+            <div
+              className={`${
+                props.type === "password" ? "" : "hidden"
+              } absolute inset-y-0 right-0 pr-3 flex items-center`}
+            >
               <button
                 tabIndex={-1}
                 type="button"
@@ -274,13 +296,11 @@ const FormInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputPr
           </div>
         </div>
       </div>
-      <div className="">
-        {renderInput()}
-      </div>
+      <div className="">{renderInput()}</div>
     </div>
   );
 });
 
 FormInput.displayName = "FormInput";
 
-export default FormInput; 
+export default FormInput;

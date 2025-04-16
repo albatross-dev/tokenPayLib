@@ -74,7 +74,7 @@ export interface AcrossBridgeDepositParams {
   quoteData: QuoteData;
   limits: Limits;
   spokePool: string;
-  spokePoolWrapper: string;
+  spokePoolWrapper?: string;
 }
 
 export interface QuoteData {
@@ -314,6 +314,15 @@ export async function fetchLimitsAndQuote(
   amount: number,
   tokenDecimals: number
 ): Promise<{ limits: Limits | null; quote: QuoteData | null }> {
+  console.log(
+    "fetchLimitsAndQuote",
+    tokenAddress,
+    originChainId,
+    destinationChainId,
+    amount,
+    tokenDecimals
+  );
+
   const rawAmount = (amount * Math.pow(10, tokenDecimals)).toString();
 
   let limits = null;

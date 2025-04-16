@@ -13,10 +13,7 @@ import { getContract, readContract } from "thirdweb";
 import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 import { encodePacked } from "thirdweb/utils";
 
-import {
-  useActiveWalletChain,
-  useActiveAccount,
-} from "thirdweb/react";
+import { useActiveWalletChain, useActiveAccount } from "thirdweb/react";
 
 import {
   formatCrypto,
@@ -26,11 +23,18 @@ import { RxUpdate } from "react-icons/rx";
 import convertAnyToAny, {
   convertAnyToAnyDirect,
   uniswapAddresses,
-  uniswapAddressesPublic
+  uniswapAddressesPublic,
 } from "../../utilities/crypto/convertAnyToAny";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { arbitrum, avalanche, base, ethereum, optimism, polygon } from "thirdweb/chains";
+import {
+  arbitrum,
+  avalanche,
+  base,
+  ethereum,
+  optimism,
+  polygon,
+} from "thirdweb/chains";
 import React from "react";
 import { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 import UniversalModal from "../Modals/UniversalModal";
@@ -38,7 +42,8 @@ import ChainSelector from "../Forms/ChainSelector";
 import { UniswapPoolsPolygon } from "../../types/payload-types";
 import { ExchangeType } from "../../utilities/exchangeTypes";
 
-const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
+const exchangeType: ExchangeType = process.env
+  .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
 
 let retryCounterAny = 0;
 let retryCounter = 0;
@@ -50,7 +55,7 @@ const chainIdSlugDictionary = {
   [avalanche.id]: "uniswapPoolsAvalanche",
   [arbitrum.id]: "uniswapPoolsArbitrum",
   [base.id]: "uniswapPoolsBase",
-}
+};
 
 let oldActiveChainId: number;
 
@@ -63,14 +68,20 @@ interface TokenSwapSectionProps {
   preAmount?: number;
 }
 
-export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
+export default function TokenSwapSection({
+  origin,
+  target,
+  max,
+  preAmount,
+}: TokenSwapSectionProps) {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
 
   const [balances, setBalances] = useState({});
   const [balanceUpdate, setBalanceUpdate] = useState<boolean>(false);
-  const [exchangeState, setExchangeState] = useState<exchangeStateType>("normal");
+  const [exchangeState, setExchangeState] =
+    useState<exchangeStateType>("normal");
 
   const [loading, setLoading] = useState<Record<string, string>>({});
 
@@ -80,9 +91,10 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
   const [originTokens, setOriginTokens] = useState({});
   const [targetTokens, setTargetTokens] = useState({});
   const [selectedTargetToken, setSelectedTargetToken] = useState(null);
-  const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] =
-    useState<bigint | null>(null);
-  const [amount, setAmount] = useState<number>(0);
+  const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] = useState<
+    bigint | null
+  >(null);
+  const [amount, setAmount] = useState<string>("");
   const [quote, setQuote] = useState<bigint | null>(null);
   const [showExchangeAnyModal, setShowExchangeAnyModal] = useState(false);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
@@ -107,7 +119,9 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     // wait for 1 second
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    setAmount((Number(balance) || 1) / numberWithZeros(ot?.decimals || 1));
+    setAmount(
+      ((Number(balance) || 0) / numberWithZeros(ot?.decimals || 0)).toString()
+    );
   }
 
   async function fetchPaths() {
@@ -115,17 +129,18 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     console.log("fetching paths", activeChain.name);
     try {
       const pathsRes = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/${chainIdSlugDictionary[activeChain.id]}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/${
+          chainIdSlugDictionary[activeChain.id]
+        }`
       );
 
       const paths: UniswapPoolsPolygon = pathsRes.data;
       console.log("paths", paths);
-      setPaths(paths)
+      setPaths(paths);
     } catch (e) {
       console.error("Error fetching paths", e);
       return;
     }
-    
   }
 
   useEffect(() => {
@@ -145,7 +160,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       }
 
       if (preAmount) {
-        setAmount(preAmount);
+        setAmount(preAmount.toString());
       }
     }
   }, [origin, target, max, preAmount]);
@@ -169,37 +184,45 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       const encodedPath = encodePacked(path[0], path[1]);
 
       // make sure final amount is a integer
-      const finalAmount = Math.floor(Number((amount * numberWithZeros(selectedToken?.decimals || 1)).toFixed(0)));
+      if (Number(amount) > 0) {
+        const finalAmount = Math.floor(
+          Number(
+            (
+              Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
+            ).toFixed(0)
+          )
+        );
 
-      const quote = await readContract({
-        contract: contract,
-        method: "quoteExactInput",
-        params: [
-          encodedPath,
-          BigInt(finalAmount),
-        ],
-      });
-      setQuote(quote as bigint);
-    }
-    // Validate the amount and set error messages
-    if (amount <= 0) {
-      setError(t("greater_zero"));
-    } else if (
-      amount >
-      (Number(selectedTokenBalance) || 1) /
-        numberWithZeros(selectedToken?.decimals || 1)
-    ) {
-      setError(
-        `${t("cannot_exceed")} ${
-          (Number(selectedTokenBalance) || 1) /
-          numberWithZeros(selectedToken?.decimals || 1)
-        }.`
-      );
-    } else {
-      if (selectedToken && selectedTargetToken && amount) {
-        fetchQuote();
+        const quote = await readContract({
+          contract: contract,
+          method: "quoteExactInput",
+          params: [encodedPath, BigInt(finalAmount)],
+        });
+        setQuote(quote as bigint);
       }
-      setError(""); // Clear error if valid
+      // Validate the amount and set error messages
+      if (Number(amount) <= 0) {
+        setError(t("greater_zero"));
+      } else if (
+        Number(amount) >
+        (Number(selectedTokenBalance) || 0) /
+          numberWithZeros(selectedToken?.decimals || 0)
+      ) {
+        setError(
+          `${t("cannot_exceed")} ${
+            (Number(selectedTokenBalance) || 0) /
+            numberWithZeros(selectedToken?.decimals || 0)
+          }.`
+        );
+      } else {
+        if (selectedToken && selectedTargetToken && amount) {
+          fetchQuote();
+        }
+        setError(""); // Clear error if valid
+      }
+    }
+    if (selectedToken && selectedTargetToken && amount) {
+      fetchQuote();
     }
   }, [selectedToken, selectedTargetToken, amount]);
 
@@ -213,7 +236,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     const tokenObj = Object.fromEntries(tokens);
     return tokenObj;
   }
-
 
   useEffect(() => {
     if (activeChain?.id && activeChain?.id !== oldActiveChainId) {
@@ -282,17 +304,21 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
 
   const handleMaxClick = () => {
     setAmount(
-      (Number(selectedTokenBalance) || 1) /
-        numberWithZeros(selectedToken?.decimals || 1)
+      (
+        (Number(selectedTokenBalance) || 0) /
+        numberWithZeros(selectedToken?.decimals || 0)
+      ).toString()
     );
   };
 
   const handleConfirmExchange = () => {
-    handleExchangeAny(amount * numberWithZeros(selectedToken?.decimals || 1));
+    handleExchangeAny(
+      Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
+    );
   };
 
   // handle exchanges from the exchange function
-  async function handleExchangeAny(amount) {
+  async function handleExchangeAny(amount: number) {
     setExchangeState("processing");
     await convertAnyToAnyDirect(
       selectedToken,
@@ -301,7 +327,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       () => {
         setTimeout(() => {
           fetchBalances();
-          setAmount(0);
+          setAmount("");
         }, 1000);
         setShowSuccessModal(true);
       },
@@ -435,7 +461,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       <TokenSelector
         type="token"
         onSelect={(token) => {
-          setAmount(0);
+          setAmount("");
           setSelectedToken(token);
           processTargetTokens(token);
         }}
@@ -451,6 +477,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
         className={`mt-2 p-2 w-full border rounded-md ${
           !selectedToken && "border-gray-300"
         }`}
+        placeholder="0.00"
         value={amount}
         disabled={!selectedToken}
         onChange={(e) => {
@@ -459,7 +486,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
           const decimals = selectedToken?.decimals || 18;
           const multiplier = Math.pow(10, decimals);
           const roundedValue = Math.floor(value * multiplier) / multiplier;
-          setAmount(roundedValue);
+          setAmount(roundedValue.toString());
         }}
         max={selectedTokenBalance}
         min={0}
@@ -519,10 +546,10 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
           </div>
           <div className="text-5xl font-bold flex gap-2 items-end">
             {Number(quote ? quote[0] : 0) /
-              numberWithZeros(selectedTargetToken?.decimals || 1) -
+              numberWithZeros(selectedTargetToken?.decimals || 0) -
               (Number(quote ? quote[0] : 0) /
-                numberWithZeros(selectedTargetToken?.decimals || 1)) *
-                0.004}
+                numberWithZeros(selectedTargetToken?.decimals || 0)) *
+                0.004 || 0}
             <span className="text-base">{selectedTargetToken?.name}</span>
           </div>
           {exchangeType === "external" && (
@@ -531,14 +558,14 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
               {/* display 0.04% commission */}{" "}
               {(
                 Number(quote ? quote[0] : 0) /
-                numberWithZeros(selectedTargetToken?.decimals || 1)
+                  numberWithZeros(selectedTargetToken?.decimals || 0) || 0
               ).toFixed(5)}
             </span>
           )}
           <div className="text-sm text-gray-500">
             {t("your_current_balance_is")}{" "}
             {Number(selectedTargetTokenBalance || 0) /
-              numberWithZeros(selectedTargetToken?.decimals || 1)}{" "}
+              numberWithZeros(selectedTargetToken?.decimals || 0) || 0}{" "}
             <span className="text-base">{selectedTargetToken?.name}</span>
           </div>
         </div>

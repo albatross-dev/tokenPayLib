@@ -48,6 +48,7 @@ import mm from "@/tokenPayLib/assets/payment-icons/ethereum/mm.png";
 import toncoin from "@/tokenPayLib/assets/payment-icons/ethereum/toncoin.svg";
 
 import realusdcabi from "@/assets/realusdcabi.json";
+import { SimpleToken } from "../../../types/token.types";
 
 const ethereumCurrencies: Record<string, SimpleToken> = {
   WETH: {
@@ -304,6 +305,7 @@ const ethereumCurrencies: Record<string, SimpleToken> = {
     contractAddress: "0x9e32b13ce7f2e80a01932b42553652e053d6ed8e",
     abi: realusdcabi,
     icon: metis,
+    id: "Metis",
   },
   TSUKA: {
     name: "Dejitaru Tsuka",

@@ -1,5 +1,4 @@
-import { PaymentTypesArray } from "./payload-types";
-import { FiatCodes } from "./request.types";
+import { FiatCodes } from "./derivedPayload.types";
 
 export interface Currency {
   symbol: string;

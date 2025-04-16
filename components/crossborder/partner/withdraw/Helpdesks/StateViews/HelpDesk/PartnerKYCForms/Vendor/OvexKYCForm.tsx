@@ -8,7 +8,6 @@ import { UseFormReturn } from "react-hook-form";
 import { UseFormSetValue } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
 
-
 let formDataPreloaded = false;
 
 interface OvexKYCFormProps {
@@ -20,8 +19,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
-const { t: tCrossborder } = useTranslation("crossborder");
-
+  const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     formDataPreloaded = false;
@@ -29,7 +27,6 @@ const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
     if (user !== "loading" && user && formDataPreloaded === false) {
-
       // copy user data to form
       preprocessDataForHelpDesk(user, setValue);
 
@@ -40,7 +37,11 @@ const { t: tCrossborder } = useTranslation("crossborder");
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -66,7 +67,11 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.address")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.address")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -129,7 +134,11 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.bank")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.bank")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -183,7 +192,11 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representative")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.representative")}
+        </div>
+      ),
     },
     {
       type: "row",
@@ -197,7 +210,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
         },
         {
           name: "vendorRepresentativeSurname",
-          label:  tCrossborder("withdraw.helpDeskKYC.ovex.surname"),
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.surname"),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -209,7 +222,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
       fields: [
         {
           name: "vendorRepresentativeEmail",
-          label:  tCrossborder("withdraw.helpDeskKYC.ovex.email"),
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.email"),
           type: "text",
           required: true,
           width: "md:w-1/2",
@@ -225,13 +238,17 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       name: "vendorRepresentativePosition",
-      label:  tCrossborder("withdraw.helpDeskKYC.ovex.position"),
+      label: tCrossborder("withdraw.helpDeskKYC.ovex.position"),
       type: "text",
       required: true,
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.businessModel")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.businessModel")}
+        </div>
+      ),
     },
     {
       name: "vendorBusinessModel",
@@ -247,13 +264,17 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       name: "vendorSourceOfFunds",
-      label:  tCrossborder("withdraw.helpDeskKYC.ovex.source"),
+      label: tCrossborder("withdraw.helpDeskKYC.ovex.source"),
       type: "textarea",
       required: true,
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeRight")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.representativeRight")}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -316,7 +337,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentative"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
@@ -324,7 +345,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -337,7 +358,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
                 "privateSettings.representativeInformation.vendorRepresentativeShareholder"
               ),
               type: "checkbox",
-              width: "md:w-1/2"
+              width: "md:w-1/2",
             },
           ],
         },
@@ -345,7 +366,11 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
     {
       type: "ui",
-      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.documents")}</div>,
+      content: (
+        <div className="font-bold">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.documents")}
+        </div>
+      ),
     },
     {
       type: "array",
@@ -377,7 +402,7 @@ const { t: tCrossborder } = useTranslation("crossborder");
           name: "statute",
           label: t("information.fields.documents.statutes"),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
@@ -394,26 +419,36 @@ const { t: tCrossborder } = useTranslation("crossborder");
           name: "shareholders",
           label: t("information.fields.documents.shareholderDocs"),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
     {
       type: "ui",
-      content: <div className="h-4">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeFiles")}</div>,
+      content: (
+        <div className="h-4">
+          {tCrossborder("withdraw.helpDeskKYC.ovex.representativeFiles")}
+        </div>
+      ),
     },
     {
       type: "array",
       name: "representativeDocs",
       label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesLabel"),
-      newLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesNewLabel"),
-      removeLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesRemoveLabel"),
+      newLabel: tCrossborder(
+        "withdraw.helpDeskKYC.ovex.representativeFilesNewLabel"
+      ),
+      removeLabel: tCrossborder(
+        "withdraw.helpDeskKYC.ovex.representativeFilesRemoveLabel"
+      ),
       fields: [
         {
           name: "representativeDoc",
-          label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFileLabel"),
+          label: tCrossborder(
+            "withdraw.helpDeskKYC.ovex.representativeFileLabel"
+          ),
           type: "file",
-          required: true
+          required: true,
         },
       ],
     },
@@ -439,5 +474,5 @@ const { t: tCrossborder } = useTranslation("crossborder");
     },
   ];
 
-  return <FieldRenderer fields={ovexB2BKYCInfo} methods={methods} />;
+  return <FieldRenderer fields={ovexB2BKYCInfo} />;
 }

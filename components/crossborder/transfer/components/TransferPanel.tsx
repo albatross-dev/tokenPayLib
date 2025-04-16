@@ -1,4 +1,9 @@
-import { Consumer, Country, PaymentTypesArray, Vendor } from "../../../../types/payload-types";
+import {
+  Consumer,
+  Country,
+  PaymentTypesArray,
+  Vendor,
+} from "../../../../types/payload-types";
 import OnRamp from "../../partner/withdraw/OnRamp";
 import Swypt from "../../partner/withdraw/Swypt/Swypt";
 import RawCrypto from "../../partner/withdraw/Crypto";
@@ -10,7 +15,6 @@ import HelpDesk from "../../partner/withdraw/Helpdesks/HelpDesk";
 import Koywe from "../../partner/withdraw/Koywe/Koywe";
 import { Account } from "thirdweb/wallets";
 import React from "react";
-
 
 interface TransferPanelProps {
   method?: PaymentTypesArray[number];
@@ -29,7 +33,7 @@ export default function TransferPanel({
   user,
   selectedCountry,
   selectedMethod,
-  preferredStableCoin
+  preferredStableCoin,
 }: TransferPanelProps) {
   switch (method?.type) {
     case "unlimit":
@@ -42,21 +46,13 @@ export default function TransferPanel({
         />
       );
     case "crypto":
-      return <RawCrypto amount={amount} preferredStableCoin={preferredStableCoin} />;
+      return (
+        <RawCrypto amount={amount} preferredStableCoin={preferredStableCoin} />
+      );
     case "bitcoin_vn":
-      return (
-        <BitcoinVN
-          amount={amount}
-          user={user}
-        />
-      );
+      return <BitcoinVN amount={amount} user={user} />;
     case "onramp_money":
-      return (
-        <OnRamp
-          amount={amount}
-          method={selectedMethod}
-        />
-      );
+      return <OnRamp amount={amount} method={selectedMethod} />;
     case "swypt":
       return (
         <Swypt
@@ -117,4 +113,4 @@ export default function TransferPanel({
     default:
       return <div>Unknown</div>;
   }
-} 
+}

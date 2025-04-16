@@ -17,7 +17,14 @@ import PartnerPanel from "./slides/PartnerPanel";
 import { Country, PaymentTypesArray } from "../../../types/payload-types";
 import { AuthContext, sendErrorReport } from "../../../../context/UserContext";
 import { ParsedUrlQuery } from "node:querystring";
-import { FiatInfo, getFiatInfoForStableCoin } from "../../../utilities/stableCoinsMaps";
+import {
+  FiatInfo,
+  getFiatInfoForStableCoin,
+  STANDARD_STABLE_MAP,
+} from "../../../utilities/stableCoinsMaps";
+import { Balance } from "../CurrencySelector";
+import { FiatCodes } from "../../../types/derivedPayload.types";
+import { useTranslation } from "next-i18next";
 
 const isDevelopment = process.env.NEXT_PUBLIC_NEXT_ENV === "development";
 
@@ -30,16 +37,13 @@ export default function TransferSection() {
   const [selectedContinent, setSelectedContinent] = useState<string>(
     continent || "europe"
   );
-  const [selectedCountry, setSelectedCountry] =
-    useState<Country | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
     null
   );
-  const [countryData, setCountryData] = useState<Country[] | null>(
-    null
-  );
+  const [countryData, setCountryData] = useState<Country[] | null>(null);
 
-  const [selectedCurrency, setSelectedCurrency] = useState<FiatInfo | null>(
+  const [selectedCurrency, setSelectedCurrency] = useState<Balance | null>(
     null
   );
   const [maxAmount, setMaxAmount] = useState<number>(0);
@@ -49,7 +53,9 @@ export default function TransferSection() {
     PaymentTypesArray[number] | null
   >(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [payoutCurrency, setPayoutCurrency] = useState<string | null>(null);
+  const [payoutCurrency, setPayoutCurrency] = useState<
+    FiatCodes | "crypto" | null
+  >(null);
 
   const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>(
     []
@@ -64,8 +70,11 @@ export default function TransferSection() {
   const countrySelectRef = useRef<HTMLDivElement>(null);
   const [clicked, setClicked] = useState<boolean>(false);
 
-  async function fetchExchangeRate(selectedFiatSymbol) {
+  const { t: tCrossborder } = useTranslation("crossborder");
+
+  async function fetchExchangeRate(selectedFiatSymbol: FiatCodes) {
     try {
+      console.log("Fetching exchange rate", selectedFiatSymbol, payoutCurrency);
       const response = await axios.post(`/api/fiatTransaction/exchangeRate`, {
         startCurrency: selectedFiatSymbol,
         endCurrency: payoutCurrency,
@@ -82,7 +91,8 @@ export default function TransferSection() {
   }
 
   useEffect(() => {
-    let selectedFiatSymbol = getFiatInfoForStableCoin(preferredStableCoin)?.symbol;
+    let selectedFiatSymbol: FiatCodes | null =
+      getFiatInfoForStableCoin(preferredStableCoin)?.id;
     if (
       selectedFiatSymbol &&
       payoutCurrency &&
@@ -173,7 +183,7 @@ export default function TransferSection() {
     }
   }, [selectedContinent, swiperInstance]);
 
-  function handleSetPayoutCurrency(currency: string) {
+  function handleSetPayoutCurrency(currency: FiatCodes) {
     setPayoutCurrency(currency);
     handlePayoutCurrencyUrlParam(currency);
   }
@@ -217,7 +227,10 @@ export default function TransferSection() {
   }
 
   function handleUrlContinentSelect(continent: string) {
-    let query: RouterQuery = { ...router.query, continent: continent || undefined };
+    let query: RouterQuery = {
+      ...router.query,
+      continent: continent || undefined,
+    };
     // remove country query parameter
     delete query.country;
     delete query.stableCoin;
@@ -257,7 +270,10 @@ export default function TransferSection() {
   }
 
   function handleUrlCountrySelect(countryCode: string | undefined) {
-    let query: RouterQuery = { ...router.query, country: countryCode || undefined };
+    let query: RouterQuery = {
+      ...router.query,
+      country: countryCode || undefined,
+    };
     delete query.stableCoin;
     delete query.payoutCoin;
     router.push(
@@ -280,6 +296,8 @@ export default function TransferSection() {
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     let inputAmount = parseFloat(e.target.value);
 
+    console.log("inputAmount", inputAmount);
+
     if (selectedMethod?.type !== "crypto") {
       setSelectedMethod(null);
     }
@@ -287,9 +305,19 @@ export default function TransferSection() {
     if (isNaN(inputAmount) || inputAmount < 0) {
       setAmount("");
       setError("");
-    } else if (inputAmount > maxAmount) {
+    } else if (inputAmount > selectedCurrency?.balance) {
       setAmount(e.target.value);
-      setError(`Amount exceeds maximum allowed: ${maxAmount}`);
+      !isDevelopment &&
+        setError(
+          `${tCrossborder("withdrawPage.errors.amountExceedsBalance")} ${
+            selectedCurrency?.balance
+          } ${
+            STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]
+              ? STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]
+                  ?.symbol
+              : selectedCurrency.symbol
+          }`
+        );
     } else {
       setAmount(e.target.value);
       setError("");
@@ -361,10 +389,11 @@ export default function TransferSection() {
                 selectedMethod={selectedMethod}
                 availableMethods={availableMethods}
                 preferredStableCoin={preferredStableCoin}
-                amount={Number(amount)}
+                amount={amount}
                 error={error}
                 setError={setError}
                 maxAmount={maxAmount}
+                setMaxAmount={setMaxAmount}
                 exchangeRate={exchangeRate}
                 loadedExchangeRate={loadedExchangeRate}
                 payoutCurrency={payoutCurrency}
@@ -386,6 +415,11 @@ export default function TransferSection() {
                 amount={Number(amount)}
                 selectedCountry={selectedCountry}
                 preferredStableCoin={preferredStableCoin}
+                onBack={() => {
+                  if (swiperInstance) {
+                    swiperInstance.slideTo(3);
+                  }
+                }}
               />
             ) : null
           }

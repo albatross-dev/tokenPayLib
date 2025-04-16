@@ -17,12 +17,13 @@ import { sendErrorReport } from "../../../../../../context/UserContext";
 import { Vendor, Consumer } from "../../../../../types/payload-types";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
 import { FiatTransactionRequest } from "../../../../../types/derivedPayload.types";
+import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 
 const POOL_FEE = 0.004;
 
 interface BitcoinVNProps {
   amount: number;
-  user: Vendor | Consumer;  
+  user: Vendor | Consumer;
 }
 
 interface Quote {
@@ -35,23 +36,63 @@ interface Quote {
   settleMethod: string;
 }
 
-interface Transaction {
+export interface BitcoinVNTransaction {
   id: string;
+  shortId: string;
+  customOrderId?: string;
+  status: string;
+  depositMethod: string;
+  depositAsset: string;
+  depositAmount: number;
+  depositFee: number;
   depositData: {
     address: string;
   };
-  settleData: {
-    accountNumber: string;
-    bank: string;
+  depositRefundData: {
+    address: string;
   };
+  depositTxns: any[];
+  settleMethod: string;
+  settleAsset: string;
+  settleAmount: number;
+  settleFee: number;
+  settleData: {
+    bank: string;
+    accountHolder: string;
+    accountNumber: string;
+  };
+  settleTxns: any[];
+  settleReceiptUrl?: string;
+  rate: number;
+  depositMin: number;
+  depositMax: number;
+  createdAt: string;
+  expiresAt: string;
+  quote: {
+    id: string;
+    depositAmount: number;
+    depositFee: number;
+    depositMethod: string;
+    settleAmount: number;
+    settleFee: number;
+    settleMethod: string;
+    rate: number;
+    rawRate: number;
+    createdAt: string;
+    expiresAt: string;
+    accepted: boolean;
+  };
+  adminMessage?: string;
 }
 
-type LoadingState = "normal" | "loading" | "success" | "error";
-
 export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
-  const [state, setState] = useState<"loading" | "error" | "loaded" | "transaction-created" | "success">("loading");
+  const [state, setState] = useState<
+    "loading" | "error" | "loaded" | "transaction-created" | "success"
+  >("loading");
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [transaction, setTransaction] = useState<Transaction | null>(null);
+  const [transaction, setTransaction] = useState<BitcoinVNTransaction | null>(
+    null
+  );
   const selectedToken = currencies["USDC"];
   const [formData, setFormData] = useState({
     accountNumber: "",
@@ -60,8 +101,10 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   });
   const account = useActiveAccount();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<LoadingState>("normal");
-  const [bankList, setBankList] = useState<Array<{ value: string; label: string }>>([]);
+  const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
+  const [bankList, setBankList] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
   const [formError, setFormError] = useState("");
   const [quoteLoaded, setQuoteLoaded] = useState(false);
   const [infoLoaded, setInfoLoaded] = useState(false);
@@ -77,7 +120,10 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
       setQuote(result.data);
       setQuoteLoaded(true);
     } catch (error) {
-      sendErrorReport("BitcoinVNQuote - Withdraw - Fetching quote failed", error);
+      sendErrorReport(
+        "BitcoinVNQuote - Withdraw - Fetching quote failed",
+        error
+      );
       console.error("Error fetching quote:", error);
       setState("error");
     }
@@ -85,6 +131,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
 
   const handleSend = async () => {
     try {
+      setIsLoading("processing");
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
         account,
@@ -94,37 +141,46 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
         transaction?.depositData.address || ""
       );
 
-      const transactionData: FiatTransactionRequest = {
-        partner: "bitcoin_vn",
-        amount: Number(amount),
-        currency: selectedToken.contractAddress,
-        currencyName: selectedToken.id,
-        transactionHash: transactionHash,
-        UUID: transaction?.id || "",
-        sendingWallet: account?.address || "",
-        currencyDecimals: selectedToken.decimals,
-        receivingWallet: transaction?.depositData.address || "",
-        toAccountBankName: transaction?.settleData.bank || "",
-        toAccountIdentifier: transaction?.settleData.accountNumber || "",
-        toNetwork: "fiat",
-        fromNetwork: "polygon",
-        type: "Withdraw",
-        finalCurrency: "VND",
-        finalamount: quote?.settleAmount || 0,
-      };
+      // get transaction from database
+      const fiatTransactionRes = await axios.get(
+        `/api/fiatTransaction/?where[transactionDetails][equals]=${transaction.shortId}`
+      );
 
-      if (user.type === "vendor") {
-        transactionData.vendor = user.id;
+      const fiatTransaction = fiatTransactionRes.data.docs[0];
+
+      console.log("fiatTransaction", fiatTransactionRes);
+
+      if (!fiatTransaction) {
+        setIsLoading("error");
+        setErrorMessage(tCrossborder("withdraw.bitcoinvn.errorAgain"));
+        sendErrorReport(
+          "BitcoinVN - Withdraw - Sending failed",
+          "no transaction found"
+        );
+        setTimeout(() => {
+          setIsLoading("normal");
+        }, 20000);
       } else {
-        transactionData.consumer = user.id;
+        try {
+          await axios.patch(`/api/fiatTransaction/${fiatTransaction?.id}`, {
+            transactionHash: transactionHash,
+          });
+
+          setState("success");
+          setIsLoading("success");
+        } catch (error) {
+          console.error("error handle send", error);
+          setErrorMessage(tCrossborder("withdraw.bitcoinvn.errorAgain"));
+          sendErrorReport(
+            "BitcoinVN - Withdraw - Updating transaction with hash failed",
+            error
+          );
+          setIsLoading("error");
+          setTimeout(() => {
+            setIsLoading("normal");
+          }, 20000);
+        }
       }
-
-      await axios.post("/api/fiatTransaction", transactionData);
-
-      setIsLoading("success");
-      setTimeout(() => {
-        setIsLoading("normal");
-      }, 20000);
     } catch (error) {
       console.error("error handle send", error);
       setErrorMessage(tCrossborder("withdraw.bitcoinvn.errorAgain"));
@@ -156,17 +212,25 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   async function createTransaction() {
     setState("loading");
     try {
-      const result = await axios.post("/api/fiatTransaction/bitcoinVN/createOrder", {
-        quote: quote?.id,
-        accountNumber: formData.accountNumber,
-        accountHolder: formData.accountHolder,
-        bank: formData.bank,
-        address: account?.address,
-      });
+      const result = await axios.post(
+        "/api/fiatTransaction/bitcoinVN/createOrder",
+        {
+          quote: quote?.id,
+          accountNumber: formData.accountNumber,
+          accountHolder: formData.accountHolder,
+          bank: formData.bank,
+          address: account?.address,
+          currency: selectedToken.contractAddress,
+          currencyDecimals: selectedToken.decimals,
+        }
+      );
       setTransaction(result.data);
       setState("transaction-created");
     } catch (error) {
-      sendErrorReport("BitcoinVN - Withdraw - Creating transaction failed", error);
+      sendErrorReport(
+        "BitcoinVN - Withdraw - Creating transaction failed",
+        error
+      );
       console.error("Error creating transaction:", error);
       setState("error");
     }
@@ -212,6 +276,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
     return (
       <QuoteForm
         quote={quote}
+        amount={amount}
         bankList={bankList}
         formData={formData}
         formError={formError}
@@ -237,4 +302,4 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   }
 
   return null;
-} 
+}

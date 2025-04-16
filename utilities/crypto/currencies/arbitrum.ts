@@ -45,6 +45,7 @@ import fxs from "@/tokenPayLib/assets/payment-icons/arbitrum/fxs.png";
 import ohm from "@/tokenPayLib/assets/payment-icons/arbitrum/ohm.png";
 import xai from "@/tokenPayLib/assets/payment-icons/arbitrum/xai.png";
 import usdplus from "@/tokenPayLib/assets/payment-icons/arbitrum/usdplus.png";
+import { SimpleToken } from "../../../types/token.types";
 
 const arbitrumCurrencies: Record<string, SimpleToken> = {
   WETH: {

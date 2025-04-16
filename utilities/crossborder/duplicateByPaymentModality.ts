@@ -4,7 +4,10 @@
  * Also ensures we can support modalities and the rest of our pipeline
  * can stay the same
  */
-function duplicateByPaymentModality(paymentPartners: any[], key: string): any[] {
+function duplicateByPaymentModality(
+  paymentPartners: any[],
+  key: string
+): any[] {
   const partners: any[] = [];
   console.log("paymentPartners", paymentPartners, key);
   paymentPartners.forEach((partner) => {
@@ -30,7 +33,9 @@ function duplicateByPaymentModality(paymentPartners: any[], key: string): any[] 
     }
   });
 
+  console.log("partners", partners);
+
   return partners;
 }
 
-export default duplicateByPaymentModality; 
+export default duplicateByPaymentModality;

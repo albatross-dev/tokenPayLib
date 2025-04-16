@@ -1,16 +1,18 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import { Account } from 'thirdweb/wallets';
-import { LoadingState, StasisErrors } from '../../../universal/stasis.types';
-import LoadingButton from '../../../../../UI/LoadingButton';
+import { Account } from "thirdweb/wallets";
+import { StasisErrors } from "../../../universal/stasis.types";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "../../../../../UI/LoadingButton";
 
 interface AddCryptoProps {
   account: Account;
   newCryptoAccountName: string | null;
   onCryptoAccountNameChange: (name: string) => void;
   onAddCryptoAccount: () => Promise<void>;
-  loadingState: LoadingState;
+  loadingState: LoadingButtonStates;
   errors: StasisErrors;
 }
 
@@ -20,7 +22,7 @@ export function AddCrypto({
   onCryptoAccountNameChange,
   onAddCryptoAccount,
   loadingState,
-  errors
+  errors,
 }: AddCryptoProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -38,7 +40,7 @@ export function AddCrypto({
           required
           id="crypto_name"
           name="crypto_name"
-          value={newCryptoAccountName || ''}
+          value={newCryptoAccountName || ""}
           onChange={(e) => onCryptoAccountNameChange(e.target.value)}
           className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -54,7 +56,8 @@ export function AddCrypto({
         active={!!newCryptoAccountName}
         onClick={onAddCryptoAccount}
       >
-        <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addCrypto.button")}
+        <IoAdd className="mr-2" />{" "}
+        {tCrossborder("deposit.stasis.addCrypto.button")}
       </LoadingButton>
 
       {errors.cryptoAccount && (
@@ -62,4 +65,4 @@ export function AddCrypto({
       )}
     </div>
   );
-} 
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BsChevronDown, BsFileEarmarkArrowDown } from "react-icons/bs";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useTranslation } from "next-i18next";
@@ -66,14 +66,14 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
     <Popover className="relative">
       {({ open }) => (
         <>
-          <Popover.Button className={` px-3 py-2 gap-2 flex items-center bg-white border ${open&&" border-uhuBlue ring-0 outline-0"} rounded`}>
+          <PopoverButton className={` px-3 py-2 gap-2 flex items-center bg-white border ${open&&" border-uhuBlue ring-0 outline-0"} rounded`}>
             <BsFileEarmarkArrowDown /> {t("ExportPopover.export")} <BsChevronDown />
-          </Popover.Button>
+          </PopoverButton>
           <Transition
             as={React.Fragment}
             // ... (rest of the transition code)
           >
-            <Popover.Panel className="absolute z-10 mt-2 w-[22rem] max-w-sm px-4 sm:px-0">
+            <PopoverPanel className="absolute z-10 mt-2 w-[22rem] max-w-sm px-4 sm:px-0">
               <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="relative bg-white p-4">
                   <Calendar
@@ -99,7 +99,7 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
                   </button>
                 </div>
               </div>
-            </Popover.Panel>
+            </PopoverPanel>
           </Transition>
         </>
       )}

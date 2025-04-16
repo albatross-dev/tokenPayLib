@@ -6,25 +6,193 @@ export const TYPE_CRYPTO = "crypto";
 export const TYPE_FIAT = "fiat";
 
 export type AllCountryCode =
-  | "DE" | "GB" | "US" | "AF" | "AL" | "DZ" | "AD" | "AO" | "AG" | "AR"
-  | "AM" | "AU" | "AT" | "AZ" | "BS" | "BH" | "BD" | "BB" | "BE" | "BZ"
-  | "BJ" | "BT" | "BO" | "BA" | "BW" | "BR" | "BN" | "BG" | "BF" | "BI"
-  | "CV" | "KH" | "CM" | "CA" | "CF" | "TD" | "CL" | "CN" | "CO" | "KM"
-  | "CG" | "CD" | "CR" | "CI" | "HR" | "CU" | "CY" | "CZ" | "DK" | "DJ"
-  | "DM" | "DO" | "EC" | "EG" | "SV" | "GQ" | "ER" | "EE" | "SZ" | "ET"
-  | "FJ" | "FI" | "FR" | "GA" | "GM" | "GE" | "GH" | "GR" | "GD" | "GT"
-  | "GN" | "GW" | "GY" | "HT" | "HN" | "HU" | "IS" | "IN" | "ID" | "IQ"
-  | "IE" | "IL" | "IT" | "JM" | "JP" | "JO" | "KZ" | "KE" | "KI" | "KR"
-  | "KW" | "KG" | "LA" | "LV" | "LB" | "LS" | "LR" | "LY" | "LI" | "LT"
-  | "LU" | "MG" | "MW" | "MY" | "MV" | "ML" | "MT" | "MH" | "MR" | "MU"
-  | "MX" | "FM" | "MD" | "MC" | "MN" | "ME" | "MA" | "MZ" | "NA" | "NR"
-  | "NP" | "NL" | "NZ" | "NI" | "NE" | "NG" | "MK" | "NO" | "OM" | "PK"
-  | "PW" | "PA" | "PG" | "PY" | "PE" | "PH" | "PL" | "PT" | "QA" | "RO"
-  | "RW" | "KN" | "LC" | "VC" | "WS" | "SM" | "ST" | "SA" | "SN" | "RS"
-  | "SC" | "SL" | "SG" | "SK" | "SI" | "SB" | "SO" | "ZA" | "SS" | "ES"
-  | "LK" | "SD" | "SR" | "SE" | "CH" | "TJ" | "TZ" | "TH" | "TL" | "TG"
-  | "TO" | "TT" | "TN" | "TR" | "TM" | "TV" | "UG" | "AE" | "UY" | "UZ"
-  | "VU" | "VE" | "VN" | "YE" | "ZM" | "ZW";
+  | "DE"
+  | "GB"
+  | "US"
+  | "AF"
+  | "AL"
+  | "DZ"
+  | "AD"
+  | "AO"
+  | "AG"
+  | "AR"
+  | "AM"
+  | "AU"
+  | "AT"
+  | "AZ"
+  | "BS"
+  | "BH"
+  | "BD"
+  | "BB"
+  | "BE"
+  | "BZ"
+  | "BJ"
+  | "BT"
+  | "BO"
+  | "BA"
+  | "BW"
+  | "BR"
+  | "BN"
+  | "BG"
+  | "BF"
+  | "BI"
+  | "CV"
+  | "KH"
+  | "CM"
+  | "CA"
+  | "CF"
+  | "TD"
+  | "CL"
+  | "CN"
+  | "CO"
+  | "KM"
+  | "CG"
+  | "CD"
+  | "CR"
+  | "CI"
+  | "HR"
+  | "CU"
+  | "CY"
+  | "CZ"
+  | "DK"
+  | "DJ"
+  | "DM"
+  | "DO"
+  | "EC"
+  | "EG"
+  | "SV"
+  | "GQ"
+  | "ER"
+  | "EE"
+  | "SZ"
+  | "ET"
+  | "FJ"
+  | "FI"
+  | "FR"
+  | "GA"
+  | "GM"
+  | "GE"
+  | "GH"
+  | "GR"
+  | "GD"
+  | "GT"
+  | "GN"
+  | "GW"
+  | "GY"
+  | "HT"
+  | "HN"
+  | "HU"
+  | "IS"
+  | "IN"
+  | "ID"
+  | "IQ"
+  | "IE"
+  | "IL"
+  | "IT"
+  | "JM"
+  | "JP"
+  | "JO"
+  | "KZ"
+  | "KE"
+  | "KI"
+  | "KR"
+  | "KW"
+  | "KG"
+  | "LA"
+  | "LV"
+  | "LB"
+  | "LS"
+  | "LR"
+  | "LY"
+  | "LI"
+  | "LT"
+  | "LU"
+  | "MG"
+  | "MW"
+  | "MY"
+  | "MV"
+  | "ML"
+  | "MT"
+  | "MH"
+  | "MR"
+  | "MU"
+  | "MX"
+  | "FM"
+  | "MD"
+  | "MC"
+  | "MN"
+  | "ME"
+  | "MA"
+  | "MZ"
+  | "NA"
+  | "NR"
+  | "NP"
+  | "NL"
+  | "NZ"
+  | "NI"
+  | "NE"
+  | "NG"
+  | "MK"
+  | "NO"
+  | "OM"
+  | "PK"
+  | "PW"
+  | "PA"
+  | "PG"
+  | "PY"
+  | "PE"
+  | "PH"
+  | "PL"
+  | "PT"
+  | "QA"
+  | "RO"
+  | "RW"
+  | "KN"
+  | "LC"
+  | "VC"
+  | "WS"
+  | "SM"
+  | "ST"
+  | "SA"
+  | "SN"
+  | "RS"
+  | "SC"
+  | "SL"
+  | "SG"
+  | "SK"
+  | "SI"
+  | "SB"
+  | "SO"
+  | "ZA"
+  | "SS"
+  | "ES"
+  | "LK"
+  | "SD"
+  | "SR"
+  | "SE"
+  | "CH"
+  | "TJ"
+  | "TZ"
+  | "TH"
+  | "TL"
+  | "TG"
+  | "TO"
+  | "TT"
+  | "TN"
+  | "TR"
+  | "TM"
+  | "TV"
+  | "UG"
+  | "AE"
+  | "UY"
+  | "UZ"
+  | "VU"
+  | "VE"
+  | "VN"
+  | "YE"
+  | "ZM"
+  | "ZW"
+  | "PS";
 
 export const CRYPTOS = [currencies["EUROE"]];
 
@@ -46,448 +214,448 @@ export const ALL_COUNTRIES_N: Record<AllCountryCode, Country> = {
     name: "Germany",
     flag: "🇩🇪",
     restrictions: false,
-    
-    iso:  "DE",
+
+    iso: "DE",
   },
   AF: {
     name: "Afghanistan",
     flag: "🇦🇫",
     restrictions: true,
-    
+
     iso: "AF",
   },
   AL: {
     name: "Albania",
     flag: "🇦🇱",
     restrictions: false,
-    
+
     iso: "AL",
   },
   DZ: {
     name: "Algeria",
     flag: "🇩🇿",
     restrictions: false,
-    
+
     iso: "DZ",
   },
   AD: {
     name: "Andorra",
     flag: "🇦🇩",
     restrictions: false,
-    
+
     iso: "AD",
   },
   AO: {
     name: "Angola",
     flag: "🇦🇴",
     restrictions: false,
-    
+
     iso: "AO",
   },
   AG: {
     name: "Antigua and Barbuda",
     flag: "🇦🇬",
     restrictions: false,
-    
+
     iso: "AG",
   },
   AR: {
     name: "Argentina",
     flag: "🇦🇷",
     restrictions: false,
-    
+
     iso: "AR",
   },
   AM: {
     name: "Armenia",
     flag: "🇦🇲",
     restrictions: false,
-    
+
     iso: "AM",
   },
   AU: {
     name: "Australia",
     flag: "🇦🇺",
     restrictions: false,
-    
+
     iso: "AU",
   },
   AT: {
     name: "Austria",
     flag: "🇦🇹",
     restrictions: false,
-    
+
     iso: "AT",
   },
   AZ: {
     name: "Azerbaijan",
     flag: "🇦🇿",
     restrictions: false,
-    
+
     iso: "AZ",
   },
   BS: {
     name: "The Bahamas",
     flag: "🇧🇸",
     restrictions: false,
-    
+
     iso: "BS",
   },
   BH: {
     name: "Bahrain",
     flag: "🇧🇭",
     restrictions: false,
-    
+
     iso: "BH",
   },
   BD: {
     name: "Bangladesh",
     flag: "🇧🇩",
     restrictions: false,
-    
+
     iso: "BD",
   },
   BB: {
     name: "Barbados",
     flag: "🇧🇧",
     restrictions: false,
-    
+
     iso: "BB",
   },
   BE: {
     name: "Belgium",
     flag: "🇧🇪",
     restrictions: false,
-    
+
     iso: "BE",
   },
   BZ: {
     name: "Belize",
     flag: "🇧🇿",
     restrictions: false,
-    
+
     iso: "BZ",
   },
   BJ: {
     name: "Benin",
     flag: "🇧🇯",
     restrictions: false,
-    
+
     iso: "BJ",
   },
   BT: {
     name: "Bhutan",
     flag: "🇧🇹",
     restrictions: false,
-    
+
     iso: "BT",
   },
   BO: {
     name: "Bolivia",
     flag: "🇧🇴",
     restrictions: false,
-    
+
     iso: "BO",
   },
   BA: {
     name: "Bosnia and Herzegovina",
     flag: "🇧🇦",
     restrictions: false,
-    
+
     iso: "BA",
   },
   BW: {
     name: "Botswana",
     flag: "🇧🇼",
     restrictions: false,
-    
+
     iso: "BW",
   },
   BR: {
     name: "Brazil",
     flag: "🇧🇷",
     restrictions: false,
-    
+
     iso: "BR",
   },
   BN: {
     name: "Brunei",
     flag: "🇧🇳",
     restrictions: false,
-    
+
     iso: "BN",
   },
   BG: {
     name: "Bulgaria",
     flag: "🇧🇬",
     restrictions: false,
-    
+
     iso: "BG",
   },
   BF: {
     name: "Burkina Faso",
     flag: "🇧🇫",
     restrictions: false,
-    
+
     iso: "BF",
   },
   BI: {
     name: "Burundi",
     flag: "🇧🇮",
     restrictions: true,
-    
+
     iso: "BI",
   },
   CV: {
     name: "Cape Verde",
     flag: "🇨🇻",
     restrictions: false,
-    
+
     iso: "CV",
   },
   KH: {
     name: "Cambodia",
     flag: "🇰🇭",
     restrictions: false,
-    
+
     iso: "KH",
   },
   CM: {
     name: "Cameroon",
     flag: "🇨🇲",
     restrictions: false,
-    
+
     iso: "CM",
   },
   CA: {
     name: "Canada",
     flag: "🇨🇦",
     restrictions: false,
-    
+
     iso: "CA",
   },
   CF: {
     name: "Central African Republic",
     flag: "🇨🇫",
     restrictions: true,
-    
+
     iso: "CF",
   },
   TD: {
     name: "Chad",
     flag: "🇹🇩",
     restrictions: false,
-    
+
     iso: "TD",
   },
   CL: {
     name: "Chile",
     flag: "🇨🇱",
     restrictions: false,
-    
+
     iso: "CL",
   },
   CN: {
     name: "China",
     flag: "🇨🇳",
     restrictions: false,
-    
+
     iso: "CN",
   },
   CO: {
     name: "Colombia",
     flag: "🇨🇴",
     restrictions: false,
-    
+
     iso: "CO",
   },
   KM: {
     name: "Comoros",
     flag: "🇰🇲",
     restrictions: false,
-    
+
     iso: "KM",
   },
   CD: {
     name: "Democratic Republic of the Congo",
     flag: "🇨🇩",
     restrictions: false,
-    
+
     iso: "CD",
   },
   CG: {
     name: "Republic of the Congo",
     flag: "🇨🇬",
     restrictions: false,
-    
+
     iso: "CG",
   },
   CR: {
     name: "Costa Rica",
     flag: "🇨🇷",
     restrictions: false,
-    
+
     iso: "CR",
   },
   CI: {
     name: "Ivory Coast",
     flag: "🇨🇮",
     restrictions: false,
-    
+
     iso: "CI",
   },
   HR: {
     name: "Croatia",
     flag: "🇭🇷",
     restrictions: false,
-    
+
     iso: "HR",
   },
   CU: {
     name: "Cuba",
     flag: "🇨🇺",
     restrictions: false,
-    
+
     iso: "CU",
   },
   CY: {
     name: "Cyprus",
     flag: "🇨🇾",
     restrictions: false,
-    
+
     iso: "CY",
   },
   CZ: {
     name: "Czech Republic",
     flag: "🇨🇿",
     restrictions: false,
-    
+
     iso: "CZ",
   },
   DK: {
     name: "Denmark",
     flag: "🇩🇰",
     restrictions: false,
-    
+
     iso: "DK",
   },
   DJ: {
     name: "Djibouti",
     flag: "🇩🇯",
     restrictions: false,
-    
+
     iso: "DJ",
   },
   DM: {
     name: "Dominica",
     flag: "🇩🇲",
     restrictions: false,
-    
+
     iso: "DM",
   },
   DO: {
     name: "Dominican Republic",
     flag: "🇩🇴",
     restrictions: false,
-    
+
     iso: "DO",
   },
   EC: {
     name: "Ecuador",
     flag: "🇪🇨",
     restrictions: false,
-    
+
     iso: "EC",
   },
   EG: {
     name: "Egypt",
     flag: "🇪🇬",
     restrictions: false,
-    
-    iso:  "EG",
+
+    iso: "EG",
   },
   SV: {
     name: "El Salvador",
     flag: "🇸🇻",
     restrictions: false,
-    
+
     iso: "SV",
   },
   GQ: {
     name: "Equatorial Guinea",
     flag: "🇬🇶",
     restrictions: false,
-    
+
     iso: "GQ",
   },
   ER: {
     name: "Eritrea",
     flag: "🇪🇷",
     restrictions: false,
-    
+
     iso: "ER",
   },
   EE: {
     name: "Estonia",
     flag: "🇪🇪",
     restrictions: false,
-    
+
     iso: "EE",
   },
   SZ: {
     name: "Eswatini",
     flag: "🇸🇿",
     restrictions: false,
-    
+
     iso: "SZ",
   },
   ET: {
     name: "Ethiopia",
     flag: "🇪🇹",
     restrictions: false,
-    
+
     iso: "ET",
   },
   FJ: {
     name: "Fiji",
     flag: "🇫🇯",
     restrictions: false,
-    
+
     iso: "FJ",
   },
   FI: {
     name: "Finland",
     flag: "🇫🇮",
     restrictions: false,
-    
+
     iso: "FI",
   },
   FR: {
     name: "France",
     flag: "🇫🇷",
     restrictions: false,
-    
+
     iso: "FR",
   },
   GA: {
     name: "Gabon",
     flag: "🇬🇦",
     restrictions: false,
-    
+
     iso: "GA",
   },
   GM: {
     name: "The Gambia",
     flag: "🇬🇲",
     restrictions: false,
-    
-    iso:  "GM",
+
+    iso: "GM",
   },
   GE: {
     name: "Georgia",
     flag: "🇬🇪",
     restrictions: false,
-    
+
     iso: "GE",
   },
 
@@ -495,791 +663,791 @@ export const ALL_COUNTRIES_N: Record<AllCountryCode, Country> = {
     name: "Ghana",
     flag: "🇬🇭",
     restrictions: false,
-    
-    iso:  "GH",
+
+    iso: "GH",
   },
   GR: {
     name: "Greece",
     flag: "🇬🇷",
     restrictions: false,
-    
+
     iso: "GR",
   },
   GD: {
     name: "Grenada",
     flag: "🇬🇩",
     restrictions: false,
-    
+
     iso: "GD",
   },
   GT: {
     name: "Guatemala",
     flag: "🇬🇹",
     restrictions: true,
-    
+
     iso: "GT",
   },
   GN: {
     name: "Guinea",
     flag: "🇬🇳",
     restrictions: true,
-    
+
     iso: "GN",
   },
   GW: {
     name: "Guinea-Bissau",
     flag: "🇬🇼",
     restrictions: true,
-    
+
     iso: "GW",
   },
   GY: {
     name: "Guyana",
     flag: "🇬🇾",
     restrictions: false,
-    
+
     iso: "GY",
   },
   HT: {
     name: "Haiti",
     flag: "🇭🇹",
     restrictions: true,
-    
-    iso:  "HT",
+
+    iso: "HT",
   },
   HN: {
     name: "Honduras",
     flag: "🇭🇳",
     restrictions: false,
-    
+
     iso: "HN",
   },
   HU: {
     name: "Hungary",
     flag: "🇭🇺",
     restrictions: false,
-    
+
     iso: "HU",
   },
   IS: {
     name: "Iceland",
     flag: "🇮🇸",
     restrictions: false,
-    
+
     iso: "IS",
   },
   IN: {
     name: "India",
     flag: "🇮🇳",
     restrictions: false,
-    
+
     iso: "IN",
   },
   ID: {
     name: "Indonesia",
     flag: "🇮🇩",
     restrictions: false,
-    
+
     iso: "ID",
   },
   IQ: {
     name: "Iraq",
     flag: "🇮🇶",
     restrictions: true,
-    
+
     iso: "IQ",
   },
   IE: {
     name: "Ireland",
     flag: "🇮🇪",
     restrictions: false,
-    
+
     iso: "IE",
   },
   IL: {
     name: "Israel",
     flag: "🇮🇱",
     restrictions: false,
-    
+
     iso: "IL",
   },
   IT: {
     name: "Italy",
     flag: "🇮🇹",
     restrictions: false,
-    
+
     iso: "IT",
   },
   JM: {
     name: "Jamaica",
     flag: "🇯🇲",
     restrictions: false,
-    
+
     iso: "JM",
   },
   JP: {
     name: "Japan",
     flag: "🇯🇵",
     restrictions: false,
-    
+
     iso: "JP",
   },
   JO: {
     name: "Jordan",
     flag: "🇯🇴",
     restrictions: false,
-    
+
     iso: "JO",
   },
   KZ: {
     name: "Kazakhstan",
     flag: "🇰🇿",
     restrictions: false,
-    
+
     iso: "KZ",
   },
   KE: {
     name: "Kenya",
     flag: "🇰🇪",
     restrictions: false,
-    
+
     iso: "KE",
   },
   KI: {
     name: "Kiribati",
     flag: "🇰🇮",
     restrictions: false,
-    
+
     iso: "KI",
   },
   KR: {
     name: "South Korea",
     flag: "🇰🇷",
     restrictions: false,
-    
+
     iso: "KR",
   },
   KW: {
     name: "Kuwait",
     flag: "🇰🇼",
     restrictions: false,
-    
+
     iso: "KW",
   },
   KG: {
     name: "Kyrgyzstan",
     flag: "🇰🇬",
     restrictions: false,
-    
+
     iso: "KG",
   },
   LA: {
     name: "Laos",
     flag: "🇱🇦",
     restrictions: false,
-    
+
     iso: "LA",
   },
   LV: {
     name: "Latvia",
     flag: "🇱🇻",
     restrictions: false,
-    
+
     iso: "LV",
   },
   LB: {
     name: "Lebanon",
     flag: "🇱🇧",
     restrictions: false,
-    
+
     iso: "LB",
   },
   LS: {
     name: "Lesotho",
     flag: "🇱🇸",
     restrictions: false,
-    
+
     iso: "LS",
   },
   LR: {
     name: "Liberia",
     flag: "🇱🇷",
     restrictions: false,
-    
+
     iso: "LR",
   },
   LY: {
     name: "Libya",
     flag: "🇱🇾",
     restrictions: true,
-    
+
     iso: "LY",
   },
   LI: {
     name: "Liechtenstein",
     flag: "🇱🇮",
     restrictions: false,
-    
+
     iso: "LI",
   },
   LT: {
     name: "Lithuania",
     flag: "🇱🇹",
     restrictions: false,
-    
+
     iso: "LT",
   },
   LU: {
     name: "Luxembourg",
     flag: "🇱🇺",
     restrictions: false,
-    
+
     iso: "LU",
   },
   MG: {
     name: "Madagascar",
     flag: "🇲🇬",
     restrictions: false,
-    
+
     iso: "MG",
   },
   MW: {
     name: "Malawi",
     flag: "🇲🇼",
     restrictions: false,
-    
+
     iso: "MW",
   },
   MY: {
     name: "Malaysia",
     flag: "🇲🇾",
     restrictions: false,
-    
+
     iso: "MY",
   },
   MV: {
     name: "Maldives",
     flag: "🇲🇻",
     restrictions: false,
-    
+
     iso: "MV",
   },
   ML: {
     name: "Mali",
     flag: "🇲🇱",
     restrictions: true,
-    
+
     iso: "ML",
   },
   MT: {
     name: "Malta",
     flag: "🇲🇹",
     restrictions: false,
-    
+
     iso: "MT",
   },
   MH: {
     name: "Marshall Islands",
     flag: "🇲🇭",
     restrictions: false,
-    
+
     iso: "MH",
   },
   MR: {
     name: "Mauritania",
     flag: "🇲🇷",
     restrictions: false,
-    
+
     iso: "MR",
   },
   MU: {
     name: "Mauritius",
     flag: "🇲🇺",
     restrictions: false,
-    
+
     iso: "MU",
   },
   MX: {
     name: "Mexico",
     flag: "🇲🇽",
     restrictions: false,
-    
+
     iso: "MX",
   },
   FM: {
     name: "Micronesia",
     flag: "🇫🇲",
     restrictions: false,
-    
+
     iso: "FM",
   },
   MD: {
     name: "Moldova",
     flag: "🇲🇩",
     restrictions: true,
-    
+
     iso: "MD",
   },
   MC: {
     name: "Monaco",
     flag: "🇲🇨",
     restrictions: false,
-    
+
     iso: "MC",
   },
   MN: {
     name: "Mongolia",
     flag: "🇲🇳",
     restrictions: false,
-    
+
     iso: "MN",
   },
   ME: {
     name: "Montenegro",
     flag: "🇲🇪",
     restrictions: false,
-    
+
     iso: "ME",
   },
   MA: {
     name: "Morocco",
     flag: "🇲🇦",
     restrictions: false,
-    
+
     iso: "MA",
   },
   MZ: {
     name: "Mozambique",
     flag: "🇲🇿",
     restrictions: false,
-    
+
     iso: "MZ",
   },
   NA: {
     name: "Namibia",
     flag: "🇳🇦",
     restrictions: false,
-    
+
     iso: "NA",
   },
   NR: {
     name: "Nauru",
     flag: "🇳🇷",
     restrictions: false,
-    
+
     iso: "NR",
   },
   NP: {
     name: "Nepal",
     flag: "🇳🇵",
     restrictions: false,
-    
+
     iso: "NP",
   },
   NL: {
     name: "Netherlands",
     flag: "🇳🇱",
     restrictions: false,
-    
+
     iso: "NL",
   },
   NZ: {
     name: "New Zealand",
     flag: "🇳🇿",
     restrictions: false,
-    
+
     iso: "NZ",
   },
   NI: {
     name: "Nicaragua",
     flag: "🇳🇮",
     restrictions: true,
-    
+
     iso: "NI",
   },
   NE: {
     name: "Niger",
     flag: "🇳🇪",
     restrictions: false,
-    
+
     iso: "NE",
   },
   NG: {
     name: "Nigeria",
     flag: "🇳🇬",
     restrictions: false,
-    
+
     iso: "NG",
   },
   MK: {
     name: "North Macedonia",
     flag: "🇲🇰",
     restrictions: false,
-    
+
     iso: "MK",
   },
   NO: {
     name: "Norway",
     flag: "🇳🇴",
     restrictions: false,
-    
+
     iso: "NO",
   },
   OM: {
     name: "Oman",
     flag: "🇴🇲",
     restrictions: false,
-    
+
     iso: "OM",
   },
   PK: {
     name: "Pakistan",
     flag: "🇵🇰",
     restrictions: false,
-    
+
     iso: "PK",
   },
   PW: {
     name: "Palau",
     flag: "🇵🇼",
     restrictions: false,
-    
+
     iso: "PW",
   },
   PA: {
     name: "Panama",
     flag: "🇵🇦",
     restrictions: false,
-    
+
     iso: "PA",
   },
   PG: {
     name: "Papua New Guinea",
     flag: "🇵🇬",
     restrictions: false,
-    
+
     iso: "PG",
   },
   PY: {
     name: "Paraguay",
     flag: "🇵🇾",
     restrictions: false,
-    
+
     iso: "PY",
   },
   PE: {
     name: "Peru",
     flag: "🇵🇪",
     restrictions: false,
-    
+
     iso: "PE",
   },
   PH: {
     name: "Philippines",
     flag: "🇵🇭",
     restrictions: false,
-    
+
     iso: "PH",
   },
   PL: {
     name: "Poland",
     flag: "🇵🇱",
     restrictions: false,
-    
+
     iso: "PL",
   },
   PT: {
     name: "Portugal",
     flag: "🇵🇹",
     restrictions: false,
-    
+
     iso: "PT",
   },
   QA: {
     name: "Qatar",
     flag: "🇶🇦",
     restrictions: false,
-    
+
     iso: "QA",
   },
   RO: {
     name: "Romania",
     flag: "🇷🇴",
     restrictions: false,
-    
+
     iso: "RO",
   },
   RW: {
     name: "Rwanda",
     flag: "🇷🇼",
     restrictions: false,
-    
+
     iso: "RW",
   },
   KN: {
     name: "Saint Kitts and Nevis",
     flag: "🇰🇳",
     restrictions: false,
-    
+
     iso: "KN",
   },
   LC: {
     name: "Saint Lucia",
     flag: "🇱🇨",
     restrictions: false,
-    
+
     iso: "LC",
   },
   VC: {
     name: "Saint Vincent and the Grenadines",
     flag: "🇻🇨",
     restrictions: false,
-    
+
     iso: "VC",
   },
   WS: {
     name: "Samoa",
     flag: "🇼🇸",
     restrictions: false,
-    
+
     iso: "WS",
   },
   SM: {
     name: "San Marino",
     flag: "🇸🇲",
     restrictions: false,
-    
+
     iso: "SM",
   },
   ST: {
     name: "São Tomé and Príncipe",
     flag: "🇸🇹",
     restrictions: false,
-    
+
     iso: "ST",
   },
   SA: {
     name: "Saudi Arabia",
     flag: "🇸🇦",
     restrictions: false,
-    
+
     iso: "SA",
   },
   SN: {
     name: "Senegal",
     flag: "🇸🇳",
     restrictions: false,
-    
+
     iso: "SN",
   },
   RS: {
     name: "Serbia",
     flag: "🇷🇸",
     restrictions: false,
-    
+
     iso: "RS",
   },
   SC: {
     name: "Seychelles",
     flag: "🇸🇨",
     restrictions: false,
-    
+
     iso: "SC",
   },
   SL: {
     name: "Sierra Leone",
     flag: "🇸🇱",
     restrictions: false,
-    
+
     iso: "SL",
   },
   SG: {
     name: "Singapore",
     flag: "🇸🇬",
     restrictions: false,
-    
+
     iso: "SG",
   },
   SK: {
     name: "Slovakia",
     flag: "🇸🇰",
     restrictions: false,
-    
+
     iso: "SK",
   },
   SI: {
     name: "Slovenia",
     flag: "🇸🇮",
     restrictions: false,
-    
+
     iso: "SI",
   },
   SB: {
     name: "Solomon Islands",
     flag: "🇸🇧",
     restrictions: false,
-    
+
     iso: "SB",
   },
   SO: {
     name: "Somalia",
     flag: "🇸🇴",
     restrictions: true,
-    
+
     iso: "SO",
   },
   ZA: {
     name: "South Africa",
     flag: "🇿🇦",
     restrictions: false,
-    
+
     iso: "ZA",
   },
   SS: {
     name: "South Sudan",
     flag: "🇸🇸",
     restrictions: true,
-    
+
     iso: "SS",
   },
   ES: {
     name: "Spain",
     flag: "🇪🇸",
     restrictions: false,
-    
+
     iso: "ES",
   },
   LK: {
     name: "Sri Lanka",
     flag: "🇱🇰",
     restrictions: false,
-    
+
     iso: "LK",
   },
   SD: {
     name: "Sudan",
     flag: "🇸🇩",
     restrictions: true,
-    
+
     iso: "SD",
   },
   SR: {
     name: "Suriname",
     flag: "🇸🇷",
     restrictions: false,
-    
+
     iso: "SR",
   },
   SE: {
     name: "Sweden",
     flag: "🇸🇪",
     restrictions: false,
-    
+
     iso: "SE",
   },
   CH: {
     name: "Switzerland",
     flag: "🇨🇭",
     restrictions: false,
-    
+
     iso: "CH",
   },
   TJ: {
     name: "Tajikistan",
     flag: "🇹🇯",
     restrictions: false,
-    
+
     iso: "TJ",
   },
   TZ: {
     name: "Tanzania",
     flag: "🇹🇿",
     restrictions: false,
-    
+
     iso: "TZ",
   },
   TH: {
     name: "Thailand",
     flag: "🇹🇭",
     restrictions: false,
-    
+
     iso: "TH",
   },
   TL: {
     name: "East Timor",
     flag: "🇹🇱",
     restrictions: false,
-    
+
     iso: "TL",
   },
   TG: {
     name: "Togo",
     flag: "🇹🇬",
     restrictions: false,
-    
+
     iso: "TG",
   },
   TO: {
     name: "Tonga",
     flag: "🇹🇴",
     restrictions: false,
-    
+
     iso: "TO",
   },
   TT: {
     name: "Trinidad and Tobago",
     flag: "🇹🇹",
     restrictions: false,
-    
+
     iso: "TT",
   },
   TN: {
     name: "Tunisia",
     flag: "🇹🇳",
     restrictions: true,
-    
-    iso: "TN",  
+
+    iso: "TN",
   },
   TR: {
     name: "Türkiye",
     flag: "🇹🇷",
     restrictions: true,
-    
+
     iso: "TR",
   },
   TM: {
     name: "Turkmenistan",
     flag: "🇹🇲",
     restrictions: false,
-    
+
     iso: "TM",
   },
   TV: {
     name: "Tuvalu",
     flag: "🇹🇻",
     restrictions: false,
-    
+
     iso: "TV",
   },
   UG: {
     name: "Uganda",
     flag: "🇺🇬",
     restrictions: false,
-    
-    iso:  "UG",
+
+    iso: "UG",
   },
   AE: {
     name: "United Arab Emirates",
     flag: "🇦🇪",
     restrictions: false,
-    
+
     iso: "AE",
   },
   GB: {
     name: "United Kingdom",
     flag: "🇬🇧",
     restrictions: false,
-    
+
     iso: "GB",
   },
   US: {
@@ -1293,56 +1461,56 @@ export const ALL_COUNTRIES_N: Record<AllCountryCode, Country> = {
     name: "Uruguay",
     flag: "🇺🇾",
     restrictions: false,
-    
+
     iso: "UY",
   },
   UZ: {
     name: "Uzbekistan",
     flag: "🇺🇿",
     restrictions: false,
-    
+
     iso: "UZ",
   },
   VU: {
     name: "Vanuatu",
     flag: "🇻🇺",
     restrictions: false,
-    
+
     iso: "VU",
   },
   VE: {
     name: "Venezuela",
     flag: "🇻🇪",
     restrictions: true,
-    
+
     iso: "VE",
   },
   VN: {
     name: "Vietnam",
     flag: "🇻🇳",
     restrictions: false,
-    
+
     iso: "VN",
   },
   YE: {
     name: "Yemen",
     flag: "🇾🇪",
     restrictions: true,
-    
+
     iso: "YE",
   },
   ZM: {
     name: "Zambia",
     flag: "🇿🇲",
     restrictions: false,
-    
+
     iso: "ZM",
   },
   ZW: {
     name: "Zimbabwe",
     flag: "🇿🇼",
     restrictions: true,
-    
+
     iso: "ZW",
   },
 };
@@ -1353,7 +1521,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇩🇪",
     restrictions: false,
     available: availableToAll,
-    iso:  "DE",
+    iso: "DE",
   },
   US: {
     name: "United States",
@@ -1724,7 +1892,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇪🇬",
     restrictions: false,
     available: availableToAll,
-    iso:  "EG",
+    iso: "EG",
   },
   SV: {
     name: "El Salvador",
@@ -1801,7 +1969,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇬🇲",
     restrictions: false,
     available: availableToAll,
-    iso:  "GM",
+    iso: "GM",
   },
   GE: {
     name: "Georgia",
@@ -1816,7 +1984,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇬🇭",
     restrictions: false,
     available: availableToAll,
-    iso:  "GH",
+    iso: "GH",
   },
   GR: {
     name: "Greece",
@@ -1865,7 +2033,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇭🇹",
     restrictions: true,
     available: availableToAll,
-    iso:  "HT",
+    iso: "HT",
   },
   HN: {
     name: "Honduras",
@@ -2558,7 +2726,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇹🇳",
     restrictions: true,
     available: availableToAll,
-    iso: "TN",  
+    iso: "TN",
   },
   TR: {
     name: "Türkiye",
@@ -2586,7 +2754,7 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
     flag: "🇺🇬",
     restrictions: false,
     available: availableToAll,
-    iso:  "UG",
+    iso: "UG",
   },
   AE: {
     name: "United Arab Emirates",
@@ -2660,11 +2828,15 @@ export const ALL_COUNTRIES: Record<AllCountryCode, CountryWithAvailability> = {
   },
 };
 
-const countries: Record<AllCountryCode, Record<AllCountryCode, CountryWithAvailability>> = {
+const countries: Record<
+  AllCountryCode,
+  Record<AllCountryCode, CountryWithAvailability>
+> = {
   DE: ALL_COUNTRIES, // Germany
   GB: ALL_COUNTRIES, // United Kingdom
   US: ALL_COUNTRIES, // United States
   AF: ALL_COUNTRIES, // Afghanistan
+  PS: ALL_COUNTRIES, // Palestine
   AL: ALL_COUNTRIES, // Albania
   DZ: ALL_COUNTRIES, // Algeria
   AD: ALL_COUNTRIES, // Andorra
@@ -2728,7 +2900,7 @@ const countries: Record<AllCountryCode, Record<AllCountryCode, CountryWithAvaila
   GA: ALL_COUNTRIES, // Gabon
   GM: ALL_COUNTRIES, // Gambia
   GE: ALL_COUNTRIES, // Georgia
-  
+
   GH: ALL_COUNTRIES, // Ghana
   GR: ALL_COUNTRIES, // Greece
   GD: ALL_COUNTRIES, // Grenada
@@ -2856,5 +3028,3 @@ const countries: Record<AllCountryCode, Record<AllCountryCode, CountryWithAvaila
   ZM: ALL_COUNTRIES, // Zambia
   ZW: ALL_COUNTRIES, // Zimbabwe
 };
-
-export default countries;

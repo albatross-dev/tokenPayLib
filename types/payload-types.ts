@@ -22,101 +22,99 @@ export type EarlyBirdTransactionsArray =
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PaymentTypesArray".
  */
-export type PaymentTypesArray =
-  | {
-      acceptedCrypto?: ('USDC' | 'EURS') | null;
-      name: string;
-      useWhiteListPaymentMethod?: boolean | null;
-      whiteList?: (string | Country)[] | null;
-      blackList?: (string | Country)[] | null;
-      withdrawModality: ('mobile_money' | 'bank_account' | 'credit_card' | 'crypto')[];
-      onrampModality: ('mobile_money' | 'credit_card' | 'bank_account')[];
-      onrampFee: number;
-      onrampMinAmount: number;
-      onrampMaxAmount: number;
-      type:
-        | 'unlimit'
-        | 'onramp_money'
-        | 'bitcoin_vn'
-        | 'bitcoin_vn_helpdesk'
-        | 'koywe_helpdesk'
-        | 'kotanipay_helpdesk'
-        | 'coinhako_helpdesk'
-        | 'swypt'
-        | 'crypto'
-        | 'ovex'
-        | 'roma'
-        | 'stasis'
-        | 'stasis_crypto_only'
-        | 'koywe_crypto_only'
-        | 'koywe';
-      supportDeposit?: boolean | null;
-      businessOnly?: boolean | null;
-      privateOnly?: boolean | null;
-      withdrawOnly?: boolean | null;
-      noWithdraw?: boolean | null;
-      currencies?:
-        | {
-            currency?:
-              | (
-                  | 'USD'
-                  | 'EUR'
-                  | 'VND'
-                  | 'AED'
-                  | 'ARS'
-                  | 'AUD'
-                  | 'BGN'
-                  | 'BOL'
-                  | 'BRL'
-                  | 'BWP'
-                  | 'CAD'
-                  | 'CHF'
-                  | 'CLP'
-                  | 'COP'
-                  | 'CRC'
-                  | 'CZK'
-                  | 'DKK'
-                  | 'ETB'
-                  | 'GBP'
-                  | 'GHS'
-                  | 'GTQ'
-                  | 'HKD'
-                  | 'IDR'
-                  | 'INR'
-                  | 'KES'
-                  | 'MKW'
-                  | 'MXN'
-                  | 'MYR'
-                  | 'NGN'
-                  | 'OMR'
-                  | 'PEN'
-                  | 'PHP'
-                  | 'PLN'
-                  | 'RON'
-                  | 'SGD'
-                  | 'TRY'
-                  | 'TZS'
-                  | 'UGX'
-                  | 'XOF'
-                  | 'XAF'
-                  | 'ZAR'
-                  | 'ZMW'
-                )
-              | null;
-            id?: string | null;
-          }[]
-        | null;
-      fiatTypeOnramp?:
-        | ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '10' | '12' | '14' | '16' | '17' | '21' | '27' | '29')
-        | null;
-      fiatTypeOfframp?: ('1' | '2' | '4' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '14' | '29') | null;
-      minAmount: number;
-      maxAmount: number;
-      fee: number;
-      recommended?: boolean | null;
-      id?: string | null;
-    }[]
-  | null;
+export type PaymentTypesArray = {
+  acceptedCrypto?: ('USDC' | 'EURS') | null;
+  name: string;
+  useWhiteListPaymentMethod?: boolean | null;
+  whiteList?: (string | Country)[] | null;
+  blackList?: (string | Country)[] | null;
+  withdrawModality: 'mobile_money' | 'bank_account' | 'credit_card' | 'crypto';
+  onrampModality: 'mobile_money' | 'credit_card' | 'bank_account';
+  onrampFee: number;
+  onrampMinAmount: number;
+  onrampMaxAmount: number;
+  type:
+    | 'unlimit'
+    | 'onramp_money'
+    | 'bitcoin_vn'
+    | 'bitcoin_vn_helpdesk'
+    | 'koywe_helpdesk'
+    | 'kotanipay_helpdesk'
+    | 'coinhako_helpdesk'
+    | 'swypt'
+    | 'crypto'
+    | 'ovex'
+    | 'roma'
+    | 'stasis'
+    | 'stasis_crypto_only'
+    | 'koywe_crypto_only'
+    | 'koywe';
+  supportDeposit?: boolean | null;
+  businessOnly?: boolean | null;
+  privateOnly?: boolean | null;
+  withdrawOnly?: boolean | null;
+  noWithdraw?: boolean | null;
+  currencies?:
+    | {
+        currency?:
+          | (
+              | 'USD'
+              | 'EUR'
+              | 'VND'
+              | 'AED'
+              | 'ARS'
+              | 'AUD'
+              | 'BGN'
+              | 'BOL'
+              | 'BRL'
+              | 'BWP'
+              | 'CAD'
+              | 'CHF'
+              | 'CLP'
+              | 'COP'
+              | 'CRC'
+              | 'CZK'
+              | 'DKK'
+              | 'ETB'
+              | 'GBP'
+              | 'GHS'
+              | 'GTQ'
+              | 'HKD'
+              | 'IDR'
+              | 'INR'
+              | 'KES'
+              | 'MKW'
+              | 'MXN'
+              | 'MYR'
+              | 'NGN'
+              | 'OMR'
+              | 'PEN'
+              | 'PHP'
+              | 'PLN'
+              | 'RON'
+              | 'SGD'
+              | 'TRY'
+              | 'TZS'
+              | 'UGX'
+              | 'XOF'
+              | 'XAF'
+              | 'ZAR'
+              | 'ZMW'
+            )
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  fiatTypeOnramp?:
+    | ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '10' | '12' | '14' | '16' | '17' | '21' | '27' | '29')
+    | null;
+  fiatTypeOfframp?: ('1' | '2' | '4' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '14' | '29') | null;
+  minAmount: number;
+  maxAmount: number;
+  fee: number;
+  recommended?: boolean | null;
+  id?: string | null;
+}[];
 
 export interface Config {
   collections: {
@@ -2410,8 +2408,8 @@ export interface Country {
     fact?: string | null;
     region: 'europe' | 'asia' | 'north_america' | 'south_america' | 'africa' | 'australia_oceania';
   };
-  preferredStableCoin: string;
-  paymentTypes?: PaymentTypesArray;
+  preferredStableCoin: 'USDC' | 'USDT' | 'EURS';
+  paymentTypes: PaymentTypesArray;
   updatedAt: string;
   createdAt: string;
 }

@@ -1,7 +1,20 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { useActiveWalletChain, useSwitchActiveWalletChain, useIsAutoConnecting } from "thirdweb/react";
-import { Chain, polygon, ethereum, optimism, arbitrum, base, avalanche, bsc } from "thirdweb/chains";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  useActiveWalletChain,
+  useSwitchActiveWalletChain,
+  useIsAutoConnecting,
+} from "thirdweb/react";
+import {
+  Chain,
+  polygon,
+  ethereum,
+  optimism,
+  arbitrum,
+  base,
+  avalanche,
+  bsc,
+} from "thirdweb/chains";
 import Image from "next/image";
 import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
@@ -18,6 +31,7 @@ import { CheckoutSession, Router } from "../../types/payload-types";
 import { ExchangeType } from "../../utilities/exchangeTypes";
 import { ChainDetails, ChainSelectorProps } from "./types";
 
+export type ChainID = 137 | 1 | 10 | 42161 | 8453 | 43114 | 56;
 
 const chains: ChainDetails[] = [
   { chainId: 137, name: "Polygon", chain: polygon, logo: POLYGON_LOGO },
@@ -41,15 +55,16 @@ export const chainsBridge: ChainDetails[] = [
 
 const chainsPublic: ChainDetails[] = [
   { chainId: 137, name: "Polygon", chain: polygon, logo: POLYGON_LOGO },
-   { chainId: 1, name: "Ethereum", chain: ethereum, logo: ETHEREUM_LOGO },
-   { chainId: 10, name: "Optimism", chain: optimism, logo: OPTIMISM_LOGO },
-   { chainId: 42161, name: "Arbitrum", chain: arbitrum, logo: ARBITRUM_LOGO },
-   { chainId: 8453, name: "Base", chain: base, logo: BASE_LOGO },
+  { chainId: 1, name: "Ethereum", chain: ethereum, logo: ETHEREUM_LOGO },
+  { chainId: 10, name: "Optimism", chain: optimism, logo: OPTIMISM_LOGO },
+  { chainId: 42161, name: "Arbitrum", chain: arbitrum, logo: ARBITRUM_LOGO },
+  { chainId: 8453, name: "Base", chain: base, logo: BASE_LOGO },
   //{ chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
   //{ chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
 ];
 
-const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
+const exchangeType: ExchangeType = process.env
+  .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
 
 /**
  * ChainSelector component allows users to select a blockchain network from a dropdown menu.
@@ -57,11 +72,12 @@ const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as Exch
 const ChainSelector: React.FC<ChainSelectorProps> = ({
   checkoutSession,
   chain,
-  chainList = (exchangeType === "external" ? chainsPublic : chains),
+  chainList = exchangeType === "external" ? chainsPublic : chains,
   returnOnly = false,
-  onChain = null
+  onChain = null,
 }) => {
-  const [activeChainDetails, setActiveChainDetails] = useState<ChainDetails | null>(chain);
+  const [activeChainDetails, setActiveChainDetails] =
+    useState<ChainDetails | null>(chain);
   const switchChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
   const walletChain = useActiveWalletChain();
@@ -70,7 +86,9 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
 
   useEffect(() => {
     if (!isAutoConnecting && walletChain) {
-      setActiveChainDetails(chainList.find(chain => chain.chainId === walletChain.id) || null);
+      setActiveChainDetails(
+        chainList.find((chain) => chain.chainId === walletChain.id) || null
+      );
     }
   }, [isAutoConnecting, walletChain, chainList]);
 
@@ -80,10 +98,20 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
         <div className="flex items-center">
           {activeChainDetails ? (
             <>
-               <Image src={activeChainDetails.logo} alt={activeChainDetails.name} className="h-6 w-6 mr-2" />
-              <span className={`${activeChainDetails.main ? 'font-bold' : ''} `}>{activeChainDetails.name}</span>
+              <Image
+                src={activeChainDetails.logo}
+                alt={activeChainDetails.name}
+                className="h-6 w-6 mr-2"
+              />
+              <span
+                className={`${activeChainDetails.main ? "font-bold" : ""} `}
+              >
+                {activeChainDetails.name}
+              </span>
               {activeChainDetails.chainId === router?.chainId && (
-                <span className="ml-2 text-xs text-green-500 font-bold">({t("pay")})</span>
+                <span className="ml-2 text-xs text-green-500 font-bold">
+                  ({t("pay")})
+                </span>
               )}
             </>
           ) : (
@@ -94,30 +122,40 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
       </MenuButton>
       <MenuItems className="origin-top-right absolute right-0 mt-2 w-full z-[30] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
         {chainList.map((chain) => {
-          return <MenuItem key={chain.name} as={Fragment}>
-            <button
-              className={`hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm ${router?.chainId === chain.chainId ? 'font-bold' : ''}`}
-              onClick={() => {
-                if (chain.chainId !== walletChain?.id && !returnOnly) {
-                  switchChain(chain.chain);
-                }
-                if (onChain) {
-                  setActiveChainDetails(chain);
-                  onChain(chain);
-                }
-              }}
-            >
-              <Image src={chain.logo} alt={chain.name} className="h-6 w-6 mr-2" />
-              <span>{chain.name}</span>
-              {router?.chainId === chain.chainId && (
-                <span className="ml-2 text-xs text-green-500">({t("pay")})</span>
-              )}
-            </button>
-          </MenuItem>
+          return (
+            <MenuItem key={chain.name} as={Fragment}>
+              <button
+                className={`hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm ${
+                  router?.chainId === chain.chainId ? "font-bold" : ""
+                }`}
+                onClick={() => {
+                  if (chain.chainId !== walletChain?.id && !returnOnly) {
+                    switchChain(chain.chain);
+                  }
+                  if (onChain) {
+                    setActiveChainDetails(chain);
+                    onChain(chain);
+                  }
+                }}
+              >
+                <Image
+                  src={chain.logo}
+                  alt={chain.name}
+                  className="h-6 w-6 mr-2"
+                />
+                <span>{chain.name}</span>
+                {router?.chainId === chain.chainId && (
+                  <span className="ml-2 text-xs text-green-500">
+                    ({t("pay")})
+                  </span>
+                )}
+              </button>
+            </MenuItem>
+          );
         })}
       </MenuItems>
     </Menu>
   );
 };
 
-export default ChainSelector; 
+export default ChainSelector;

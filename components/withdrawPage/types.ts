@@ -33,6 +33,7 @@ export interface TransactionDetailsSlideProps extends SlideProps {
   preferredStableCoin: string;
   payoutCurrency: FiatCodes | "crypto";
   maxAmount: number;
+  setMaxAmount: (amount: number) => void;
   amount: string;
   handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string;

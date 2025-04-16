@@ -1,5 +1,5 @@
-import { sendErrorReport } from "@/context/UserContext";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import { sendErrorReport } from "../../../context/UserContext";
 
 // --- Type Definitions ---
 
@@ -73,24 +73,24 @@ export async function getMetaData(
     return response.data;
   } catch (error: any) {
     sendErrorReport("Error while retrieving metadata from bitcoinVN", error);
-      if (axios.isAxiosError(error)) {
-        console.error(
-          "Error while retrieving metadata from bitcoinVN (Axios Error):",
-          error.message
-        );
-        if (error.response) {
-          console.error("Response Data:", error.response.data);
-          console.error("Response Status:", error.response.status);
-          console.error("Response Headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("Request:", error.request);
-        }
-      } else {
-        console.error(
-          "Error while retrieving metadata from bitcoinVN (Generic Error):",
-          error
-        );
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error while retrieving metadata from bitcoinVN (Axios Error):",
+        error.message
+      );
+      if (error.response) {
+        console.error("Response Data:", error.response.data);
+        console.error("Response Status:", error.response.status);
+        console.error("Response Headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("Request:", error.request);
       }
+    } else {
+      console.error(
+        "Error while retrieving metadata from bitcoinVN (Generic Error):",
+        error
+      );
+    }
     return null;
   }
 }

@@ -1,29 +1,39 @@
-import React from 'react';
+import React from "react";
 import { SwiperClass } from "swiper/react";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
-import BackButton from '../components/BackButton';
-import CurrencyDisplay from '../../CurrencySelector';
-import MethodSelector from '../components/MethodSelector';
-import { FiatInfo, getFiatInfo, getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
-import { CdnMedia, Country, PaymentTypesArray } from '../../../../types/payload-types';
-import { Currency } from '../../../../types/currency.types';
+import BackButton from "../components/BackButton";
+import CurrencyDisplay, { Balance } from "../../CurrencySelector";
+import MethodSelector from "../components/MethodSelector";
+import {
+  FiatInfo,
+  getFiatInfo,
+  getFiatInfoForStableCoin,
+} from "../../../../utilities/stableCoinsMaps";
+import {
+  CdnMedia,
+  Country,
+  PaymentTypesArray,
+} from "../../../../types/payload-types";
+import { Currency } from "../../../../types/currency.types";
+import { FiatCodes } from "../../../../types/derivedPayload.types";
 
 interface TransactionDetailsFormProps {
   selectedCountry: Country | null;
-  selectedCurrency: FiatInfo | null;
+  selectedCurrency: Balance | null;
   selectedMethod: PaymentTypesArray[number] | null;
   availableMethods: PaymentTypesArray;
   preferredStableCoin: string;
-  amount: number;
+  amount: string;
   error: string;
   setError: (error: string) => void;
   maxAmount: number;
+  setMaxAmount: (max: number) => void;
   exchangeRate: number;
   loadedExchangeRate: boolean;
-  payoutCurrency: string | null;
+  payoutCurrency: FiatCodes | "crypto" | null;
   swiperInstance: SwiperClass | null;
-  setSelectedCurrency: (currency: FiatInfo | null, max: number) => void;
+  setSelectedCurrency: (currency: Balance | null, max: number) => void;
   handleAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
   clearData: () => void;
@@ -41,6 +51,7 @@ export default function TransactionDetailsForm({
   error,
   setError,
   maxAmount,
+  setMaxAmount,
   exchangeRate,
   loadedExchangeRate,
   payoutCurrency,
@@ -48,14 +59,17 @@ export default function TransactionDetailsForm({
   setSelectedCurrency,
   handleAmountChange,
   setSelectedMethod,
-  clearData
+  clearData,
 }: TransactionDetailsFormProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   return (
     <div className="relative p-4">
       <div className="relative z-[10] text-darkBlue flex flex-col gap-4 max-w-4xl mx-auto">
-        <BackButton clearData={clearData} />
+        <BackButton
+          onBack={() => swiperInstance?.slideTo(2)}
+          clearData={clearData}
+        />
 
         <h2 className="text-2xl">
           {tCrossborder("transferSection.selected_target_country", {
@@ -63,12 +77,15 @@ export default function TransactionDetailsForm({
           })}
         </h2>
 
-        <p className="text-xl font-bold">{tCrossborder("transferSection.balance")}</p>
+        <p className="text-xl font-bold">
+          {tCrossborder("transferSection.balance")}
+        </p>
         <CurrencyDisplay
           selectedCurrency={selectedCurrency}
           mainCurrencySymbol={preferredStableCoin}
           onCurrencySelected={(currency, max) => {
             setSelectedCurrency(currency, max);
+            setMaxAmount(max);
             setError(""); // Clear any existing error
           }}
         />
@@ -88,13 +105,14 @@ export default function TransactionDetailsForm({
               onChange={handleAmountChange}
               disabled={!selectedCurrency}
             />
+
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
-                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol
-                : selectedCurrency?.id}
+                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
+                    ?.symbol
+                : selectedCurrency?.icon}
             </div>
           </div>
-
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {!selectedCurrency && (
             <p className="text-red-500 text-sm">
@@ -103,24 +121,26 @@ export default function TransactionDetailsForm({
           )}
         </div>
 
-        {selectedMethod?.type !== "crypto" && (
+        {selectedMethod?.type !== "crypto" && payoutCurrency !== "crypto" && (
           <MethodSelector
             methods={availableMethods}
-            selectable={Boolean(availableMethods && amount > 0)}
+            selectable={Boolean(availableMethods && parseFloat(amount) > 0)}
             amount={Number(amount)}
             exchangeRate={exchangeRate}
             loadedExchangeRate={loadedExchangeRate}
             setSelectedMethod={setSelectedMethod}
             selectedMethod={selectedMethod}
             sendingCurrency={getFiatInfoForStableCoin(preferredStableCoin)}
-            finalCurrency={getFiatInfo(payoutCurrency || "")}
+            finalCurrency={getFiatInfo(payoutCurrency)}
           />
         )}
 
         <div className="flex justify-end">
           <button
             className={`${
-              selectedMethod && (!error || isDevelopment) ? "bg-uhuBlue" : "bg-gray-300"
+              selectedMethod && (!error || isDevelopment)
+                ? "bg-uhuBlue"
+                : "bg-gray-300"
             } text-white font-bold py-2 px-4 rounded-lg mt-4`}
             disabled={!selectedMethod || (error && !isDevelopment)}
             onClick={() => swiperInstance?.slideTo(4)}
@@ -164,9 +184,17 @@ export default function TransactionDetailsForm({
                 </p>
                 <p>
                   <strong>{tCrossborder("transferSection.currency")}:</strong>{" "}
-                  {selectedCountry?.countryInfo.currency}
+                  {
+                    selectedCountry?.countryInfo.currency[
+                      Symbol.for(selectedCountry?.countryInfo.currency)
+                    ]
+                  }
                 </p>
-                <p className={`${selectedCountry?.countryInfo.gdp ? "" : "hidden"}`}>
+                <p
+                  className={`${
+                    selectedCountry?.countryInfo.gdp ? "" : "hidden"
+                  }`}
+                >
                   <strong>{tCrossborder("transferSection.gdp")}:</strong>{" "}
                   {selectedCountry?.countryInfo.gdp}
                 </p>
@@ -177,4 +205,4 @@ export default function TransactionDetailsForm({
       </div>
     </div>
   );
-} 
+}

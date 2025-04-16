@@ -4,18 +4,13 @@ import { Fragment, useState } from "react";
 import { BsX } from "react-icons/bs";
 import { useTranslation } from "next-i18next";
 import AddressDisplay from "../UI/AddressDisplay";
+import { FiatTransaction } from "../../types/payload-types";
 
-interface TransactionData {
-  [key: string]: string | number | boolean | null;
-  vendor?: any;
-  requestChatId?: string;
-  requestMessageId?: string;
-}
 
 interface TransactionModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  transactionData: TransactionData | null;
+  transactionData: FiatTransaction | null;
 }
 
 const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, closeModal, transactionData }) => {

@@ -1,7 +1,12 @@
 import { Account } from "thirdweb/wallets";
 import OnRamp from "../../crossborder/partner/deposit/OnRamp";
 import Unlimit from "../../crossborder/partner/deposit/Unlimit";
-import { Consumer, Vendor, PaymentTypesArray, Country } from "../../../types/payload-types";
+import {
+  Consumer,
+  Vendor,
+  PaymentTypesArray,
+  Country,
+} from "../../../types/payload-types";
 import React from "react";
 import Stasis from "../../crossborder/partner/deposit/Stasis/Stasis";
 import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
@@ -14,7 +19,7 @@ interface DepositPanelProps {
   startCurrency?: string;
   endCurrency?: string;
   account: Account;
-  user: Consumer | Vendor; 
+  user: Consumer | Vendor;
   country?: Country;
 }
 
@@ -38,13 +43,7 @@ export default function DepositPanel({
         />
       );
     case "onramp_money":
-      return (
-        <OnRamp
-          amount={amount}
-          account={account}
-          method={method}
-        />
-      );
+      return <OnRamp amount={amount} account={account} method={method} />;
     case "bitcoin_vn":
       return (
         <BitcoinVN
@@ -74,7 +73,7 @@ export default function DepositPanel({
     case "coinhako_helpdesk":
     case "ovex":
       return <DepositError errorType="helpdesk" />;
- 
+
     default:
       return <DepositError errorType="unavailable" />;
   }
