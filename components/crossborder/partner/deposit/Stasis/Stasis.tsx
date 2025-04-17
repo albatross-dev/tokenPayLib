@@ -175,7 +175,14 @@ export default function Stasis({ amount, account, user }: StasisProps) {
     setLoadingState("processing");
     try {
       const walletAddress = account.address;
-      const wallet_message = "test message";
+      const readableMessage = `I confirm the ownership of address ${
+        account.address
+      }. Signature time: ${new Date().toISOString()}.`;
+
+      // Convert this message to a hex string (this is what your example shows)
+      const wallet_message =
+        "0x" + Buffer.from(readableMessage).toString("hex");
+
       const wallet_signature = await account.signMessage({
         message: wallet_message,
       });
