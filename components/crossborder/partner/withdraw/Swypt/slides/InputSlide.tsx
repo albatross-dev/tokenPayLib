@@ -74,11 +74,11 @@ export const InputSlide: React.FC<InputSlideProps> = ({
         {formError && <p className="text-red-500 text-sm">{formError}</p>}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
         >
           {tCrossborder("withdraw.swypt.startTransaction")}
         </button>
       </form>
     </>
   );
-}; 
+};

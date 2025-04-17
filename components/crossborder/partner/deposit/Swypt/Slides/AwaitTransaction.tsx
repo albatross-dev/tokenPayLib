@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { HiChevronDoubleRight } from "react-icons/hi";
-import { AwaitTransactionProps } from './types';
+import { AwaitTransactionProps } from "./types";
 
 export function AwaitTransaction({
   amount,
@@ -9,7 +9,7 @@ export function AwaitTransaction({
   endCurrency,
   quote,
   account,
-  onFinalize
+  onFinalize,
 }: AwaitTransactionProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -51,10 +51,10 @@ export function AwaitTransaction({
 
       <button
         onClick={onFinalize}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+        className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
       >
         {tCrossborder("deposit.swypt.finalize")}
       </button>
     </>
   );
-} 
+}

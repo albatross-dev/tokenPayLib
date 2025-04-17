@@ -1,4 +1,10 @@
-import { Chain, ContractOptions, getContract, readContract, ThirdwebClient } from "thirdweb";
+import {
+  Chain,
+  ContractOptions,
+  getContract,
+  readContract,
+  ThirdwebClient,
+} from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
 
 /**
@@ -19,7 +25,6 @@ export default async function fetchBalance(
   abi: any[],
   accountAddress: string
 ): Promise<bigint> {
-
   try {
     const contract: Readonly<ContractOptions<any[]>> = getContract({
       client: client,
@@ -36,16 +41,15 @@ export default async function fetchBalance(
 
     console.log("fetchBalance result", typeof result, result);
 
-     if (typeof result !== "bigint") {
+    if (typeof result !== "bigint") {
       throw new Error("Failed to fetch balance");
     }
 
     return result;
   } catch (error) {
-    sendErrorReport(`Error fetching balance for ${accountAddress} ${contractAddress} on ${chain.name}`, error);
     return BigInt(0); // Return zero balance in case of an error
   }
-} 
+}
 
 export async function fetchTotalSupply(
   client: ThirdwebClient,
@@ -68,7 +72,10 @@ export async function fetchTotalSupply(
 
     return result;
   } catch (error) {
-    sendErrorReport(`Error fetching total supply for ${contractAddress} on ${chain.name}`, error);
+    sendErrorReport(
+      `Error fetching total supply for ${contractAddress} on ${chain.name}`,
+      error
+    );
     return BigInt(0); // Return zero balance in case of an error
   }
-} 
+}

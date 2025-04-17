@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { HiChevronDoubleRight } from "react-icons/hi";
-import { InputProps } from './types';
+import { InputProps } from "./types";
 
 export function Input({
   amount,
@@ -12,7 +12,7 @@ export function Input({
   formData,
   formError,
   onFormSubmit,
-  onInputChange
+  onInputChange,
 }: InputProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -71,11 +71,11 @@ export function Input({
         {formError && <p className="text-red-500 text-sm">{formError}</p>}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
         >
           {tCrossborder("withdraw.swypt.startTransaction")}
         </button>
       </form>
     </>
   );
-} 
+}

@@ -74,10 +74,6 @@ async function getBalance(
       decimals: currency.decimals,
     };
   } catch (error) {
-    sendErrorReport(
-      `CurrencySelector - Error fetching balance for ${symbol}:`,
-      error
-    );
     console.error(`Error fetching balance for ${symbol}:`, error);
   }
   return null;

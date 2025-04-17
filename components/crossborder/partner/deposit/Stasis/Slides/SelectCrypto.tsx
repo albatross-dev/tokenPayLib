@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import { CryptoAccount } from '../../../universal/stasis.types';
+import { CryptoAccount } from "../../../universal/stasis.types";
 
 interface SelectCryptoProps {
   cryptoAccounts: CryptoAccount[];
@@ -9,7 +9,11 @@ interface SelectCryptoProps {
   onAddCrypto: () => void;
 }
 
-export function SelectCrypto({ cryptoAccounts, onSelectCrypto, onAddCrypto }: SelectCryptoProps) {
+export function SelectCrypto({
+  cryptoAccounts,
+  onSelectCrypto,
+  onAddCrypto,
+}: SelectCryptoProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   return (
@@ -32,7 +36,7 @@ export function SelectCrypto({ cryptoAccounts, onSelectCrypto, onAddCrypto }: Se
                 {account.address}
               </p>
               <button
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition"
                 onClick={() => onSelectCrypto(account)}
               >
                 {tCrossborder("deposit.stasis.selectCrypto.button")}
@@ -54,4 +58,4 @@ export function SelectCrypto({ cryptoAccounts, onSelectCrypto, onAddCrypto }: Se
       </button>
     </div>
   );
-} 
+}

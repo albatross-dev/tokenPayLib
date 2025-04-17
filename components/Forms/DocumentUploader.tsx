@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Controller, useFormContext, Control } from 'react-hook-form';
-import { BsFileEarmarkText } from 'react-icons/bs';
-import { IoClose, IoAttachOutline } from 'react-icons/io5';
+import React, { useState, useRef, useEffect } from "react";
+import { Controller, useFormContext, Control } from "react-hook-form";
+import { BsFileEarmarkText } from "react-icons/bs";
+import { IoClose, IoAttachOutline } from "react-icons/io5";
 
 interface PreloadedFile {
   id: string | number;
@@ -19,7 +19,7 @@ interface DocumentUploadFieldProps {
 }
 
 const isPreloadedFile = (file: FileType): file is PreloadedFile => {
-  return file !== null && 'id' in file;
+  return file !== null && "id" in file;
 };
 
 const isFile = (file: FileType): file is File => {
@@ -37,16 +37,31 @@ const isFile = (file: FileType): file is File => {
  *   required={true}
  * />
  */
-const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control, label, required }: DocumentUploadFieldProps): JSX.Element => {
+const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
+  name,
+  control,
+  label,
+  required,
+}: DocumentUploadFieldProps): JSX.Element => {
   const [filePreview, setFilePreview] = useState<FileType>(null);
   const [error, setError] = useState<string | null>(null);
   const hiddenInputRef = useRef<HTMLInputElement>(null);
-  const { formState: { errors }, clearErrors, setValue, getValues, trigger } = useFormContext();
+  const {
+    formState: { errors },
+    clearErrors,
+    setValue,
+    getValues,
+    trigger,
+  } = useFormContext();
 
   // Fetch the existing file from the state (if available)
   useEffect(() => {
     const existingFile = getValues(name);
-    if (existingFile && typeof existingFile === 'object' && 'id' in existingFile) {
+    if (
+      existingFile &&
+      typeof existingFile === "object" &&
+      "id" in existingFile
+    ) {
       setFilePreview(existingFile as PreloadedFile);
     }
   }, [name, getValues]);
@@ -57,7 +72,10 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
   };
 
   // Handle file selection manually through the input
-  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>, onChange: (file: FileType) => void): void => {
+  const handleFileSelected = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    onChange: (file: FileType) => void
+  ): void => {
     const file = event.target.files?.[0];
     if (file) {
       setFilePreview(file);
@@ -92,7 +110,10 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
 
   // Parse and display errors for nested fields
   useEffect(() => {
-    const parseNestedError = (fieldName: string, errorObj: Record<string, any>): string | null => {
+    const parseNestedError = (
+      fieldName: string,
+      errorObj: Record<string, any>
+    ): string | null => {
       const regex = /([a-zA-Z]+)\[(\d+)\]\.(\w+)/;
       const match = fieldName.match(regex);
 
@@ -116,7 +137,12 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
 
     if (isPreloadedFile(filePreview)) {
       return (
-        <a href={filePreview.url} target="_blank" rel="noopener noreferrer" className="text-sm text-uhuBlue underline">
+        <a
+          href={filePreview.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-uhuBlue underline"
+        >
           {filePreview.filename}
         </a>
       );
@@ -147,7 +173,7 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
             <button
               type="button"
               onClick={handleUploadClick}
-              className="bg-uhuBlue text-white flex items-center px-4 py-2 rounded-lg mt-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="bg-uhuBlue text-white flex items-center px-4 py-2 rounded-lg mt-2 hover:bg-uhuBlue focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               <IoAttachOutline className="w-5 h-5 mr-2" />
               Datei hochladen
@@ -158,7 +184,7 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
           <input
             type="file"
             ref={hiddenInputRef}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={(e) => handleFileSelected(e, onChange)}
           />
 
@@ -189,4 +215,4 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({ name, control
   );
 };
 
-export default DocumentUploadField; 
+export default DocumentUploadField;

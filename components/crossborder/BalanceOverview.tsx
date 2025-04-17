@@ -29,7 +29,6 @@ interface Balance {
   decimals: number;
 }
 
-
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
@@ -67,29 +66,27 @@ export default function BalanceOverview() {
         });
 
         try {
-          const result = await readContract({
-            contract,
-            method: "function balanceOf(address) view returns (uint256)",
-            params: [account.address],
-          });
+          if (symbol) {
+            const result = await readContract({
+              contract,
+              method: "function balanceOf(address) view returns (uint256)",
+              params: [account.address],
+            });
 
-          const balance =
-            Number(result || 0) / numberWithZeros(currency.decimals);
+            const balance =
+              Number(result || 0) / numberWithZeros(currency.decimals);
 
-          if (balance > 0) {
-            return {
-              symbol,
-              balance,
-              currency: currency.id,
-              icon: currency.icon,
-              decimals: currency.decimals,
-            };
+            if (balance > 0) {
+              return {
+                symbol,
+                balance,
+                currency: currency.id,
+                icon: currency.icon,
+                decimals: currency.decimals,
+              };
+            }
           }
         } catch (error) {
-          sendErrorReport(
-            `BalanceOverview - Error fetching balance for ${symbol}`,
-            error
-          );
           console.error(`Error fetching balance for ${symbol}:`, error);
         }
         return null;

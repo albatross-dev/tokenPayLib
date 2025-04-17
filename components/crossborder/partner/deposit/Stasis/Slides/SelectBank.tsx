@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
-import { BankAccount } from '../../../universal/stasis.types';
+import { BankAccount } from "../../../universal/stasis.types";
 
 interface SelectBankProps {
   bankAccounts: BankAccount[];
@@ -9,7 +9,11 @@ interface SelectBankProps {
   onAddBank: () => void;
 }
 
-export function SelectBank({ bankAccounts, onSelectBank, onAddBank }: SelectBankProps) {
+export function SelectBank({
+  bankAccounts,
+  onSelectBank,
+  onAddBank,
+}: SelectBankProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   return (
@@ -32,13 +36,12 @@ export function SelectBank({ bankAccounts, onSelectBank, onAddBank }: SelectBank
                 {account.holder_name}
               </p>
               <p className="text-xs text-gray-500 mb-1">
-                {tCrossborder("deposit.stasis.selectBank.bank")} {account.bank_name}
+                {tCrossborder("deposit.stasis.selectBank.bank")}{" "}
+                {account.bank_name}
               </p>
-              <p className="text-xs text-gray-500 mb-1">
-                IBAN: {account.iban}
-              </p>
+              <p className="text-xs text-gray-500 mb-1">IBAN: {account.iban}</p>
               <button
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition"
                 onClick={() => onSelectBank(account)}
               >
                 {tCrossborder("deposit.stasis.selectBank.button")}
@@ -60,4 +63,4 @@ export function SelectBank({ bankAccounts, onSelectBank, onAddBank }: SelectBank
       </button>
     </div>
   );
-} 
+}

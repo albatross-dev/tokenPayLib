@@ -35,7 +35,7 @@ export default function SelectBankAccount({
                 {tCrossborder("withdraw.stasis.IBAN")} {account.iban}
               </p>
               <button
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition"
                 onClick={() => handleSelectBankAccount(account)}
               >
                 {tCrossborder("withdraw.stasis.chooseThisAcount")}

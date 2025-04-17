@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
@@ -15,10 +15,10 @@ export function StasisKYC() {
       </p>
       <Link
         href="/kyc/stasis"
-        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
+        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition flex items-center justify-center"
       >
         {tCrossborder("deposit.stasis.kyc.button")}
       </Link>
     </div>
   );
-} 
+}

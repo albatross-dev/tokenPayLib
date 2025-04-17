@@ -57,8 +57,6 @@ const chainIdSlugDictionary = {
   [base.id]: "uniswapPoolsBase",
 };
 
-let oldActiveChainId: number;
-
 type exchangeStateType = "normal" | "processing" | "error";
 
 interface TokenSwapSectionProps {
@@ -238,10 +236,9 @@ export default function TokenSwapSection({
   }
 
   useEffect(() => {
-    if (activeChain?.id && activeChain?.id !== oldActiveChainId) {
+    if (activeChain?.id) {
       setOriginTokens(getOriginTokens());
-      fetchPaths();
-      oldActiveChainId = activeChain.id;
+      //fetchPaths();
     }
   }, [activeChain]);
 

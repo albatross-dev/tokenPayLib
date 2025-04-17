@@ -365,7 +365,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
               <p className="text-red-500 text-sm">{errors.conversionError}</p>
             )}
             <button
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
               onClick={handleSend}
               disabled={isLoading || !selectedToken || loadingQuote}
             >

@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import { useTranslation } from "next-i18next";
 import { HiChevronDoubleRight } from "react-icons/hi2";
-import { OverviewProps } from './types';
-import { getFiatCurrencyCode } from '../../../../../../utilities/stableCoinsMaps';
+import { OverviewProps } from "./types";
+import { getFiatCurrencyCode } from "../../../../../../utilities/stableCoinsMaps";
 
 export function Overview({ quote, onStartTransaction }: OverviewProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -19,7 +19,9 @@ export function Overview({ quote, onStartTransaction }: OverviewProps) {
             {quote.rate}
           </p>
           <p className="text-red-500">
-            <strong>{tCrossborder("deposit.bitcoinvn.overview.validFor")}</strong>{" "}
+            <strong>
+              {tCrossborder("deposit.bitcoinvn.overview.validFor")}
+            </strong>{" "}
             {quote.expiresAt &&
               Math.round(
                 (new Date(quote.expiresAt).getTime() - new Date().getTime()) /
@@ -42,7 +44,8 @@ export function Overview({ quote, onStartTransaction }: OverviewProps) {
           </div>
           <div className="flex flex-col items-end justify-end gap-1">
             <p className="text-6xl">
-              {quote.settleAmount} {quote.settleMethod && getFiatCurrencyCode(quote.settleMethod)}
+              {quote.settleAmount}{" "}
+              {quote.settleMethod && getFiatCurrencyCode(quote.settleMethod)}
             </p>
             <strong className="text-gray-500">
               {tCrossborder("deposit.bitcoinvn.overview.credit")}
@@ -52,10 +55,10 @@ export function Overview({ quote, onStartTransaction }: OverviewProps) {
       </div>
       <button
         onClick={onStartTransaction}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+        className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
       >
         {tCrossborder("deposit.bitcoinvn.overview.button")}
       </button>
     </div>
   );
-} 
+}

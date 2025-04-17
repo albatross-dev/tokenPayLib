@@ -73,7 +73,7 @@ export default function Koywe({
       </p>
       <Link
         href="/kyc/koywe"
-        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition flex items-center justify-center"
+        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition flex items-center justify-center"
       >
         {tCrossborder("withdraw.koywe.kyc.button")}
       </Link>
