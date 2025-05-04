@@ -153,7 +153,6 @@ const FormInput = forwardRef<
                   onlyIso={props.onlyIso}
                   validCountries={props.validCountries}
                   onSelect={(country) => {
-                    console.log("country", country);
                     onChange(country);
                   }}
                   disabled={props.disabled}

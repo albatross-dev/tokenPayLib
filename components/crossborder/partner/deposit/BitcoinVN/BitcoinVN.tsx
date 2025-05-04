@@ -9,11 +9,11 @@ import {
   Created,
   Unverified,
   ComponentState,
-  BitcoinVNTransaction
-} from './Slides';
-import { BitcoinVNQuote } from "../../../methods/BitcoinVNQuote";
+  BitcoinVNTransaction,
+} from "./Slides";
 import { getQuote } from "../../../../../utilities/partner/bitcoinvn";
 import { sendErrorReport } from "../../../../../../context/UserContext";
+import { BitcoinVNQuote } from "../../universal/bitcoinVNUtils";
 
 interface BitcoinVNProps {
   amount: number;
@@ -32,7 +32,9 @@ export default function BitcoinVN({
 }: BitcoinVNProps) {
   const [state, setState] = useState<ComponentState>("loading");
   const [quote, setQuote] = useState<BitcoinVNQuote | null>(null);
-  const [transaction, setTransaction] = useState<BitcoinVNTransaction | null>(null);
+  const [transaction, setTransaction] = useState<BitcoinVNTransaction | null>(
+    null
+  );
 
   useEffect(() => {
     setState("loading");
@@ -96,10 +98,12 @@ export default function BitcoinVN({
     case "error":
       return <Error />;
     case "overview":
-      return quote ? <Overview quote={quote} onStartTransaction={handleStartTransaction} /> : null;
+      return quote ? (
+        <Overview quote={quote} onStartTransaction={handleStartTransaction} />
+      ) : null;
     case "created":
       return transaction ? <Created transaction={transaction} /> : null;
     default:
       return <Loading />;
   }
-} 
+}

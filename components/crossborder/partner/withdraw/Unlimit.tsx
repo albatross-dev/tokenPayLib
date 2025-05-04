@@ -6,12 +6,17 @@ import { Account } from "thirdweb/wallets";
 
 interface UnlimitProps {
   amount: number;
-  account: Account
+  account: Account;
   user: Consumer | Vendor;
-  country: Country
+  country: Country;
 }
 
-const Unlimit: React.FC<UnlimitProps> = ({ amount, account, user, country }) => {
+const Unlimit: React.FC<UnlimitProps> = ({
+  amount,
+  account,
+  user,
+  country,
+}) => {
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
   const { setIsHelpModalOpen } = useUhuConfig();

@@ -7,7 +7,7 @@ import {
   sendAndConfirmTransaction,
 } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { getSwyptQuote, SwyptQuoteResponse } from "../../../methods/SwyptQuote";
+import { getSwyptQuote, SwyptQuoteResponse } from "../../universal/swyptUtils";
 import {
   swyptContract,
   swyptContractAddress,
@@ -94,7 +94,7 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
         ],
       });
 
-      const { transactionHash: approveHash } = await sendAndConfirmTransaction({
+      await sendAndConfirmTransaction({
         account,
         transaction: approve,
       });
@@ -104,37 +104,19 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
         transaction: withdrawToEscrow,
       });
 
-      const result = await axios.post(
-        "https://pool.swypt.io/api/swypt-offramp",
-        {
-          partyB: formData.phone,
-          tokenAddress: selectedToken.contractAddress,
-          hash: transactionHash,
-          chain: "Polygon",
-        }
-      );
+      // call the offramp endpoint
 
-      const transactionId = result.data.orderID;
-
-      await axios.post("/api/fiatTransaction", {
-        vendor: user.id,
-        partner: "swypt",
-        amount: Number(amount),
-        currency: selectedToken.contractAddress,
-        currencyName: selectedToken.id.toUpperCase(),
+      await axios.post("/api/fiatTransaction/swypt/offramp", {
+        phone: formData.phone,
+        chain: "polygon",
+        tokenAddress: selectedToken.contractAddress,
+        tokenDecimals: selectedToken.decimals,
         transactionHash: transactionHash,
-        UUID: transactionId,
         sendingWallet: account?.address,
-        currencyDecimals: selectedToken.decimals,
-        receivingWallet: swyptContractAddress,
-        toAccountBankName: "Mobile Money",
-        toAccountIdentifier: formData.phone,
-        toNetwork: "fiat",
-        fromNetwork: "polygon",
-        status: "pending",
-        type: "Withdraw",
-        finalCurrency: "KES",
-        finalAmount: quote!.outputAmount - quote!.outputAmount * 0.004,
+        amount: Number(amount),
+        tokenId: selectedToken.id.toUpperCase(),
+        swyptContractAddress: swyptContractAddress,
+        outputAmount: Number(amount),
       });
 
       setState("success");

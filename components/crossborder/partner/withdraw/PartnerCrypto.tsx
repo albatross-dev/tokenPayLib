@@ -29,8 +29,7 @@ import {
 import { PATHS } from "../../../../utilities/crypto/getPath";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
 import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
-import { PaymentTypesArray } from "../../../../types/payload-types";
-import { Country } from "../../../../types/payload-types";
+import { PaymentTypesArray, Country } from "../../../../types/payload-types";
 import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 
 export type TransactionState = "transaction" | "success";

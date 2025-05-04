@@ -12,9 +12,10 @@ import Stasis from "../../crossborder/partner/deposit/Stasis/Stasis";
 import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
 import BitcoinVN from "../../crossborder/partner/deposit/BitcoinVN/BitcoinVN";
 import DepositError from "../DepositError";
-
+import { QuotePaymentType } from "./DepositMethodSelector";
+import Koywe from "../../crossborder/partner/deposit/Koywe/Koywe";
 interface DepositPanelProps {
-  method: PaymentTypesArray[number];
+  method: QuotePaymentType;
   amount: number;
   startCurrency?: string;
   endCurrency?: string;
@@ -65,6 +66,8 @@ export default function DepositPanel({
           endCurrency={endCurrency}
         />
       );
+    case "koywe":
+      return <Koywe method={method} account={account} country={country} />;
     case "stasis":
       return <Stasis amount={amount} account={account} user={user} />;
     case "bitcoin_vn_helpdesk":

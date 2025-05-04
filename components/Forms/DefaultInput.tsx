@@ -1,5 +1,10 @@
-import React from 'react';
-import { UseFormRegister, Path } from 'react-hook-form';
+import React, { useEffect } from "react";
+import {
+  UseFormRegister,
+  Path,
+  UseFormGetFieldState,
+  UseFormStateProps,
+} from "react-hook-form";
 
 interface DefaultInputProps<T extends Record<string, any>> {
   disabled?: boolean;
@@ -7,10 +12,12 @@ interface DefaultInputProps<T extends Record<string, any>> {
   fieldName: Path<T>;
   methods: {
     register: UseFormRegister<T>;
+    getFieldState: UseFormGetFieldState<T>;
   };
   placeholder?: string | number;
   parsedRequired?: boolean;
   step?: string | number;
+  validate?: (value: any) => boolean | string;
 }
 
 /**
@@ -28,22 +35,40 @@ function DefaultInput<T extends Record<string, any>>({
   methods,
   placeholder,
   parsedRequired,
-  step
+  step,
+  validate,
 }: DefaultInputProps<T>): JSX.Element {
+  const { getFieldState } = methods;
+  const fieldState = getFieldState(fieldName);
+
+  useEffect(() => {
+    console.log("fieldState", fieldName, fieldState);
+  }, [fieldState]);
+
   return (
-    <input
-      id={String(fieldName)}
-      name={String(fieldName)}
-      type={type}
-      disabled={disabled}
-      step={step}
-      placeholder={placeholder?.toString()}
-      {...methods.register(fieldName, { required: parsedRequired })}
-      className={`mt-1 p-2 w-full border rounded-md ${
-        disabled ? "text-gray-500" : ""
-      }`}
-    />
+    <>
+      <input
+        id={String(fieldName)}
+        name={String(fieldName)}
+        type={type}
+        disabled={disabled}
+        step={step}
+        placeholder={placeholder?.toString()}
+        {...methods.register(fieldName, {
+          validate: validate,
+          required: parsedRequired,
+        })}
+        className={`mt-1 p-2 w-full border rounded-md ${
+          disabled ? "text-gray-500" : ""
+        }`}
+      />
+      {fieldState.error && (
+        <p className="text-red-500 text-sm">
+          {fieldState.error?.message?.toString()}
+        </p>
+      )}
+    </>
   );
 }
 
-export default DefaultInput; 
+export default DefaultInput;

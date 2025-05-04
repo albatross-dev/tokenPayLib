@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef,
+} from "react";
 import currencies, {
   formatCrypto,
   formatNumberWithCurrency,
@@ -52,11 +58,26 @@ export default function BalanceOverview() {
 
   const euroWhitelist: string[] = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
   const usdWhitelist: string[] = ["USDC", "USDT"]; // Whitelisted USD stablecoins
+  const popularWhitelist: string[] = [
+    "WETH",
+    "WMATIC",
+    "WBTC",
+    "USDC.E",
+    "DAI",
+  ];
+
+  const [lastFetchTime, setLastFetchTime] = useState(0);
+  const DEBOUNCE_DELAY = 10000; // 10 seconds in milliseconds
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
-
-    const balancePromises = Object.entries(currencies).map(
+    console.log("fetching crossborder balances");
+    let whiteList = [...euroWhitelist, ...usdWhitelist, ...popularWhitelist];
+    let currenciesToFetch = Object.entries(currencies).filter(([symbol]) =>
+      whiteList.includes(symbol)
+    );
+    const balancePromises = currenciesToFetch.map(
       async ([symbol, currency]: [string, SimpleToken]) => {
         const contract = getContract({
           client: client,
@@ -123,14 +144,45 @@ export default function BalanceOverview() {
     }
   };
 
+  // Properly debounced fetchBalances function
+  const debouncedFetchBalances = useCallback(() => {
+    // Clear any existing timeout to prevent multiple calls
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    const now = Date.now();
+    const timeSinceLastFetch = now - lastFetchTime;
+
+    if (timeSinceLastFetch < DEBOUNCE_DELAY) {
+      // If less than 10 seconds have passed, schedule the fetch for later
+      const delay = DEBOUNCE_DELAY - timeSinceLastFetch;
+      fetchTimeoutRef.current = setTimeout(() => {
+        fetchBalances();
+        setLastFetchTime(Date.now());
+        fetchTimeoutRef.current = null;
+      }, delay);
+    } else {
+      // If more than 10 seconds have passed, fetch immediately
+      fetchBalances();
+      setLastFetchTime(now);
+    }
+  }, [fetchBalances, lastFetchTime]);
+
   useEffect(() => {
     setIsClient(true);
     if (uhuConfig !== "loading") {
-      fetchBalances();
-      const interval = setInterval(fetchBalances, 10000);
-      return () => clearInterval(interval);
+      debouncedFetchBalances();
+      const interval = setInterval(debouncedFetchBalances, 10000);
+      return () => {
+        clearInterval(interval);
+        // Also clear any pending timeout when component unmounts
+        if (fetchTimeoutRef.current) {
+          clearTimeout(fetchTimeoutRef.current);
+        }
+      };
     }
-  }, [account, client, uhuConfig, loading]);
+  }, [account, client, uhuConfig, loading, debouncedFetchBalances]);
 
   return (
     <>

@@ -1,11 +1,16 @@
 /**
  * Converts the processed data object into a FormData object.
- * @returns {FormData} The FormData object containing the processed data.
+ * @returns The FormData object containing the processed data.
  */
 function getFormData(processedData: Record<string, any>) {
   const formData = new FormData();
   // Helper function to check for files recursively
-  const handleDataRecursively = (key: string, value: any, parent: any, formKey = "") => {
+  const handleDataRecursively = (
+    key: string,
+    value: any,
+    parent: any,
+    formKey = ""
+  ) => {
     if (Array.isArray(value)) {
       value.forEach((item, index) => {
         handleDataRecursively(`${key}[${index}]`, item, value, formKey);

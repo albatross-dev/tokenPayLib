@@ -1,5 +1,5 @@
 import { FiatTransaction } from "../../../../../../types/payload-types";
-import { BitcoinVNQuote } from "../../../../methods/BitcoinVNQuote";
+import { BitcoinVNQuote } from "../../../universal/bitcoinVNUtils";
 
 export type ComponentState = "loading" | "error" | "overview" | "created";
 
@@ -32,4 +32,4 @@ export interface LoadingProps {
 
 export interface ErrorProps {
   // Empty for now as it doesn't require any props
-} 
+}

@@ -43,10 +43,13 @@ export default function Table({
   const queryClient = useQueryClient();
   const { t } = useTranslation("common");
 
-  async function fetchData(query: TableQuery, collection: Collection): Promise<FetchedData> {
+  async function fetchData(
+    query: TableQuery,
+    collection: Collection
+  ): Promise<FetchedData> {
     try {
       const res = await axios(
-        `/api/${collection}?${QueryString.stringify(query)}`
+        `/api/${collection.toString()}?${QueryString.stringify(query)}`
       );
       return res.data;
     } catch (error) {
@@ -58,7 +61,7 @@ export default function Table({
         limit: 20,
         totalDocs: 0,
         hasNextPage: false,
-        hasPrevPage: false
+        hasPrevPage: false,
       };
     }
   }
@@ -115,8 +118,9 @@ export default function Table({
           </thead>
           <tbody className="divide-y divide-gray-200 flex-shrink h-full overflow-y-auto">
             {table.getRowModel().rows.map((row) => {
-              const isOlderThan30Min = row.original.updatedAt ?
-                moment().diff(moment(row.original.updatedAt), "minutes") > 30 : false;
+              const isOlderThan30Min = row.original.updatedAt
+                ? moment().diff(moment(row.original.updatedAt), "minutes") > 30
+                : false;
               return (
                 <tr
                   key={row.id}
@@ -127,9 +131,7 @@ export default function Table({
                   }`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                    >
+                    <td key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

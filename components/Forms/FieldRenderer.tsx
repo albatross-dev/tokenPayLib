@@ -37,7 +37,6 @@ const FieldRenderer = ({
             return null;
           }
         }
-
         // parse required field, check if it is a function or boolean or undefined
         let parsedRequired = false;
         if (field.required) {
@@ -126,7 +125,7 @@ const FieldRenderer = ({
                   control={methods.control}
                   disabled={alwaysEditable ? false : field.disabled}
                   required={parsedRequired}
-                  validCountries={fields.validCountries}
+                  validCountries={field.validCountries}
                   id={fieldName}
                   {...methods.register(fieldName, { required: parsedRequired })}
                 />
@@ -176,6 +175,7 @@ const FieldRenderer = ({
                   fieldName={fieldName}
                   methods={methods}
                   parsedRequired={parsedRequired}
+                  validate={field.validate}
                   step={step}
                 />
               )}

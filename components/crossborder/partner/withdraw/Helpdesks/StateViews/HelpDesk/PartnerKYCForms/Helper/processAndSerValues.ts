@@ -1,11 +1,18 @@
 import { UseFormSetValue, Path } from "react-hook-form";
-import { Consumer, User, Vendor } from "../../../../../../../../../types/payload-types";
+import {
+  Consumer,
+  User,
+  Vendor,
+} from "../../../../../../../../../types/payload-types";
 import formatDateForInput from "../../../../../../../../../utilities/forms/formatDateForInput";
 
 // Recursive function to preprocess and set values in nested data structures
-const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, setValue: UseFormSetValue<T>): void => {
+const preprocessDataForHelpDesk = <T extends Record<string, any>>(
+  user: User,
+  setValue: UseFormSetValue<T>
+): void => {
   let userCp: Vendor | Consumer = JSON.parse(JSON.stringify(user));
-  
+
   // Remove specific transaction properties
   delete userCp.currentOvexTransaction;
   delete userCp.currentRomaTransaction;
@@ -18,7 +25,11 @@ const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, se
     Object.entries(data).forEach(([key, value]) => {
       const fullKey = parentKey ? `${parentKey}.${key}` : key; // Handles nested keys
 
-      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively call the function for nested objects
         loop(value, fullKey);
       } else if (Array.isArray(value)) {
@@ -30,7 +41,11 @@ const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, se
         });
       } else {
         // Check if the value is a valid ISO date string
-        if (typeof value === "string" && !isNaN(Date.parse(value)) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
+        if (
+          typeof value === "string" &&
+          !isNaN(Date.parse(value)) &&
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+        ) {
           const formattedDate = formatDateForInput(value);
           console.log("formattedDate", key, value, formattedDate);
           setValue(fullKey as Path<T>, formattedDate as any);
@@ -45,4 +60,4 @@ const preprocessDataForHelpDesk = <T extends Record<string, any>>(user: User, se
   loop(userCp);
 };
 
-export default preprocessDataForHelpDesk; 
+export default preprocessDataForHelpDesk;

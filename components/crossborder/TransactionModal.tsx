@@ -76,7 +76,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                       {/* ... additional rows */}
                       {/* Dynamically create rows for items */}
                       {Object.entries(transactionData).map(
-                        ([key, value], index) => (
+                        ([key, value]: [string, any], index) => (
                           <tr key={index}>
                             <td className="py-2 whitespace-nowrap text-sm font-medium text-gray-500">
                               {t(key)}{" "}

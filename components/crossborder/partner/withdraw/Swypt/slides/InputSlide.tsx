@@ -3,7 +3,7 @@ import React from "react";
 import { HiChevronDoubleRight } from "react-icons/hi";
 import { FormData } from "../types";
 import { PaymentTypesArray } from "../../../../../../types/payload-types";
-import { SwyptQuoteResponse } from "../../../../methods/SwyptQuote";
+import { SwyptQuoteResponse } from "../../../universal/swyptUtils";
 
 interface InputSlideProps {
   amount: number;

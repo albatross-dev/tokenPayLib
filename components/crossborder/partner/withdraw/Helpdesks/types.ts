@@ -16,7 +16,6 @@ export type TransactionState =
   | "manuel"
   | "paymentPending";
 
-
 export interface HelpDeskProps {
   country: Country;
   amount: number;

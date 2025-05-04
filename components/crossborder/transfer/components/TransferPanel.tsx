@@ -62,6 +62,16 @@ export default function TransferPanel({
           method={selectedMethod}
         />
       );
+    case "koywe":
+      return (
+        <Koywe
+          amount={amount}
+          account={account}
+          user={user}
+          method={selectedMethod}
+          country={selectedCountry}
+        />
+      );
     case "bitcoin_vn_helpdesk":
     case "koywe_helpdesk":
     case "kotanipay_helpdesk":

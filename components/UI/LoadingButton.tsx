@@ -1,7 +1,14 @@
 import { HiQuestionMarkCircle, HiLockClosed, HiCheck } from "react-icons/hi2";
 import React from "react";
+import showErrorPopup, { ErrorDetails } from "../Modals/ErrorPrompt";
 
 export type LoadingButtonStates = "processing" | "error" | "success" | "normal";
+
+export type LoadingButtonError = {
+  message: string;
+  title: string;
+  error: ErrorDetails;
+};
 
 interface LoadingButtonProps {
   isLoading: LoadingButtonStates;
@@ -9,6 +16,7 @@ interface LoadingButtonProps {
   children: React.ReactNode;
   openError?: () => void;
   active?: boolean;
+  error?: LoadingButtonError;
 }
 
 const LoadingButton: React.FC<LoadingButtonProps> = ({
@@ -17,6 +25,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   children,
   openError,
   active = true,
+  error,
 }) => {
   let buttonStyles =
     "bw-full h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent w-full md:w-auto text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ";
@@ -56,6 +65,15 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
       <>
         <div className="w-7"></div>
         {children}
+        {error && (
+          <HiQuestionMarkCircle
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              showErrorPopup(error.title, error.message, error.error);
+            }}
+            className="h-5 w-5 text-white ml-2"
+          />
+        )}
         {typeof openError === "function" && (
           <HiQuestionMarkCircle
             onClick={(e: React.MouseEvent) => {
@@ -91,19 +109,17 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
       {buttonContent}
       {isLoading === "success" ? (
         <HiCheck className="h-5 w-5 text-white ml-2" />
-      ) : (
-        isLoading !== "processing" && isLoading !== "error" ? (
-          active ? (
-            <div></div>
-          ) : (
-            <HiLockClosed className="h-5 w-5 text-white ml-2" />
-          )
+      ) : isLoading !== "processing" && isLoading !== "error" ? (
+        active ? (
+          <div></div>
         ) : (
-          <></>
+          <HiLockClosed className="h-5 w-5 text-white ml-2" />
         )
+      ) : (
+        <></>
       )}
     </button>
   );
 };
 
-export default LoadingButton; 
+export default LoadingButton;
