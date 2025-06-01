@@ -6,6 +6,22 @@ import {
   ThirdwebClient,
 } from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
+import { queryClient } from "../../../pages/_app";
+
+// Custom error types to distinguish between different failure scenarios
+class ZeroBalanceError extends Error {
+  constructor(message: string = "Balance is 0") {
+    super(message);
+    this.name = "ZeroBalanceError";
+  }
+}
+
+class ContractError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ContractError";
+  }
+}
 
 /**
  * Fetches the balance of a given account address from a specified contract on a specified blockchain.
@@ -18,7 +34,7 @@ import { sendErrorReport } from "../../../context/UserContext";
  * @returns {Promise<bigint>} - The balance of the account in the contract, or 0 in case of an error.
  * @throws {Error} - Throws an error if the balance could not be fetched.
  */
-export default async function fetchBalance(
+async function fetchBalanceRaw(
   client: ThirdwebClient,
   chain: Chain,
   contractAddress: string,
@@ -26,6 +42,10 @@ export default async function fetchBalance(
   accountAddress: string
 ): Promise<bigint> {
   try {
+    if (process.env.NEXT_PUBLIC_NEXT_ENV === "development") {
+      console.log("fetchBalance RAW");
+    }
+
     const contract: Readonly<ContractOptions<any[]>> = getContract({
       client: client,
       chain,
@@ -39,16 +59,80 @@ export default async function fetchBalance(
       params: [accountAddress],
     });
 
-    console.log("fetchBalance result", typeof result, result);
-
     if (typeof result !== "bigint") {
-      throw new Error("Failed to fetch balance");
+      return null;
     }
 
     return result;
   } catch (error) {
-    return BigInt(0); // Return zero balance in case of an error
+    console.log("fetchBalance RAW error", error);
+    return null;
   }
+}
+
+// Generate a consistent cache key for the balance query
+function getBalanceQueryKey(
+  chainId: number,
+  contractAddress: string,
+  accountAddress: string
+): string[] {
+  return [
+    "balance",
+    chainId.toString(),
+    contractAddress.toLowerCase(),
+    accountAddress.toLowerCase(),
+  ];
+}
+
+// Cached version using QueryClient
+export default async function fetchBalance(
+  client: ThirdwebClient,
+  chain: Chain,
+  contractAddress: string,
+  abi: any[],
+  accountAddress: string,
+  options?: {
+    staleTime?: number; // How long data stays fresh (default: 30 seconds)
+  }
+): Promise<bigint> {
+  const queryKey = getBalanceQueryKey(
+    chain.id,
+    contractAddress,
+    accountAddress
+  );
+
+  if (process.env.NEXT_PUBLIC_NEXT_ENV === "development") {
+    console.log("fetchBalance queryKey", queryKey);
+  }
+
+  const defaultOptions = {
+    staleTime: 30 * 1000, // 30 seconds
+    ...options,
+  };
+
+  let lastResult = queryClient.getQueryData<bigint>(queryKey);
+
+  if (lastResult === BigInt(0)) {
+    defaultOptions.staleTime = 5 * 60 * 1000; // 5 minutes
+  } else if (lastResult === null) {
+    defaultOptions.staleTime = Infinity; // Never stale
+  }
+
+  const result = await queryClient.fetchQuery<bigint>({
+    queryKey,
+    queryFn: () => {
+      return fetchBalanceRaw(
+        client,
+        chain,
+        contractAddress,
+        abi,
+        accountAddress
+      );
+    },
+    staleTime: defaultOptions.staleTime,
+  });
+
+  return result;
 }
 
 export async function fetchTotalSupply(

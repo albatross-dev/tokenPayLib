@@ -8,12 +8,9 @@ import React, {
   useRef,
 } from "react";
 import currencies, {
-  formatCrypto,
   formatNumberWithCurrency,
 } from "../../utilities/crypto/currencies";
-import MiniLoader from "../UI/MiniLoader";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
-import Image from "next/image";
 
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
@@ -25,8 +22,8 @@ import UniversalModal from "../Modals/UniversalModal";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import ConvertPopup from "./ConverterPopup";
-import { sendErrorReport } from "../../../context/UserContext";
 import { SimpleToken } from "../../types/token.types";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
 interface Balance {
   symbol: string;
   balance: number;
@@ -79,28 +76,20 @@ export default function BalanceOverview() {
     );
     const balancePromises = currenciesToFetch.map(
       async ([symbol, currency]: [string, SimpleToken]) => {
-        const contract = getContract({
-          client: client,
-          chain: polygon,
-          address: currency.contractAddress,
-          abi: currency.abi,
-        });
-
         try {
           if (symbol) {
-            const result = await readContract({
-              contract,
-              method: "function balanceOf(address) view returns (uint256)",
-              params: [account.address],
-            });
-
-            const balance =
-              Number(result || 0) / numberWithZeros(currency.decimals);
+            let balance = await fetchBalance(
+              client,
+              polygon,
+              currency.contractAddress,
+              currency.abi,
+              account.address
+            );
 
             if (balance > 0) {
               return {
                 symbol,
-                balance,
+                balance: Number(balance) / numberWithZeros(currency.decimals),
                 currency: currency.id,
                 icon: currency.icon,
                 decimals: currency.decimals,

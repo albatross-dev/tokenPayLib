@@ -14,6 +14,7 @@ import Link from "next/link";
 import { sendErrorReport } from "../../../context/UserContext";
 import { UhuConfigContext } from "../contexts/UhuConfigContext";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
@@ -35,7 +36,6 @@ export default function BalanceOverview() {
   useEffect(() => {
     setIsClient(true);
 
-
     if (uhuConfig === "loading") return;
 
     const fetchBalances = async () => {
@@ -43,27 +43,19 @@ export default function BalanceOverview() {
 
       const balancePromises = Object.entries(currencies).map(
         async ([symbol, currency]) => {
-          const contract = getContract({
-            client: client,
-            chain: polygon,
-            address: currency.contractAddress,
-            abi: currency.abi,
-          });
-
           try {
-            const result = await readContract({
-              contract,
-              method: "function balanceOf(address) view returns (uint256)",
-              params: [account.address],
-            });
-
-            const balance =
-              Number(result || 0) / numberWithZeros(currency.decimals);
+            const balance = await fetchBalance(
+              client,
+              polygon,
+              currency.contractAddress,
+              currency.abi,
+              account.address
+            );
 
             if (balance > 0) {
               return {
                 symbol,
-                balance,
+                balance: Number(balance) / numberWithZeros(currency.decimals),
                 currency: currency.id,
                 icon: currency.icon,
                 decimals: currency.decimals,
@@ -145,7 +137,7 @@ export default function BalanceOverview() {
             href={"/deposit"}
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
-             {tAccount("deposit")}
+            {tAccount("deposit")}
           </Link>
         </div>
       </div>

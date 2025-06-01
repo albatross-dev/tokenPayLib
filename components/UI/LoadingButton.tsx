@@ -69,7 +69,9 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
           <HiQuestionMarkCircle
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              showErrorPopup(error.title, error.message, error.error);
+              showErrorPopup(undefined, error.title, error.message, {
+                error: error.error,
+              });
             }}
             className="h-5 w-5 text-white ml-2"
           />

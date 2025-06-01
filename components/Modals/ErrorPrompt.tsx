@@ -34,18 +34,26 @@ export interface ErrorDetails {
 
 interface ErrorPopupProps {
   titleKey?: string | null;
+  titleText?: string | null;
   errorDetails: ErrorDetails;
   onClose: () => void;
+  action?: {
+    buttonText: string;
+    onAction: () => void;
+  };
 }
 
 // This component is now designed to be rendered imperatively
 const ErrorPopup: React.FC<ErrorPopupProps> = ({
   titleKey,
+  titleText,
   errorDetails,
   onClose,
+  action,
 }) => {
   const { t } = useTranslation("common"); // Assuming 'common' namespace for generic terms
   const [isOpen, setIsOpen] = useState(true); // Control open state internally
+  const [isActionClicked, setIsActionClicked] = useState(false);
 
   // Extract details safely
   const message = errorDetails?.message || "";
@@ -95,7 +103,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
               >
                 <HiExclamationTriangle className="h-6 w-6 text-red-500 mr-2 flex-shrink-0" />
                 {/* Use translated title */}
-                {t(titleKey || "errorPopup.defaultTitle", "Error")}
+                {titleText || t(titleKey || "errorPopup.defaultTitle", "Error")}
               </DialogTitle>
               <div className="my-4 space-y-3">
                 {/* Display main message */}
@@ -153,8 +161,24 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
                 </div>
               )}
 
-              {/* Close Button */}
-              <div className="mt-5 flex justify-end">
+              <div className="mt-5 flex justify-end gap-2">
+                {action ? (
+                  <button
+                    type="button"
+                    disabled={isActionClicked}
+                    className="inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 transition-colors"
+                    onClick={() => {
+                      setIsActionClicked(true);
+                      handleClose();
+                      action.onAction();
+                    }}
+                  >
+                    {action.buttonText}
+                  </button>
+                ) : (
+                  <div></div>
+                )}
+
                 <button
                   type="button"
                   className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 transition-colors"
@@ -184,12 +208,17 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
  */
 export function showErrorPopup(
   titleKey?: string | null,
+  titleText?: string | null,
   messageKeyOrText?: string | null,
   details: {
     component?: ReactNode;
     error?: ErrorObject;
     [key: string]: any;
-  } = {}
+  } = {},
+  action?: {
+    buttonText: string;
+    onAction: () => void;
+  }
 ): void {
   // 1. Create a DOM element to mount the popup into
   const container = document.createElement("div");
@@ -222,8 +251,10 @@ export function showErrorPopup(
     <React.StrictMode>
       <ErrorPopup
         titleKey={titleKey}
+        titleText={titleText}
         errorDetails={errorDetails}
         onClose={cleanup} // Pass the cleanup function
+        action={action}
       />
     </React.StrictMode>
   );
