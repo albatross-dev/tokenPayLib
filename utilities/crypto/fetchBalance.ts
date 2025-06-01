@@ -60,13 +60,13 @@ async function fetchBalanceRaw(
     });
 
     if (typeof result !== "bigint") {
-      return null;
+      return BigInt(0);
     }
 
     return result;
   } catch (error) {
     console.log("fetchBalance RAW error", error);
-    return null;
+    return BigInt(0);
   }
 }
 

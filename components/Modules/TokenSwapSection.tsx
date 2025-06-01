@@ -25,7 +25,6 @@ import convertAnyToAny, {
   uniswapAddressesPublic,
 } from "../../utilities/crypto/convertAnyToAny";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   arbitrum,
   avalanche,
@@ -43,6 +42,7 @@ import QueryString from "qs";
 import { SimpleToken } from "../../types/token.types";
 import MiniLoader from "../UI/MiniLoader";
 import { Pool } from "../../types/payload-types";
+import { api } from "../../../context/UserContext";
 
 const exchangeType: ExchangeType = process.env
   .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
@@ -186,7 +186,7 @@ export default function TokenSwapSection({
 
       console.log("stringifiedQuery", stringifiedQuery);
 
-      const pathsRes = await axios.get(
+      const pathsRes = await api.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`
       );
 
@@ -334,7 +334,7 @@ export default function TokenSwapSection({
       inputTokens: "processing",
     }));
 
-    let inputTokensRes = await axios.get(
+    let inputTokensRes = await api.get(
       `/api/globals/inputTokens${activeChain.id}`
     );
 

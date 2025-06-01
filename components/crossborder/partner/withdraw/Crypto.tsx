@@ -2,11 +2,11 @@ import React, { useEffect, useState, useContext } from "react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import {
+  api,
   AuthContext,
   sendErrorReport,
 } from "../../../../../context/UserContext";
 import { IoClose } from "react-icons/io5";
-import axios from "axios";
 import TokenSelector from "../../../Forms/TokenSelector";
 import { useActiveAccount } from "thirdweb/react";
 import { TokensByChainId } from "../../../../utilities/crypto/currencies";
@@ -259,7 +259,7 @@ export default function RawCrypto({
           transactionData.consumer = user.id;
         }
 
-        await axios.post("/api/fiatTransaction", transactionData);
+        await api.post("/api/fiatTransaction", transactionData);
       } catch (error) {
         const errors: FormErrors = {};
         sendErrorReport(`Crypto - Withdraw - Error transfering token`, error);
@@ -303,7 +303,7 @@ export default function RawCrypto({
         transactionData.consumer = user.id;
       }
 
-      await axios.post("/api/fiatTransaction", transactionData);
+      await api.post("/api/fiatTransaction", transactionData);
     }
 
     setState("success");

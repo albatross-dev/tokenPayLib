@@ -5,8 +5,7 @@ import { NewBankAccount, StasisErrors } from "../../../universal/stasis.types";
 import LoadingButton, {
   LoadingButtonStates,
 } from "../../../../../UI/LoadingButton";
-import axios from "axios";
-import { sendErrorReport } from "../../../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../../../context/UserContext";
 interface AddBankProps {
   loadingState: LoadingButtonStates;
   errors: StasisErrors;
@@ -29,7 +28,7 @@ export function AddBank({
   const handleAddBankAccount = async () => {
     setLoadingState("processing");
     try {
-      await axios.post(
+      await api.post(
         "/api/fiatTransaction/stasis/createBankAccount",
         newBankAccount
       );

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "../../../../context/UserContext";
 
 export async function loadTransaction(ctx: any) {
   const id = ctx.params?.id;
@@ -7,7 +7,7 @@ export async function loadTransaction(ctx: any) {
     const cookies = ctx.req?.cookies || {};
 
     // Create axios request with the cookies
-    const { data } = await axios.get(`/api/fiatTransaction/${id}`, {
+    const { data } = await api.get(`/api/fiatTransaction/${id}`, {
       headers: {
         Cookie: Object.entries(cookies)
           .map(([key, value]) => `${key}=${value}`)

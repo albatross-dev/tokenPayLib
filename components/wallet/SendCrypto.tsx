@@ -4,20 +4,19 @@ import { useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
-import axios from "axios";
-import { AuthContext, sendErrorReport } from "../../../context/UserContext";
-import SimpleList from "../UI/SimpleList";
 import {
-  formatCrypto,
-  TokensByChainId,
-} from "../../utilities/crypto/currencies";
+  api,
+  AuthContext,
+  sendErrorReport,
+} from "../../../context/UserContext";
+import SimpleList from "../UI/SimpleList";
+import { TokensByChainId } from "../../utilities/crypto/currencies";
 import { useTranslation } from "react-i18next";
 import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
 import { getSendCryptoColumns } from "./sendCryptoColumns";
 import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
 import SendCryptoDialog from "./SendCryptoDialog";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
-import { useUhuConfig } from "../contexts/UhuConfigContext";
 import { FiatTransactionRequest } from "../../types/derivedPayload.types";
 
 const client = createThirdwebClient({
@@ -123,7 +122,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
           transferData.consumer = user.id;
         }
 
-        await axios.post("/api/cryptoTransfer", transferData);
+        await api.post("/api/cryptoTransfer", transferData);
 
         setTargetAddress("");
         setAmount(0);

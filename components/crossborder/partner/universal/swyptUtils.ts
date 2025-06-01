@@ -1,9 +1,7 @@
 import { getContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { client } from "../../../../../pages/_app";
-import { PaymentTypesArray } from "../../../../types/payload-types";
-import axios from "axios";
-import { sendErrorReport } from "../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../context/UserContext";
 
 const swyptAbi = [
   {
@@ -75,7 +73,7 @@ export async function getSwyptQuote(
   type: string = "offramp"
 ): Promise<SwyptQuoteResponse> {
   try {
-    const result = await axios.post("/api/fiatTransaction/swypt/quote", {
+    const result = await api.post("/api/fiatTransaction/swypt/quote", {
       type,
       amount: String(amount),
       fiatCurrency,

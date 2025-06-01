@@ -1,5 +1,5 @@
 import axios from "axios";
-import { sendErrorReport } from "../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../context/UserContext";
 import countriesISO from "i18n-iso-countries";
 
 export interface KoyweQuoteResponse {
@@ -72,7 +72,7 @@ export async function getKoyweQuote({
   }
 
   try {
-    const response = await axios.post(`/api/fiatTransaction/koywe/getQuote`, {
+    const response = await api.post(`/api/fiatTransaction/koywe/getQuote`, {
       symbolIn,
       symbolOut,
       amountIn,
@@ -115,7 +115,7 @@ export async function getBankAccounts({
   countryCode = countriesISO.alpha2ToAlpha3(countryCode);
 
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `/api/fiatTransaction/koywe/getBankAccounts`,
       {
         countryCode,
@@ -136,7 +136,7 @@ export interface KoyweAccountState {
 
 export async function getKoyweAccountState(): Promise<KoyweAccountState> {
   try {
-    const response = await axios.get(
+    const response = await api.get(
       "/api/fiatTransaction/koywe/checkIfCanOperate"
     );
     return response.data as KoyweAccountState;
@@ -170,7 +170,7 @@ export async function getSupportedBanks({
       throw new Error(`Invalid country code ${countryCode}`);
     }
 
-    const response = await axios.get(
+    const response = await api.get(
       `/api/fiatTransaction/koywe/getSupportedBanks`,
       {
         params: { countryCode },
@@ -203,7 +203,7 @@ export async function createKoyweBankAccount({
   countryCode = countriesISO.alpha2ToAlpha3(countryCode);
 
   try {
-    const response = await axios.post(
+    const response = await api.post(
       "/api/fiatTransaction/koywe/createBankAccount",
       {
         bankCode,
@@ -239,7 +239,7 @@ export async function createKoyweDepositTransaction({
   fiatOriginCurrency?: string;
 }): Promise<string> {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       "/api/fiatTransaction/koywe/createDepositTransaction",
       {
         quote,
@@ -277,7 +277,7 @@ export async function createKoyweTransaction({
   finalCurrency?: string;
 }): Promise<string> {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       "/api/fiatTransaction/koywe/createTransaction",
       {
         quote,
@@ -312,7 +312,7 @@ export async function getKoywePaymentMethods({
   currencySymbol: string;
 }): Promise<KoywePaymentMethod[]> {
   try {
-    const response = await axios.get(
+    const response = await api.get(
       `/api/fiatTransaction/koywe/getPaymentMethods`,
       {
         params: { currencySymbol },

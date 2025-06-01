@@ -12,8 +12,7 @@ import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
 import { client } from "../../../../../pages/_app";
 import currencies from "../../../../utilities/crypto/currencies";
-import axios from "axios";
-import { sendErrorReport } from "../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../context/UserContext";
 
 export default function KoyweAwaitingCryptoPayment({
   transaction,
@@ -44,7 +43,7 @@ export default function KoyweAwaitingCryptoPayment({
       );
 
       if (transactionHash) {
-        await axios.patch(`/api/fiatTransaction/${transaction.id}`, {
+        await api.patch(`/api/fiatTransaction/${transaction.id}`, {
           transactionHash: transactionHash,
         });
 

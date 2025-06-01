@@ -1,7 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { IoArrowBack } from "react-icons/io5";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Account } from "thirdweb/wallets";
 import {
   Vendor,
@@ -17,7 +16,7 @@ import {
   StasisKYC,
   Success,
 } from "./Slides";
-import { sendErrorReport } from "../../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import Loader from "../../../../UI/Loader";
 import {
   BankAccount,
@@ -121,7 +120,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
       return;
     }
     try {
-      const response = await axios.get(
+      const response = await api.get(
         "/api/fiatTransaction/stasis/getBankAccounts"
       );
       setBankAccounts(response.data);
@@ -144,7 +143,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
       return;
     }
     try {
-      const response = await axios.get(
+      const response = await api.get(
         "/api/fiatTransaction/stasis/getCryptoAccounts"
       );
       setCryptoAccounts(response.data);
@@ -187,7 +186,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
         message: wallet_message,
       });
 
-      await axios.post("/api/fiatTransaction/stasis/createCryptoAccount", {
+      await api.post("/api/fiatTransaction/stasis/createCryptoAccount", {
         name: newCryptoAccountName,
         network_type: "polygon",
         address: walletAddress,
@@ -229,7 +228,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
 
     setLoadingState("processing");
     try {
-      const createDepositRes = await axios.post(
+      const createDepositRes = await api.post(
         "/api/fiatTransaction/stasis/createDeposit",
         {
           amount: amount,

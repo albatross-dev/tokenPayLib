@@ -4,9 +4,8 @@ import { BsArrowClockwise, BsArrowLeft, BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import LoadingButton from "../UI/LoadingButton";
 import PartnerPanel from "./partner/PartnerPanel";
+import { api } from "../../../context/UserContext";
 
 export default function TransactionDetails({
   transaction: initialTransaction,
@@ -25,7 +24,7 @@ export default function TransactionDetails({
     queryKey: ["transaction", initialTransaction.id],
     queryFn: async () => {
       console.log("Fetching transaction data...");
-      const { data } = await axios.get(
+      const { data } = await api.get(
         `/api/fiatTransaction/${initialTransaction.id}`
       );
       console.log("Transaction data fetched:", data);

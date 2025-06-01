@@ -17,6 +17,7 @@ import {
   HiChevronDown,
   HiChevronUp,
   HiExclamationTriangle,
+  HiInformationCircle,
 } from "react-icons/hi2";
 import { useTranslation } from "next-i18next"; // Or your i18n hook
 
@@ -32,6 +33,13 @@ export interface ErrorDetails {
   error?: ErrorObject;
 }
 
+export interface AdditionalInfo {
+  neutral?: boolean;
+  closeTimeout?: number;
+  actionOnTimeout?: () => void;
+  closingButtonText?: string;
+}
+
 interface ErrorPopupProps {
   titleKey?: string | null;
   titleText?: string | null;
@@ -41,6 +49,7 @@ interface ErrorPopupProps {
     buttonText: string;
     onAction: () => void;
   };
+  additionalInfo?: AdditionalInfo;
 }
 
 // This component is now designed to be rendered imperatively
@@ -50,6 +59,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
   errorDetails,
   onClose,
   action,
+  additionalInfo,
 }) => {
   const { t } = useTranslation("common"); // Assuming 'common' namespace for generic terms
   const [isOpen, setIsOpen] = useState(true); // Control open state internally
@@ -65,6 +75,29 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
     // Allow time for the exit animation before calling onClose which unmounts
     setTimeout(onClose, 300); // Match leave duration
   };
+
+  useEffect(() => {
+    let timeoutId;
+
+    if (isOpen && additionalInfo?.closeTimeout) {
+      timeoutId = setTimeout(() => {
+        handleClose();
+        if (
+          additionalInfo.actionOnTimeout &&
+          typeof additionalInfo.actionOnTimeout === "function"
+        ) {
+          additionalInfo.actionOnTimeout();
+        }
+      }, additionalInfo.closeTimeout);
+    }
+
+    // Cleanup function - runs when dependencies change or component unmounts
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [additionalInfo?.closeTimeout, isOpen]);
 
   return (
     // Use internal isOpen state for Transition
@@ -101,7 +134,11 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
                 as="h3"
                 className="text-lg font-medium leading-6 text-gray-900 flex items-center"
               >
-                <HiExclamationTriangle className="h-6 w-6 text-red-500 mr-2 flex-shrink-0" />
+                {additionalInfo?.neutral ? (
+                  <HiInformationCircle className="h-6 w-6 text-gray-500 mr-2 flex-shrink-0" />
+                ) : (
+                  <HiExclamationTriangle className="h-6 w-6 text-red-500 mr-2 flex-shrink-0" />
+                )}
                 {/* Use translated title */}
                 {titleText || t(titleKey || "errorPopup.defaultTitle", "Error")}
               </DialogTitle>
@@ -184,7 +221,8 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
                   className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 transition-colors"
                   onClick={handleClose} // Use internal handler
                 >
-                  {t("errorPopup.closeButton", "Close")}
+                  {additionalInfo?.closingButtonText ||
+                    t("errorPopup.closeButton", "Close")}
                 </button>
               </div>
             </DialogPanel>
@@ -195,30 +233,27 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
   );
 };
 
-/**
- * Displays an error popup modally.
- *
- * @param {string | undefined | null} titleKey - Translation key for the title (or default 'Error').
- * @param {string | undefined | null} messageKeyOrText - Translation key or direct text for the main message.
- * @param {object} [details={}] - Optional details object.
- * @param {React.ReactNode} [details.component] - Optional React component to render in the body.
- * @param {object} [details.error] - Optional nested error object.
- * @param {string | number} [details.error.code] - Optional error code.
- * @param {string} [details.error.message] - Optional detailed error message for disclosure.
- */
-export function showErrorPopup(
-  titleKey?: string | null,
-  titleText?: string | null,
-  messageKeyOrText?: string | null,
-  details: {
+interface ShowErrorPopupProps {
+  titleKey?: string | null;
+  titleText?: string | null;
+  messageKeyOrText?: string | null;
+  details?: {
     component?: ReactNode;
     error?: ErrorObject;
     [key: string]: any;
-  } = {},
+  };
   action?: {
     buttonText: string;
     onAction: () => void;
-  }
+  };
+}
+
+/**
+ * Displays an error popup modally.
+ */
+export function showErrorPopup(
+  props: ShowErrorPopupProps,
+  additionalInfo?: AdditionalInfo
 ): void {
   // 1. Create a DOM element to mount the popup into
   const container = document.createElement("div");
@@ -241,20 +276,21 @@ export function showErrorPopup(
 
   // 4. Prepare errorDetails object for the component
   const errorDetails: ErrorDetails = {
-    message: messageKeyOrText || undefined, // Pass the key or text
-    component: details.component,
-    error: details.error,
+    message: props.messageKeyOrText || undefined, // Pass the key or text
+    component: props?.details?.component,
+    error: props?.details?.error,
   };
 
   // 5. Render the ErrorPopup component into the root
   root.render(
     <React.StrictMode>
       <ErrorPopup
-        titleKey={titleKey}
-        titleText={titleText}
+        titleKey={props.titleKey}
+        titleText={props.titleText}
         errorDetails={errorDetails}
         onClose={cleanup} // Pass the cleanup function
-        action={action}
+        action={props.action}
+        additionalInfo={additionalInfo}
       />
     </React.StrictMode>
   );

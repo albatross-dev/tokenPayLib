@@ -58,10 +58,10 @@ export default function CreateTransactionSlide({
         setState("normal");
       } catch (error) {
         console.error("Error fetching quote:", error);
-        showErrorPopup(
-          tCrossborder("withdraw.koywe.quoteError"),
-          error.response?.data || error
-        );
+        showErrorPopup({
+          titleKey: tCrossborder("withdraw.koywe.quoteError"),
+          messageKeyOrText: error.response?.data || error,
+        });
       }
     };
     fetchQuote();

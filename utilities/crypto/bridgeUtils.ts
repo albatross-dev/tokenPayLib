@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Chain,
   getContract,
@@ -9,7 +8,7 @@ import { client } from "../../../pages/_app";
 import { Account } from "thirdweb/wallets";
 import currencies from "../crypto/currencies";
 import CustomWrapperABI from "../../assets/customSwapRouterAbi.json";
-import { sendErrorReport } from "../../../context/UserContext";
+import { api, sendErrorReport } from "../../../context/UserContext";
 import { SimpleToken } from "../../types/token.types";
 
 // Define the ABI for the depositV3 function
@@ -330,7 +329,7 @@ export async function fetchLimitsAndQuote(
 
   // Fetch limits
   try {
-    const limitsResponse = await axios.get(
+    const limitsResponse = await api.get(
       `${process.env.NEXT_PUBLIC_LOCAL_URL}/api/limits`,
       {
         params: { token: tokenAddress, originChainId, destinationChainId },
@@ -353,7 +352,7 @@ export async function fetchLimitsAndQuote(
 
   // Fetch quote
   try {
-    const quoteResponse = await axios.get(
+    const quoteResponse = await api.get(
       `${process.env.NEXT_PUBLIC_LOCAL_URL}/api/quotes`,
       {
         params: {

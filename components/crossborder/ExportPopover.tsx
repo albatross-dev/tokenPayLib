@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { BsChevronDown, BsFileEarmarkArrowDown } from "react-icons/bs";
-import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react";
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useTranslation } from "next-i18next";
-import axios from "axios";
 import qs from "qs";
+import { api } from "../../../context/UserContext";
 
 interface DayObject {
   year: number;
@@ -29,7 +34,7 @@ interface TransactionData {
   };
 }
 
-type ButtonState = 'inactive' | 'active' | 'loading';
+type ButtonState = "inactive" | "active" | "loading";
 
 export default function ExportPopover({ minDate }: ExportPopoverProps) {
   const [selectedDayRange, setSelectedDayRange] = useState<DateRange>({
@@ -37,7 +42,7 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
     to: null,
   });
   const { t } = useTranslation("common");
-  
+
   const [buttonState, setButtonState] = useState<ButtonState>("inactive");
 
   const handleDataExport = async (): Promise<void> => {
@@ -66,8 +71,13 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
     <Popover className="relative">
       {({ open }) => (
         <>
-          <PopoverButton className={` px-3 py-2 gap-2 flex items-center bg-white border ${open&&" border-uhuBlue ring-0 outline-0"} rounded`}>
-            <BsFileEarmarkArrowDown /> {t("ExportPopover.export")} <BsChevronDown />
+          <PopoverButton
+            className={` px-3 py-2 gap-2 flex items-center bg-white border ${
+              open && " border-uhuBlue ring-0 outline-0"
+            } rounded`}
+          >
+            <BsFileEarmarkArrowDown /> {t("ExportPopover.export")}{" "}
+            <BsChevronDown />
           </PopoverButton>
           <Transition
             as={React.Fragment}
@@ -95,7 +105,9 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
                     onClick={handleDataExport}
                     disabled={buttonState !== "active"}
                   >
-                    {buttonState === "loading" ? t("ExportPopover.loading_export") : t("ExportPopover.export")}
+                    {buttonState === "loading"
+                      ? t("ExportPopover.loading_export")
+                      : t("ExportPopover.export")}
                   </button>
                 </div>
               </div>
@@ -109,7 +121,7 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
 
 async function setData(dateRange: DateRange): Promise<TransactionData[]> {
   if (!dateRange.from || !dateRange.to) {
-    throw new Error('Date range is incomplete');
+    throw new Error("Date range is incomplete");
   }
 
   let from = new Date(
@@ -140,14 +152,16 @@ async function setData(dateRange: DateRange): Promise<TransactionData[]> {
   let rangeQuery = qs.stringify({ where: query }, { addQueryPrefix: true });
 
   // Fetch data
-  const response = await axios.get<{ docs: TransactionData[] }>(`/api/fiatTransaction${rangeQuery}`);
+  const response = await api.get<{ docs: TransactionData[] }>(
+    `/api/fiatTransaction${rangeQuery}`
+  );
 
   return response.data.docs;
 }
 
 function convertToCSV(arr: TransactionData[]): string {
-  if (arr.length === 0) return '';
-  
+  if (arr.length === 0) return "";
+
   // Remove unwanted keys
   const unwantedKeys = [
     "updatedAt",
@@ -187,7 +201,7 @@ function convertToCSV(arr: TransactionData[]): string {
 
 function triggerDownload(selectedDayRange: DateRange, csvData: string): void {
   if (!selectedDayRange.from || !selectedDayRange.to) return;
-  
+
   const blob = new Blob([csvData], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);

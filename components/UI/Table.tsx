@@ -7,10 +7,9 @@ import {
   useReactTable,
   ColumnDef,
 } from "@tanstack/react-table";
-import axios from "axios";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
-import { sendErrorReport } from "../../../context/UserContext";
+import { api, sendErrorReport } from "../../../context/UserContext";
 import { Collection } from "../../types/derivedPayload.types";
 import { TableQuery } from "./SimpleList";
 
@@ -48,7 +47,7 @@ export default function Table({
     collection: Collection
   ): Promise<FetchedData> {
     try {
-      const res = await axios(
+      const res = await api.get(
         `/api/${collection.toString()}?${QueryString.stringify(query)}`
       );
       return res.data;

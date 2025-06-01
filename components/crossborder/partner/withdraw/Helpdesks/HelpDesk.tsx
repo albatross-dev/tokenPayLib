@@ -10,12 +10,12 @@ import LoadingHelpDesk from "./StateViews/HelpDesk/LoadingHelpDesk";
 import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestError";
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
-import axios from "axios";
 import { client } from "../../../../../../pages/_app";
 import { polygon } from "thirdweb/chains";
 import { useTranslation } from "next-i18next";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";
 import {
+  api,
   AuthContext,
   sendErrorReport,
 } from "../../../../../../context/UserContext";
@@ -149,7 +149,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
         const processedData = preprocessDataForServer(data);
         const formData = getFormData(processedData);
 
-        await axios.patch(`/api/${user!.type}/${user!.id}`, formData, {
+        await api.patch(`/api/${user!.type}/${user!.id}`, formData, {
           headers: { "Content-Type": undefined },
         });
 
@@ -164,7 +164,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
       const sendData = {
         partnerType: method.type,
       };
-      await axios.post(
+      await api.post(
         "/api/fiatTransaction/helpDeskVerificationRequest",
         sendData
       );
@@ -192,7 +192,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
     setError(null);
     setState(DESK_STATE_LOADING);
     try {
-      await axios.post("/api/fiatTransaction/helpDeskRequest", {
+      await api.post("/api/fiatTransaction/helpDeskRequest", {
         partnerType: method.type,
         currencyName: country.preferredStableCoin,
         currency: country.preferredStableCoin,
@@ -230,7 +230,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
         transaction!.burnAddress
       );
 
-      await axios.post("/api/fiatTransaction/paymentUpdate", {
+      await api.post("/api/fiatTransaction/paymentUpdate", {
         transaction: transaction,
         transactionHash: transactionHash,
       });

@@ -1,5 +1,4 @@
-import axios from "axios";
-import { sendErrorReport } from "../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../context/UserContext";
 import { BankAccount } from "../../../components/crossborder/partner/universal/stasis.types";
 import { Consumer, Vendor } from "../../../types/payload-types";
 
@@ -20,7 +19,7 @@ const fetchBankAccounts = async ({
     return;
   }
   try {
-    const response = await axios.get(
+    const response = await api.get(
       "/api/fiatTransaction/stasis/getBankAccounts"
     );
     setBankAccounts(response.data);

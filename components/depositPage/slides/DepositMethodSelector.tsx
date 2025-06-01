@@ -1,14 +1,13 @@
 import MiniLoader from "../../UI/MiniLoader";
 import { useEffect, useState, useCallback } from "react";
 import { IoWarning } from "react-icons/io5";
-import axios from "axios";
 import {
   getFiatCurrencySymbol,
   getFiatCurrencyCode,
 } from "../../../utilities/stableCoinsMaps";
 import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "../../../utilities/partner/bitcoinvn";
-import { sendErrorReport } from "../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../context/UserContext";
 import duplicateByPaymentModality from "../../../utilities/crossborder/duplicateByPaymentModality";
 import { getSwyptQuote } from "../../crossborder/partner/universal/swyptUtils";
 import { PaymentTypesArray } from "../../../types/payload-types";
@@ -81,7 +80,7 @@ export default function DepositMethodSelector({
       endCurrencyCode: string
     ): Promise<number | null> => {
       try {
-        const response = await axios.post(`/api/fiatTransaction/exchangeRate`, {
+        const response = await api.post(`/api/fiatTransaction/exchangeRate`, {
           startCurrency,
           endCurrency: endCurrencyCode,
         });

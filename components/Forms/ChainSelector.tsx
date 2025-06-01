@@ -137,28 +137,26 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
         if (error?.code === -32603) {
           return;
         }
-        showErrorPopup(
-          undefined,
-          t("wallet.switchChainError"),
-          t("wallet.switchChainErrorDescription"),
-          {
+        showErrorPopup({
+          titleKey: t("wallet.switchChainError"),
+          messageKeyOrText: t("wallet.switchChainErrorDescription"),
+          details: {
             error: error,
           },
-          {
+          action: {
             buttonText: t("wallet.switchChainErrorButton"),
             onAction: () => {
               if (retryCounter > 2) {
-                showErrorPopup(
-                  undefined,
-                  t("toManyRetries.title"),
-                  t("toManyRetries.description")
-                );
+                showErrorPopup({
+                  titleKey: t("toManyRetries.title"),
+                  messageKeyOrText: t("toManyRetries.description"),
+                });
                 return;
               }
               handleSwitchChain(chain, retryCounter + 1);
             },
-          }
-        );
+          },
+        });
       }
     }
   }

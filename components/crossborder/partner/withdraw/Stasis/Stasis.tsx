@@ -3,9 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { useTranslation } from "next-i18next";
-import { useActiveAccount } from "thirdweb/react";
 import { polygon } from "thirdweb/chains";
-import axios from "axios";
 import currencies from "../../../../../../utilities/currencies";
 import { StasisProps } from "./slides/types";
 
@@ -22,6 +20,7 @@ import { BankAccount, StasisErrors } from "../../universal/stasis.types";
 import { SimpleToken } from "../../../../../types/token.types";
 import { AddBank, StasisKYC } from "../../deposit/Stasis/Slides";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
+import { api } from "../../../../../../context/UserContext";
 
 const POOL_FEE = 0.004;
 
@@ -112,7 +111,7 @@ export default function Stasis({
       try {
         let withdrawalResponse;
         try {
-          withdrawalResponse = await axios.post(
+          withdrawalResponse = await api.post(
             "/api/fiatTransaction/stasis/createWithdraw",
             {
               incoming_amount: Number(amount - amount * POOL_FEE),
@@ -149,7 +148,7 @@ export default function Stasis({
           depositAddress
         );
 
-        await axios.patch(`/api/fiatTransaction/${transaction.id}`, {
+        await api.patch(`/api/fiatTransaction/${transaction.id}`, {
           transactionHash: transactionHash,
         });
 

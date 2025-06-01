@@ -3,8 +3,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ErrorPopup from "../Modals/ErrorPopup";
 import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
-import axios from "axios";
-import { AuthContext, sendErrorReport } from "../../../context/UserContext";
+import {
+  api,
+  AuthContext,
+  sendErrorReport,
+} from "../../../context/UserContext";
 import BalanceOverview from "../crossborder/BalanceOverview";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -120,7 +123,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   useEffect(() => {
     async function getCountryData() {
       try {
-        let countryRes = await axios.get(
+        let countryRes = await api.get(
           `/api/countries?where[countryCode][equals]=${
             user?.vendorCountry || user?.billingAddress?.country
           }`

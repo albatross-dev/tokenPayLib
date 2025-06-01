@@ -1,5 +1,4 @@
-import { sendErrorReport } from "../../../../../../context/UserContext";
-import axios from "axios";
+import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import React, { useEffect, useState } from "react";
 import {
   getContract,
@@ -106,7 +105,7 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
 
       // call the offramp endpoint
 
-      await axios.post("/api/fiatTransaction/swypt/offramp", {
+      await api.post("/api/fiatTransaction/swypt/offramp", {
         phone: formData.phone,
         chain: "polygon",
         tokenAddress: selectedToken.contractAddress,

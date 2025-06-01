@@ -1,14 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  createThirdwebClient,
-  getContract,
-  readContract,
-  prepareContractCall,
-  sendAndConfirmTransaction,
-} from "thirdweb";
+import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { IoClose } from "react-icons/io5";
-import axios from "axios";
 import { useActiveAccount } from "thirdweb/react";
 import { parseUnits } from "ethers/lib/utils";
 import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
@@ -16,6 +8,7 @@ import { IoIosInformationCircle } from "react-icons/io";
 import { useTranslation } from "next-i18next";
 import { encodePacked } from "thirdweb/utils";
 import {
+  api,
   AuthContext,
   sendErrorReport,
 } from "../../../../../context/UserContext";
@@ -268,7 +261,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
           transactionData.consumer = user.id;
         }
 
-        await axios.post("/api/fiatTransaction", transactionData);
+        await api.post("/api/fiatTransaction", transactionData);
       } catch (error) {
         const errors: ValidationErrors = {};
         sendErrorReport(
@@ -289,7 +282,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
         targetAddress
       );
 
-      await axios.post("/api/fiatTransaction", {
+      await api.post("/api/fiatTransaction", {
         vendor: user.id,
         partner: "crypto",
         amount: Number(amount),

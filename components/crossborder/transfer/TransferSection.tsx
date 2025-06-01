@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import QueryString from "qs";
-import axios from "axios";
 import { useActiveAccount } from "thirdweb/react";
 import { Swiper, SwiperSlide, SwiperClass } from "swiper/react";
 import "swiper/css";
@@ -15,7 +14,11 @@ import CurrencyConversionSelection from "./slides/CurrencyConversionSelection";
 import TransactionDetailsForm from "./slides/TransactionDetailsForm";
 import PartnerPanel from "./slides/PartnerPanel";
 import { Country, PaymentTypesArray } from "../../../types/payload-types";
-import { AuthContext, sendErrorReport } from "../../../../context/UserContext";
+import {
+  api,
+  AuthContext,
+  sendErrorReport,
+} from "../../../../context/UserContext";
 import { ParsedUrlQuery } from "node:querystring";
 import {
   FiatInfo,
@@ -75,7 +78,7 @@ export default function TransferSection() {
   async function fetchExchangeRate(selectedFiatSymbol: FiatCodes) {
     try {
       console.log("Fetching exchange rate", selectedFiatSymbol, payoutCurrency);
-      const response = await axios.post(`/api/fiatTransaction/exchangeRate`, {
+      const response = await api.post(`/api/fiatTransaction/exchangeRate`, {
         startCurrency: selectedFiatSymbol,
         endCurrency: payoutCurrency,
       });
@@ -135,7 +138,7 @@ export default function TransferSection() {
           ],
         },
       };
-      const countriesResponse = await axios(
+      const countriesResponse = await api.get(
         `/api/countries?${QueryString.stringify(query)}`
       );
 
