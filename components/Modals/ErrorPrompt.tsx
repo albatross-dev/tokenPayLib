@@ -222,7 +222,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
                   onClick={handleClose} // Use internal handler
                 >
                   {additionalInfo?.closingButtonText ||
-                    t("errorPopup.closeButton", "Close")}
+                    t("errorPopup.closeButton", "close")}
                 </button>
               </div>
             </DialogPanel>

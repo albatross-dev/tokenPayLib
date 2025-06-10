@@ -42,6 +42,4 @@ export function ServerReporter(config: ServerConfig): Reporter | undefined {
   if (isServer) {
     return new Reporter(config);
   }
-
-  console.warn("ServerReporter cant be used in the browser!!!");
 }

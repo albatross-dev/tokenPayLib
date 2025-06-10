@@ -2,7 +2,11 @@ import React from "react";
 import ErrorView from "./ErrorView";
 
 interface ErrorReporter {
-  exception: (message: string, errorInfo: React.ErrorInfo, error: Error) => void;
+  exception: (
+    message: string,
+    errorInfo: React.ErrorInfo,
+    error: Error
+  ) => void;
 }
 
 interface ErrorBoundaryProps {
@@ -16,16 +20,19 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export default class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   private clientReporter: ErrorReporter;
   private serverReporter: ErrorReporter;
   private backLink: string;
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
-  
-    const { clientReporter, serverReporter, backLink } = props; 
-  
+
+    const { clientReporter, serverReporter, backLink } = props;
+
     this.state = { hasError: false };
     this.clientReporter = clientReporter;
     this.serverReporter = serverReporter;
@@ -64,4 +71,4 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
 
     return this.props.children;
   }
-} 
+}

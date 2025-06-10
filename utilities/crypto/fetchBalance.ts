@@ -95,15 +95,15 @@ export default async function fetchBalance(
     staleTime?: number; // How long data stays fresh (default: 30 seconds)
   }
 ): Promise<bigint> {
+  if (!accountAddress) {
+    return BigInt(0);
+  }
+
   const queryKey = getBalanceQueryKey(
     chain.id,
     contractAddress,
     accountAddress
   );
-
-  if (process.env.NEXT_PUBLIC_NEXT_ENV === "development") {
-    console.log("fetchBalance queryKey", queryKey);
-  }
 
   const defaultOptions = {
     staleTime: 30 * 1000, // 30 seconds
