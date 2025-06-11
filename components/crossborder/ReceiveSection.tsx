@@ -1,29 +1,34 @@
-import React, { use, useContext, useEffect, useRef, useState } from "react";
-import QueryString from "qs";
-import Loader from "../UI/Loader";
-import ContinentsMap from "../UI/ContinentMap";
-import WalletQRCode from "../UI/WalletQRCode";
-import { useSprings, animated } from "@react-spring/web";
+import React from "react";
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from "@headlessui/react";
-import { FiChevronDown, FiSearch } from "react-icons/fi";
+import { animated, useSprings } from "@react-spring/web";
+import QueryString from "qs";
+import { useContext, useEffect, useRef, useState } from "react";
 import AnimateHeight from "react-animate-height";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import UniversalModal from "../Modals/UniversalModal";
-import AddressDisplay from "../UI/AddressDisplay";
+import { FiChevronDown, FiSearch } from "react-icons/fi";
 import { useActiveAccount } from "thirdweb/react";
 import {
   api,
   AuthContext,
   sendErrorReport,
 } from "../../../context/UserContext";
-import { LogLevel } from "../../utilities/error-reporter/reporter";
-import LoadingButton from "../UI/LoadingButton";
 import duplicateByPaymentModality from "../../utilities/crossborder/duplicateByPaymentModality";
+import { LogLevel } from "../../utilities/error-reporter/reporter";
+import UniversalModal from "../Modals/UniversalModal";
+import AddressDisplay from "../UI/AddressDisplay";
+import ContinentsMap from "../UI/ContinentMap";
+import Loader from "../UI/Loader";
+import LoadingButton from "../UI/LoadingButton";
+import WalletQRCode from "../UI/WalletQRCode";
 
 interface Currency {
   currency: string;
@@ -373,7 +378,6 @@ function CountriesInfo({
                                     className="bg-uhuBlue rounded shadow py-1 px-4 text-white font-bold"
                                     onClick={() => {
                                       setModalSelectedCountry(country);
-                                      console.log("country", country);
                                       setIsCountryInfoOpen(true);
                                     }}
                                   >

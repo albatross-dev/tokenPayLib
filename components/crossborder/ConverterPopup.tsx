@@ -1,37 +1,37 @@
-import React, { useState, Fragment, useEffect } from "react";
 import {
   Dialog,
   DialogPanel,
   DialogTitle,
-  TransitionChild,
   Transition,
+  TransitionChild,
 } from "@headlessui/react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IoClose } from "react-icons/io5";
 import { RxUpdate } from "react-icons/rx";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import {
   convertAnyToAnyDirect,
   uniswapAddresses,
 } from "../../utilities/crypto/convertAnyToAny";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 
-import fetchBalance from "../../utilities/crypto/fetchBalance";
-import { getContract, readContract } from "thirdweb";
-import { PATHS } from "../../utilities/crypto/getPath";
-import QuoteV2Abi from "../../assets/quoteV2Abi.json";
-import { encodePacked } from "thirdweb/utils";
 import { IoIosSwap } from "react-icons/io";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { getContract, readContract } from "thirdweb";
+import { encodePacked } from "thirdweb/utils";
+import { client } from "../../../pages/_app";
+import QuoteV2Abi from "../../assets/quoteV2Abi.json";
+import { SimpleToken } from "../../types/token.types";
 import { formatCrypto } from "../../utilities/crypto/currencies";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
+import { PATHS } from "../../utilities/crypto/getPath";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
+import { useUhuConfig } from "../contexts/UhuConfigContext";
 import {
   ConvertStateButtonState,
   ConvertStateButtonWide,
 } from "../UI/ConvertStateButton";
-import { client } from "../../../pages/_app";
-import { useUhuConfig } from "../contexts/UhuConfigContext";
 import Maintenance from "../UI/Maintenance";
-import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
-import { SimpleToken } from "../../types/token.types";
 
 interface ConvertPopupProps {
   show: boolean;
@@ -77,7 +77,6 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
 
   useEffect(() => {
     async function update() {
-      console.log("update token", token);
       if (token && targetToken) {
         setSelectedToken(token);
         setSelectedTokenBalance(BigInt(0));
@@ -112,7 +111,6 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
         return;
       }
 
-      console.log("fetchQuote", selectedToken, selectedTargetToken, amount);
       let contract = getContract({
         client: client,
         chain: activeChain,
@@ -164,13 +162,6 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
     selectedToken: SimpleToken,
     selectedTargetToken: SimpleToken
   ) {
-    console.log(
-      "fetchBalances",
-      account,
-      activeChain,
-      selectedToken,
-      selectedTargetToken
-    );
     if (!account?.address || !activeChain) return;
     setBalanceUpdate(true);
 
@@ -230,7 +221,6 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
         setRetryCounter(retryCounter + 1);
         if (retryCounter < 3) {
           handleExchangeAny(amount);
-          console.log("retrying exchange");
         } else {
           console.error("Error converting to EUROE", error);
           setExchangeState("error");

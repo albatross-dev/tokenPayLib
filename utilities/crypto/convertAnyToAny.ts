@@ -85,6 +85,9 @@ export function getQuoteContract(chain: Chain): ContractOptions<any[]> {
   });
 }
 
+/**
+ * Converts any token to any token directly
+ */
 export async function convertAnyToAnyDirect(
   token: SimpleToken,
   amount: number,

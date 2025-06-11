@@ -3,11 +3,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 import countriesISO from "i18n-iso-countries";
-import {
-  ALL_COUNTRIES,
-  ALL_COUNTRIES_N,
-} from "../../utilities/CountriesConfig";
-import Tooltip from "../UI/ToolTip";
+import { ALL_COUNTRIES_N } from "../../utilities/CountriesConfig";
+import Tooltip from "@/tokenPayLib/components/UI/Tooltip";
 
 interface Country {
   name: string;

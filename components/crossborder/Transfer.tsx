@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/UserContext";
 import moment from "moment";
-import ExportPopover from "./ExportPopover";
+import ExportPopover, { DateRange } from "../Modules/ExportPopover";
 import { useTranslation } from "react-i18next";
 import TransactionModal from "./TransactionModal";
 import { BsArrowUpRight } from "react-icons/bs";
@@ -11,6 +11,8 @@ import SimpleList from "../UI/SimpleList";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { FiatTransaction } from "../../types/payload-types";
+import qs from "qs";
+import { api } from "../../../context/UserContext";
 
 interface TableQuery {
   type?: {
@@ -116,6 +118,61 @@ export default function Transfer() {
     },
   ];
 
+  async function getTransferData(dateRange: DateRange): Promise<any[]> {
+    if (!dateRange.from || !dateRange.to) {
+      throw new Error("Date range is incomplete");
+    }
+
+    let from = new Date(
+      dateRange.from.year,
+      dateRange.from.month - 1,
+      dateRange.from.day
+    );
+
+    // Creating a completely new date object for "to"
+    let to = new Date(
+      dateRange.to.year,
+      dateRange.to.month - 1,
+      dateRange.to.day
+    );
+    let adjustedTo = new Date(to);
+    adjustedTo.setDate(adjustedTo.getDate() + 1);
+
+    console.log("setData called", from, adjustedTo);
+
+    // Build queries for today and yesterday
+    const query = {
+      and: [
+        { createdAt: { greater_than_equal: from.toISOString() } },
+        { createdAt: { less_than: adjustedTo.toISOString() } },
+      ],
+    };
+
+    let rangeQuery = qs.stringify({ where: query }, { addQueryPrefix: true });
+
+    // Fetch data
+    const response = await api.get<{ docs: any[] }>(
+      `/api/fiatTransaction${rangeQuery}`
+    );
+
+    return response.data.docs;
+  }
+
+  const unwantedKeys = [
+    "updatedAt",
+    "items",
+    "vendor",
+    "consumer",
+    "checkoutConfig",
+    "companyWebsite",
+    "supportWebsite",
+    "gdprURL",
+    "termsURL",
+    "fromUrl",
+    "successUrl",
+    "logo",
+  ];
+
   return (
     <>
       <div className="px-4">
@@ -131,11 +188,13 @@ export default function Transfer() {
           loader={false}
         >
           <ExportPopover
+            setData={getTransferData}
             minDate={{
               year: moment(user?.createdAt).year(),
               month: moment(user?.createdAt).month(),
               day: moment(user?.createdAt).date(),
             }}
+            unwantedKeys={unwantedKeys}
           />
           <TypePopover
             onSelect={(type: string) => {

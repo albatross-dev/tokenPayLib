@@ -103,6 +103,7 @@ export default function TokenSwapSection({
   const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] = useState<
     bigint | null
   >(null);
+
   const [amount, setAmount] = useState<string>("");
   const [quote, setQuote] = useState<bigint | null>(null);
   const [showExchangeAnyModal, setShowExchangeAnyModal] = useState(false);
@@ -112,6 +113,63 @@ export default function TokenSwapSection({
 
   const [pools, setPools] = useState<Pool[]>([]);
 
+  /**
+   * Initializes the token swap section with pre-selected values when origin/target tokens,
+   * max amount, or pre-amount are provided as props. Sets up the initial state for
+   * token selection, amounts, and target tokens.
+   */
+  useEffect(() => {
+    if (origin) {
+      const ot = getOriginTokens();
+      setSelectedToken(ot[origin]);
+      const tt = processTargetTokens(ot[origin]);
+      if (target) {
+        setSelectedTargetToken(tt[target]);
+      }
+
+      if (max) {
+        setMaxAmountImmediately(ot[origin]);
+      }
+
+      if (preAmount) {
+        setAmount(preAmount.toString());
+      }
+    }
+  }, [origin, target, max, preAmount]);
+
+  /**
+   * Fetches a quote for a given token swap
+   */
+  useEffect(() => {
+    if (selectedToken && selectedTargetToken && amount) {
+      fetchQuote();
+    }
+  }, [selectedToken, selectedTargetToken, amount]);
+
+  /**
+   * Fetches the origin tokens for a given chain
+   */
+  useEffect(() => {
+    async function fetchOriginTokens() {
+      setOriginTokens(await getOriginTokens());
+    }
+    if (activeChain?.id) {
+      fetchOriginTokens();
+    }
+  }, [activeChain]);
+
+  /**
+   * Fetches the balances for the selected token and target token
+   */
+  useEffect(() => {
+    if (account && activeChain) {
+      fetchBalances();
+    }
+  }, [activeChain, selectedToken, selectedTargetToken, account]);
+
+  /**
+   * Set the max amount immediately
+   */
   async function setMaxAmountImmediately(ot: SimpleToken) {
     const balance = await fetchBalance(
       client,
@@ -123,8 +181,6 @@ export default function TokenSwapSection({
 
     setSelectedTokenBalance(balance);
 
-    console.log("balance", balance);
-
     // wait for 1 second
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -133,18 +189,16 @@ export default function TokenSwapSection({
     );
   }
 
+  /**
+   * Get the path for a given origin token and target token
+   */
   async function getPath(originToken: SimpleToken, targetToken: SimpleToken) {
-    console.log(
-      "getting path",
-      originToken.id.toUpperCase(),
-      targetToken.id.toUpperCase()
-    );
     let pool: Pool | undefined = pools.find(
       (path) =>
         path.inputToken === originToken.id.toUpperCase() &&
         path.outputToken === targetToken.id.toUpperCase()
     );
-    console.log("pool", pool);
+
     if (pool) {
       let path = JSON.parse(pool.path);
       for (let i = 0; i < path[0].length; i++) {
@@ -158,9 +212,10 @@ export default function TokenSwapSection({
     }
   }
 
+  /**
+   * Fetch paths from the backend
+   */
   async function fetchPaths(originToken: SimpleToken): Promise<Pool[]> {
-    // fetch paths from backend
-    console.log("fetching paths", activeChain.name);
     try {
       const query = {
         where: {
@@ -203,6 +258,13 @@ export default function TokenSwapSection({
     }
   }
 
+  /**
+   /**
+    * Processes target tokens for a given origin token by:
+    * 1. Fetching available swap paths from the backend
+    * 2. Converting paths into a map of output tokens
+    * 3. Updating the UI state with available target tokens
+    */
   async function processTargetTokens(token: SimpleToken) {
     if (!token) return;
 
@@ -240,28 +302,9 @@ export default function TokenSwapSection({
     return targetTokens;
   }
 
-  useEffect(() => {
-    if (origin) {
-      const ot = getOriginTokens();
-      setSelectedToken(ot[origin]);
-      const tt = processTargetTokens(ot[origin]);
-      console.log("tt", tt);
-      console.log("target", target);
-      if (target) {
-        console.log("target", target, tt[target]);
-        setSelectedTargetToken(tt[target]);
-      }
-
-      if (max) {
-        setMaxAmountImmediately(ot[origin]);
-      }
-
-      if (preAmount) {
-        setAmount(preAmount.toString());
-      }
-    }
-  }, [origin, target, max, preAmount]);
-
+  /**
+   * Fetches a quote for a given token swap
+   */
   async function fetchQuote() {
     let contract = getContract({
       client: client,
@@ -274,8 +317,6 @@ export default function TokenSwapSection({
       selectedToken,
       selectedTargetToken
     );
-
-    console.log("path", path, uniswapAddressesPublic[activeChain.id].quote);
 
     const encodedPath = encodePacked(path[0], path[1]);
 
@@ -322,12 +363,10 @@ export default function TokenSwapSection({
     }
   }
 
-  useEffect(() => {
-    if (selectedToken && selectedTargetToken && amount) {
-      fetchQuote();
-    }
-  }, [selectedToken, selectedTargetToken, amount]);
-
+  /**
+   * Fetches the origin tokens for a given chain
+   * @returns A map of token symbols to token objects for available origin tokens
+   */
   async function getOriginTokens(): Promise<Record<string, SimpleToken>> {
     setLoading((prevState) => ({
       ...prevState,
@@ -368,21 +407,6 @@ export default function TokenSwapSection({
 
     return inputTokensMap;
   }
-
-  useEffect(() => {
-    async function fetchOriginTokens() {
-      setOriginTokens(await getOriginTokens());
-    }
-    if (activeChain?.id) {
-      fetchOriginTokens();
-    }
-  }, [activeChain]);
-
-  useEffect(() => {
-    if (account && activeChain) {
-      fetchBalances();
-    }
-  }, [activeChain, selectedToken, selectedTargetToken, account]);
 
   // fetch all necessary balances
   async function fetchBalances() {
@@ -435,6 +459,9 @@ export default function TokenSwapSection({
     setBalanceUpdate(false);
   }
 
+  /**
+   * Handles the click event for the "Max" button
+   */
   const handleMaxClick = () => {
     setAmount(
       (
@@ -444,13 +471,18 @@ export default function TokenSwapSection({
     );
   };
 
+  /**
+   * Handles the click event for the "Confirm" button
+   */
   const handleConfirmExchange = () => {
     handleExchangeAny(
       Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
     );
   };
 
-  // handle exchanges from the exchange function
+  /**
+   * Handles the click event for the "Confirm" button
+   */
   async function handleExchangeAny(amount: number) {
     setExchangeState("processing");
     await convertAnyToAnyDirect(
@@ -484,8 +516,10 @@ export default function TokenSwapSection({
     setExchangeState("normal");
   }
 
-  // handle exchanges from the modals
-  async function handleExchange(amount) {
+  /**
+   * Handles the click event for the "Confirm" button
+   */
+  async function handleExchange(amount: number) {
     setExchangeState("processing");
 
     await convertAnyToAnyDirect(

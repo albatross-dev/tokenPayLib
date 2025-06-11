@@ -9,39 +9,43 @@ import {
 import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useTranslation } from "next-i18next";
-import qs from "qs";
-import { api } from "../../../context/UserContext";
+import moment from "moment";
 
-interface DayObject {
+export interface DayObject {
   year: number;
   month: number;
   day: number;
 }
 
-interface DateRange {
+export interface DateRange {
   from: DayObject | null;
   to: DayObject | null;
 }
 
 interface ExportPopoverProps {
   minDate: DayObject;
-}
-
-interface TransactionData {
-  [key: string]: any;
-  checkoutConfig?: {
-    [key: string]: any;
-  };
+  setData: (dateRange: DateRange) => Promise<any[]>;
+  unwantedKeys: string[];
 }
 
 type ButtonState = "inactive" | "active" | "loading";
 
-export default function ExportPopover({ minDate }: ExportPopoverProps) {
+export default function ExportPopover({
+  minDate,
+  setData,
+  unwantedKeys,
+}: ExportPopoverProps) {
   const [selectedDayRange, setSelectedDayRange] = useState<DateRange>({
     from: null,
     to: null,
   });
   const { t } = useTranslation("common");
+
+  const today = {
+    year: moment().year(),
+    month: moment().month() + 1,
+    day: moment().date(),
+  };
 
   const [buttonState, setButtonState] = useState<ButtonState>("inactive");
 
@@ -52,7 +56,7 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
     const sales = await setData(selectedDayRange);
 
     // Convert sales data to CSV and trigger download
-    const csvData = convertToCSV(sales);
+    const csvData = convertToCSV(sales, unwantedKeys);
     triggerDownload(selectedDayRange, csvData);
 
     setButtonState("active");
@@ -92,6 +96,7 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
                     colorPrimary="#2E3DFF"
                     colorPrimaryLight="#F5F5F5"
                     minimumDate={minDate}
+                    maximumDate={today}
                     shouldHighlightWeekends
                   />
                   <button
@@ -119,64 +124,8 @@ export default function ExportPopover({ minDate }: ExportPopoverProps) {
   );
 }
 
-async function setData(dateRange: DateRange): Promise<TransactionData[]> {
-  if (!dateRange.from || !dateRange.to) {
-    throw new Error("Date range is incomplete");
-  }
-
-  let from = new Date(
-    dateRange.from.year,
-    dateRange.from.month - 1,
-    dateRange.from.day
-  );
-
-  // Creating a completely new date object for "to"
-  let to = new Date(
-    dateRange.to.year,
-    dateRange.to.month - 1,
-    dateRange.to.day
-  );
-  let adjustedTo = new Date(to);
-  adjustedTo.setDate(adjustedTo.getDate() + 1);
-
-  console.log("setData called", from, adjustedTo);
-
-  // Build queries for today and yesterday
-  const query = {
-    and: [
-      { createdAt: { greater_than_equal: from.toISOString() } },
-      { createdAt: { less_than: adjustedTo.toISOString() } },
-    ],
-  };
-
-  let rangeQuery = qs.stringify({ where: query }, { addQueryPrefix: true });
-
-  // Fetch data
-  const response = await api.get<{ docs: TransactionData[] }>(
-    `/api/fiatTransaction${rangeQuery}`
-  );
-
-  return response.data.docs;
-}
-
-function convertToCSV(arr: TransactionData[]): string {
+function convertToCSV(arr: any[], unwantedKeys: string[]): string {
   if (arr.length === 0) return "";
-
-  // Remove unwanted keys
-  const unwantedKeys = [
-    "updatedAt",
-    "items",
-    "vendor",
-    "consumer",
-    "checkoutConfig",
-    "companyWebsite",
-    "supportWebsite",
-    "gdprURL",
-    "termsURL",
-    "fromUrl",
-    "successUrl",
-    "logo",
-  ];
 
   // Process the data
   const processedData = arr.map((obj) => {

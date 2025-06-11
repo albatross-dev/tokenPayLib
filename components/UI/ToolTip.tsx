@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 
-
-
+/**
+ * Tooltip component that displays additional information on hover
+ */
 const Tooltip = ({ text }: { text: string }): JSX.Element => {
   const [showTooltip, setShowTooltip] = useState(false);
-  const { t } = useTranslation("common"); 
 
   return (
     <div className="relative z-99 flex items-center">

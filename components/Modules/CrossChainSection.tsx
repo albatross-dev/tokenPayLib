@@ -53,6 +53,9 @@ const CrossChainSection: React.FC = () => {
     }
   }, [activeChain]);
 
+  /**
+   * Fetches the stable balance of the active chain
+   */
   async function fetchStableBalance(): Promise<void> {
     if (!activeChain?.id || !account?.address) return;
 

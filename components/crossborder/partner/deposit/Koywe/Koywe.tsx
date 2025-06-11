@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { QuotePaymentType } from "../../../../depositPage/slides/DepositMethodSelector";
-import { Account } from "thirdweb/dist/types/wallets/interfaces/wallet";
 import { Country } from "../../../../../types/payload-types";
 import {
   createKoyweDepositTransaction,
@@ -20,6 +19,7 @@ import StartTransaction from "./Slides/StartTransaction";
 import router from "next/router";
 import UnverifiedSlide from "../../withdraw/Koywe/Slides/UnverifiedSlide";
 import currencies from "../../../../../utilities/crypto/currencies";
+import { Account } from "thirdweb/wallets";
 
 interface KoyweProps {
   method: QuotePaymentType;

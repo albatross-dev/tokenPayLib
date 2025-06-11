@@ -77,7 +77,6 @@ const BridgeModalUniversal = ({
       status: 0,
     });
 
-    console.log("all params", chain, token, amount, destinationChainId);
     if (chain && token && amount && destinationChainId) {
       fetchLimitsAndQuoteData();
     }
@@ -103,6 +102,9 @@ const BridgeModalUniversal = ({
     }
   }, [amount, maxAmount, token]);
 
+  /**
+   * Fetches the limits and quote data for a given token and chain
+   */
   const fetchLimitsAndQuoteData = async () => {
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
@@ -139,10 +141,16 @@ const BridgeModalUniversal = ({
     }
   };
 
+  /**
+   * Handles the click event for the "Max" button
+   */
   const handleMaxClick = () => {
     setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
   };
 
+  /**
+   * Handles the click event for the "Confirm" button
+   */
   const handleConfirmBridge = () => {
     if (amount === null) return;
 
@@ -150,6 +158,9 @@ const BridgeModalUniversal = ({
     closeModal();
   };
 
+  /**
+   * Handles the bridge operation
+   */
   async function handleBridge(amount: number): Promise<void> {
     onStart();
     const tokenAddress = token?.contractAddress;
@@ -159,16 +170,6 @@ const BridgeModalUniversal = ({
       console.error("Missing required data for bridge operation");
       return;
     }
-
-    console.log(
-      "accrossBridgeDeposit",
-      tokenAddress,
-      originChainId,
-      destinationChainId,
-      amount,
-      account,
-      token
-    );
 
     const success = await acrossBridgeDeposit({
       tokenAddress,
