@@ -255,7 +255,7 @@ export default function BalanceOverview() {
             {tCrossborder("balanceOverview.eurUsdConvert")}
           </div>
           <Link
-            href={"/deposit"}
+            href={"/deposit?source=crossborder"}
             className={`border hover:bg-gray-200 rounded px-3 py-1 border-gray-300 ${
               router.route === "/deposit" ? "text-uhuBlue border-uhuBlue" : ""
             }`}
@@ -263,7 +263,7 @@ export default function BalanceOverview() {
             {tCrossborder("balanceOverview.depositBalance")}
           </Link>
           <Link
-            href={"/withdraw"}
+            href={"/withdraw?source=crossborder"}
             className={`border hover:bg-gray-200  rounded px-3 py-1 border-gray-300 ${
               router.route === "/withdraw" ? "text-uhuBlue border-uhuBlue" : ""
             }`}

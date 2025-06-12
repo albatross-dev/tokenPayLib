@@ -6,9 +6,6 @@ import { useTranslation } from "next-i18next";
 import { SimpleToken } from "../../types/token.types";
 import { TokenSelectorProps } from "./types";
 
-
-
-
 /**
  * TokenSelector component allows users to select a token from a dropdown menu.
  * It includes a search functionality to filter tokens by name or id.
@@ -49,13 +46,18 @@ export default function TokenSelector({
             <div className="flex items-center">
               {selectedToken ? (
                 <>
-                  <Image
-                    src={selectedToken.icon}
-                    alt={selectedToken.name}
-                    width={24}
-                    height={24}
-                    className="h-6 w-6 mr-2"
-                  />
+                  {selectedToken.icon ? (
+                    <Image
+                      src={selectedToken.icon}
+                      alt={selectedToken.name}
+                      width={24}
+                      height={24}
+                      className="h-6 w-6 mr-2"
+                    />
+                  ) : (
+                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full"></div>
+                  )}
+
                   <span>{selectedToken.name}</span>
                 </>
               ) : (
@@ -77,7 +79,9 @@ export default function TokenSelector({
             type="text"
             placeholder={t("search")}
             value={searchTerm}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -115,4 +119,4 @@ export default function TokenSelector({
       </MenuItems>
     </Menu>
   );
-} 
+}

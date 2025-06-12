@@ -10,6 +10,7 @@ import { Calendar } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useTranslation } from "next-i18next";
 import moment from "moment";
+import LoadingButton, { LoadingButtonStates } from "../UI/LoadingButton";
 
 export interface DayObject {
   year: number;
@@ -25,15 +26,15 @@ export interface DateRange {
 interface ExportPopoverProps {
   minDate: DayObject;
   setData: (dateRange: DateRange) => Promise<any[]>;
-  unwantedKeys: string[];
+  wantedKeys: string[];
+  keyNames: Record<string, string>;
 }
-
-type ButtonState = "inactive" | "active" | "loading";
 
 export default function ExportPopover({
   minDate,
   setData,
-  unwantedKeys,
+  wantedKeys,
+  keyNames,
 }: ExportPopoverProps) {
   const [selectedDayRange, setSelectedDayRange] = useState<DateRange>({
     from: null,
@@ -47,27 +48,43 @@ export default function ExportPopover({
     day: moment().date(),
   };
 
-  const [buttonState, setButtonState] = useState<ButtonState>("inactive");
+  const [loadingButtonState, setLoadingButtonState] =
+    useState<LoadingButtonStates>("normal");
+  const [loadingButtonActive, setLoadingButtonActive] =
+    useState<boolean>(false);
 
   const handleDataExport = async (): Promise<void> => {
-    if (buttonState !== "active") return;
+    if (loadingButtonState !== "normal") return;
 
-    setButtonState("loading");
-    const sales = await setData(selectedDayRange);
+    setLoadingButtonState("processing");
 
-    // Convert sales data to CSV and trigger download
-    const csvData = convertToCSV(sales, unwantedKeys);
-    triggerDownload(selectedDayRange, csvData);
+    try {
+      const sales = await setData(selectedDayRange);
 
-    setButtonState("active");
+      // Convert sales data to CSV and trigger download
+      const csvData = convertToCSV(sales, wantedKeys, keyNames);
+      triggerDownload(selectedDayRange, csvData);
+
+      setLoadingButtonState("success");
+
+      setTimeout(() => {
+        setLoadingButtonState("normal");
+      }, 5000);
+    } catch (error) {
+      console.log("error", error);
+      setLoadingButtonState("error");
+      setTimeout(() => {
+        setLoadingButtonState("normal");
+      }, 5000);
+    }
   };
 
   const handleDateChange = (range: DateRange): void => {
     setSelectedDayRange(range);
     if (range.from && range.to) {
-      setButtonState("active");
+      setLoadingButtonActive(true);
     } else {
-      setButtonState("inactive");
+      setLoadingButtonActive(false);
     }
   };
 
@@ -89,7 +106,7 @@ export default function ExportPopover({
           >
             <PopoverPanel className="absolute z-10 mt-2 w-[22rem] max-w-sm px-4 sm:px-0">
               <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="relative bg-white p-4">
+                <div className="relative bg-white p-4 flex flex-col gap-1">
                   <Calendar
                     value={selectedDayRange}
                     onChange={handleDateChange}
@@ -99,21 +116,17 @@ export default function ExportPopover({
                     maximumDate={today}
                     shouldHighlightWeekends
                   />
-                  <button
-                    className={`mt-4 block w-full text-center py-2 rounded-md ${
-                      buttonState === "loading"
-                        ? "bg-gray-400"
-                        : buttonState === "active"
-                        ? "bg-blue-500 text-white"
-                        : "bg-blue-200 text-gray-400"
-                    }`}
+                  <LoadingButton
+                    isLoading={loadingButtonState}
                     onClick={handleDataExport}
-                    disabled={buttonState !== "active"}
+                    active={loadingButtonActive}
+                    fullWidth={true}
+                    showSuccessColor={true}
                   >
-                    {buttonState === "loading"
-                      ? t("ExportPopover.loading_export")
+                    {loadingButtonState === "success"
+                      ? t("ExportPopover.success")
                       : t("ExportPopover.export")}
-                  </button>
+                  </LoadingButton>
                 </div>
               </div>
             </PopoverPanel>
@@ -124,25 +137,49 @@ export default function ExportPopover({
   );
 }
 
-function convertToCSV(arr: any[], unwantedKeys: string[]): string {
+function convertToCSV(
+  arr: any[],
+  wantedKeys: string[],
+  keyNames: Record<string, string>
+): string {
   if (arr.length === 0) return "";
+
+  // Helper function to get nested object values
+  const getNestedValue = (obj: any, path: string) => {
+    return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+  };
 
   // Process the data
   const processedData = arr.map((obj) => {
-    const newObj = { ...obj };
-    unwantedKeys.forEach((key) => {
-      delete newObj[key];
-      if (newObj.checkoutConfig) {
-        delete newObj.checkoutConfig[key];
+    const newObj: Record<string, any> = {};
+
+    // Only include wanted keys
+    wantedKeys.forEach((key) => {
+      if (key.includes(".")) {
+        // Handle nested keys
+        const value = getNestedValue(obj, key);
+        if (value !== undefined) {
+          newObj[key] = value;
+        }
+      } else {
+        // Handle top-level keys
+        if (obj[key] !== undefined) {
+          newObj[key] = obj[key];
+        }
       }
     });
+
     return newObj;
   });
 
   // Convert to CSV
-  const csv = [Object.keys(processedData[0]).join(";")]; // header
+  const csv = [wantedKeys.map((key) => keyNames[key]).join(";")]; // header
   for (const row of processedData) {
-    csv.push(Object.values(row).join(";"));
+    const values = wantedKeys.map((key) => {
+      const value = row[key];
+      return value !== undefined ? value : "";
+    });
+    csv.push(values.join(";"));
   }
 
   return csv.join("\n");

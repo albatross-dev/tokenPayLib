@@ -351,7 +351,7 @@ function CountriesInfo({
                                             <div
                                               className={`${
                                                 minimumFeePartner
-                                                  ? ""
+                                                  ? "hidden" // TODO: figure out how to display min amount correctly
                                                   : "hidden"
                                               } `}
                                             >

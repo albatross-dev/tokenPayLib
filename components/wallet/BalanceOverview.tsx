@@ -126,7 +126,7 @@ export default function BalanceOverview() {
         <div className="flex-1"></div>
         <div>
           <Link
-            href={"/withdraw"}
+            href={"/withdraw?source=wallet"}
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
             {tAccount("withdrawal")}
@@ -134,7 +134,7 @@ export default function BalanceOverview() {
         </div>
         <div>
           <Link
-            href={"/deposit"}
+            href={"/deposit?source=wallet"}
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
             {tAccount("deposit")}

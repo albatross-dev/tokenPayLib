@@ -109,7 +109,7 @@ const BridgeModalUniversal = ({
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
 
-    if (!tokenAddress || !originChainId || amount === null) {
+    if (!tokenAddress || !originChainId || amount === null || amount <= 0) {
       return;
     }
 

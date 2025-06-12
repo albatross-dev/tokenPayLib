@@ -26,6 +26,9 @@ import { Account } from "thirdweb/wallets";
 import { SimpleToken } from "../../../../types/token.types";
 import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "@/tokenPayLib/components/UI/LoadingButton";
 
 interface RawCryptoProps {
   amount: number;
@@ -62,7 +65,7 @@ export default function RawCrypto({
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<
     bigint | null
   >(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
   const { user } = useContext(AuthContext);
   const account = useActiveAccount();
   const [newTxHash, setNewTxHash] = useState<string | null>(null);
@@ -209,7 +212,7 @@ export default function RawCrypto({
   const handleSend = async () => {
     if (!validateForm()) return;
 
-    setIsLoading(true);
+    setIsLoading("processing");
     if (differentToken && selectedToken && quote) {
       try {
         await convertAnyToAnyDirect(
@@ -268,7 +271,7 @@ export default function RawCrypto({
         );
         setErrors(errors);
         console.error("Error transfering token", error);
-        setIsLoading(false);
+        setIsLoading("error");
         return;
       }
     } else {
@@ -307,7 +310,7 @@ export default function RawCrypto({
     }
 
     setState("success");
-    setIsLoading(false);
+    setIsLoading("normal");
     setIsOpen(true);
   };
 
@@ -406,15 +409,14 @@ export default function RawCrypto({
             {errors.conversionError && (
               <p className="text-red-500 text-sm">{errors.conversionError}</p>
             )}
-            <button
-              className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
+            <LoadingButton
+              isLoading={isLoading}
               onClick={handleSend}
-              disabled={isLoading || !selectedToken || loadingQuote}
+              fullWidth={true}
+              active={selectedToken && !loadingQuote}
             >
-              {isLoading
-                ? tCrossborder("withdraw.crypto.send")
-                : tCrossborder("withdraw.crypto.sendNow")}
-            </button>
+              {tCrossborder("withdraw.crypto.sendNow")}
+            </LoadingButton>
           </div>
         </div>
       )}

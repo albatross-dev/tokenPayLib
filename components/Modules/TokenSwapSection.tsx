@@ -1,63 +1,44 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
-import TokenSelector from "../Forms/TokenSelector";
 import ExchangeModal from "../../components/Modals/ExchangeModal";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
 import tokenyByChain from "../../utilities/crypto/tokenByChain";
+import TokenSelector from "../Forms/TokenSelector";
 
-import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { ConvertStateButtonWide } from "../../components/UI/ConvertStateButton";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 
-import { client } from "../../../pages/_app";
 import { getContract, readContract } from "thirdweb";
-import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 import { encodePacked } from "thirdweb/utils";
+import { client } from "../../../pages/_app";
+import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 
-import { useActiveWalletChain, useActiveAccount } from "thirdweb/react";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 
+import QueryString from "qs";
+import { useEffect, useState } from "react";
+import { RxUpdate } from "react-icons/rx";
+import { api } from "../../../context/UserContext";
+import { Pool } from "../../types/payload-types";
+import { SimpleToken } from "../../types/token.types";
+import {
+  convertAnyToAnyDirect,
+  uniswapAddressesPublic,
+} from "../../utilities/crypto/convertAnyToAny";
 import {
   formatCrypto,
   TokensByChainId,
 } from "../../utilities/crypto/currencies";
-import { RxUpdate } from "react-icons/rx";
-import convertAnyToAny, {
-  convertAnyToAnyDirect,
-  uniswapAddresses,
-  uniswapAddressesPublic,
-} from "../../utilities/crypto/convertAnyToAny";
-import { useEffect, useState } from "react";
-import {
-  arbitrum,
-  avalanche,
-  base,
-  ethereum,
-  optimism,
-  polygon,
-} from "thirdweb/chains";
-import React from "react";
-import { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
-import UniversalModal from "../Modals/UniversalModal";
-import ChainSelector from "../Forms/ChainSelector";
 import { ExchangeType } from "../../utilities/exchangeTypes";
-import QueryString from "qs";
-import { SimpleToken } from "../../types/token.types";
+import ChainSelector from "../Forms/ChainSelector";
+import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 import MiniLoader from "../UI/MiniLoader";
-import { Pool } from "../../types/payload-types";
-import { api } from "../../../context/UserContext";
 
 const exchangeType: ExchangeType = process.env
   .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
 
 let retryCounterAny = 0;
 let retryCounter = 0;
-
-const chainIdSlugDictionary = {
-  [ethereum.id]: "uniswapPoolsEthereum",
-  [polygon.id]: "uniswapPoolsPolygon",
-  [optimism.id]: "uniswapPoolsOptimism",
-  [avalanche.id]: "uniswapPoolsAvalanche",
-  [arbitrum.id]: "uniswapPoolsArbitrum",
-  [base.id]: "uniswapPoolsBase",
-};
 
 type exchangeStateType = "normal" | "processing" | "error";
 
@@ -292,7 +273,6 @@ export default function TokenSwapSection({
     delete outputTokens["none"];
 
     setTargetTokens(outputTokens);
-    console.log("outputTokens", outputTokens);
 
     setLoading((prevState) => ({
       ...prevState,
@@ -330,16 +310,12 @@ export default function TokenSwapSection({
         )
       );
 
-      console.log("encodedPath", encodedPath);
-      console.log("finalAmount", finalAmount);
-
       try {
         const quote = await readContract({
           contract: contract,
           method: "quoteExactInput",
           params: [encodedPath, BigInt(finalAmount)],
         });
-        console.log("quote", quote);
         setQuote(quote as bigint);
       } catch (e) {
         setQuote(BigInt(0));
@@ -500,7 +476,6 @@ export default function TokenSwapSection({
         retryCounterAny++;
         if (retryCounterAny < 3) {
           handleExchangeAny(amount);
-          console.log("retrying exchange", retryCounterAny);
         } else {
           retryCounterAny = 0;
           console.error("Error converting to EUROE", error);
@@ -554,6 +529,55 @@ export default function TokenSwapSection({
     setExchangeState("normal");
   }
 
+  /**
+   * Handles the selection of an origin token in the token swap interface.
+   * Resets the swap state and triggers the process to find compatible target tokens.
+   *
+   * @param token - The selected origin token to swap from
+   */
+  function handleOriginTokenSelected(token: SimpleToken) {
+    setAmount("");
+    setSelectedToken(token);
+    setTargetTokens({});
+    setPools([]);
+    setQuote(null);
+    setSelectedTargetToken(null);
+    setSelectedTargetTokenBalance(null);
+    processTargetTokens(token);
+  }
+
+  /**
+   * Handles the input of token amount in the swap interface.
+   * Rounds the input value to match the selected token's decimal precision.
+   *
+   * @param e - The input event containing the new amount value
+   */
+  function handleAmountInput(e: React.ChangeEvent<HTMLInputElement>) {
+    // round to the decimals of the token
+    const value = Number(e.target.value);
+    const decimals = selectedToken?.decimals || 18;
+    const multiplier = Math.pow(10, decimals);
+    const roundedValue = Math.floor(value * multiplier) / multiplier;
+    setAmount(roundedValue.toString());
+  }
+
+  /**
+   * Handles the selection of a target token in the token swap interface.
+   * Updates the selected target token and fetches its balance.
+   *
+   * @param token - The selected target token to swap to
+   */
+  function handleTargetTokenSelected(selectedToken: SimpleToken) {
+    setSelectedTargetToken(selectedToken);
+    setQuote(null);
+  }
+
+  async function handleBalanceUpdate() {
+    setBalanceUpdate(true);
+    await fetchBalances();
+    setBalanceUpdate(false);
+  }
+
   return (
     <div>
       <UniversalModal
@@ -597,16 +621,7 @@ export default function TokenSwapSection({
 
       <TokenSelector
         type="token"
-        onSelect={(token) => {
-          setAmount("");
-          setSelectedToken(token);
-          setTargetTokens({});
-          setPools([]);
-          setQuote(null);
-          setSelectedTargetToken(null);
-          setSelectedTargetTokenBalance(null);
-          processTargetTokens(token);
-        }}
+        onSelect={handleOriginTokenSelected}
         tokens={originTokens}
         selectedToken={selectedToken}
       />
@@ -622,14 +637,7 @@ export default function TokenSwapSection({
         placeholder="0.00"
         value={amount}
         disabled={!selectedToken}
-        onChange={(e) => {
-          // round to the decimals of the token
-          const value = Number(e.target.value);
-          const decimals = selectedToken?.decimals || 18;
-          const multiplier = Math.pow(10, decimals);
-          const roundedValue = Math.floor(value * multiplier) / multiplier;
-          setAmount(roundedValue.toString());
-        }}
+        onChange={handleAmountInput}
         max={selectedTokenBalance}
         min={0}
       />
@@ -648,12 +656,10 @@ export default function TokenSwapSection({
         <div>{selectedToken?.name}</div>
         <div className="flex-1"></div>
         <RxUpdate
-          className={`w-6 h-6 ${balanceUpdate && "animate-spin"}`}
-          onClick={async () => {
-            setBalanceUpdate(true);
-            await fetchBalances();
-            setBalanceUpdate(false);
-          }}
+          className={`w-6 h-6 cursor-pointer ${
+            balanceUpdate && "animate-spin"
+          }`}
+          onClick={handleBalanceUpdate}
         />
         <button
           type="button"
@@ -671,9 +677,7 @@ export default function TokenSwapSection({
 
       <TokenSelector
         type="token"
-        onSelect={(selectedToken) => {
-          setSelectedTargetToken(selectedToken);
-        }}
+        onSelect={handleTargetTokenSelected}
         tokens={targetTokens}
         selectedToken={selectedTargetToken}
       />
@@ -715,7 +719,11 @@ export default function TokenSwapSection({
         <div className="self-end">
           <ConvertStateButtonWide
             enabled={
-              selectedTargetToken && selectedToken && amount && !inputError
+              selectedTargetToken &&
+              selectedToken &&
+              amount &&
+              !inputError &&
+              Boolean(quote)
             }
             state={exchangeState}
             onClick={handleConfirmExchange}

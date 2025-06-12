@@ -10,13 +10,13 @@ import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import Loader from "../UI/Loader";
 import TokenSelector from "../Forms/TokenSelector";
 import { formatCrypto } from "../../utilities/crypto/currencies";
-import { useTranslation } from "react-i18next";
 import LoadingButton from "../UI/LoadingButton";
 
 export default function SendCryptoDialog({
   isOpen,
   setIsOpen,
   isLoading,
+  setIsLoading,
   selectedToken,
   originTokens,
   amount,
@@ -83,6 +83,15 @@ export default function SendCryptoDialog({
                   <div className="text-center">
                     {tAccount("sendCrypto.dialog.successText")}
                   </div>
+                  <div className="flex flex-row gap-2">
+                    <button
+                      type="button"
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                      onClick={() => setIsLoading("normal")}
+                    >
+                      {tAccount("sendCrypto.dialog.newTransaction")}
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
@@ -110,11 +119,19 @@ export default function SendCryptoDialog({
                         value={amount}
                         onChange={(e) => {
                           if (!selectedToken) {
-                            setFieldError("amount", tAccount("sendCrypto.errors.selectTokenFirst"));
+                            setFieldError(
+                              "amount",
+                              tAccount("sendCrypto.errors.selectTokenFirst")
+                            );
                           } else {
-                            if(e.target.value > maxAmount) {
-                              setFieldError("amount", tAccount("sendCrypto.errors.insufficientBalance"));
-                            }else{
+                            if (e.target.value > maxAmount) {
+                              setFieldError(
+                                "amount",
+                                tAccount(
+                                  "sendCrypto.errors.insufficientBalance"
+                                )
+                              );
+                            } else {
                               clearFieldError("amount");
                             }
                             setAmount(e.target.value);
@@ -143,7 +160,9 @@ export default function SendCryptoDialog({
                       </button>
                     </div>
                     {errors.amount && (
-                      <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.amount}
+                      </p>
                     )}
                     <div className="mt-4 mb-2">
                       {tAccount("sendCrypto.dialog.step3")}
@@ -169,7 +188,12 @@ export default function SendCryptoDialog({
                     <LoadingButton
                       isLoading={isLoading}
                       onClick={handleSend}
-                      active={Object.keys(errors).length > 0 || !selectedToken}
+                      active={
+                        Object.keys(errors).length === 0 &&
+                        selectedToken &&
+                        amount > 0 &&
+                        targetAddress.length > 0
+                      }
                     >
                       {tAccount("sendCrypto.dialog.sendButton")}
                     </LoadingButton>
@@ -182,4 +206,4 @@ export default function SendCryptoDialog({
       </Dialog>
     </Transition>
   );
-} 
+}

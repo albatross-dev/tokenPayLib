@@ -1,7 +1,9 @@
-import React from 'react';
-import { useTranslation } from 'next-i18next';
-import { BalanceSelectionSlideProps } from '../types';
-import FiatBalanceSelector from '../../crossborder/transfer/components/FiatBalanceSelector';
+import React from "react";
+import { useTranslation } from "next-i18next";
+import { BalanceSelectionSlideProps } from "../types";
+import FiatBalanceSelector from "../../crossborder/transfer/components/FiatBalanceSelector";
+import { useRouter } from "next/router";
+import BackButton from "../../crossborder/transfer/components/BackButton";
 
 const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
   selectedCountry,
@@ -9,12 +11,24 @@ const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
   setPreferredStableCoin,
   swiperInstance,
 }) => {
-  const { t: tCrossborder } = useTranslation('crossborder');
+  const { t: tCrossborder } = useTranslation("crossborder");
+
+  const router = useRouter();
+  const source = router.query.source;
+
+  function goBack() {
+    if (source === "crossborder") {
+      router.push("/crossborder");
+    } else {
+      router.push("/wallet");
+    }
+  }
 
   return (
     <div className="relative z-[10] p-4 flex flex-col gap-4 max-w-4xl mx-auto">
+      <BackButton onBack={goBack} />
       <h2 className="text-2xl">
-        {tCrossborder('withdrawPage.balanceSelection.heading')}
+        {tCrossborder("withdrawPage.balanceSelection.heading")}
       </h2>
       {selectedCountry && (
         <FiatBalanceSelector
@@ -22,7 +36,7 @@ const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
           setAvailableMethods={setAvailableMethods}
           setPreferredStableCoin={(coin) => {
             if (coin) {
-              console.log('coin', coin);
+              console.log("coin", coin);
               setPreferredStableCoin(coin);
             }
           }}
@@ -35,4 +49,4 @@ const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
   );
 };
 
-export default BalanceSelectionSlide; 
+export default BalanceSelectionSlide;

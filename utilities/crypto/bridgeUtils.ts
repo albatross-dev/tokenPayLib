@@ -222,7 +222,6 @@ export async function acrossBridgeDeposit(
   const {
     tokenAddress,
     destinationChainId,
-    amount,
     account,
     chain,
     quoteData,
@@ -230,6 +229,9 @@ export async function acrossBridgeDeposit(
     spokePoolWrapper,
     spokePool,
   } = params;
+
+  let { amount } = params;
+  amount = Math.floor(amount);
 
   console.log("acrossBridgeDeposit", params);
 
@@ -322,7 +324,7 @@ export async function fetchLimitsAndQuote(
     tokenDecimals
   );
 
-  const rawAmount = (amount * Math.pow(10, tokenDecimals)).toString();
+  const rawAmount = Math.floor(amount * Math.pow(10, tokenDecimals)).toString();
 
   let limits = null;
   let quote = null;
@@ -359,18 +361,16 @@ export async function fetchLimitsAndQuote(
           token: tokenAddress,
           originChainId: originChainId,
           destinationChainId: destinationChainId,
-          amount: rawAmount,
+          amount: rawAmount.toString().replace(",", "."),
         },
       }
     );
-
     let quoteData = quoteResponse.data;
     quoteData.status = 200;
 
     quote = quoteData;
   } catch (error) {
     sendErrorReport("BridgeUtils - Error fetching quote", error);
-    console.log("Error fetching quote:", error);
 
     const errorData = {
       code: error.response?.data?.code || "UNKNOWN_ERROR",

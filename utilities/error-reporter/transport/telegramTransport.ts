@@ -63,6 +63,8 @@ export class TelegramTransport implements Transport {
           },
         });
 
+        console.log("response", response);
+
         if (response.status !== 200) {
           console.error(
             "Failed to send message with Http Status: ",

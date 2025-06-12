@@ -21,7 +21,7 @@ interface TableQuery {
 }
 
 export default function Transfer() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTransactionData, setSelectedTransactionData] =
     useState<FiatTransaction | null>(null);
@@ -30,13 +30,6 @@ export default function Transfer() {
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const openModalWithTransactionData = (
-    transactionData: FiatTransaction
-  ): void => {
-    setSelectedTransactionData(transactionData);
-    setIsModalOpen(true);
-  };
-
   const columns: ColumnDef<any, any>[] = [
     {
       accessorKey: "transactionHash",
@@ -44,10 +37,7 @@ export default function Transfer() {
       cell: (props) => {
         return (
           <Link href={`/transaction/${props.row.original.id}`}>
-            <BsArrowUpRight
-              //onClick={() => openModalWithTransactionData(props.row.original)}
-              className="w-4 h-4 mr-2 ml-2 cursor-pointer"
-            />
+            <BsArrowUpRight className="w-4 h-4 mr-2 ml-2 cursor-pointer" />
           </Link>
         );
       },
@@ -158,59 +148,61 @@ export default function Transfer() {
     return response.data.docs;
   }
 
-  const unwantedKeys = [
-    "updatedAt",
-    "items",
-    "vendor",
-    "consumer",
-    "checkoutConfig",
-    "companyWebsite",
-    "supportWebsite",
-    "gdprURL",
-    "termsURL",
-    "fromUrl",
-    "successUrl",
-    "logo",
+  const wantedKeys = [
+    "createdAt",
+    "amount",
+    "currencyName",
+    "type",
+    "toAccountIdentifier",
+    "status",
   ];
 
+  const keyNames = {
+    createdAt: tCrossborder("transfer.date"),
+    amount: tCrossborder("transfer.amount"),
+    currencyName: tCrossborder("transfer.currency"),
+    type: tCrossborder("transfer.type"),
+    toAccountIdentifier: tCrossborder("transfer.receiver"),
+    status: tCrossborder("transfer.status"),
+  };
+
   return (
-    <>
-      <div className="px-4">
-        <TransactionModal
-          isOpen={isModalOpen}
-          closeModal={() => setIsModalOpen(false)}
-          transactionData={selectedTransactionData}
+    <div className="px-4 h-full flex-1 ">
+      <TransactionModal
+        isOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)}
+        transactionData={selectedTransactionData}
+      />
+      <SimpleList
+        standardQuery={paymentsTableQuery}
+        collection="fiatTransaction"
+        columns={columns}
+        loader={false}
+      >
+        <ExportPopover
+          setData={getTransferData}
+          minDate={{
+            year: moment(user?.createdAt).year(),
+            month: moment(user?.createdAt).month(),
+            day: moment(user?.createdAt).date(),
+          }}
+          keyNames={keyNames}
+          wantedKeys={wantedKeys}
         />
-        <SimpleList
-          standardQuery={paymentsTableQuery}
-          collection="fiatTransaction"
-          columns={columns}
-          loader={false}
-        >
-          <ExportPopover
-            setData={getTransferData}
-            minDate={{
-              year: moment(user?.createdAt).year(),
-              month: moment(user?.createdAt).month(),
-              day: moment(user?.createdAt).date(),
-            }}
-            unwantedKeys={unwantedKeys}
-          />
-          <TypePopover
-            onSelect={(type: string) => {
-              if (type === "all") {
-                setPaymentsTableQuery({});
-              } else {
-                setPaymentsTableQuery({
-                  type: {
-                    equals: type,
-                  },
-                });
-              }
-            }}
-          />
-        </SimpleList>
-      </div>
-    </>
+        <TypePopover
+          onSelect={(type: string) => {
+            if (type === "all") {
+              setPaymentsTableQuery({});
+            } else {
+              setPaymentsTableQuery({
+                type: {
+                  equals: type,
+                },
+              });
+            }
+          }}
+        />
+      </SimpleList>
+    </div>
   );
 }

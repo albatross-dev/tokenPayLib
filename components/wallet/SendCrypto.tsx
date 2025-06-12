@@ -128,10 +128,6 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         setAmount(0);
         setIsLoading("success");
         setNewTxHash(transactionHash);
-
-        setTimeout(() => {
-          setIsLoading("normal");
-        }, 20000);
       } catch (error) {
         console.log("error handle send", error);
         setErrorMessage({
@@ -152,6 +148,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       <SendCryptoDialog
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        setIsLoading={setIsLoading}
         isLoading={isLoading}
         selectedToken={selectedToken}
         originTokens={originTokens}
