@@ -4,7 +4,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 import countriesISO from "i18n-iso-countries";
 import { ALL_COUNTRIES_N } from "../../utilities/CountriesConfig";
-import Tooltip from "@/tokenPayLib/components/UI/Tooltip";
+import Tooltip from "../UI/Tooltip";
 
 interface Country {
   name: string;

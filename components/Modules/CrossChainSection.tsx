@@ -73,8 +73,6 @@ const CrossChainSection: React.FC = () => {
       params: [account.address],
     });
 
-    console.log("resultStableBalance", resultStableBalance);
-
     setBalanceOfStableData(resultStableBalance);
     setBalanceOfStableLoading(false);
   }
@@ -97,7 +95,6 @@ const CrossChainSection: React.FC = () => {
         maxAmount={Number(balanceOfStableData)}
         destinationChainId={selectedChain?.chainId}
         onStart={() => {
-          console.log("onStart", selectedChain?.chainId);
           setLoading((prevState) => ({
             ...prevState,
             [`${selectedChain?.chainId}`]: "processing",
