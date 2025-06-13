@@ -30,8 +30,6 @@ const Tooltip = ({ text }: { text: string }): JSX.Element => {
   );
 };
 
-export default Tooltip;
-
 interface Country {
   name: string;
   flag: string;
