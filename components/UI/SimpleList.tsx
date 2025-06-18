@@ -1,8 +1,8 @@
-import React, { useEffect, useState, ReactNode } from 'react'
-import Table from './Table';
-import DatePicker from '../../../components/DatePicker';
-import { Collection } from '../../types/derivedPayload.types';
-import { ColumnDef } from '@tanstack/react-table';
+import DatePicker from "@/tokenPayLib/components/UI/DatePicker";
+import { ColumnDef } from "@tanstack/react-table";
+import { ReactNode, useEffect, useState } from "react";
+import { Collection } from "../../types/derivedPayload.types";
+import Table from "./Table";
 
 interface DateRange {
   from: {
@@ -46,12 +46,12 @@ export default function SimpleList({
   columns,
   collection,
   loader,
-  standardQuery
+  standardQuery,
 }: SimpleListProps): JSX.Element {
-  const [tableQuery, setTableQuery] = useState<TableQuery>({ 
-    page: 1, 
-    limit: 20, 
-    where: standardQuery 
+  const [tableQuery, setTableQuery] = useState<TableQuery>({
+    page: 1,
+    limit: 20,
+    where: standardQuery || {},
   });
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function SimpleList({
     }
     const fromDate = new Date(`${e.from.year}-${e.from.month}-${e.from.day}`);
     const toDate = new Date(`${e.to.year}-${e.to.month}-${e.to.day}`);
-  
+
     setTableQuery({
       ...tableQuery,
       where: {
@@ -102,13 +102,13 @@ export default function SimpleList({
         <DatePicker onDateChange={handleDateChange} minDate="2021-01-01" />
         {children}
       </div>
-      <Table 
-        loader={loader} 
-        tableQuery={tableQuery} 
-        setTableQuery={setTableQuery} 
-        columns={columns} 
+      <Table
+        loader={loader}
+        tableQuery={tableQuery}
+        setTableQuery={setTableQuery}
+        columns={columns}
         collection={collection}
       />
     </div>
-  )
+  );
 }

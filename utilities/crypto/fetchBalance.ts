@@ -6,7 +6,7 @@ import {
   ThirdwebClient,
 } from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
-import { queryClient } from "../../../pages/_app";
+import { queryClient } from "@/pages/_app";
 
 // Custom error types to distinguish between different failure scenarios
 class ZeroBalanceError extends Error {
