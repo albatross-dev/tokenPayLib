@@ -26,7 +26,7 @@ export default function PartnerPanel({
 
   return (
     <div>
-      <div className="relative z-[10] text-darkBlue flex flex-col gap-4 max-w-4xl mx-auto">
+      <div className="relative z-[10] text-darkBlue flex flex-col max-w-4xl mx-auto">
         <div className="p-4">
           <BackButton onBack={onBack} />
         </div>

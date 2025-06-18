@@ -10,7 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { sortMethodByCurrencyDeposit } from "../../utilities/crossborder/sortMethodByCurrency";
 import { Country, PaymentTypesArray } from "../../types/payload-types";
-import { Swiper as SwiperType } from 'swiper';
+import { Swiper as SwiperType } from "swiper";
 import Banner from "../UI/Banner";
 import Maintenance from "../UI/Maintenance";
 
@@ -20,6 +20,7 @@ import FiatSelectionSlide from "./slides/FiatSelectionSlide";
 import DepositDetailsSlide from "./slides/DepositDetailsSlide";
 import DepositSlide from "./slides/DepositSlide";
 import { FiatCodes } from "../../types/derivedPayload.types";
+import { QuotePaymentType } from "./slides/DepositMethodSelector";
 
 interface MaintenanceProps {
   deposit?: {
@@ -46,13 +47,20 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   // The country of the user
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   // A object mapping available currencies to an array of methods for the specific currency
-  const [methodsByCurrency, setMethodsByCurrency] = useState<Record<string, PaymentTypesArray>>({});
+  const [methodsByCurrency, setMethodsByCurrency] = useState<
+    Record<string, PaymentTypesArray>
+  >({});
   // The method the user selected for its deposit
-  const [selectedMethod, setSelectedMethod] = useState<PaymentTypesArray[number] | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<QuotePaymentType | null>(
+    null
+  );
   // The currency the user wants to receive
-  const [preferredStableCoin, setPreferredStableCoin] = useState<string | null>(null);
+  const [preferredStableCoin, setPreferredStableCoin] = useState<string | null>(
+    null
+  );
   // The currency in which the user wants to pay
-  const [preferredFiatCurrency, setPreferredFiatCurrency] = useState<FiatCodes>();
+  const [preferredFiatCurrency, setPreferredFiatCurrency] =
+    useState<FiatCodes>();
   // The amount the user wants to receive
   const [amount, setAmount] = useState<string>("");
 
@@ -73,12 +81,14 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
 
   // All fiat currencies that are available for the available Methods
   const availableFiatCurrencies = availableMethodsForStableCoin
-    ? Array.from(new Set(
-        availableMethodsForStableCoin
-          .map((method) => method.currencies)
-          .flat()
-          .map(({ currency }) => currency)
-      ))
+    ? Array.from(
+        new Set(
+          availableMethodsForStableCoin
+            .map((method) => method.currencies)
+            .flat()
+            .map(({ currency }) => currency)
+        )
+      )
     : [];
 
   // All deposit methods that support the preferredStableCoin and the prefferedFiatTransaction
@@ -111,7 +121,9 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
     async function getCountryData() {
       try {
         let countryRes = await axios.get(
-          `/api/countries?where[countryCode][equals]=${user?.vendorCountry || user?.billingAddress?.country}`
+          `/api/countries?where[countryCode][equals]=${
+            user?.vendorCountry || user?.billingAddress?.country
+          }`
         );
 
         if (countryRes.data.docs.length === 0) {
@@ -140,11 +152,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
         setErrorMessage({
           message: tCrossborder("depositPage.errors.fetchCountryData"),
           component: (
-            <Banner
-              href={"/settings"}
-              color={"bg-red-400"}
-              rounded={"rounded"}
-            >
+            <Banner href={"/settings"} color={"bg-red-400"} rounded={"rounded"}>
               <div suppressHydrationWarning>{t("no_country")}</div>
             </Banner>
           ),
@@ -283,4 +291,4 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
       </div>
     </>
   );
-} 
+}

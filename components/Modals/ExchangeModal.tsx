@@ -1,7 +1,14 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  TransitionChild,
+  Transition,
+} from "@headlessui/react";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { useTranslation } from "react-i18next";
+import { SimpleToken } from "../../types/token.types";
 
 interface Token {
   symbol: string;
@@ -21,34 +28,34 @@ interface CheckoutSession {
 interface ExchangeModalProps {
   show: boolean;
   closeModal: () => void;
-  token: Token;
+  token: SimpleToken;
   handleExchange: (amount: number) => void;
   maxAmount: number | string;
   checkoutSession?: CheckoutSession | null;
 }
 
-const ExchangeModal: React.FC<ExchangeModalProps> = ({ 
-  show, 
-  closeModal, 
-  token, 
-  handleExchange, 
-  maxAmount, 
-  checkoutSession = null 
+const ExchangeModal: React.FC<ExchangeModalProps> = ({
+  show,
+  closeModal,
+  token,
+  handleExchange,
+  maxAmount,
+  checkoutSession = null,
 }) => {
-  const [amount, setAmount] = useState<number>((Number(maxAmount) || 1));
+  const [amount, setAmount] = useState<number>(Number(maxAmount) || 1);
 
   const { t } = useTranslation("common");
 
   useEffect(() => {
-    setAmount((Number(maxAmount) || 1) / numberWithZeros(token?.contract?.decimals || 1));
-  }, [maxAmount, token?.contract?.decimals]);
+    setAmount((Number(maxAmount) || 1) / numberWithZeros(token?.decimals || 1));
+  }, [maxAmount, token?.decimals]);
 
   const handleMaxClick = (): void => {
-    setAmount((Number(maxAmount) || 1) / numberWithZeros(token?.contract?.decimals || 1));
+    setAmount((Number(maxAmount) || 1) / numberWithZeros(token?.decimals || 1));
   };
 
   const handleConfirmExchange = (): void => {
-    handleExchange(amount * numberWithZeros(token?.contract?.decimals || 1));
+    handleExchange(amount * numberWithZeros(token?.decimals || 1));
     closeModal();
   };
 
@@ -78,12 +85,18 @@ const ExchangeModal: React.FC<ExchangeModalProps> = ({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                {`${t("convert")} ${token?.symbol}`}
+              <DialogTitle
+                as="h3"
+                className="text-lg font-medium leading-6 text-gray-900"
+              >
+                {`${t("convert")} ${token?.id}`}
               </DialogTitle>
 
               <p className="text-gray-700">
-                {t("enter_amount_exchange", {currency: (checkoutSession?.router?.stableCoinShortName || "usdc") })}
+                {t("enter_amount_exchange", {
+                  currency:
+                    checkoutSession?.router?.stableCoinShortName || "usdc",
+                })}
               </p>
 
               <input
@@ -119,4 +132,4 @@ const ExchangeModal: React.FC<ExchangeModalProps> = ({
   );
 };
 
-export default ExchangeModal; 
+export default ExchangeModal;

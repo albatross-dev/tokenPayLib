@@ -15,7 +15,10 @@ import { client } from "../../../../../../pages/_app";
 import { polygon } from "thirdweb/chains";
 import { useTranslation } from "next-i18next";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";
-import { AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
+import {
+  AuthContext,
+  sendErrorReport,
+} from "../../../../../../context/UserContext";
 import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
 import currencies from "../../../../../utilities/crypto/currencies";
 import getFormData from "../../../../../utilities/forms/getFormData";
@@ -38,7 +41,12 @@ const TRANSACTION_STATE_DONE: TransactionState = "done";
 const TRANSACTION_STATE_MANUEL: TransactionState = "manuel";
 const TRANSACTION_STATE_PAYMENT_PENDING: TransactionState = "paymentPending";
 
-const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method }) => {
+const HelpDesk: React.FC<HelpDeskProps> = ({
+  country,
+  amount,
+  account,
+  method,
+}) => {
   const { user, refreshAuthentication } = useContext(AuthContext);
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -156,11 +164,17 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
       const sendData = {
         partnerType: method.type,
       };
-      await axios.post("/api/fiatTransaction/helpDeskVerificationRequest", sendData);
+      await axios.post(
+        "/api/fiatTransaction/helpDeskVerificationRequest",
+        sendData
+      );
       refreshAuthentication();
       setState(DESK_STATE_VERIFICATION_REQUESTED);
     } catch (e) {
-      sendErrorReport("HelpDesk - Verification request failed custom endpoint", e);
+      sendErrorReport(
+        "HelpDesk - Verification request failed custom endpoint",
+        e
+      );
       console.error(e);
       setState(DESK_STATE_FAILED);
     }
@@ -244,8 +258,12 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
     <div className="mb-16">
       {state === DESK_STATE_ONGOING && transaction && (
         <>
-          {transaction.status === TRANSACTION_STATE_STARTED && <TransactionStarted />}
-          {transaction.status === TRANSACTION_STATE_PENDING && <TransactionPending />}
+          {transaction.status === TRANSACTION_STATE_STARTED && (
+            <TransactionStarted />
+          )}
+          {transaction.status === TRANSACTION_STATE_PENDING && (
+            <TransactionPending />
+          )}
           {transaction.status === TRANSACTION_STATE_PAYMENT_PENDING && (
             <TransactionPaymentPending
               handleSend={handleSend}
@@ -254,13 +272,20 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
               errorMessage={errorMessage}
             />
           )}
-          {transaction.status === TRANSACTION_STATE_DONE && <TransactionDone handleNewTransaction={handleNewTransaction} />}
-          {transaction.status === TRANSACTION_STATE_MANUEL && <TransactionManual handleNewTransaction={handleNewTransaction} />}
+          {transaction.status === TRANSACTION_STATE_DONE && (
+            <TransactionDone handleNewTransaction={handleNewTransaction} />
+          )}
+          {transaction.status === TRANSACTION_STATE_MANUEL && (
+            <TransactionManual handleNewTransaction={handleNewTransaction} />
+          )}
           {transaction === null && <TransactionNone />}
         </>
       )}
       {state === DESK_STATE_UNVERIFIED && (
-        <HelpDeskVerificationForm method={method} handleVerificationRequest={handleVerificationRequest} />
+        <HelpDeskVerificationForm
+          method={method}
+          handleVerificationRequest={handleVerificationRequest}
+        />
       )}
       {state === DESK_STATE_VERIFIED && (
         <HelpDeskRequestForm
@@ -270,11 +295,13 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
           handleStartTransaction={handleStartTransaction}
         />
       )}
-      {state === DESK_STATE_VERIFICATION_REQUESTED && <VerificationInProgress />}
+      {state === DESK_STATE_VERIFICATION_REQUESTED && (
+        <VerificationInProgress />
+      )}
       {state === DESK_STATE_LOADING && <LoadingHelpDesk />}
       {state === DESK_STATE_FAILED && <VerificationRequestError />}
     </div>
   );
 };
 
-export default HelpDesk; 
+export default HelpDesk;

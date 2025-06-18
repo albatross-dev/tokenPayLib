@@ -9,8 +9,8 @@ import TypePopover from "./TypePopover";
 import AddressDisplay from "../UI/AddressDisplay";
 import SimpleList from "../UI/SimpleList";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { FiatTransaction } from "../../types/payload-types";
-
 
 interface TableQuery {
   type?: {
@@ -21,13 +21,16 @@ interface TableQuery {
 export default function Transfer() {
   const { user, setUser } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedTransactionData, setSelectedTransactionData] = useState<FiatTransaction | null>(null);
+  const [selectedTransactionData, setSelectedTransactionData] =
+    useState<FiatTransaction | null>(null);
   const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
 
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const openModalWithTransactionData = (transactionData: FiatTransaction): void => {
+  const openModalWithTransactionData = (
+    transactionData: FiatTransaction
+  ): void => {
     setSelectedTransactionData(transactionData);
     setIsModalOpen(true);
   };
@@ -38,10 +41,12 @@ export default function Transfer() {
       header: tCrossborder("transfer.information"),
       cell: (props) => {
         return (
-          <BsArrowUpRight
-            onClick={() => openModalWithTransactionData(props.row.original)}
-            className="w-4 h-4 mr-2 ml-2 cursor-pointer"
-          />
+          <Link href={`/transaction/${props.row.original.id}`}>
+            <BsArrowUpRight
+              //onClick={() => openModalWithTransactionData(props.row.original)}
+              className="w-4 h-4 mr-2 ml-2 cursor-pointer"
+            />
+          </Link>
         );
       },
     },
@@ -119,7 +124,12 @@ export default function Transfer() {
           closeModal={() => setIsModalOpen(false)}
           transactionData={selectedTransactionData}
         />
-        <SimpleList standardQuery={paymentsTableQuery} collection="fiatTransaction" columns={columns} loader={false}>
+        <SimpleList
+          standardQuery={paymentsTableQuery}
+          collection="fiatTransaction"
+          columns={columns}
+          loader={false}
+        >
           <ExportPopover
             minDate={{
               year: moment(user?.createdAt).year(),
@@ -129,7 +139,7 @@ export default function Transfer() {
           />
           <TypePopover
             onSelect={(type: string) => {
-              if(type === 'all') {
+              if (type === "all") {
                 setPaymentsTableQuery({});
               } else {
                 setPaymentsTableQuery({

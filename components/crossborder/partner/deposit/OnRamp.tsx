@@ -2,7 +2,11 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { useUhuConfig } from "../../../contexts/UhuConfigContext";
 import { Account } from "thirdweb/wallets";
-import { Vendor, Consumer, PaymentTypesArray } from "../../../../types/payload-types";
+import {
+  Vendor,
+  Consumer,
+  PaymentTypesArray,
+} from "../../../../types/payload-types";
 
 interface OnRampProps {
   amount: number;
@@ -47,4 +51,4 @@ export default function OnRamp({ amount, account, method }: OnRampProps) {
       </div>
     </div>
   );
-} 
+}

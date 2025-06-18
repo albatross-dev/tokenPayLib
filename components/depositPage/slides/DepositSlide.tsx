@@ -1,17 +1,13 @@
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import {
-  Consumer,
-  Country,
-  PaymentTypesArray,
-  Vendor,
-} from "../../../types/payload-types";
+import { Consumer, Country, Vendor } from "../../../types/payload-types";
 import { Account } from "thirdweb/wallets";
 import Loader from "../../UI/Loader";
 import DepositPanel from "./DepositPanel";
+import { QuotePaymentType } from "./DepositMethodSelector";
 
 interface DepositSlideProps {
-  selectedMethod: PaymentTypesArray[number] | null;
+  selectedMethod: QuotePaymentType | null;
   amount: number;
   preferredFiatCurrency: string;
   preferredStableCoin: string | null;

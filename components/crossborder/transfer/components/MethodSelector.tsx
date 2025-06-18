@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import {
   getBitcoinVNMetaData,
   getBitcoinVNQuote,
-} from "../../methods/BitcoinVNQuote";
+} from "../../partner/universal/bitcoinVNUtils";
 import MiniLoader from "../../../UI/MiniLoader";
 import { useTranslation } from "react-i18next";
 import { IoWarning } from "react-icons/io5";
-import { getSwyptQuote } from "../../methods/SwyptQuote";
+import { getSwyptQuote } from "../../partner/universal/swyptUtils";
 import { PaymentTypesArray } from "../../../../types/payload-types";
-import { FiatInfo } from "../../../../utilities/stableCoinsMaps";
+import {
+  FiatInfo,
+  STANDARD_STABLE_MAP,
+} from "../../../../utilities/stableCoinsMaps";
+import { getKoyweQuote } from "../../partner/universal/koyweUtils";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
@@ -66,7 +70,6 @@ export default function MethodSelector({
 
   useEffect(() => {
     async function update() {
-      setLoading(true);
       console.log("update started");
       // sort the methods by payment modality
       const sortedMethods: SortedMethodsType = {};
@@ -113,7 +116,8 @@ export default function MethodSelector({
                   amount,
                   "KES",
                   "USDC",
-                  "Polygon"
+                  "Polygon",
+                  "offramp"
                 );
 
                 // Apply your platform fee (0.4%)
@@ -124,6 +128,29 @@ export default function MethodSelector({
                 method.predictedAmount = 0;
               }
             }
+            break;
+          case "koywe":
+            if (amount < method.minAmount || amount > method.maxAmount) {
+              method.predictedAmount = 0;
+              break;
+            } else {
+              try {
+                let quoteObj = {
+                  symbolIn: "USDC",
+                  symbolOut: finalCurrency?.id || "",
+                  amountIn: amount,
+                };
+                console.log("quoteObj", quoteObj);
+                const koyweQuote = await getKoyweQuote(quoteObj);
+                console.log("koyweQuote", koyweQuote);
+                method.predictedAmount =
+                  koyweQuote.amountOut - koyweQuote.amountOut * 0.004;
+              } catch (error) {
+                console.error("KoyweQuote - Error fetching quote:", error);
+                method.predictedAmount = 0;
+              }
+            }
+
             break;
           case "unlimit":
           case "onramp_money":
@@ -163,12 +190,12 @@ export default function MethodSelector({
             if (singleMethod.predictedAmount > 0) {
               sortedMethods[modality].cheapestMethod = singleMethod;
             } else {
-              sortedMethods[modality].nextMethodWithLimit = singleMethod;
+              //sortedMethods[modality].nextMethodWithLimit = singleMethod;
             }
           } else if (amount < singleMethod.minAmount) {
-            sortedMethods[modality].nextMethodWithLimit = singleMethod;
+            //sortedMethods[modality].nextMethodWithLimit = singleMethod;
           } else {
-            sortedMethods[modality].nextLowerLimitMethod = singleMethod;
+            //sortedMethods[modality].nextLowerLimitMethod = singleMethod;
           }
           continue;
         }
@@ -216,7 +243,14 @@ export default function MethodSelector({
     }
 
     if (methods && amount && exchangeRate && loadedExchangeRate) {
-      update();
+      setLoading(true);
+
+      // only call update if the amount has not changed for 1 seconds
+      const timeout = setTimeout(() => {
+        update();
+      }, 1000);
+
+      return () => clearTimeout(timeout);
     }
   }, [methods, amount, exchangeRate, loadedExchangeRate]);
 

@@ -1,7 +1,14 @@
 import { Account } from "thirdweb/wallets";
-import { SwyptQuoteResponse } from "../../../../methods/SwyptQuote";
+import { SwyptQuoteResponse } from "../../../universal/swyptUtils";
 
-export type SwyptState = "input" | "awaitTransaction" | "loading" | "pooling" | "transaction-created" | "error" | "success";
+export type SwyptState =
+  | "input"
+  | "awaitTransaction"
+  | "loading"
+  | "pooling"
+  | "transaction-created"
+  | "error"
+  | "success";
 
 export interface FormData {
   phone: string;
@@ -46,4 +53,4 @@ export interface ErrorProps {
 
 export interface SuccessProps {
   // Empty as it doesn't require any props
-} 
+}

@@ -4,7 +4,6 @@ import ExchangeModal from "../../components/Modals/ExchangeModal";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
 import tokenyByChain from "../../utilities/crypto/tokenByChain";
 
-import { PATHS } from "../../utilities/crypto/getPath";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { ConvertStateButtonWide } from "../../components/UI/ConvertStateButton";
 
@@ -39,8 +38,11 @@ import React from "react";
 import { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 import UniversalModal from "../Modals/UniversalModal";
 import ChainSelector from "../Forms/ChainSelector";
-import { UniswapPoolsPolygon } from "../../types/payload-types";
 import { ExchangeType } from "../../utilities/exchangeTypes";
+import QueryString from "qs";
+import { SimpleToken } from "../../types/token.types";
+import MiniLoader from "../UI/MiniLoader";
+import { Pool } from "../../types/payload-types";
 
 const exchangeType: ExchangeType = process.env
   .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
@@ -81,14 +83,23 @@ export default function TokenSwapSection({
   const [exchangeState, setExchangeState] =
     useState<exchangeStateType>("normal");
 
-  const [loading, setLoading] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState<Record<string, string>>({
+    inputTokens: "normal",
+    quote: "normal",
+    outputTokens: "normal",
+  });
 
   // exchange
-  const [selectedToken, setSelectedToken] = useState(null);
+  const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [selectedTokenBalance, setSelectedTokenBalance] = useState(null);
-  const [originTokens, setOriginTokens] = useState({});
-  const [targetTokens, setTargetTokens] = useState({});
-  const [selectedTargetToken, setSelectedTargetToken] = useState(null);
+  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>(
+    {}
+  );
+  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken>>(
+    {}
+  );
+  const [selectedTargetToken, setSelectedTargetToken] =
+    useState<SimpleToken | null>(null);
   const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] = useState<
     bigint | null
   >(null);
@@ -99,9 +110,9 @@ export default function TokenSwapSection({
   const [inputError, setError] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const [paths, setPaths] = useState(null);
+  const [pools, setPools] = useState<Pool[]>([]);
 
-  async function setMaxAmountImmediately(ot) {
+  async function setMaxAmountImmediately(ot: SimpleToken) {
     const balance = await fetchBalance(
       client,
       activeChain,
@@ -122,23 +133,111 @@ export default function TokenSwapSection({
     );
   }
 
-  async function fetchPaths() {
+  async function getPath(originToken: SimpleToken, targetToken: SimpleToken) {
+    console.log(
+      "getting path",
+      originToken.id.toUpperCase(),
+      targetToken.id.toUpperCase()
+    );
+    let pool: Pool | undefined = pools.find(
+      (path) =>
+        path.inputToken === originToken.id.toUpperCase() &&
+        path.outputToken === targetToken.id.toUpperCase()
+    );
+    console.log("pool", pool);
+    if (pool) {
+      let path = JSON.parse(pool.path);
+      for (let i = 0; i < path[0].length; i++) {
+        if (path[0][i] === "uint24") {
+          path[1][i] = Number(path[1][i]);
+        }
+      }
+      return path;
+    } else {
+      return [];
+    }
+  }
+
+  async function fetchPaths(originToken: SimpleToken): Promise<Pool[]> {
     // fetch paths from backend
     console.log("fetching paths", activeChain.name);
     try {
+      const query = {
+        where: {
+          and: [
+            {
+              inputToken: {
+                equals: originToken.id.toUpperCase(),
+              },
+            },
+            {
+              chain: {
+                equals: activeChain.id.toString(),
+              },
+            },
+          ],
+        },
+        limit: 200,
+      };
+
+      const stringifiedQuery = QueryString.stringify(query, {
+        addQueryPrefix: true,
+      });
+
+      console.log("stringifiedQuery", stringifiedQuery);
+
       const pathsRes = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/${
-          chainIdSlugDictionary[activeChain.id]
-        }`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`
       );
 
-      const paths: UniswapPoolsPolygon = pathsRes.data;
-      console.log("paths", paths);
-      setPaths(paths);
+      const pools: Pool[] = pathsRes?.data?.docs || [];
+
+      // parse paths from pool
+
+      setPools(pools);
+
+      return pools;
     } catch (e) {
       console.error("Error fetching paths", e);
       return;
     }
+  }
+
+  async function processTargetTokens(token: SimpleToken) {
+    if (!token) return;
+
+    setLoading((prevState) => ({
+      ...prevState,
+      targetTokens: "processing",
+    }));
+
+    let paths = await fetchPaths(token);
+
+    console.log("paths", paths);
+
+    let outputTokens = Object.fromEntries(
+      paths.map((path) => {
+        let obj: SimpleToken | null =
+          TokensByChainId[activeChain.id][path.outputToken];
+        if (obj && path.outputToken) {
+          return [path.outputToken, obj];
+        } else {
+          return ["none", null];
+        }
+      })
+    );
+
+    delete outputTokens["none"];
+
+    setTargetTokens(outputTokens);
+    console.log("outputTokens", outputTokens);
+
+    setLoading((prevState) => ({
+      ...prevState,
+      targetTokens: "normal",
+    }));
+
+    return targetTokens;
   }
 
   useEffect(() => {
@@ -163,82 +262,119 @@ export default function TokenSwapSection({
     }
   }, [origin, target, max, preAmount]);
 
-  useEffect(() => {
-    async function fetchQuote() {
-      let contract = getContract({
-        client: client,
-        chain: activeChain,
-        address: (exchangeType === "internal"
-          ? uniswapAddresses
-          : uniswapAddressesPublic)[activeChain.id].quote,
-        abi: QuoteV2Abi as Array<any>,
-      });
+  async function fetchQuote() {
+    let contract = getContract({
+      client: client,
+      chain: activeChain,
+      address: uniswapAddressesPublic[activeChain.id].quote,
+      abi: QuoteV2Abi as Array<any>,
+    });
 
-      const path =
-        PATHS[activeChain.id][
-          (selectedToken.id || selectedToken.symbol).toUpperCase()
-        ][selectedTargetToken.id.toUpperCase()];
+    const path: Array<Array<string>> = await getPath(
+      selectedToken,
+      selectedTargetToken
+    );
 
-      const encodedPath = encodePacked(path[0], path[1]);
+    console.log("path", path, uniswapAddressesPublic[activeChain.id].quote);
 
-      // make sure final amount is a integer
-      if (Number(amount) > 0) {
-        const finalAmount = Math.floor(
-          Number(
-            (
-              Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
-            ).toFixed(0)
-          )
-        );
+    const encodedPath = encodePacked(path[0], path[1]);
 
+    // make sure final amount is a integer
+    if (Number(amount) > 0) {
+      const finalAmount = Math.floor(
+        Number(
+          (
+            Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
+          ).toFixed(0)
+        )
+      );
+
+      console.log("encodedPath", encodedPath);
+      console.log("finalAmount", finalAmount);
+
+      try {
         const quote = await readContract({
           contract: contract,
           method: "quoteExactInput",
           params: [encodedPath, BigInt(finalAmount)],
         });
+        console.log("quote", quote);
         setQuote(quote as bigint);
-      }
-      // Validate the amount and set error messages
-      if (Number(amount) <= 0) {
-        setError(t("greater_zero"));
-      } else if (
-        Number(amount) >
-        (Number(selectedTokenBalance) || 0) /
-          numberWithZeros(selectedToken?.decimals || 0)
-      ) {
-        setError(
-          `${t("cannot_exceed")} ${
-            (Number(selectedTokenBalance) || 0) /
-            numberWithZeros(selectedToken?.decimals || 0)
-          }.`
-        );
-      } else {
-        if (selectedToken && selectedTargetToken && amount) {
-          fetchQuote();
-        }
-        setError(""); // Clear error if valid
+      } catch (e) {
+        setQuote(BigInt(0));
+        console.error("Error fetching quote", e);
       }
     }
+    // Validate the amount and set error messages
+    if (Number(amount) <= 0) {
+      setError(t("greater_zero"));
+    } else if (
+      Number(amount) >
+      (Number(selectedTokenBalance) || 0) /
+        numberWithZeros(selectedToken?.decimals || 0)
+    ) {
+      setError(
+        `${t("cannot_exceed")} ${
+          (Number(selectedTokenBalance) || 0) /
+          numberWithZeros(selectedToken?.decimals || 0)
+        }.`
+      );
+    }
+  }
+
+  useEffect(() => {
     if (selectedToken && selectedTargetToken && amount) {
       fetchQuote();
     }
   }, [selectedToken, selectedTargetToken, amount]);
 
-  function getOriginTokens() {
-    const tokens = Object.keys(PATHS[activeChain.id]).map((tokenId) => {
-      let obj = TokensByChainId[activeChain.id][tokenId];
-      if (obj) obj.id = tokenId;
-      return [tokenId, obj];
-    });
+  async function getOriginTokens(): Promise<Record<string, SimpleToken>> {
+    setLoading((prevState) => ({
+      ...prevState,
+      inputTokens: "processing",
+    }));
 
-    const tokenObj = Object.fromEntries(tokens);
-    return tokenObj;
+    let inputTokensRes = await axios.get(
+      `/api/globals/inputTokens${activeChain.id}`
+    );
+
+    if (!inputTokensRes?.data?.inputTokens) {
+      setLoading((prevState) => ({
+        ...prevState,
+        inputTokens: "normal",
+      }));
+      return {};
+    }
+
+    let inputTokens: string[] = JSON.parse(inputTokensRes?.data?.inputTokens);
+
+    let inputTokensMap = Object.fromEntries(
+      inputTokens.map((tokenID: string) => {
+        let obj: SimpleToken | null = TokensByChainId[activeChain.id][tokenID];
+        if (obj && tokenID) {
+          return [tokenID, obj];
+        } else {
+          return ["none", null];
+        }
+      })
+    );
+
+    delete inputTokensMap["none"];
+
+    setLoading((prevState) => ({
+      ...prevState,
+      inputTokens: "normal",
+    }));
+
+    return inputTokensMap;
   }
 
   useEffect(() => {
+    async function fetchOriginTokens() {
+      setOriginTokens(await getOriginTokens());
+    }
     if (activeChain?.id) {
-      setOriginTokens(getOriginTokens());
-      //fetchPaths();
+      fetchOriginTokens();
     }
   }, [activeChain]);
 
@@ -350,12 +486,9 @@ export default function TokenSwapSection({
 
   // handle exchanges from the modals
   async function handleExchange(amount) {
-    setLoading((prevState) => ({
-      ...prevState,
-      [selectedToken.symbol]: "processing",
-    }));
+    setExchangeState("processing");
 
-    await convertAnyToAny(
+    await convertAnyToAnyDirect(
       selectedToken,
       amount,
       account,
@@ -374,45 +507,17 @@ export default function TokenSwapSection({
           retryCounter = 0;
           console.error("Error converting to EUROE", error);
 
-          setLoading((prevState) => ({
-            ...prevState,
-            [selectedToken.symbol]: "error",
-          }));
+          setExchangeState("error");
 
           setTimeout(() => {
-            setLoading((prevState) => ({
-              ...prevState,
-              [selectedToken.symbol]: "normal",
-            }));
+            setExchangeState("normal");
           }, 4000);
         }
       },
       activeChain,
-      "usdc"
+      selectedTargetToken
     );
-    setLoading((prevState) => ({
-      ...prevState,
-      [selectedToken.symbol]: "normal",
-    }));
-  }
-
-  function processTargetTokens(token) {
-    if (!token) return;
-    let targetTokenArr = Object.keys(
-      PATHS[activeChain.id][token.id.toUpperCase()]
-    ).map((tokenId) => {
-      return [tokenId, TokensByChainId[activeChain.id][tokenId]];
-    });
-
-    targetTokenArr = targetTokenArr.filter((item) => {
-      return item[1] !== undefined;
-    });
-
-    let targetTokens = Object.fromEntries(targetTokenArr);
-    setTargetTokens(targetTokens);
-    setSelectedTargetToken(targetTokenArr[0][1]);
-
-    return targetTokens;
+    setExchangeState("normal");
   }
 
   return (
@@ -430,7 +535,7 @@ export default function TokenSwapSection({
         closeModal={() => setShowExchangeModal(false)}
         token={selectedToken}
         handleExchange={handleExchange}
-        maxAmount={balances[selectedToken?.symbol]}
+        maxAmount={balances[selectedToken?.id]}
       />
 
       <ExchangeModal
@@ -438,7 +543,7 @@ export default function TokenSwapSection({
         closeModal={() => setShowExchangeAnyModal(false)}
         token={selectedToken}
         handleExchange={handleExchangeAny}
-        maxAmount={balances[selectedToken?.symbol]}
+        maxAmount={balances[selectedToken?.id]}
       />
       <div className="bg-gray-100 p-4 my-4 rounded-lg">
         <div className="mb-2 mt-4 font-bold">{t("info_text_h")}</div>
@@ -452,7 +557,8 @@ export default function TokenSwapSection({
       </div>
       <ChainSelector type="chain" />
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
-        <div>{t("choose_origin_currency")}</div>
+        <div>{t("choose_origin_currency")}</div>{" "}
+        {loading.inputTokens === "processing" && <MiniLoader />}
       </div>
 
       <TokenSelector
@@ -460,6 +566,11 @@ export default function TokenSwapSection({
         onSelect={(token) => {
           setAmount("");
           setSelectedToken(token);
+          setTargetTokens({});
+          setPools([]);
+          setQuote(null);
+          setSelectedTargetToken(null);
+          setSelectedTargetTokenBalance(null);
           processTargetTokens(token);
         }}
         tokens={originTokens}
@@ -521,6 +632,7 @@ export default function TokenSwapSection({
 
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
         <div>{t("choose_target_currency")}</div>
+        {loading.targetTokens === "processing" && <MiniLoader />}
       </div>
 
       <TokenSelector

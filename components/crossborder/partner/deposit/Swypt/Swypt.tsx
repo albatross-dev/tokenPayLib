@@ -1,8 +1,13 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { getSwyptQuote } from "../../../methods/SwyptQuote";
+import { getSwyptQuote } from "../../universal/swyptUtils";
 import { Account } from "thirdweb/wallets";
-import { Consumer, FiatTransaction, PaymentTypesArray, Vendor } from "../../../../../types/payload-types";
+import {
+  Consumer,
+  FiatTransaction,
+  PaymentTypesArray,
+  Vendor,
+} from "../../../../../types/payload-types";
 import {
   Input,
   AwaitTransaction,
@@ -12,9 +17,12 @@ import {
   Error,
   Success,
   SwyptState,
-  FormData
-} from './Slides';
-import { AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
+  FormData,
+} from "./Slides";
+import {
+  AuthContext,
+  sendErrorReport,
+} from "../../../../../../context/UserContext";
 import currencies from "../../../../../utilities/crypto/currencies";
 
 interface SwyptProps {
@@ -52,24 +60,28 @@ export default function Swypt({
     const maxAttempts = timeout / interval;
     let attempts = 0;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const poll = setInterval(async () => {
         attempts++;
 
         try {
-          const res = await axios.get(
-            `https://pool.swypt.io/api/swypt-onramping/${transactionId}`
+          const res = await axios.post(
+            "/api/fiatTransaction/swypt/onrampStatus",
+            {
+              transactionId: transactionId,
+            }
           );
-          const status = res.data.status;
+          console.log("res", res);
+          const status = res.data.status.toLowerCase();
 
-          if (status === "awaitTransaction") {
+          if (status === "success") {
             clearInterval(poll);
             resolve(status);
           }
 
           if (status === "failed") {
             clearInterval(poll);
-            return reject("Transaction failed");
+            resolve(status);
           }
 
           if (attempts >= maxAttempts) {
@@ -78,6 +90,7 @@ export default function Swypt({
           }
         } catch (err) {
           clearInterval(poll);
+          console.log("err", err);
           return reject(err);
         }
       }, interval);
@@ -87,15 +100,21 @@ export default function Swypt({
   useEffect(() => {
     async function loadData() {
       console.log("method", method);
-      const swyptQuote = await getSwyptQuote(
-        amount,
-        startCurrency,
-        endCurrency,
-        "Polygon",
-        "onramp"
-      );
-      setQuote(swyptQuote);
-      setQuoteLoaded(true);
+      try {
+        const swyptQuote = await getSwyptQuote(
+          amount,
+          startCurrency,
+          endCurrency,
+          "Polygon",
+          "onramp"
+        );
+        setQuote(swyptQuote);
+        setQuoteLoaded(true);
+      } catch (error) {
+        console.error("Error getting Swypt quote:", error);
+        sendErrorReport("Swypt - Withdraw - Error getting quote", error);
+        setState("error");
+      }
     }
 
     if (amount) {
@@ -106,10 +125,36 @@ export default function Swypt({
   }, [amount]);
 
   useEffect(() => {
-    if (user.currentSwyptOnRampTransaction && typeof user.currentSwyptOnRampTransaction === "object") {
+    if (
+      user.currentSwyptOnRampTransaction &&
+      typeof user.currentSwyptOnRampTransaction === "object"
+    ) {
       if (user.currentSwyptOnRampTransaction.status === "awaitSTK") {
         setState("pooling");
-        pollTransactionStatusFrontend(user.currentSwyptOnRampTransaction.UUID);
+        const checkStatus = async () => {
+          if (typeof user.currentSwyptOnRampTransaction === "object") {
+            try {
+              let status = await pollTransactionStatusFrontend(
+                user.currentSwyptOnRampTransaction.UUID
+              );
+              if (status === "awaitTransaction") {
+                setState("awaitTransaction");
+              } else if (status === "failed") {
+                setState("error");
+              } else if (status === "completed") {
+                setState("success");
+              }
+            } catch (error) {
+              console.error("Error polling transaction status:", error);
+              sendErrorReport(
+                "Swypt - Withdraw - Error polling transaction status",
+                error
+              );
+              setState("error");
+            }
+          }
+        };
+        checkStatus();
       } else if (
         user.currentSwyptOnRampTransaction.status === "awaitTransaction"
       ) {
@@ -139,50 +184,17 @@ export default function Swypt({
     try {
       setState("loading");
 
-      const result = await axios.post(
-        "https://pool.swypt.io/api/swypt-onramping",
-        {
-          partyA: formData.phone,
-          amount: String(amount),
-          side: "onramp",
-          userAddress: selectedToken.contractAddress,
-        }
-      );
-
-      console.log("swypt result", result);
-
-      const transactionId = result.data.orderID;
-
-      const fiatTransaction: FiatTransaction = {
-        vendor: user.id,
-        partner: "swypt",
-        amount: Number(amount),
-        currency: selectedToken.contractAddress,
-        currencyName: selectedToken.id,
-        transactionHash: "",
-        UUID: transactionId,
-        transactionDetails: account?.address,
-        currencyDecimals: selectedToken.decimals,
-        toAccountBankName: "Mobile Money",
-        toAccountIdentifier: formData.phone,
-        toNetwork: "polygon",
-        fromNetwork: "fiat",
-        status: "awaitSTK",
-        type: "Withdraw",
-        finalCurrency: "USDC",
-        fee: quote.fee.amount,
-        exchangeRate: quote.exchangeRate,
-        finalamount: quote.outputAmount - quote.outputAmount * 0.004,
-        id: null,
-        updatedAt: null,
-        createdAt: null
-      }
-
-      let transactionRes = await axios.post("/api/fiatTransaction", fiatTransaction);
-
-      // update currentSwyptTransaction of the user
-      await axios.post("/api/vendor", {
-        currentSwyptOnRampTransaction: transactionRes.data.id,
+      // create transaction
+      await axios.post("/api/fiatTransaction/swypt/onramp", {
+        phone: formData.phone,
+        amount: amount.toString(),
+        selectedTokenId: selectedToken.id,
+        selectedTokenDecimals: selectedToken.decimals,
+        selectedTokenContractAddress: selectedToken.contractAddress,
+        receivingWallet: account.address,
+        fee: Number(quote.fee.amount),
+        exchangeRate: Number(quote.exchangeRate),
+        outputAmount: Number(quote.outputAmount),
       });
 
       refreshAuthentication();
@@ -196,39 +208,18 @@ export default function Swypt({
   const finalizeTransaction = async () => {
     setState("loading");
 
-    if (!user.currentSwyptOnRampTransaction || typeof user.currentSwyptOnRampTransaction !== "object") {
+    if (
+      !user.currentSwyptOnRampTransaction ||
+      typeof user.currentSwyptOnRampTransaction !== "object"
+    ) {
       setState("error");
       return;
     }
 
     try {
-      const response = await axios.post("https://pool.swypt.io/api/deposit", {
-        chain: "Polygon",
-        amount: user.currentSwyptOnRampTransaction.amount,
-        address: user.currentSwyptOnRampTransaction.toAccountIdentifier,
-        tokenAddress: user.currentSwyptOnRampTransaction.currency,
-        exchangeRate: user.currentSwyptOnRampTransaction.exchangeRate,
-        feeAmount: user.currentSwyptOnRampTransaction.fee,
-        symbol: user.currentSwyptOnRampTransaction.finalCurrency,
-        project: "tokenPay",
-        orderID: user.currentSwyptOnRampTransaction.UUID,
-      });
+      let result = await axios.get("/api/fiatTransaction/swypt/deposit");
 
-      let transactionState = response.data.status;
-      let processedState = transactionState === 200 ? "completed" : "failed";
-
-      // update the fiat Transaction
-      await axios.post(
-        `/api/fiatTransaction/${user.currentSwyptOnRampTransaction.id}`,
-        {
-          status: processedState,
-        }
-      );
-
-      // remove the current transaction from the user
-      await axios.post("/api/vendor", {
-        currentSwyptOnRampTransaction: null,
-      });
+      let processedState = result.data.status;
 
       refreshAuthentication();
       setState(processedState === "completed" ? "success" : "error");
@@ -273,4 +264,4 @@ export default function Swypt({
       {state === "success" && <Success />}
     </div>
   );
-} 
+}

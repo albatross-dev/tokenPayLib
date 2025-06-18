@@ -3,7 +3,9 @@ import React from "react";
 import { ErrorMessage } from "../../../../../../../types/errorMessage.types";
 import { FiatTransaction } from "../../../../../../../types/payload-types";
 import AddressDisplay from "../../../../../../UI/AddressDisplay";
-import LoadingButton, { LoadingButtonStates } from "../../../../../../UI/LoadingButton";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "../../../../../../UI/LoadingButton";
 
 interface TransactionPaymentPendingProps {
   transaction: FiatTransaction;

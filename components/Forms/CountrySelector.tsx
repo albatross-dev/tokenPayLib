@@ -3,7 +3,10 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 import countriesISO from "i18n-iso-countries";
-import { ALL_COUNTRIES, ALL_COUNTRIES_N } from "../../utilities/CountriesConfig";
+import {
+  ALL_COUNTRIES,
+  ALL_COUNTRIES_N,
+} from "../../utilities/CountriesConfig";
 import Tooltip from "../UI/ToolTip";
 
 interface Country {
@@ -76,7 +79,8 @@ export default function CountrySelector({
   validCountries,
 }: CountrySelectorProps): JSX.Element {
   const { t, i18n } = useTranslation("common");
-  const [displayCountries, setDisplayCountries] = useState<CountryDictionary>(countries);
+  const [displayCountries, setDisplayCountries] =
+    useState<CountryDictionary>(countries);
 
   // if selectedCountry is a string then we need to find the country object
   let selectedCountryObj: Country | undefined;
@@ -88,7 +92,9 @@ export default function CountrySelector({
 
   useEffect(() => {
     if (countries && Array.isArray(validCountries)) {
-      const filteredCountries = Object.keys(countries).reduce<CountryDictionary>((acc, key) => {
+      const filteredCountries = Object.keys(
+        countries
+      ).reduce<CountryDictionary>((acc, key) => {
         if (validCountries.includes(countries[key].iso)) {
           acc[key] = countries[key];
         }
@@ -111,14 +117,15 @@ export default function CountrySelector({
   return disabled ? (
     <div className="inline-flex justify-start items-center w-full rounded-md border border-gray-200 px-2 py-2 bg-gray-50 text-sm font-medium text-gray-500">
       <div className="mr-2">{selectedCountryObj?.flag}</div>
-      <div>{selectedCountryObj?.iso && countriesISO.getName(selectedCountryObj.iso, i18n.language)}</div>
+      <div>
+        {selectedCountryObj?.iso &&
+          countriesISO.getName(selectedCountryObj.iso, i18n.language)}
+      </div>
       <div></div>
     </div>
   ) : (
     <Menu as="div" className="relative inline-block text-left w-full">
-      <MenuButton
-        className="inline-flex w-full justify-between items-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
-      >
+      <MenuButton className="inline-flex w-full justify-between items-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
         <div className="flex items-center">
           {selectedCountryObj ? (
             <>
@@ -137,7 +144,7 @@ export default function CountrySelector({
         <BiChevronDown className="h-6 w-6 text-gray-700" />
       </MenuButton>
       <MenuItems className="origin-top-right absolute right-0 z-[30] mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-        <div className="h-72 overflow-auto">
+        <div className="max-h-[10rem] overflow-auto">
           {Object.keys(displayCountries).map((countryId) => (
             <MenuItem key={displayCountries[countryId].name} as={Fragment}>
               <button
@@ -156,4 +163,4 @@ export default function CountrySelector({
       </MenuItems>
     </Menu>
   );
-} 
+}

@@ -10,26 +10,40 @@ import { useTranslation } from "react-i18next";
 import { getMetaData, getQuote } from "../../../utilities/partner/bitcoinvn";
 import { sendErrorReport } from "../../../../context/UserContext";
 import duplicateByPaymentModality from "../../../utilities/crossborder/duplicateByPaymentModality";
-import { getSwyptQuote } from "../../crossborder/methods/SwyptQuote";
+import { getSwyptQuote } from "../../crossborder/partner/universal/swyptUtils";
 import { PaymentTypesArray } from "../../../types/payload-types";
 import React from "react";
 import { FiatCodes } from "../../../types/derivedPayload.types";
+import {
+  getKoywePaymentMethods,
+  getKoyweQuote,
+  KoywePaymentMethod,
+  KoyweQuoteResponse,
+} from "../../crossborder/partner/universal/koyweUtils";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
-interface QuotePaymentType extends PaymentMethodType {
+export interface QuotePaymentType extends PaymentMethodType {
   predictedAmount: number;
   apiError: string | null;
   predictedOnrampAmount: number;
   onrampMinAmount: number;
   onrampMaxAmount: number;
+  context: {
+    koywe?: {
+      quotes: {
+        quote: KoyweQuoteResponse;
+        paymentMethod: KoywePaymentMethod;
+      }[];
+    };
+  };
 }
 
 interface DepositMethodSelectorProps {
   methods: PaymentTypesArray;
   amount: number;
-  selectedMethod: PaymentTypesArray[number] | null;
-  setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
+  selectedMethod: QuotePaymentType | null;
+  setSelectedMethod: (method: QuotePaymentType | null) => void;
   startCurrency: FiatCodes;
   endCurrency: string;
 }
@@ -87,11 +101,6 @@ export default function DepositMethodSelector({
 
   useEffect(() => {
     const update = async () => {
-      setLoading(true);
-      setError(null);
-      setSelectedMethod(null);
-      setModalityMethodMap(null);
-
       const endCurrencyCode = getFiatCurrencyCode(endCurrency);
 
       const exchangeRate = await fetchExchangeRate(
@@ -140,12 +149,12 @@ export default function DepositMethodSelector({
         let minAmount = method.onrampMinAmount;
         let maxAmount = method.onrampMaxAmount;
         let apiError: string | null = null;
+        let context = {};
 
         try {
           switch (method.type) {
             case "swypt":
               if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
-                console.log("Fetching Swypt data with", startCurrency);
                 const swyptQuote = await getSwyptQuote(
                   Number(amount),
                   startCurrency,
@@ -205,6 +214,55 @@ export default function DepositMethodSelector({
               }
               break;
             }
+            case "koywe": {
+              if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
+                const paymentMethods = await getKoywePaymentMethods({
+                  currencySymbol: startCurrency,
+                });
+
+                let koyweQuotes: {
+                  quote: KoyweQuoteResponse;
+                  paymentMethod: KoywePaymentMethod;
+                }[] = [];
+
+                for (const paymentMethod of paymentMethods) {
+                  console.log("fetching quote for", paymentMethod);
+                  const koyweQuote = await getKoyweQuote({
+                    symbolIn: startCurrency,
+                    symbolOut: endCurrency,
+                    amountIn: Number(amount),
+                    paymentMethodId: paymentMethod._id,
+                    executable: true,
+                    deductFees: true,
+                    includeClientId: true,
+                  });
+
+                  if (koyweQuote) {
+                    koyweQuotes.push({ quote: koyweQuote, paymentMethod });
+                  }
+                }
+
+                console.log("koyweQuotes", koyweQuotes);
+
+                // get cheapest quote
+                const cheapestQuote = koyweQuotes.reduce((min, quote) => {
+                  return Math.min(min, quote.quote.amountOut);
+                }, Infinity);
+
+                context = {
+                  ...context,
+                  koywe: {
+                    quotes: koyweQuotes,
+                    cheapestQuote,
+                  },
+                };
+
+                console.log("cheapestQuote", cheapestQuote);
+
+                predictedOnrampAmount = cheapestQuote;
+              }
+              break;
+            }
             default: {
               if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
                 predictedOnrampAmount =
@@ -233,6 +291,7 @@ export default function DepositMethodSelector({
           onrampMinAmount: minAmount,
           onrampMaxAmount: maxAmount,
           apiError,
+          context,
         };
       });
 
@@ -303,7 +362,17 @@ export default function DepositMethodSelector({
     };
 
     if (Number(amount) > 0 && startCurrency && endCurrency) {
-      update();
+      setLoading(true);
+      setError(null);
+      setSelectedMethod(null);
+      setModalityMethodMap(null);
+
+      // only call update if the amount has not changed for 2 seconds
+      const timeout = setTimeout(() => {
+        update();
+      }, 1000);
+
+      return () => clearTimeout(timeout);
     } else {
       setLoading(false);
       setModalityMethodMap(null);

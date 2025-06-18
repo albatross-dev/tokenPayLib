@@ -10,6 +10,13 @@ import {
 } from "../../../../../types/payload-types";
 import Loader from "../../../../UI/Loader";
 import React from "react";
+import {
+  getKoyweAccountState,
+  KoyweBankAccount,
+} from "../../universal/koyweUtils";
+import SelectBankAccountSlide from "./Slides/SelectBankAccountSlide";
+import UnverifiedSlide from "./Slides/UnverifiedSlide";
+import CreateTransactionSlide from "./Slides/CreateTransactionSlide";
 interface KoyweProps {
   amount: number;
   account: Account;
@@ -27,15 +34,14 @@ export default function Koywe({
 }: KoyweProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  // 'loading' | 'error' | 'overview' | 'created'
-  const [state, setState] = useState("loading");
+  const [state, setState] = useState<"loading" | "error" | "normal">("loading");
 
-  // The transaction created by the backend
-  //  on koywe with the payment informations
-  const [transaction, setTransaction] = useState(null);
+  const [selectedBankAccount, setSelectedBankAccount] =
+    useState<KoyweBankAccount | null>(null);
 
-  // 'withdraw', 'success' or 'loading'
-  const [view, setView] = useState("withdraw");
+  const [view, setView] = useState<
+    "unverified" | "bankAccount" | "createTransaction"
+  >("bankAccount");
 
   // ###################
   // # Component Logic #
@@ -43,16 +49,29 @@ export default function Koywe({
 
   useEffect(() => {
     setState("loading");
-    // do stuff
-    setState("overview");
+    const fetchKoyweAccountState = async () => {
+      const koyweAccountState = await getKoyweAccountState();
+      setState("normal");
+      if (koyweAccountState.canOperate) {
+        setView("bankAccount");
+      } else {
+        setView("unverified");
+      }
+    };
+    fetchKoyweAccountState();
   }, []);
+
+  function handleOnSelectBankAccount(bankAccount: KoyweBankAccount) {
+    setSelectedBankAccount(bankAccount);
+    setView("createTransaction");
+  }
 
   // ####################
   // # Render Functions #
   // ####################
 
   const renderLoading = () => (
-    <div className="w-full h-full flex items-center justify-center mt-16">
+    <div className="w-full h-full flex items-center justify-center">
       <Loader />
     </div>
   );
@@ -63,43 +82,29 @@ export default function Koywe({
     </div>
   );
 
-  const renderKoyweKYCLink = () => (
-    <div className="w-full">
-      <h2 className="text-xl font-semibold mb-4">
-        {tCrossborder("withdraw.koywe.kyc.heading")}
-      </h2>
-      <p className="text-gray-600">
-        {tCrossborder("withdraw.koywe.kyc.description")}
-      </p>
-      <Link
-        href="/kyc/koywe"
-        className="mt-4 bg-uhuBlue text-white px-4 py-2 rounded-lg hover:bg-uhuBlue transition flex items-center justify-center"
-      >
-        {tCrossborder("withdraw.koywe.kyc.button")}
-      </Link>
-    </div>
-  );
-
-  const renderKoyweWithdraw = () => <div>Withdraw </div>;
-
-  const renderSuccess = () => <div>Success </div>;
-
   return (
-    <div className="flex flex-col w-full max-w-4xl  items-center justify-center p-4">
-      {/* {user.koyweState === "unverified" || user.koyweState === undefined
-        ? renderKoyweKYCLink()
-        : user.koyweState === "in_progress"
-        ? renderLoading()
-        : user.koyweState === "verified"
-        ? ( view === "withdraw"
-          ? renderKoyweWithdraw()
-          : view === "success"
-          ? renderSuccess()
-          : view === "loading"
-          ? renderLoading()
-          : renderError()
-        )
-        : renderLoading()} */}
+    <div className="flex flex-col w-full max-w-4xl p-4 md:p-8 items-center justify-center border-gray-200 border rounded-md">
+      {state === "loading" ? (
+        renderLoading()
+      ) : state === "error" ? (
+        renderError()
+      ) : state === "normal" ? (
+        view === "bankAccount" ? (
+          <SelectBankAccountSlide
+            country={country}
+            onSelectBankAccount={handleOnSelectBankAccount}
+          />
+        ) : view === "unverified" ? (
+          <UnverifiedSlide />
+        ) : view === "createTransaction" ? (
+          <CreateTransactionSlide
+            selectedBankAccount={selectedBankAccount}
+            amount={amount}
+            country={country}
+            method={method}
+          />
+        ) : null
+      ) : null}
     </div>
   );
 }
