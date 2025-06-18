@@ -1,21 +1,8 @@
-import DatePicker from "@/tokenPayLib/components/UI/DatePicker";
+import DatePicker, { DateRange } from "@/tokenPayLib/components/UI/DatePicker";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReactNode, useEffect, useState } from "react";
 import { Collection } from "../../types/derivedPayload.types";
 import Table from "./Table";
-
-interface DateRange {
-  from: {
-    year: number;
-    month: number;
-    day: number;
-  };
-  to: {
-    year: number;
-    month: number;
-    day: number;
-  };
-}
 
 interface WhereClause {
   and?: Array<{
@@ -62,7 +49,7 @@ export default function SimpleList({
 
   const handleDateChange = (e: DateRange | null): void => {
     console.log(e);
-    if (!e) {
+    if (!e || e.from === null || e.to === null) {
       // Filter query object to remove date filters
       const newQuery = { ...tableQuery };
       if (newQuery.where.and) {
@@ -73,6 +60,7 @@ export default function SimpleList({
 
       return setTableQuery(newQuery);
     }
+
     const fromDate = new Date(`${e.from.year}-${e.from.month}-${e.from.day}`);
     const toDate = new Date(`${e.to.year}-${e.to.month}-${e.to.day}`);
 

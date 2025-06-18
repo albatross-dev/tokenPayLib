@@ -4,56 +4,83 @@ import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Popover } from "@headlessui/react";
 import { BsChevronDown, BsCalendar4Week } from "react-icons/bs";
 import addDaysToDate from "@/utilities/addDaysToDate";
-import { useTranslation } from 'next-i18next'; // Import useTranslation
+import { useTranslation } from "next-i18next";
 
-const DatePicker = ({
+export interface DateRange {
+  from: {
+    year: number;
+    month: number;
+    day: number;
+  } | null;
+  to: {
+    year: number;
+    month: number;
+    day: number;
+  } | null;
+}
+
+interface PredefinedRange {
+  label: string;
+  value: number | null;
+}
+
+interface DatePickerProps {
+  onDateChange: (range: DateRange | null) => void;
+  minDate: string;
+  defaultRange?: number;
+}
+
+const DatePicker: React.FC<DatePickerProps> = ({
   onDateChange,
   minDate,
-  defaultRange = 28, // Default range in days (28 for "Last 4 weeks")
+  defaultRange = 28,
 }) => {
-  const { t } = useTranslation('common'); // Use i18next for translations
+  const { t } = useTranslation("common");
 
-  // Predefined ranges with constants for logic
-  const predefinedRanges = [
-    { label: t('date_picker_entire_time'), value: null },
-    { label: t('date_picker_last_7_days'), value: 7 },
-    { label: t('date_picker_last_4_weeks'), value: 28 },
-    { label: t('date_picker_last_90_days'), value: 90 },
+  const predefinedRanges: PredefinedRange[] = [
+    { label: t("date_picker_entire_time"), value: null },
+    { label: t("date_picker_last_7_days"), value: 7 },
+    { label: t("date_picker_last_4_weeks"), value: 28 },
+    { label: t("date_picker_last_90_days"), value: 90 },
   ];
 
-  // Initialize date range based on defaultRange value (use null for "Entire time")
-  const [selectedDayRange, setSelectedDayRange] = useState(
+  const [selectedDayRange, setSelectedDayRange] = useState<DateRange>(
     defaultRange === null
       ? { from: null, to: null }
       : {
-          from: addDaysToDate(utils().getToday(), -defaultRange),
-          to: utils().getToday(),
+          from: addDaysToDate(utils("de").getToday(), -defaultRange),
+          to: utils("de").getToday(),
         }
   );
 
-  // Set the initial selected preset based on the defaultRange value
-  const [selectedPreset, setSelectedPreset] = useState(
-    predefinedRanges.find(range => range.value === defaultRange)?.label || t('date_picker_last_4_weeks')
+  const [selectedPreset, setSelectedPreset] = useState<string>(
+    predefinedRanges.find((range) => range.value === defaultRange)?.label ||
+      t("date_picker_last_4_weeks")
   );
 
-  // Handle the selection of predefined ranges
-  const handlePredefinedRangeSelect = (range) => {
+  const minDateObj = minDate
+    ? {
+        year: new Date(minDate).getFullYear(),
+        month: new Date(minDate).getMonth() + 1,
+        day: new Date(minDate).getDate(),
+      }
+    : undefined;
+
+  const handlePredefinedRangeSelect = (range: PredefinedRange): void => {
     if (range.value === null) {
-      // If "Entire time" is selected, set the selectedDayRange to null
       setSelectedDayRange({ from: null, to: null });
       onDateChange(null);
     } else {
-      const endDate = utils().getToday();
+      const endDate = utils("de").getToday();
       const startDate = addDaysToDate(endDate, -range.value);
-      const newRange = { from: startDate, to: endDate };
+      const newRange: DateRange = { from: startDate, to: endDate };
       setSelectedDayRange(newRange);
       onDateChange(newRange);
     }
-    setSelectedPreset(range.label); // Set the label for the selected preset
+    setSelectedPreset(range.label);
   };
 
-  // Handle custom date selection
-  const handleCustomDateSelect = (range) => {
+  const handleCustomDateSelect = (range: DateRange): void => {
     setSelectedDayRange(range);
     onDateChange(range);
   };
@@ -78,7 +105,7 @@ const DatePicker = ({
             <div className="border-b md:border-r md:border-b-0 border-gray-200 p-4 md:w-56">
               {predefinedRanges.map((range) => (
                 <div
-                  key={range.value} // Use value for key
+                  key={range.value}
                   onClick={() => handlePredefinedRangeSelect(range)}
                   className="cursor-pointer hover:bg-gray-200 p-2 rounded"
                 >
@@ -92,7 +119,7 @@ const DatePicker = ({
                 onChange={handleCustomDateSelect}
                 colorPrimary="#2E3DFF"
                 colorPrimaryLight="#F5F5F5"
-                minimumDate={minDate}
+                minimumDate={minDateObj}
                 shouldHighlightWeekends
               />
             </div>

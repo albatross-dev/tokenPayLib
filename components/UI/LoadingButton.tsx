@@ -94,7 +94,10 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
                 titleKey: error.title,
                 messageKeyOrText: error.message,
                 details: {
-                  error: error.error,
+                  error: {
+                    ...error.error,
+                    message: error.error.message ?? undefined,
+                  },
                 },
               });
             }}
