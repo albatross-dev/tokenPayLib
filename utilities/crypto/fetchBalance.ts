@@ -34,7 +34,7 @@ class ContractError extends Error {
  * @returns {Promise<bigint>} - The balance of the account in the contract, or 0 in case of an error.
  * @throws {Error} - Throws an error if the balance could not be fetched.
  */
-async function fetchBalanceRaw(
+export async function fetchBalanceRaw(
   client: ThirdwebClient,
   chain: Chain,
   contractAddress: string,
@@ -42,10 +42,6 @@ async function fetchBalanceRaw(
   accountAddress: string
 ): Promise<bigint> {
   try {
-    if (process.env.NEXT_PUBLIC_NEXT_ENV === "development") {
-      console.log("fetchBalance RAW");
-    }
-
     const contract: Readonly<ContractOptions<any[]>> = getContract({
       client: client,
       chain,
@@ -65,7 +61,6 @@ async function fetchBalanceRaw(
 
     return result;
   } catch (error) {
-    console.log("fetchBalance RAW error", error);
     return BigInt(0);
   }
 }

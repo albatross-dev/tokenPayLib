@@ -171,6 +171,11 @@ const BridgeModalUniversal = ({
       return;
     }
 
+    if (!account) {
+      console.error("No account found");
+      return;
+    }
+
     const success = await acrossBridgeDeposit({
       tokenAddress,
       originChainId,

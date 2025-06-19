@@ -118,15 +118,10 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
       return;
     }
 
-    console.log(
-      "accrossBridgeDeposit",
-      tokenAddress,
-      originChainId,
-      destinationChainId,
-      amount,
-      account,
-      token
-    );
+    if (!account) {
+      console.error("No account found");
+      return;
+    }
 
     let success = await acrossBridgeDeposit({
       tokenAddress,

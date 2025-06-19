@@ -84,7 +84,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {selectedMethod?.type === "crypto"
-                ? getFiatInfoForStableCoin[preferredStableCoin]?.symbol
+                ? getFiatInfoForStableCoin(preferredStableCoin)?.symbol
                 : getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
                 ? getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
                     ?.symbol
@@ -104,7 +104,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
             setSelectedMethod={setSelectedMethod}
             selectedMethod={selectedMethod}
             sendingCurrency={STANDARD_STABLE_MAP[preferredStableCoin]}
-            finalCurrency={getFiatInfo(payoutCurrency as FiatCodes)}
+            finalCurrency={getFiatInfo(payoutCurrency as FiatCodes) || null}
           />
         )}
 
@@ -126,7 +126,8 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
                   src={
-                    (selectedCountry?.countryInfo.background as CdnMedia).url
+                    (selectedCountry?.countryInfo.background as CdnMedia).url ||
+                    ""
                   }
                   fill={true}
                   objectFit="cover"
@@ -165,7 +166,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
                   </strong>{" "}
                   {
                     selectedCountry?.countryInfo.currency[
-                      Symbol.for(selectedCountry?.countryInfo.currency)
+                      Symbol.for(selectedCountry?.countryInfo.currency) as any
                     ]
                   }
                 </p>

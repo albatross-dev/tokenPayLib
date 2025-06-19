@@ -6,18 +6,19 @@ import { PaymentTypesArray } from "../../types/payload-types";
  * @param {*} transfer boolean to determine if the methods are for a transfer (crossborder) or not
  * @returns
  */
-export default function sortMethodByCurrencyWithdraw(methods: PaymentTypesArray, transfer: boolean): Record<string, PaymentTypesArray> {
+export default function sortMethodByCurrencyWithdraw(
+  methods: PaymentTypesArray,
+  transfer: boolean
+): Record<string, PaymentTypesArray> {
   let sortedMethods: Record<string, any[]> = {};
 
   methods.forEach((method) => {
-
     // Ensure acceptedCrypto is an array (split if it's a string)
     // EURS or EURS,USDC,USDT
     const acceptedCurrencies: string[] =
       typeof method.acceptedCrypto === "string"
         ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
-        : [method.acceptedCrypto]; // Wrap single currency in an array
-
+        : [method.acceptedCrypto || ""]; // Wrap single currency in an array
 
     acceptedCurrencies.forEach((currency: string) => {
       if (!sortedMethods[currency]) {
@@ -41,7 +42,9 @@ export default function sortMethodByCurrencyWithdraw(methods: PaymentTypesArray,
  * @param {*} methods as retrieved from the backend
  * @returns an object with the currencie string as keys and a list of methods that support that currencie.
  */
-export function sortMethodByCurrencyDeposit(methods: PaymentTypesArray): Record<string, PaymentTypesArray> {
+export function sortMethodByCurrencyDeposit(
+  methods: PaymentTypesArray
+): Record<string, PaymentTypesArray> {
   let sortedMethods: Record<string, any[]> = {};
 
   methods.forEach((method) => {
@@ -50,9 +53,9 @@ export function sortMethodByCurrencyDeposit(methods: PaymentTypesArray): Record<
     const acceptedCurrencies: string[] =
       typeof method.acceptedCrypto === "string"
         ? method.acceptedCrypto.split(",").map((c) => c.trim()) // Split and trim spaces
-        : [method.acceptedCrypto]; // Wrap single currency in an array
+        : [method.acceptedCrypto || ""]; // Wrap single currency in an array
 
-    console.log("acceptedCurrencies",method.name, acceptedCurrencies);
+    console.log("acceptedCurrencies", method.name, acceptedCurrencies);
 
     acceptedCurrencies.forEach((currency: string) => {
       if (!sortedMethods[currency]) {
@@ -70,4 +73,4 @@ export function sortMethodByCurrencyDeposit(methods: PaymentTypesArray): Record<
   console.log("sortedMethods", sortedMethods);
 
   return sortedMethods;
-} 
+}

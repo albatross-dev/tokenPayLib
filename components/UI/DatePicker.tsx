@@ -48,8 +48,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
     defaultRange === null
       ? { from: null, to: null }
       : {
-          from: addDaysToDate(utils("de").getToday(), -defaultRange),
-          to: utils("de").getToday(),
+          from: addDaysToDate(utils("en").getToday(), -defaultRange),
+          to: utils("en").getToday(),
         }
   );
 
@@ -71,7 +71,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
       setSelectedDayRange({ from: null, to: null });
       onDateChange(null);
     } else {
-      const endDate = utils("de").getToday();
+      const endDate = utils("en").getToday();
       const startDate = addDaysToDate(endDate, -range.value);
       const newRange: DateRange = { from: startDate, to: endDate };
       setSelectedDayRange(newRange);

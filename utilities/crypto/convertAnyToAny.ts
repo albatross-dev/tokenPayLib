@@ -245,7 +245,7 @@ export async function convertAnyToAnyDirect(
     console.log("swap done", res);
 
     success();
-  } catch (e) {
+  } catch (e: any) {
     sendErrorReport("convertAnyToAnyDirect", e);
     console.error(
       `Error converting ${finalAmount} ${token.id} to ${target.id}`,
@@ -278,12 +278,9 @@ async function convertAnyToAny(
     target
   );
 
-  console.log(
-    "swap router contract address",
-    (exchangeType === "internal" || internal
-      ? uniswapAddresses
-      : uniswapAddressesPublic)[chain.id].router
-  );
+  if (!token.contract) {
+    throw new Error("Token contract not found");
+  }
 
   try {
     const swapRouterContract = getContract({
@@ -434,7 +431,7 @@ async function convertAnyToAny(
     console.log("res", res);
 
     success();
-  } catch (e) {
+  } catch (e: any) {
     sendErrorReport("convertAnyToAny", e);
     console.error(
       `Error converting ${finalAmount} ${

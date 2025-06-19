@@ -1,14 +1,19 @@
 import axios from "axios";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import moment from "moment-timezone";
 import qs from "qs";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { sendErrorReport } from "../../../context/UserContext";
 import { Maintenance, Router, UhuConfig } from "../../types/payload-types";
+moment.locale("de");
+
+const timeZone = "Europe/Berlin";
+const zonedDate = moment().tz(timeZone);
 
 interface UhuConfigContextType {
   uhuConfig: UhuConfig | "loading" | null;
@@ -61,12 +66,23 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
   }
 
   async function getCurrentRouter() {
+    const routerType = zonedDate.month() % 2 === 0 ? "a" : "b";
+
     // Construct the query object
     const query = {
       where: {
-        useAfter: {
-          less_than_equal: new Date().toISOString(), // Convert the date to ISO string
-        },
+        and: [
+          {
+            useAfter: {
+              less_than_equal: new Date().toISOString(), // Convert the date to ISO string
+            },
+          },
+          {
+            routerType: {
+              equals: routerType,
+            },
+          },
+        ],
       },
       sort: "-useAfter",
       limit: 1,

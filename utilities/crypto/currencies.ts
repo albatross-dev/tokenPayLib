@@ -235,7 +235,7 @@ const currenciesStable: Record<string, SimpleToken> = {
   },
 };
 
-type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
+export type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
 
 export const TokensByChainId: Record<
   chainTypesIds,
