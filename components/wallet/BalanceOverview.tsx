@@ -108,7 +108,11 @@ export default function BalanceOverview() {
     <div className="flex flex-col items-center md:items-start bg-uhuGray shadow-md w-full rounded-lg p-6">
       <div className="flex justify-between md:justify-start w-full mb-4 gap-4">
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "text-transparent bg-gray-300 animate-pulse rounded-lg"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
           </span>
           <span className="text-gray-500">
@@ -116,7 +120,11 @@ export default function BalanceOverview() {
           </span>
         </div>
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "text-transparent bg-gray-300 animate-pulse rounded-lg"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}
           </span>
           <span className="text-gray-500">
