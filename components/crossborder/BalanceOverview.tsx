@@ -69,7 +69,6 @@ export default function BalanceOverview() {
 
   const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
-    console.log("fetching crossborder balances");
     let whiteList = [...euroWhitelist, ...usdWhitelist, ...popularWhitelist];
     let currenciesToFetch = Object.entries(currencies).filter(([symbol]) =>
       whiteList.includes(symbol)
