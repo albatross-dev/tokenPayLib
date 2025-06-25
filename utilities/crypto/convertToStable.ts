@@ -24,10 +24,9 @@ async function convertToStablePolygon(
   error: (e: Error) => void,
   targetToken: string
 ): Promise<void> {
-  console.log(
-    `Converting ${amount} ${token.symbol} ${token.contract.contractAddress} to EUROE`
-  );
-  console.log("account", account);
+  if (!token.contract) {
+    throw new Error("Token contract not found");
+  }
 
   try {
     const swapRouterContract = getContract({
@@ -97,7 +96,7 @@ async function convertToStablePolygon(
     });
 
     success();
-  } catch (e) {
+  } catch (e: any) {
     sendErrorReport(`Error converting ${amount} ${token.symbol} to EUROE`, e);
     console.error(`Error converting ${amount} ${token.symbol} to EUROE`, e);
     error(e);

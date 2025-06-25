@@ -10,7 +10,32 @@ import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import Loader from "../UI/Loader";
 import TokenSelector from "../Forms/TokenSelector";
 import { formatCrypto } from "../../utilities/crypto/currencies";
-import LoadingButton from "../UI/LoadingButton";
+import LoadingButton, { LoadingButtonStates } from "../UI/LoadingButton";
+import { SimpleToken } from "@/tokenPayLib/types/token.types";
+import { TFunction } from "i18next";
+import { Errors } from "@/tokenPayLib/hooks/useSendCryptoForm";
+
+interface SendCryptoDialogProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  isLoading: LoadingButtonStates;
+  setIsLoading: (isLoading: LoadingButtonStates) => void;
+  selectedToken: SimpleToken | null;
+  originTokens: Record<string, SimpleToken>;
+  amount: number;
+  setAmount: (amount: number) => void;
+  targetAddress: string;
+  setTargetAddress: (targetAddress: string) => void;
+  errors: Errors;
+  handleSend: () => void;
+  handleMaxClick: () => void;
+  selectedTokenBalance: number | null;
+  maxAmount: number;
+  fetchTokenBalance: (token: SimpleToken) => void;
+  tAccount: TFunction;
+  setFieldError: (field: string, error: string) => void;
+  clearFieldError: (field: string) => void;
+}
 
 export default function SendCryptoDialog({
   isOpen,
@@ -32,7 +57,7 @@ export default function SendCryptoDialog({
   tAccount,
   setFieldError,
   clearFieldError,
-}) {
+}: SendCryptoDialogProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -124,7 +149,7 @@ export default function SendCryptoDialog({
                               tAccount("sendCrypto.errors.selectTokenFirst")
                             );
                           } else {
-                            if (e.target.value > maxAmount) {
+                            if (Number(e.target.value) > maxAmount) {
                               setFieldError(
                                 "amount",
                                 tAccount(
@@ -134,7 +159,7 @@ export default function SendCryptoDialog({
                             } else {
                               clearFieldError("amount");
                             }
-                            setAmount(e.target.value);
+                            setAmount(Number(e.target.value));
                           }
                         }}
                         max={maxAmount}
@@ -188,12 +213,12 @@ export default function SendCryptoDialog({
                     <LoadingButton
                       isLoading={isLoading}
                       onClick={handleSend}
-                      active={
+                      active={Boolean(
                         Object.keys(errors).length === 0 &&
-                        selectedToken &&
-                        amount > 0 &&
-                        targetAddress.length > 0
-                      }
+                          selectedToken &&
+                          amount > 0 &&
+                          targetAddress.length > 0
+                      )}
                     >
                       {tAccount("sendCrypto.dialog.sendButton")}
                     </LoadingButton>

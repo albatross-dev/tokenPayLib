@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { GateFiDisplayModeEnum, GateFiSDK } from '@gatefi/js-sdk';
+import React, { useEffect } from "react";
+import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
 import { useTranslation } from "next-i18next";
-import {
-  useActiveAccount,
-} from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 
 const UnlimitWidget = () => {
-
-  const { t } = useTranslation("common");
   const account = useActiveAccount();
+
+  if (!account) {
+    return null;
+  }
 
   useEffect(() => {
     // Initialize the GateFi SDK in embedded mode
@@ -18,14 +18,14 @@ const UnlimitWidget = () => {
       nodeSelector: "#crypto-widget-container", // The ID of the container div
       walletAddress: account.address,
       walletLock: true,
-      defaultCrypto:{
+      defaultCrypto: {
         currency: "USDC",
-        amount: "1000"
+        amount: "1000",
       },
       styles: {
         type: "light",
-        primaryBackground: "#ffffff"
-      }
+        primaryBackground: "#ffffff",
+      },
     });
 
     // Cleanup on component unmount (optional)
@@ -35,15 +35,17 @@ const UnlimitWidget = () => {
   }, []);
 
   return (
-    <div id="crypto-widget-container" style={{
-      width: "100%",
-      height: "100%",
-      minHeight: "700px",
-      display: "flex",
-      marginTop: "2rem",
-      justifyContent: "center",
-    }}>
-    </div>
+    <div
+      id="crypto-widget-container"
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: "700px",
+        display: "flex",
+        marginTop: "2rem",
+        justifyContent: "center",
+      }}
+    ></div>
   );
 };
 

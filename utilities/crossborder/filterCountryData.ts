@@ -16,7 +16,7 @@ export default function filterCountryData(
   // filter the countries by black and whitelist
   let newCountries = countries.filter((country) => {
     if (country.useWhiteList) {
-      return country.receivingFromCountryWhiteList.some(
+      return country.receivingFromCountryWhiteList?.some(
         (whiteCountry) =>
           (whiteCountry as Country).countryCode === originCountryISO
       );
@@ -33,7 +33,7 @@ export default function filterCountryData(
     country.paymentTypes = country.paymentTypes.filter((method) => {
       if (method.withdrawOnly) return false;
       if (method.useWhiteListPaymentMethod) {
-        return method.whiteList.some(
+        return method.whiteList?.some(
           (whiteCountry) =>
             (whiteCountry as Country).countryCode === originCountryISO
         );

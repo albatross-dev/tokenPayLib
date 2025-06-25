@@ -1,31 +1,32 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
+import Image from "next/image";
+import { useContext, useEffect, useState } from "react";
 import { formatNumberWithCurrency } from "../../../utilities/currencies";
 import currencies from "../../utilities/crypto/currencies";
 import MiniLoader from "../UI/MiniLoader";
-import Image from "next/image";
 
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import { polygon } from "thirdweb/chains";
-import { useActiveAccount } from "thirdweb/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { createThirdwebClient } from "thirdweb";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
 import { sendErrorReport } from "../../../context/UserContext";
-import { UhuConfigContext } from "../contexts/UhuConfigContext";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { useUhuConfig } from "../contexts/UhuConfigContext";
+import { Balance } from "../crossborder/CurrencySelector";
 
 const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
 });
 
 export default function BalanceOverview() {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState(false);
-  const { uhuConfig } = useContext(UhuConfigContext);
+  const { uhuConfig } = useUhuConfig();
   const { t: tAccount } = useTranslation("wallet");
-  const [balances, setBalances] = useState([]);
+  const [balances, setBalances] = useState<Balance[] | null>(null);
   const [totalEuroBalance, setTotalEuroBalance] = useState(0);
   const [totalUsdBalance, setTotalUsdBalance] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -107,7 +108,11 @@ export default function BalanceOverview() {
     <div className="flex flex-col items-center md:items-start bg-uhuGray shadow-md w-full rounded-lg p-6">
       <div className="flex justify-between md:justify-start w-full mb-4 gap-4">
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "text-transparent bg-gray-300 animate-pulse rounded-lg"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
           </span>
           <span className="text-gray-500">
@@ -115,7 +120,11 @@ export default function BalanceOverview() {
           </span>
         </div>
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "text-transparent bg-gray-300 animate-pulse rounded-lg"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}
           </span>
           <span className="text-gray-500">
@@ -141,7 +150,7 @@ export default function BalanceOverview() {
           </Link>
         </div>
       </div>
-      {loading ? (
+      {loading || !balances ? (
         <div className="flex justify-center items-center py-4">
           <MiniLoader />
         </div>

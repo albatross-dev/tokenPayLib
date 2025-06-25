@@ -318,6 +318,10 @@ export default function TokenSwapSection({
         });
         setQuote(quote as bigint);
       } catch (e) {
+        console.log("contract", contract);
+        console.log("path", path);
+        console.log("encodedPath", encodedPath);
+        console.log("amount", BigInt(finalAmount));
         setQuote(BigInt(0));
         console.error("Error fetching quote", e);
       }

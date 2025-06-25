@@ -143,7 +143,7 @@ export default function Table({
           </tbody>
         </table>
       </div>
-      {!isLoading && fetchedData?.docs?.length > 0 ? (
+      {!isLoading && fetchedData && fetchedData?.docs?.length > 0 ? (
         <div className="flex gap-4 items-center mt-6 mb-4">
           <span>
             {fetchedData.limit * (fetchedData.page - 1) + 1}-

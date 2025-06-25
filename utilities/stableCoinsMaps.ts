@@ -63,9 +63,8 @@ const STABLE_FIAT_MAP: {
   USDC: { id: "USD", symbol: "$" },
   USDT: { id: "USD", symbol: "$" },
   EURS: { id: "EUR", symbol: "€" },
-  EUROE: { id: "EUR", symbol: "€" }
+  EUROE: { id: "EUR", symbol: "€" },
 };
-
 
 /**
  * Maps stablecoin ticker symbols to their corresponding fiat currency codes.
@@ -128,19 +127,21 @@ const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
 };
 
 export const STANDARD_STABLE_MAP: { [key: string]: FiatInfo } = {
-  USDC: getFiatInfo("USD"),
-  EURS: getFiatInfo("EUR"),
-  EUROE: getFiatInfo("EUR"),
-  USDT: getFiatInfo("USD"),
-  UHU: getFiatInfo("EUR"),
+  USDC: getFiatInfo("USD")!,
+  EURS: getFiatInfo("EUR")!,
+  EUROE: getFiatInfo("EUR")!,
+  USDT: getFiatInfo("USD")!,
+  UHU: getFiatInfo("EUR")!,
 };
 
-export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefined => {
+export const getFiatInfoForStableCoin = (
+  stableCoin: string
+): FiatInfo | undefined => {
   return STANDARD_STABLE_MAP[stableCoin];
-}
-
+};
 
 export function getFiatInfo(fiatCode: FiatCodes): FiatInfo | undefined {
+  if (fiatCode === null || fiatCode === undefined) return undefined;
   return FIAT_INFO_MAP[fiatCode];
 }
 
@@ -148,7 +149,9 @@ export function getFiatInfo(fiatCode: FiatCodes): FiatInfo | undefined {
  * Retrieves the fiat currency code for a given stablecoin ticker.
  *  Handles case-insensitivity.
  */
-export function getFiatCurrencyCode(stablecoin: string): "USD" | "EUR" | undefined {
+export function getFiatCurrencyCode(
+  stablecoin: string
+): "USD" | "EUR" | undefined {
   return STABLECOIN_TO_FIAT_MAP[stablecoin];
 }
 
@@ -157,5 +160,6 @@ export function getFiatCurrencyCode(stablecoin: string): "USD" | "EUR" | undefin
  * Handles case-insensitivity.
  */
 export function getFiatCurrencySymbol(fiatCode: FiatCodes): string | undefined {
+  if (fiatCode === null || fiatCode === undefined) return undefined;
   return FIAT_SYMBOLS_MAP[fiatCode];
 }

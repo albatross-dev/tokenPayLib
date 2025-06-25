@@ -1,21 +1,8 @@
-import React, { useEffect, useState, ReactNode } from 'react'
-import Table from './Table';
-import DatePicker from '../../../components/DatePicker';
-import { Collection } from '../../types/derivedPayload.types';
-import { ColumnDef } from '@tanstack/react-table';
-
-interface DateRange {
-  from: {
-    year: number;
-    month: number;
-    day: number;
-  };
-  to: {
-    year: number;
-    month: number;
-    day: number;
-  };
-}
+import DatePicker, { DateRange } from "@/tokenPayLib/components/UI/DatePicker";
+import { ColumnDef } from "@tanstack/react-table";
+import { ReactNode, useEffect, useState } from "react";
+import { Collection } from "../../types/derivedPayload.types";
+import Table from "./Table";
 
 interface WhereClause {
   and?: Array<{
@@ -46,12 +33,12 @@ export default function SimpleList({
   columns,
   collection,
   loader,
-  standardQuery
+  standardQuery,
 }: SimpleListProps): JSX.Element {
-  const [tableQuery, setTableQuery] = useState<TableQuery>({ 
-    page: 1, 
-    limit: 20, 
-    where: standardQuery 
+  const [tableQuery, setTableQuery] = useState<TableQuery>({
+    page: 1,
+    limit: 20,
+    where: standardQuery || {},
   });
 
   useEffect(() => {
@@ -62,7 +49,7 @@ export default function SimpleList({
 
   const handleDateChange = (e: DateRange | null): void => {
     console.log(e);
-    if (!e) {
+    if (!e || e.from === null || e.to === null) {
       // Filter query object to remove date filters
       const newQuery = { ...tableQuery };
       if (newQuery.where.and) {
@@ -73,9 +60,10 @@ export default function SimpleList({
 
       return setTableQuery(newQuery);
     }
+
     const fromDate = new Date(`${e.from.year}-${e.from.month}-${e.from.day}`);
     const toDate = new Date(`${e.to.year}-${e.to.month}-${e.to.day}`);
-  
+
     setTableQuery({
       ...tableQuery,
       where: {
@@ -102,13 +90,13 @@ export default function SimpleList({
         <DatePicker onDateChange={handleDateChange} minDate="2021-01-01" />
         {children}
       </div>
-      <Table 
-        loader={loader} 
-        tableQuery={tableQuery} 
-        setTableQuery={setTableQuery} 
-        columns={columns} 
+      <Table
+        loader={loader}
+        tableQuery={tableQuery}
+        setTableQuery={setTableQuery}
+        columns={columns}
         collection={collection}
       />
     </div>
-  )
+  );
 }

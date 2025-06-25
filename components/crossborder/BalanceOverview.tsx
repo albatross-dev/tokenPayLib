@@ -33,7 +33,7 @@ interface Balance {
 }
 
 const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID!,
 });
 
 export default function BalanceOverview() {
@@ -69,7 +69,6 @@ export default function BalanceOverview() {
 
   const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
-    console.log("fetching crossborder balances");
     let whiteList = [...euroWhitelist, ...usdWhitelist, ...popularWhitelist];
     let currenciesToFetch = Object.entries(currencies).filter(([symbol]) =>
       whiteList.includes(symbol)
@@ -214,7 +213,10 @@ export default function BalanceOverview() {
         <div className="flex justify-between md:justify-start w-full mb-4 gap-4">
           <div className="flex flex-col items-center md:items-start">
             <span
-              className={`text-5xl font-bold ${loading && "animate-pulse"}`}
+              className={`text-5xl font-bold ${
+                loading &&
+                "text-transparent bg-gray-300 animate-pulse rounded-lg"
+              }`}
             >
               {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
             </span>
@@ -224,7 +226,10 @@ export default function BalanceOverview() {
           </div>
           <div className="flex flex-col items-center md:items-start">
             <span
-              className={`text-5xl font-bold ${loading && "animate-pulse"}`}
+              className={`text-5xl font-bold ${
+                loading &&
+                "text-transparent bg-gray-300 animate-pulse rounded-lg"
+              }`}
             >
               {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}
             </span>

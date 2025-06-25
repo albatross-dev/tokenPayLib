@@ -10,6 +10,7 @@ import currencies from "../crypto/currencies";
 import CustomWrapperABI from "../../assets/customSwapRouterAbi.json";
 import { api, sendErrorReport } from "../../../context/UserContext";
 import { SimpleToken } from "../../types/token.types";
+import { AxiosError } from "axios";
 
 // Define the ABI for the depositV3 function
 const SpokePoolAbi = [
@@ -339,7 +340,7 @@ export async function fetchLimitsAndQuote(
     );
 
     limits = limitsResponse.data;
-  } catch (error) {
+  } catch (error: any) {
     sendErrorReport("BridgeUtils - Error fetching limits", error);
     console.log("Error fetching limits:", error);
 
@@ -369,7 +370,7 @@ export async function fetchLimitsAndQuote(
     quoteData.status = 200;
 
     quote = quoteData;
-  } catch (error) {
+  } catch (error: any) {
     sendErrorReport("BridgeUtils - Error fetching quote", error);
 
     const errorData = {

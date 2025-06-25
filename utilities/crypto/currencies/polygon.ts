@@ -164,7 +164,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     decimals: 18,
     contractAddress: "0x8f006d1e1d9dc6c98996f50a4c810f17a47fbf19",
     abi: realusdcabi as Array<any>,
-    icon: null,
+    icon: "",
   },
   LINK: {
     name: "ChainLink Token",
@@ -372,7 +372,7 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     decimals: 18,
     contractAddress: "0xd1e6354fb05bf72a8909266203dab80947dceccf",
     abi: realusdcabi,
-    icon: null,
+    icon: "",
   },
   FRAX: {
     name: "Frax",

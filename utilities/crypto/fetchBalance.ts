@@ -6,7 +6,7 @@ import {
   ThirdwebClient,
 } from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
-import { queryClient } from "../../../pages/_app";
+import { queryClient } from "@/pages/_app";
 
 // Custom error types to distinguish between different failure scenarios
 class ZeroBalanceError extends Error {
@@ -34,7 +34,7 @@ class ContractError extends Error {
  * @returns {Promise<bigint>} - The balance of the account in the contract, or 0 in case of an error.
  * @throws {Error} - Throws an error if the balance could not be fetched.
  */
-async function fetchBalanceRaw(
+export async function fetchBalanceRaw(
   client: ThirdwebClient,
   chain: Chain,
   contractAddress: string,
@@ -61,7 +61,6 @@ async function fetchBalanceRaw(
 
     return result;
   } catch (error) {
-    console.log("fetchBalance RAW error", error);
     return BigInt(0);
   }
 }
