@@ -42,10 +42,6 @@ async function fetchBalanceRaw(
   accountAddress: string
 ): Promise<bigint> {
   try {
-    if (process.env.NEXT_PUBLIC_NEXT_ENV === "development") {
-      console.log("fetchBalance RAW");
-    }
-
     const contract: Readonly<ContractOptions<any[]>> = getContract({
       client: client,
       chain,

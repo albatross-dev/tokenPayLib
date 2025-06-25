@@ -54,7 +54,6 @@ export async function tokenPayAbstractionSimpleTransfer(
   token: SimpleToken,
   recipient: string
 ): Promise<TransactionResult> {
-  console.log("tokenPayAbstractionSimpleTransfer", amount);
   const contract = getTokenPayAbstractionContract(client, chain);
 
   // get token contract and approve transaction

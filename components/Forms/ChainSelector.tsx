@@ -148,8 +148,8 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
             onAction: () => {
               if (retryCounter > 2) {
                 showErrorPopup({
-                  titleKey: t("toManyRetries.title"),
-                  messageKeyOrText: t("toManyRetries.description"),
+                  titleKey: t("tooManyRetries.title"),
+                  messageKeyOrText: t("tooManyRetries.description"),
                 });
                 return;
               }
