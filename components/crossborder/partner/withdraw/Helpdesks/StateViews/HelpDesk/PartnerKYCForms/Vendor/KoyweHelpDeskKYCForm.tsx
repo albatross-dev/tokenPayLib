@@ -54,7 +54,7 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
           name: "vendorLegalType",
           label: t("information.fields.businessInformation.vendorLegalType"),
           type: "select",
-          options: t("signup.legalTypes", { returnObjects: true }),
+          options: t("signup.legalTypes", { returnObjects: true }) as { label: string; value: any }[],
           required: false,
           disabled: true,
           width: "w-1/2",
@@ -245,7 +245,7 @@ export default function KoyweHelpDeskKYCForm({ setValue, methods }: KoyweHelpDes
       name: "vendorIndustry",
       label: t("information.fields.businessInformation.vendorIndustry"),
       type: "select",
-      options: t("NACE", { returnObjects: true }),
+      options: t("NACE", { returnObjects: true }) as { label: string; value: any }[],
       required: true,
     },
     {

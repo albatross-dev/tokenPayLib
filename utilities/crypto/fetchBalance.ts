@@ -1,10 +1,4 @@
-import {
-  Chain,
-  ContractOptions,
-  getContract,
-  readContract,
-  ThirdwebClient,
-} from "thirdweb";
+import { Chain, ContractOptions, getContract, readContract, ThirdwebClient } from "thirdweb";
 import { sendErrorReport } from "../../../context/UserContext";
 import { queryClient } from "@/pages/_app";
 
@@ -42,7 +36,7 @@ export async function fetchBalanceRaw(
   accountAddress: string
 ): Promise<bigint> {
   try {
-    const contract: Readonly<ContractOptions<any[]>> = getContract({
+    const contract: Readonly<ContractOptions<any[], `0x${string}`>> = getContract({
       client: client,
       chain,
       address: contractAddress,
@@ -66,17 +60,8 @@ export async function fetchBalanceRaw(
 }
 
 // Generate a consistent cache key for the balance query
-function getBalanceQueryKey(
-  chainId: number,
-  contractAddress: string,
-  accountAddress: string
-): string[] {
-  return [
-    "balance",
-    chainId.toString(),
-    contractAddress.toLowerCase(),
-    accountAddress.toLowerCase(),
-  ];
+function getBalanceQueryKey(chainId: number, contractAddress: string, accountAddress: string): string[] {
+  return ["balance", chainId.toString(), contractAddress.toLowerCase(), accountAddress.toLowerCase()];
 }
 
 // Cached version using QueryClient
@@ -94,11 +79,7 @@ export default async function fetchBalance(
     return BigInt(0);
   }
 
-  const queryKey = getBalanceQueryKey(
-    chain.id,
-    contractAddress,
-    accountAddress
-  );
+  const queryKey = getBalanceQueryKey(chain.id, contractAddress, accountAddress);
 
   const defaultOptions = {
     staleTime: 30 * 1000, // 30 seconds
@@ -116,13 +97,7 @@ export default async function fetchBalance(
   const result = await queryClient.fetchQuery<bigint>({
     queryKey,
     queryFn: () => {
-      return fetchBalanceRaw(
-        client,
-        chain,
-        contractAddress,
-        abi,
-        accountAddress
-      );
+      return fetchBalanceRaw(client, chain, contractAddress, abi, accountAddress);
     },
     staleTime: defaultOptions.staleTime,
   });
@@ -137,7 +112,7 @@ export async function fetchTotalSupply(
   abi: any[]
 ): Promise<bigint> {
   try {
-    const contract: Readonly<ContractOptions<any[]>> = getContract({
+    const contract: Readonly<ContractOptions<any[], `0x${string}`>> = getContract({
       client: client,
       chain,
       address: contractAddress,
@@ -151,10 +126,7 @@ export async function fetchTotalSupply(
 
     return result;
   } catch (error) {
-    sendErrorReport(
-      `Error fetching total supply for ${contractAddress} on ${chain.name}`,
-      error
-    );
+    sendErrorReport(`Error fetching total supply for ${contractAddress} on ${chain.name}`, error);
     return BigInt(0); // Return zero balance in case of an error
   }
 }

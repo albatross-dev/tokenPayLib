@@ -70,7 +70,7 @@ export const uniswapAddressesPublic: Record<string, { router: string; quote: str
   },
 };
 
-export function getQuoteContract(chain: Chain): ContractOptions<any[]> {
+export function getQuoteContract(chain: Chain): ContractOptions<any[], `0x${string}`> {
   return getContract({
     client: client,
     chain: chain,

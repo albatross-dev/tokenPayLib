@@ -58,7 +58,6 @@ export type InputType =
   | "token"
   | "chain";
 
-
 // Field renderer types
 export type FormField =
   | BaseFieldProps
@@ -73,7 +72,7 @@ export type FormField =
 
 export interface ArrayFieldProps extends BaseFieldProps {
   field: FormField;
-  methods: UseFormReturn<FieldValues, any, undefined>;
+  methods: UseFormReturn<FieldValues, any, FieldValues>;
   parentName: string;
 }
 
@@ -116,7 +115,6 @@ export interface CountrySelectorProps extends BaseFieldProps {
   validCountries?: string[];
 }
 
-
 export interface CurrencySelectorProps extends BaseFieldProps {
   currencies: FiatInfo[];
 }
@@ -151,7 +149,6 @@ export interface ChainDetails {
   logo: string;
   main?: boolean;
 }
-
 
 // Chain selector specific types
 export interface ChainSelectorProps extends BaseFieldProps {

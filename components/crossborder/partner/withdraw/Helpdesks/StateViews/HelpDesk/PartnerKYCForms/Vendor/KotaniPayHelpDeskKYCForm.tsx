@@ -54,7 +54,7 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
           name: "vendorLegalType",
           label: t("information.fields.businessInformation.vendorLegalType"),
           type: "select",
-          options: t("signup.legalTypes", { returnObjects: true }),
+          options: t("signup.legalTypes", { returnObjects: true }) as { label: string; value: any }[],
           required: false,
           disabled: true,
           width: "w-1/2",

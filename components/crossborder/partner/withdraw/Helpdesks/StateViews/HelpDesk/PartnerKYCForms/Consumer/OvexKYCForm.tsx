@@ -9,7 +9,7 @@ import { FormField } from "../../../../../../../../Forms/types";
 
 interface OvexKYCFormProps {
   setValue: UseFormSetValue<any>;
-  methods: UseFormReturn<FieldValues, any, undefined>;
+  methods: UseFormReturn;
 }
 
 let formDataPreloaded = false;
