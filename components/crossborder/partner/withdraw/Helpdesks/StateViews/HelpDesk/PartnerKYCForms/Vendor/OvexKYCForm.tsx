@@ -1,6 +1,6 @@
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
@@ -37,11 +37,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}</div>,
     },
     {
       type: "row",
@@ -67,11 +63,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.address")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.address")}</div>,
     },
     {
       type: "row",
@@ -85,9 +77,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
         },
         {
           name: "vendorRegisterNumber",
-          label: t(
-            "information.fields.businessInformation.vendorRegisterNumber"
-          ),
+          label: t("information.fields.businessInformation.vendorRegisterNumber"),
           type: "text",
           required: true,
           width: "md:w-2/3",
@@ -134,11 +124,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.bank")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.bank")}</div>,
     },
     {
       type: "row",
@@ -192,11 +178,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.representative")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representative")}</div>,
     },
     {
       type: "row",
@@ -244,11 +226,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.businessModel")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.businessModel")}</div>,
     },
     {
       name: "vendorBusinessModel",
@@ -270,31 +248,21 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.representativeRight")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeRight")}</div>,
     },
     {
       type: "array",
       name: "representatives",
       label: t("privateSettings.representativeInformation.representatives"),
-      newLabel: t(
-        "privateSettings.representativeInformation.representatives_newLabel"
-      ),
-      removeLabel: t(
-        "privateSettings.representativeInformation.representatives_removeLabel"
-      ),
+      newLabel: t("privateSettings.representativeInformation.representatives_newLabel"),
+      removeLabel: t("privateSettings.representativeInformation.representatives_removeLabel"),
       fields: [
         {
           type: "row",
           fields: [
             {
               name: "vendorRepresentativeName",
-              label: t(
-                "privateSettings.representativeInformation.vendorRepresentativeName"
-              ),
+              label: t("privateSettings.representativeInformation.vendorRepresentativeName"),
               type: "text",
               width: "w-full",
               disabled: true,
@@ -302,9 +270,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
             },
             {
               name: "vendorRepresentativeSurname",
-              label: t(
-                "privateSettings.representativeInformation.vendorRepresentativeSurname"
-              ),
+              label: t("privateSettings.representativeInformation.vendorRepresentativeSurname"),
               type: "text",
               width: "w-full",
               disabled: true,
@@ -314,9 +280,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
         },
         {
           name: "vendorRepresentativeBirthDate",
-          label: t(
-            "privateSettings.representativeInformation.vendorRepresentativeBirthDate"
-          ),
+          label: t("privateSettings.representativeInformation.vendorRepresentativeBirthDate"),
           type: "date",
           disabled: true,
           required: true,
@@ -333,17 +297,13 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
           fields: [
             {
               name: "vendorRepresentative",
-              label: t(
-                "privateSettings.representativeInformation.vendorRepresentative"
-              ),
+              label: t("privateSettings.representativeInformation.vendorRepresentative"),
               type: "checkbox",
               width: "md:w-1/2",
             },
             {
               name: "vendorRepresentativePowerOfAttorney",
-              label: t(
-                "privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"
-              ),
+              label: t("privateSettings.representativeInformation.vendorRepresentativePowerOfAttorney"),
               type: "checkbox",
               width: "md:w-1/2",
             },
@@ -354,9 +314,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
           fields: [
             {
               name: "vendorRepresentativeShareholder",
-              label: t(
-                "privateSettings.representativeInformation.vendorRepresentativeShareholder"
-              ),
+              label: t("privateSettings.representativeInformation.vendorRepresentativeShareholder"),
               type: "checkbox",
               width: "md:w-1/2",
             },
@@ -366,22 +324,14 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.documents")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.ovex.documents")}</div>,
     },
     {
       type: "array",
       name: "commercialRegistrations",
       label: t("information.fields.documents.commercialRegistrations"),
-      newLabel: t(
-        "information.fields.documents.commercialRegistrations_newLabel"
-      ),
-      removeLabel: t(
-        "information.fields.documents.commercialRegistrations_removeLabel"
-      ),
+      newLabel: t("information.fields.documents.commercialRegistrations_newLabel"),
+      removeLabel: t("information.fields.documents.commercialRegistrations_removeLabel"),
       fields: [
         {
           name: "commercialRegister",
@@ -411,9 +361,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
       name: "shareholderDocs",
       label: t("information.fields.documents.shareholderDocs"),
       newLabel: t("information.fields.documents.shareholderDocs_newLabel"),
-      removeLabel: t(
-        "information.fields.documents.shareholderDocs_removeLabel"
-      ),
+      removeLabel: t("information.fields.documents.shareholderDocs_removeLabel"),
       fields: [
         {
           name: "shareholders",
@@ -425,28 +373,18 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: (
-        <div className="h-4">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.representativeFiles")}
-        </div>
-      ),
+      content: <div className="h-4">{tCrossborder("withdraw.helpDeskKYC.ovex.representativeFiles")}</div>,
     },
     {
       type: "array",
       name: "representativeDocs",
       label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesLabel"),
-      newLabel: tCrossborder(
-        "withdraw.helpDeskKYC.ovex.representativeFilesNewLabel"
-      ),
-      removeLabel: tCrossborder(
-        "withdraw.helpDeskKYC.ovex.representativeFilesRemoveLabel"
-      ),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesNewLabel"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFilesRemoveLabel"),
       fields: [
         {
           name: "representativeDoc",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.ovex.representativeFileLabel"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.ovex.representativeFileLabel"),
           type: "file",
           required: true,
         },
@@ -465,9 +403,7 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
           <AcceptTermsCheckbox
             methods={methods}
             partnerName={"Ovex"}
-            partnerTerms={
-              "https://storage.googleapis.com/ovex-static-assets/legal/OVEX_Terms_and_Conditions.pdf"
-            }
+            partnerTerms={"https://storage.googleapis.com/ovex-static-assets/legal/OVEX_Terms_and_Conditions.pdf"}
           />
         );
       },

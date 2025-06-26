@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import buildPopover from "../../../../../../../../UI/buildPopover";
 
 interface AcceptTermsCheckboxProps {
@@ -51,21 +51,15 @@ export default function AcceptTermsCheckbox({ methods, partnerTerms, partnerName
           </a>{" "}
           {tCrossborder("withdraw.helpDeskKYC.acceptTerms.termsAcceptance")}{" "}
           {tCrossborder("withdraw.helpDeskKYC.acceptTerms.dataShareIntro", { partnerName })}{" "}
-          <a
-            className="text-uhuBlue"
-            target="_blank"
-            href="https://usetokenpay.com/terms-and-conditions/"
-          >
+          <a className="text-uhuBlue" target="_blank" href="https://usetokenpay.com/terms-and-conditions/">
             {tCrossborder("withdraw.helpDeskKYC.acceptTerms.tokenPayTermsLabel")}
           </a>{" "}
           {tCrossborder("withdraw.helpDeskKYC.acceptTerms.paragraphReference")} <InformationPopover t={tCrossborder} />
         </div>
       </label>
       {methods.formState.errors.acceptTerms && (
-        <div className="text-red-500 text-sm mt-1">
-          {methods.formState.errors.acceptTerms.message as string}
-        </div>
+        <div className="text-red-500 text-sm mt-1">{methods.formState.errors.acceptTerms.message as string}</div>
       )}
     </div>
   );
-} 
+}

@@ -20,6 +20,7 @@ export default function TokenSelector({
   onSelect,
   selectText,
   displayContent,
+  disabled,
 }: TokenSelectorProps): JSX.Element {
   const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -37,7 +38,10 @@ export default function TokenSelector({
   return (
     <Menu as="div" className="relative inline-block text-left w-full mt-4">
       <MenuButton
-        className={`inline-flex w-full justify-between items-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none`}
+        disabled={disabled}
+        className={`inline-flex w-full justify-between items-center rounded-md border shadow-sm px-2 py-2  text-sm font-medium focus:outline-none ${
+          disabled ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
       >
         {displayContent ? (
           displayContent

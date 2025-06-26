@@ -1,9 +1,9 @@
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react';
-import { Fragment, useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
-import { useTranslation } from 'react-i18next';
-import React from 'react';
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { useTranslation } from "next-i18next";
+import React from "react";
 
 interface Language {
   label: string;
@@ -15,14 +15,14 @@ interface Languages {
 }
 
 const defaultLangs: Languages = {
-  en: { label: 'English', emoji: 'US' },
-  de: { label: 'Deutsch', emoji: 'DE' },
-  fr: { label: 'Français', emoji: 'FR' }
+  en: { label: "English", emoji: "US" },
+  de: { label: "Deutsch", emoji: "DE" },
+  fr: { label: "Français", emoji: "FR" },
 };
 
 export const smallDefautlLangs: Languages = {
-  en: { label: 'English', emoji: 'US' },
-  de: { label: 'Deutsch', emoji: 'DE' }
+  en: { label: "English", emoji: "US" },
+  de: { label: "Deutsch", emoji: "DE" },
 };
 
 interface LanguageSwitcherProps {
@@ -31,7 +31,7 @@ interface LanguageSwitcherProps {
 
 export default function LanguageSwitcher({ languages = defaultLangs }: LanguageSwitcherProps) {
   const router = useRouter();
-  const defaultLocale = 'de';
+  const defaultLocale = "de";
 
   const { t } = useTranslation("common");
 
@@ -45,18 +45,18 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
 
   useEffect(() => {
     // After mounting, update currentLocale based on client-side cookie if available
-    const savedLocale = Cookies.get('NEXT_LOCALE') || router.locale;
+    const savedLocale = Cookies.get("NEXT_LOCALE") || router.locale;
     if (savedLocale && savedLocale !== currentLocale) {
       setCurrentLocale(savedLocale);
     }
-    setIsMounted(true);  // Ensure the component is mounted
+    setIsMounted(true); // Ensure the component is mounted
   }, [router.locale, currentLocale]);
 
   // Function to change language
   const changeLanguage = (locale: string): void => {
-    Cookies.set('NEXT_LOCALE', locale, { expires: 365 }); // Cookie expires in 1 year
+    Cookies.set("NEXT_LOCALE", locale, { expires: 365 }); // Cookie expires in 1 year
     router.push(router.pathname, router.asPath, { locale });
-    setCurrentLocale(locale);  // Update state to avoid hydration mismatch
+    setCurrentLocale(locale); // Update state to avoid hydration mismatch
   };
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
         const buttonRect = buttonRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
 
-        if (viewportHeight - buttonRect.bottom < 150) {  
+        if (viewportHeight - buttonRect.bottom < 150) {
           setOpenUpwards(true);
         } else {
           setOpenUpwards(false);
@@ -75,9 +75,9 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
 
     handlePositionCheck();
 
-    window.addEventListener('resize', handlePositionCheck);
+    window.addEventListener("resize", handlePositionCheck);
     return () => {
-      window.removeEventListener('resize', handlePositionCheck);
+      window.removeEventListener("resize", handlePositionCheck);
     };
   }, []);
 
@@ -104,9 +104,9 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems 
+          <MenuItems
             className={`absolute right-0 w-36 mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none 
-              ${openUpwards ? 'bottom-full mb-2 origin-bottom-right' : 'top-full mt-2 origin-top-right'}`}
+              ${openUpwards ? "bottom-full mb-2 origin-bottom-right" : "top-full mt-2 origin-top-right"}`}
           >
             {Object.keys(languages).map((locale) => (
               <MenuItem key={locale}>
@@ -114,7 +114,7 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
                   <button
                     onClick={() => changeLanguage(locale)}
                     className={`${
-                      active ? 'bg-gray-100' : 'text-gray-900'
+                      active ? "bg-gray-100" : "text-gray-900"
                     } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                   >
                     <span className="mr-2 text-sm font-bold">{languages[locale]?.emoji}</span>
@@ -128,4 +128,4 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
       </Menu>
     </div>
   );
-} 
+}

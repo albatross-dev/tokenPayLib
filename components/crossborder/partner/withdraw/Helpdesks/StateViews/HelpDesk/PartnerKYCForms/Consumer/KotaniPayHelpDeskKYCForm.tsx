@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
@@ -14,10 +14,7 @@ interface KotaniPayHelpDeskKYCFormProps {
 
 let formDataPreloaded = false;
 
-export default function KotaniPayHelpDeskKYCFormConsumer({
-  setValue,
-  methods,
-}: KotaniPayHelpDeskKYCFormProps) {
+export default function KotaniPayHelpDeskKYCFormConsumer({ setValue, methods }: KotaniPayHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -38,20 +35,14 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: (
-        <div className="font-bold text-xl">
-          {tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}
-        </div>
-      ),
+      content: <div className="font-bold text-xl">{tCrossborder("withdraw.helpDeskKYC.ovex.generalInfo")}</div>,
     },
     {
       type: "row",
       fields: [
         {
           name: "name",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.kotanipay.representativeName"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.kotanipay.representativeName"),
           type: "text",
           required: false,
           disabled: true,
@@ -60,9 +51,7 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
         {
           type: "text",
           name: "surname",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.kotanipay.representativeSurname"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.kotanipay.representativeSurname"),
           required: false,
           disabled: true,
           width: "w-1/2",
@@ -71,9 +60,7 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
     },
     {
       name: "birthday",
-      label: t(
-        "privateSettings.representativeInformation.vendorRepresentativeBirthDate"
-      ),
+      label: t("privateSettings.representativeInformation.vendorRepresentativeBirthDate"),
       type: "date",
       disabled: true,
       required: true,
@@ -111,9 +98,7 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
     {
       type: "ui",
       content: (
-        <div className="font-bold text-xl">
-          {tCrossborder("withdraw.helpDeskKYC.consumer.kotani.kotaniInfo")}
-        </div>
+        <div className="font-bold text-xl">{tCrossborder("withdraw.helpDeskKYC.consumer.kotani.kotaniInfo")}</div>
       ),
     },
     {
@@ -124,27 +109,17 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
     },
     {
       name: "kotaniTransactionCount",
-      label: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.ovex.ovexTransactions"
-      ),
+      label: tCrossborder("withdraw.helpDeskKYC.consumer.ovex.ovexTransactions"),
       type: "text",
       required: true,
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold text-xl">
-          {tCrossborder("withdraw.helpDeskKYC.consumer.documents")}
-        </div>
-      ),
+      content: <div className="font-bold text-xl">{tCrossborder("withdraw.helpDeskKYC.consumer.documents")}</div>,
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}</div>,
     },
     {
       name: "taxId",
@@ -156,18 +131,12 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
       type: "array",
       name: "stasisRepresentativeProofOfIdentity",
       label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocument"),
-      newLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.idDocumentNewLabel"
-      ),
-      removeLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"
-      ),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentNewLabel"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"),
       fields: [
         {
           name: "representativeProofOfIdentityPage",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.consumer.idDocumentFileLabel"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentFileLabel"),
           type: "file",
           required: true,
         },
@@ -175,28 +144,18 @@ export default function KotaniPayHelpDeskKYCFormConsumer({
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddress")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddress")}</div>,
     },
     {
       type: "array",
       name: "stasisProofOfResidence",
       label: tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddress"),
-      newLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.proofOfAddressNewLabel"
-      ),
-      removeLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.proofOfAddressRemoveLabel"
-      ),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddressNewLabel"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddressRemoveLabel"),
       fields: [
         {
           name: "stasisProofOfResidencePage",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.consumer.proofOfAddressFileLabel"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.consumer.proofOfAddressFileLabel"),
           type: "file",
           required: true,
         },

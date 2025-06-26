@@ -1,13 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  Transition,
-} from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import { SimpleToken } from "../../types/token.types";
 
 interface Token {
@@ -85,17 +79,13 @@ const ExchangeModal: React.FC<ExchangeModalProps> = ({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle
-                as="h3"
-                className="text-lg font-medium leading-6 text-gray-900"
-              >
+              <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
                 {`${t("convert")} ${token?.id}`}
               </DialogTitle>
 
               <p className="text-gray-700">
                 {t("enter_amount_exchange", {
-                  currency:
-                    checkoutSession?.router?.stableCoinShortName || "usdc",
+                  currency: checkoutSession?.router?.stableCoinShortName || "usdc",
                 })}
               </p>
 

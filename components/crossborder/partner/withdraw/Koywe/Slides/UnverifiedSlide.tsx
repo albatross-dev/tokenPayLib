@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 export default function UnverifiedSlide() {
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -10,9 +10,7 @@ export default function UnverifiedSlide() {
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">
           {tCrossborder("withdraw.koywe.verificationRequired")}
         </h2>
-        <p className="text-gray-600">
-          {tCrossborder("withdraw.koywe.verificationRequiredDescription")}
-        </p>
+        <p className="text-gray-600">{tCrossborder("withdraw.koywe.verificationRequiredDescription")}</p>
       </div>
       <Link
         href="/kyc/koywe"

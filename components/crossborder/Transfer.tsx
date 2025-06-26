@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/UserContext";
 import moment from "moment";
 import ExportPopover, { DateRange } from "../Modules/ExportPopover";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import TransactionModal from "./TransactionModal";
 import { BsArrowUpRight } from "react-icons/bs";
 import TypePopover from "./TypePopover";
@@ -23,8 +23,7 @@ interface TableQuery {
 export default function Transfer() {
   const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedTransactionData, setSelectedTransactionData] =
-    useState<FiatTransaction | null>(null);
+  const [selectedTransactionData, setSelectedTransactionData] = useState<FiatTransaction | null>(null);
   const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
 
   const { t } = useTranslation("common");
@@ -52,8 +51,7 @@ export default function Transfer() {
             {props.row.original.shredCount
               ? props.getValue() *
                 (props.row.original.shardList?.length
-                  ? props.row.original.shardList.length /
-                    props.row.original.shredCount
+                  ? props.row.original.shardList.length / props.row.original.shredCount
                   : 0)
               : props.getValue()}
           </div>
@@ -73,9 +71,7 @@ export default function Transfer() {
       cell: (props) => {
         return (
           <div className="table-cell">
-            <span className="bg-uhuBlue rounded-full px-2 text-white font-bold">
-              {t(props.getValue())}
-            </span>
+            <span className="bg-uhuBlue rounded-full px-2 text-white font-bold">{t(props.getValue())}</span>
           </div>
         );
       },
@@ -84,15 +80,7 @@ export default function Transfer() {
       accessorKey: "toAccountIdentifier",
       header: tCrossborder("transfer.receiver"),
       cell: (props) => {
-        return (
-          <div className="table-cell">
-            {props.getValue() ? (
-              <AddressDisplay value={props.getValue()} />
-            ) : (
-              "-"
-            )}
-          </div>
-        );
+        return <div className="table-cell">{props.getValue() ? <AddressDisplay value={props.getValue()} /> : "-"}</div>;
       },
     },
     {
@@ -100,9 +88,7 @@ export default function Transfer() {
       header: tCrossborder("transfer.date"),
       cell: (props) => {
         return (
-          <div className="table-cell whitespace-nowrap">
-            {moment(props.getValue()).format("DD.MM.YYYY, HH:mm")}
-          </div>
+          <div className="table-cell whitespace-nowrap">{moment(props.getValue()).format("DD.MM.YYYY, HH:mm")}</div>
         );
       },
     },
@@ -113,18 +99,10 @@ export default function Transfer() {
       throw new Error("Date range is incomplete");
     }
 
-    let from = new Date(
-      dateRange.from.year,
-      dateRange.from.month - 1,
-      dateRange.from.day
-    );
+    let from = new Date(dateRange.from.year, dateRange.from.month - 1, dateRange.from.day);
 
     // Creating a completely new date object for "to"
-    let to = new Date(
-      dateRange.to.year,
-      dateRange.to.month - 1,
-      dateRange.to.day
-    );
+    let to = new Date(dateRange.to.year, dateRange.to.month - 1, dateRange.to.day);
     let adjustedTo = new Date(to);
     adjustedTo.setDate(adjustedTo.getDate() + 1);
 
@@ -141,21 +119,12 @@ export default function Transfer() {
     let rangeQuery = qs.stringify({ where: query }, { addQueryPrefix: true });
 
     // Fetch data
-    const response = await api.get<{ docs: any[] }>(
-      `/api/fiatTransaction${rangeQuery}`
-    );
+    const response = await api.get<{ docs: any[] }>(`/api/fiatTransaction${rangeQuery}`);
 
     return response.data.docs;
   }
 
-  const wantedKeys = [
-    "createdAt",
-    "amount",
-    "currencyName",
-    "type",
-    "toAccountIdentifier",
-    "status",
-  ];
+  const wantedKeys = ["createdAt", "amount", "currencyName", "type", "toAccountIdentifier", "status"];
 
   const keyNames = {
     createdAt: tCrossborder("transfer.date"),
@@ -173,12 +142,7 @@ export default function Transfer() {
         closeModal={() => setIsModalOpen(false)}
         transactionData={selectedTransactionData}
       />
-      <SimpleList
-        standardQuery={paymentsTableQuery}
-        collection="fiatTransaction"
-        columns={columns}
-        loader={false}
-      >
+      <SimpleList standardQuery={paymentsTableQuery} collection="fiatTransaction" columns={columns} loader={false}>
         <ExportPopover
           setData={getTransferData}
           minDate={{

@@ -141,6 +141,7 @@ export interface TokenSelectorProps extends BaseFieldProps {
   onSelect: (token: SimpleToken) => void;
   selectText?: string;
   displayContent?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export interface ChainDetails {
@@ -160,6 +161,7 @@ export interface ChainSelectorProps extends BaseFieldProps {
   chainList?: ChainDetails[] | undefined;
   returnOnly?: boolean | undefined;
   onChain?: (chain: ChainDetails) => void | undefined;
+  disabled?: boolean | undefined;
 }
 
 export interface FieldRendererProps {

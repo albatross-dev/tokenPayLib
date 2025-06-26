@@ -1,6 +1,6 @@
 import { useUhuConfig } from "@/tokenPayLib/components/contexts/UhuConfigContext";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 export default function Unlimit({ amount, account, user, country }) {
   console.log("Unlimit: ", amount, account, user, country);
@@ -10,9 +10,7 @@ export default function Unlimit({ amount, account, user, country }) {
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const onrampUrl = `https://onramp.gatefi.com/?region=${
-    country.countryCode
-  }&partnerAccountId=${
+  const onrampUrl = `https://onramp.gatefi.com/?region=${country.countryCode}&partnerAccountId=${
     process.env.NEXT_PUBLIC_GATEFI_PARTNER_ACCOUNT_ID
   }&cryptoCurrency=usdc&cryptoCurrencyLock=true&fiatAmount=${amount}&fiatAmountLock=true&fiatCurrency=${
     country.currency
@@ -22,9 +20,7 @@ export default function Unlimit({ amount, account, user, country }) {
 
   return (
     <div className="flex flex-col -mt-8">
-      <div className="font-bold text-xl mb-2">
-        {tCrossborder("deposit.unlimit.transactionTitle")}
-      </div>
+      <div className="font-bold text-xl mb-2">{tCrossborder("deposit.unlimit.transactionTitle")}</div>
       <div className="mb-4">
         {tCrossborder("deposit.unlimit.transactionInstructions1")}
         <span

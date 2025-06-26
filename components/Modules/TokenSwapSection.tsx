@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import ExchangeModal from "../../components/Modals/ExchangeModal";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
 import tokenyByChain from "../../utilities/crypto/tokenByChain";
@@ -21,21 +21,16 @@ import { RxUpdate } from "react-icons/rx";
 import { api } from "../../../context/UserContext";
 import { Pool } from "../../types/payload-types";
 import { SimpleToken } from "../../types/token.types";
-import {
-  convertAnyToAnyDirect,
-  uniswapAddressesPublic,
-} from "../../utilities/crypto/convertAnyToAny";
-import {
-  formatCrypto,
-  TokensByChainId,
-} from "../../utilities/crypto/currencies";
+import { convertAnyToAnyDirect, uniswapAddressesPublic } from "../../utilities/crypto/convertAnyToAny";
+import { formatCrypto, TokensByChainId } from "../../utilities/crypto/currencies";
 import { ExchangeType } from "../../utilities/exchangeTypes";
 import ChainSelector from "../Forms/ChainSelector";
 import UniversalModal, { MODAL_TYPE_SUCCESS } from "../Modals/UniversalModal";
 import MiniLoader from "../UI/MiniLoader";
+import { ChainDetails } from "@/tokenPayLib/types/chainDetails.types";
+import showErrorPopup from "../Modals/ErrorPrompt";
 
-const exchangeType: ExchangeType = process.env
-  .NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
+const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
 
 let retryCounterAny = 0;
 let retryCounter = 0;
@@ -49,20 +44,14 @@ interface TokenSwapSectionProps {
   preAmount?: number;
 }
 
-export default function TokenSwapSection({
-  origin,
-  target,
-  max,
-  preAmount,
-}: TokenSwapSectionProps) {
+export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
   const { t } = useTranslation("common");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
 
   const [balances, setBalances] = useState({});
   const [balanceUpdate, setBalanceUpdate] = useState<boolean>(false);
-  const [exchangeState, setExchangeState] =
-    useState<exchangeStateType>("normal");
+  const [exchangeState, setExchangeState] = useState<exchangeStateType>("normal");
 
   const [loading, setLoading] = useState<Record<string, string>>({
     inputTokens: "normal",
@@ -73,23 +62,17 @@ export default function TokenSwapSection({
   // exchange
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [selectedTokenBalance, setSelectedTokenBalance] = useState(null);
-  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>(
-    {}
-  );
-  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken>>(
-    {}
-  );
-  const [selectedTargetToken, setSelectedTargetToken] =
-    useState<SimpleToken | null>(null);
-  const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] = useState<
-    bigint | null
-  >(null);
+  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>({});
+  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken>>({});
+  const [selectedTargetToken, setSelectedTargetToken] = useState<SimpleToken | null>(null);
+  const [selectedTargetTokenBalance, setSelectedTargetTokenBalance] = useState<bigint | null>(null);
 
   const [amount, setAmount] = useState<string>("");
   const [quote, setQuote] = useState<bigint | null>(null);
   const [showExchangeAnyModal, setShowExchangeAnyModal] = useState(false);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
-  const [inputError, setError] = useState("");
+  const [inputError, setError] = useState<string | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [pools, setPools] = useState<Pool[]>([]);
@@ -152,22 +135,14 @@ export default function TokenSwapSection({
    * Set the max amount immediately
    */
   async function setMaxAmountImmediately(ot: SimpleToken) {
-    const balance = await fetchBalance(
-      client,
-      activeChain,
-      ot.contractAddress,
-      ot.abi,
-      account.address
-    );
+    const balance = await fetchBalance(client, activeChain, ot.contractAddress, ot.abi, account.address);
 
     setSelectedTokenBalance(balance);
 
     // wait for 1 second
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    setAmount(
-      ((Number(balance) || 0) / numberWithZeros(ot?.decimals || 0)).toString()
-    );
+    setAmount(((Number(balance) || 0) / numberWithZeros(ot?.decimals || 0)).toString());
   }
 
   /**
@@ -175,9 +150,7 @@ export default function TokenSwapSection({
    */
   async function getPath(originToken: SimpleToken, targetToken: SimpleToken) {
     let pool: Pool | undefined = pools.find(
-      (path) =>
-        path.inputToken === originToken.id.toUpperCase() &&
-        path.outputToken === targetToken.id.toUpperCase()
+      (path) => path.inputToken === originToken.id.toUpperCase() && path.outputToken === targetToken.id.toUpperCase()
     );
 
     if (pool) {
@@ -220,11 +193,7 @@ export default function TokenSwapSection({
         addQueryPrefix: true,
       });
 
-      console.log("stringifiedQuery", stringifiedQuery);
-
-      const pathsRes = await api.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`
-      );
+      const pathsRes = await api.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`);
 
       const pools: Pool[] = pathsRes?.data?.docs || [];
 
@@ -260,8 +229,7 @@ export default function TokenSwapSection({
 
     let outputTokens = Object.fromEntries(
       paths.map((path) => {
-        let obj: SimpleToken | null =
-          TokensByChainId[activeChain.id][path.outputToken];
+        let obj: SimpleToken | null = TokensByChainId[activeChain.id][path.outputToken];
         if (obj && path.outputToken) {
           return [path.outputToken, obj];
         } else {
@@ -286,6 +254,8 @@ export default function TokenSwapSection({
    * Fetches a quote for a given token swap
    */
   async function fetchQuote() {
+    setQuoteError(null);
+
     let contract = getContract({
       client: client,
       chain: activeChain,
@@ -293,21 +263,14 @@ export default function TokenSwapSection({
       abi: QuoteV2Abi as Array<any>,
     });
 
-    const path: Array<Array<string>> = await getPath(
-      selectedToken,
-      selectedTargetToken
-    );
+    const path: Array<Array<string>> = await getPath(selectedToken, selectedTargetToken);
 
     const encodedPath = encodePacked(path[0], path[1]);
 
     // make sure final amount is a integer
     if (Number(amount) > 0) {
       const finalAmount = Math.floor(
-        Number(
-          (
-            Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
-          ).toFixed(0)
-        )
+        Number((Number(amount) * numberWithZeros(selectedToken?.decimals || 0)).toFixed(0))
       );
 
       try {
@@ -324,21 +287,15 @@ export default function TokenSwapSection({
         console.log("amount", BigInt(finalAmount));
         setQuote(BigInt(0));
         console.error("Error fetching quote", e);
+        setQuoteError(t("error_fetching_paths"));
       }
     }
     // Validate the amount and set error messages
     if (Number(amount) <= 0) {
       setError(t("greater_zero"));
-    } else if (
-      Number(amount) >
-      (Number(selectedTokenBalance) || 0) /
-        numberWithZeros(selectedToken?.decimals || 0)
-    ) {
+    } else if (Number(amount) > (Number(selectedTokenBalance) || 0) / numberWithZeros(selectedToken?.decimals || 0)) {
       setError(
-        `${t("cannot_exceed")} ${
-          (Number(selectedTokenBalance) || 0) /
-          numberWithZeros(selectedToken?.decimals || 0)
-        }.`
+        `${t("cannot_exceed")} ${formatCrypto(Number(selectedTokenBalance) || 0, selectedToken?.decimals || 18, 6)}.`
       );
     }
   }
@@ -353,9 +310,7 @@ export default function TokenSwapSection({
       inputTokens: "processing",
     }));
 
-    let inputTokensRes = await api.get(
-      `/api/globals/inputTokens${activeChain.id}`
-    );
+    let inputTokensRes = await api.get(`/api/globals/inputTokens${activeChain.id}`);
 
     if (!inputTokensRes?.data?.inputTokens) {
       setLoading((prevState) => ({
@@ -402,6 +357,11 @@ export default function TokenSwapSection({
         account.address
       );
       setSelectedTokenBalance(balance);
+
+      // if the balance is 0, set the error
+      if (balance === BigInt(0)) {
+        setError(t("balance_zero"));
+      }
     }
 
     if (selectedTargetToken) {
@@ -418,9 +378,7 @@ export default function TokenSwapSection({
     const newBalances = {};
 
     // search for usdc in tokenyByChain
-    let usdcToken = tokenyByChain[activeChain.id].tokens.find(
-      (token) => token.symbol === "USDC"
-    );
+    let usdcToken = tokenyByChain[activeChain.id].tokens.find((token) => token.symbol === "USDC");
 
     // fetch usdc balance
     if (usdcToken) {
@@ -443,21 +401,14 @@ export default function TokenSwapSection({
    * Handles the click event for the "Max" button
    */
   const handleMaxClick = () => {
-    setAmount(
-      (
-        (Number(selectedTokenBalance) || 0) /
-        numberWithZeros(selectedToken?.decimals || 0)
-      ).toString()
-    );
+    setAmount(((Number(selectedTokenBalance) || 0) / numberWithZeros(selectedToken?.decimals || 0)).toString());
   };
 
   /**
    * Handles the click event for the "Confirm" button
    */
   const handleConfirmExchange = () => {
-    handleExchangeAny(
-      Number(amount) * numberWithZeros(selectedToken?.decimals || 0)
-    );
+    handleExchangeAny(Number(amount) * numberWithZeros(selectedToken?.decimals || 0));
   };
 
   /**
@@ -465,6 +416,9 @@ export default function TokenSwapSection({
    */
   async function handleExchangeAny(amount: number) {
     setExchangeState("processing");
+
+    const path: Array<Array<string>> = await getPath(selectedToken, selectedTargetToken);
+
     await convertAnyToAnyDirect(
       selectedToken,
       amount,
@@ -475,6 +429,7 @@ export default function TokenSwapSection({
           setAmount("");
         }, 1000);
         setShowSuccessModal(true);
+        setExchangeState("normal");
       },
       (error) => {
         retryCounterAny++;
@@ -482,7 +437,11 @@ export default function TokenSwapSection({
           handleExchangeAny(amount);
         } else {
           retryCounterAny = 0;
-          console.error("Error converting to EUROE", error);
+          showErrorPopup({
+            messageKeyOrText: t("error_converting_token"),
+            titleText: t("error_converting_token_title"),
+          });
+          console.error(`Error converting to ${selectedTargetToken?.name}`, error);
           setExchangeState("error");
           setTimeout(() => {
             setExchangeState("normal");
@@ -490,9 +449,9 @@ export default function TokenSwapSection({
         }
       },
       activeChain,
-      selectedTargetToken
+      selectedTargetToken,
+      path
     );
-    setExchangeState("normal");
   }
 
   /**
@@ -557,12 +516,21 @@ export default function TokenSwapSection({
    * @param e - The input event containing the new amount value
    */
   function handleAmountInput(e: React.ChangeEvent<HTMLInputElement>) {
+    setError(null);
     // round to the decimals of the token
     const value = Number(e.target.value);
-    const decimals = selectedToken?.decimals || 18;
-    const multiplier = Math.pow(10, decimals);
-    const roundedValue = Math.floor(value * multiplier) / multiplier;
-    setAmount(roundedValue.toString());
+    if (value > 0) {
+      if (value > (Number(selectedTokenBalance) || 0) / numberWithZeros(selectedToken?.decimals || 0)) {
+        setError(`${t("cannot_exceed")} ${formatCrypto(selectedTokenBalance || 0, selectedToken?.decimals || 18, 6)}.`);
+      }
+
+      const decimals = selectedToken?.decimals || 18;
+      const multiplier = Math.pow(10, decimals);
+      const roundedValue = Math.floor(value * multiplier) / multiplier;
+      setAmount(roundedValue.toString());
+    } else {
+      setAmount(e.target.value);
+    }
   }
 
   /**
@@ -580,6 +548,19 @@ export default function TokenSwapSection({
     setBalanceUpdate(true);
     await fetchBalances();
     setBalanceUpdate(false);
+  }
+
+  function handleChainSelected() {
+    setSelectedToken(null);
+    setSelectedTokenBalance(null);
+    setSelectedTargetToken(null);
+    setSelectedTargetTokenBalance(null);
+    setQuote(null);
+    setQuoteError(null);
+    setError(null);
+    setAmount("");
+    setPools([]);
+    setTargetTokens({});
   }
 
   return (
@@ -617,10 +598,9 @@ export default function TokenSwapSection({
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
         <div>{t("choose_chain")}</div>
       </div>
-      <ChainSelector type="chain" />
+      <ChainSelector type="chain" disabled={!account} onChain={handleChainSelected} />
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
-        <div>{t("choose_origin_currency")}</div>{" "}
-        {loading.inputTokens === "processing" && <MiniLoader />}
+        <div>{t("choose_origin_currency")}</div> {loading.inputTokens === "processing" && <MiniLoader />}
       </div>
 
       <TokenSelector
@@ -628,6 +608,7 @@ export default function TokenSwapSection({
         onSelect={handleOriginTokenSelected}
         tokens={originTokens}
         selectedToken={selectedToken}
+        disabled={!account}
       />
 
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
@@ -635,12 +616,10 @@ export default function TokenSwapSection({
       </div>
       <input
         type="number"
-        className={`mt-2 p-2 w-full border rounded-md ${
-          !selectedToken && "border-gray-300"
-        }`}
+        className={`mt-2 p-2 w-full border rounded-md ${!selectedToken && "border-gray-300"}`}
         placeholder="0.00"
         value={amount}
-        disabled={!selectedToken}
+        disabled={!selectedToken || !selectedTokenBalance || !account}
         onChange={handleAmountInput}
         max={selectedTokenBalance}
         min={0}
@@ -651,18 +630,14 @@ export default function TokenSwapSection({
       <div className="mt-4 flex justify-between items-center gap-2">
         <div>{t("current_balance_is")}</div>
         <div>
-          {formatCrypto(
-            selectedTokenBalance || 0,
-            selectedToken?.decimals || 18,
-            6
-          )}
+          <span className={`${(balanceUpdate || !selectedToken) && "loadingPanel"}`}>
+            {formatCrypto(selectedTokenBalance || 0, selectedToken?.decimals || 18, 6)}
+          </span>
         </div>
         <div>{selectedToken?.name}</div>
         <div className="flex-1"></div>
         <RxUpdate
-          className={`w-6 h-6 cursor-pointer ${
-            balanceUpdate && "animate-spin"
-          }`}
+          className={`w-6 h-6 cursor-pointer ${balanceUpdate && "animate-spin"}`}
           onClick={handleBalanceUpdate}
         />
         <button
@@ -684,6 +659,7 @@ export default function TokenSwapSection({
         onSelect={handleTargetTokenSelected}
         tokens={targetTokens}
         selectedToken={selectedTargetToken}
+        disabled={!account}
       />
 
       <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
@@ -692,43 +668,35 @@ export default function TokenSwapSection({
 
       <div className="flex flex-col md:flex-row gap-4 justify-between md:items-end">
         <div className="flex flex-col mt-4">
-          <div className="text-sm text-gray-500">
-            {t("you_will_receive_roughly")}
-          </div>
+          {quoteError && <span className="text-red-500 text-sm">{quoteError}</span>}
+          <div className="text-sm text-gray-500">{t("you_will_receive_roughly")}</div>
           <div className="text-5xl font-bold flex gap-2 items-end">
-            {Number(quote ? quote[0] : 0) /
-              numberWithZeros(selectedTargetToken?.decimals || 0) -
-              (Number(quote ? quote[0] : 0) /
-                numberWithZeros(selectedTargetToken?.decimals || 0)) *
-                0.004 || 0}
-            <span className="text-base">{selectedTargetToken?.name}</span>
+            <span className={`${!quote && "loadingPanel px-4"}`}>
+              {Number(quote ? quote[0] : 0) / numberWithZeros(selectedTargetToken?.decimals || 0) -
+                (Number(quote ? quote[0] : 0) / numberWithZeros(selectedTargetToken?.decimals || 0)) * 0.004 || 0}{" "}
+              <span className="text-base">{selectedTargetToken?.name}</span>
+            </span>
           </div>
           {exchangeType === "external" && (
             <span className="text-base">
               {t("current_exchange_rate")}
               {/* display 0.04% commission */}{" "}
-              {(
-                Number(quote ? quote[0] : 0) /
-                  numberWithZeros(selectedTargetToken?.decimals || 0) || 0
-              ).toFixed(5)}
+              <span className={`${!quote && "loadingPanel px-4"}`}>
+                {(Number(quote ? quote[0] : 0) / numberWithZeros(selectedTargetToken?.decimals || 0) || 0).toFixed(5)}
+              </span>
             </span>
           )}
           <div className="text-sm text-gray-500">
             {t("your_current_balance_is")}{" "}
-            {Number(selectedTargetTokenBalance || 0) /
-              numberWithZeros(selectedTargetToken?.decimals || 0) || 0}{" "}
-            <span className="text-base">{selectedTargetToken?.name}</span>
+            <span className={`${(balanceUpdate || !selectedTargetToken) && "loadingPanel px-4"}`}>
+              {formatCrypto(Number(selectedTargetTokenBalance || 0), selectedTargetToken?.decimals || 18, 6)}{" "}
+              <span className="text-base">{selectedTargetToken?.name}</span>
+            </span>
           </div>
         </div>
         <div className="self-end">
           <ConvertStateButtonWide
-            enabled={
-              selectedTargetToken &&
-              selectedToken &&
-              amount &&
-              !inputError &&
-              Boolean(quote)
-            }
+            enabled={selectedTargetToken && selectedToken && amount && !inputError && Boolean(quote)}
             state={exchangeState}
             onClick={handleConfirmExchange}
           >
