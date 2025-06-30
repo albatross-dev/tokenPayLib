@@ -33,9 +33,9 @@ const Maintenance = () => {
     >
       <FaTools className="w-8 h-8 text-gray-800" />
       {showText && (
-        <div className="flex items-center flex-col gap-2">
+        <div className="flex items-center flex-col gap-2 text-center">
           <h3>{t("maintenance.title")}</h3>
-          <p>{t("maintenance.p1")}</p>
+          <p className="text-center">{t("maintenance.p1")}</p>
         </div>
       )}
     </div>

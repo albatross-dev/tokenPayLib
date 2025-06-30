@@ -234,12 +234,30 @@ export default function DepositMethodSelector({
               }
               break;
             }
+            case "stasis": {
+              console.log(
+                "stasis",
+                method,
+                exchangeRate,
+                method.onrampFee ? Number(amount) * exchangeRate * (method.onrampFee / 100) : 0,
+                method.onrampCommission || 0
+              );
+              if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
+                predictedOnrampAmount =
+                  Number(amount) * exchangeRate -
+                  (method.onrampFee ? Number(amount) * exchangeRate * (method.onrampFee / 100) : 0) -
+                  (method.onrampCommission || 0);
+              }
+              console.log("stasis predictedOnrampAmount", predictedOnrampAmount);
+              break;
+            }
             default: {
               if (Number(amount) >= minAmount && Number(amount) <= maxAmount) {
                 predictedOnrampAmount =
                   Number(amount) * exchangeRate -
                   Number(amount) * exchangeRate * 0.004 -
-                  Number(amount) * exchangeRate * (method.onrampFee / 100);
+                  (method.onrampFee ? Number(amount) * exchangeRate * (method.onrampFee / 100) : 0) -
+                  (method.onrampCommission || 0);
               }
               break;
             }

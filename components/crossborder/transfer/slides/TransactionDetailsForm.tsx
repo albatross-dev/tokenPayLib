@@ -1,22 +1,13 @@
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
 import React from "react";
 import { SwiperClass } from "swiper/react";
-import Image from "next/image";
-import { useTranslation } from "next-i18next";
-import BackButton from "../components/BackButton";
-import CurrencyDisplay, { Balance } from "../../CurrencySelector";
-import MethodSelector from "../components/MethodSelector";
-import {
-  FiatInfo,
-  getFiatInfo,
-  getFiatInfoForStableCoin,
-} from "../../../../utilities/stableCoinsMaps";
-import {
-  CdnMedia,
-  Country,
-  PaymentTypesArray,
-} from "../../../../types/payload-types";
-import { Currency } from "../../../../types/currency.types";
 import { FiatCodes } from "../../../../types/derivedPayload.types";
+import { CdnMedia, Country, PaymentTypesArray } from "../../../../types/payload-types";
+import { getFiatInfo, getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
+import CurrencyDisplay, { Balance } from "../../CurrencySelector";
+import BackButton from "../components/BackButton";
+import MethodSelector from "../components/MethodSelector";
 
 interface TransactionDetailsFormProps {
   selectedCountry: Country | null;
@@ -66,10 +57,7 @@ export default function TransactionDetailsForm({
   return (
     <div className="relative p-4">
       <div className="relative z-[10] text-darkBlue flex flex-col gap-4 max-w-4xl mx-auto">
-        <BackButton
-          onBack={() => swiperInstance?.slideTo(2)}
-          clearData={clearData}
-        />
+        <BackButton onBack={() => swiperInstance?.slideTo(2)} clearData={clearData} />
 
         <h2 className="text-2xl">
           {tCrossborder("transferSection.selected_target_country", {
@@ -77,9 +65,7 @@ export default function TransactionDetailsForm({
           })}
         </h2>
 
-        <p className="text-xl font-bold">
-          {tCrossborder("transferSection.balance")}
-        </p>
+        <p className="text-xl font-bold">{tCrossborder("transferSection.balance")}</p>
         <CurrencyDisplay
           selectedCurrency={selectedCurrency}
           mainCurrencySymbol={preferredStableCoin}
@@ -91,9 +77,7 @@ export default function TransactionDetailsForm({
         />
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-xl font-bold">
-            {tCrossborder("transferSection.select_amount")}
-          </h2>
+          <h2 className="text-xl font-bold">{tCrossborder("transferSection.select_amount")}</h2>
           <div className="relative">
             <input
               type="number"
@@ -108,16 +92,13 @@ export default function TransactionDetailsForm({
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {Boolean(getFiatInfoForStableCoin(selectedCurrency?.symbol || ""))
-                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
-                    ?.symbol
+                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol
                 : selectedCurrency?.symbol}
             </div>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {!selectedCurrency && (
-            <p className="text-red-500 text-sm">
-              {tCrossborder("transferSection.select_amount_first")}
-            </p>
+            <p className="text-red-500 text-sm">{tCrossborder("transferSection.select_amount_first")}</p>
           )}
         </div>
 
@@ -138,9 +119,7 @@ export default function TransactionDetailsForm({
         <div className="flex justify-end">
           <button
             className={`${
-              selectedMethod && (!error || isDevelopment)
-                ? "bg-uhuBlue"
-                : "bg-gray-300"
+              selectedMethod && (!error || isDevelopment) ? "bg-uhuBlue" : "bg-gray-300"
             } text-white font-bold py-2 px-4 rounded-lg mt-4`}
             disabled={!selectedMethod || (error && !isDevelopment)}
             onClick={() => swiperInstance?.slideTo(4)}
@@ -175,8 +154,7 @@ export default function TransactionDetailsForm({
               </div>
               <div className="flex-1 gap-2 flex flex-col">
                 <p>
-                  <strong>{tCrossborder("transferSection.capital")}:</strong>{" "}
-                  {selectedCountry?.countryInfo.capital}
+                  <strong>{tCrossborder("transferSection.capital")}:</strong> {selectedCountry?.countryInfo.capital}
                 </p>
                 <p>
                   <strong>{tCrossborder("transferSection.population")}:</strong>{" "}
@@ -184,19 +162,10 @@ export default function TransactionDetailsForm({
                 </p>
                 <p>
                   <strong>{tCrossborder("transferSection.currency")}:</strong>{" "}
-                  {
-                    selectedCountry?.countryInfo.currency[
-                      Symbol.for(selectedCountry?.countryInfo.currency)
-                    ]
-                  }
+                  {selectedCountry?.countryInfo.currency[Symbol.for(selectedCountry?.countryInfo.currency)]}
                 </p>
-                <p
-                  className={`${
-                    selectedCountry?.countryInfo.gdp ? "" : "hidden"
-                  }`}
-                >
-                  <strong>{tCrossborder("transferSection.gdp")}:</strong>{" "}
-                  {selectedCountry?.countryInfo.gdp}
+                <p className={`${selectedCountry?.countryInfo.gdp ? "" : "hidden"}`}>
+                  <strong>{tCrossborder("transferSection.gdp")}:</strong> {selectedCountry?.countryInfo.gdp}
                 </p>
               </div>
             </div>

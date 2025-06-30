@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { getBitcoinVNMetaData, getBitcoinVNQuote } from "../../partner/universal/bitcoinVNUtils";
-import MiniLoader from "../../../UI/MiniLoader";
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";
-import { getSwyptQuote } from "../../partner/universal/swyptUtils";
 import { PaymentTypesArray } from "../../../../types/payload-types";
-import { FiatInfo, STANDARD_STABLE_MAP } from "../../../../utilities/stableCoinsMaps";
+import { FiatInfo } from "../../../../utilities/stableCoinsMaps";
+import MiniLoader from "../../../UI/MiniLoader";
+import { getBitcoinVNMetaData, getBitcoinVNQuote } from "../../partner/universal/bitcoinVNUtils";
 import { getKoyweQuote } from "../../partner/universal/koyweUtils";
+import { getSwyptQuote } from "../../partner/universal/swyptUtils";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
@@ -59,8 +59,6 @@ export default function MethodSelector({
   const [loading, setLoading] = useState(true);
 
   const quoteMethods = methods as QuotePaymentType[];
-
-  console.log("sortedMethods", sortedMethods);
 
   useEffect(() => {
     async function update() {
@@ -168,12 +166,12 @@ export default function MethodSelector({
             if (singleMethod.predictedAmount > 0) {
               sortedMethods[modality].cheapestMethod = singleMethod;
             } else {
-              //sortedMethods[modality].nextMethodWithLimit = singleMethod;
+              sortedMethods[modality].nextMethodWithLimit = singleMethod;
             }
           } else if (amount < singleMethod.minAmount) {
-            //sortedMethods[modality].nextMethodWithLimit = singleMethod;
+            sortedMethods[modality].nextMethodWithLimit = singleMethod;
           } else {
-            //sortedMethods[modality].nextLowerLimitMethod = singleMethod;
+            sortedMethods[modality].nextLowerLimitMethod = singleMethod;
           }
           continue;
         }

@@ -50,9 +50,7 @@ export type PaymentTypesArray = {
   onrampMinAmount?: number | null;
   onrampMaxAmount?: number | null;
   noWithdraw?: boolean | null;
-  withdrawModality?:
-    | ("mobile_money" | "bank_account" | "credit_card" | "crypto")
-    | null;
+  withdrawModality: "mobile_money" | "bank_account" | "credit_card" | "crypto";
   businessOnly?: boolean | null;
   privateOnly?: boolean | null;
   withdrawOnly?: boolean | null;
@@ -108,41 +106,9 @@ export type PaymentTypesArray = {
       }[]
     | null;
   fiatTypeOnramp?:
-    | (
-        | "1"
-        | "2"
-        | "3"
-        | "4"
-        | "5"
-        | "6"
-        | "7"
-        | "8"
-        | "10"
-        | "12"
-        | "14"
-        | "16"
-        | "17"
-        | "21"
-        | "27"
-        | "29"
-      )
+    | ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "10" | "12" | "14" | "16" | "17" | "21" | "27" | "29")
     | null;
-  fiatTypeOfframp?:
-    | (
-        | "1"
-        | "2"
-        | "4"
-        | "6"
-        | "7"
-        | "8"
-        | "9"
-        | "10"
-        | "11"
-        | "12"
-        | "14"
-        | "29"
-      )
-    | null;
+  fiatTypeOfframp?: ("1" | "2" | "4" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "14" | "29") | null;
   minAmount: number;
   maxAmount: number;
   fee: number;
@@ -285,9 +251,7 @@ export interface CheckoutSession {
   errorMessage?: string | null;
   errorMessageWebhook?: string | null;
   refundTxHash?: string | null;
-  paymentStatus?:
-    | ("pending" | "completed" | "failed" | "refundPending" | "refunded")
-    | null;
+  paymentStatus?: ("pending" | "completed" | "failed" | "refundPending" | "refunded") | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1195,15 +1159,7 @@ export interface Vendor {
     | null;
   walletAddress?: string | null;
   arePaymentsRequired?: boolean | null;
-  bitcoinVNStatus?:
-    | (
-        | "unverified"
-        | "verifyIdentity"
-        | "verifyResidence"
-        | "in_progress"
-        | "verified"
-      )
-    | null;
+  bitcoinVNStatus?: ("unverified" | "verifyIdentity" | "verifyResidence" | "in_progress" | "verified") | null;
   bitcoinVNAPIkey?: string | null;
   bitcoinVNpass?: string | null;
   bitcoinVNIdentityDocs?:
@@ -1226,19 +1182,7 @@ export interface Vendor {
     | null;
   currentSwyptOnRampTransaction?: (string | null) | FiatTransaction;
   koyweState?: ("unverified" | "in_progress" | "verified") | null;
-  koyweDocumentType?:
-    | (
-        | "DNI"
-        | "CUIT"
-        | "RUT"
-        | "CED_CIU"
-        | "CED_EXT"
-        | "RFC"
-        | "CURP"
-        | "DNI"
-        | "RUC"
-      )
-    | null;
+  koyweDocumentType?: ("DNI" | "CUIT" | "RUT" | "CED_CIU" | "CED_EXT" | "RFC" | "CURP" | "DNI" | "RUC") | null;
   koyweDocumentNumber?: string | null;
   koyweDocumentCountry?: ("ARG" | "CHL" | "COL" | "PER" | "MEX") | null;
   koyweSupportedNationality?:
@@ -1319,9 +1263,7 @@ export interface Vendor {
   currentCoinhakoHelpdeskTransaction?: (string | null) | FiatTransaction;
   stasisRepresentative?: string | null;
   stasisVolume?: string | null;
-  stasisRepresentativeIdentityType?:
-    | ("Passport" | "National ID" | "Driver license" | "Residence permit")
-    | null;
+  stasisRepresentativeIdentityType?: ("Passport" | "National ID" | "Driver license" | "Residence permit") | null;
   stasisRepresentativeProofOfIdentity?:
     | {
         representativeProofOfIdentityPage?: string | Document | null;
@@ -1338,14 +1280,7 @@ export interface Vendor {
   stasisKYCUUID?: string | null;
   stasisKYCLevelUUID?: string | null;
   stasisKYBStep?:
-    | (
-        | "createStasisAccount"
-        | "startKYB"
-        | "livenessCheck"
-        | "companyInfo"
-        | "kybOngoing"
-        | "approved"
-      )
+    | ("createStasisAccount" | "startKYB" | "livenessCheck" | "companyInfo" | "kybOngoing" | "approved")
     | null;
   stasisKYBStatus?: string | null;
   euroEAccount?: string | null;
@@ -1431,6 +1366,7 @@ export interface FiatTransaction {
   toAccountReference?: string | null;
   toAccountCode?: string | null;
   toAccountBankName?: string | null;
+  toAccountBankCountry?: string | null;
   transactionHash?: string | null;
   toNetwork?: string | null;
   endUserUUID?: string | null;
@@ -2080,15 +2016,7 @@ export interface Consumer {
   };
   iban?: string | null;
   bic?: string | null;
-  bitcoinVNStatus?:
-    | (
-        | "unverified"
-        | "verifyIdentity"
-        | "verifyResidence"
-        | "in_progress"
-        | "verified"
-      )
-    | null;
+  bitcoinVNStatus?: ("unverified" | "verifyIdentity" | "verifyResidence" | "in_progress" | "verified") | null;
   bitcoinVNAPIkey?: string | null;
   bitcoinVNpass?: string | null;
   bitcoinVNIdentityID?: string | null;
@@ -2112,9 +2040,7 @@ export interface Consumer {
     | null;
   currentSwyptOnRampTransaction?: (string | null) | FiatTransaction;
   koyweState?: ("unverified" | "in_progress" | "verified") | null;
-  koyweDocumentType?:
-    | ("DNI" | "CUIT" | "RUT" | "CED_CIU" | "CED_EXT" | "RFC" | "CURP" | "RUC")
-    | null;
+  koyweDocumentType?: ("DNI" | "CUIT" | "RUT" | "CED_CIU" | "CED_EXT" | "RFC" | "CURP" | "RUC") | null;
   koyweDocumentNumber?: string | null;
   koyweDocumentCountry?: ("ARG" | "CHL" | "COL" | "PER" | "MEX") | null;
   koyweSupportedNationality?:
@@ -2198,9 +2124,7 @@ export interface Consumer {
   currentCoinhakoHelpdeskTransaction?: (string | null) | FiatTransaction;
   stasisRepresentative?: string | null;
   stasisVolume?: string | null;
-  stasisRepresentativeIdentityType?:
-    | ("Passport" | "National ID" | "Driver license" | "Residence permit")
-    | null;
+  stasisRepresentativeIdentityType?: ("Passport" | "National ID" | "Driver license" | "Residence permit") | null;
   stasisRepresentativeProofOfIdentity?:
     | {
         representativeProofOfIdentityPage?: string | Document | null;
@@ -2217,15 +2141,7 @@ export interface Consumer {
   stasisKYCUUID?: string | null;
   stasisKYCLevelUUID?: string | null;
   stasisKYBStep?:
-    | (
-        | "createStasisAccount"
-        | "address"
-        | "startKYB"
-        | "livenessCheck"
-        | "financialInfo"
-        | "kybOngoing"
-        | "approved"
-      )
+    | ("createStasisAccount" | "address" | "startKYB" | "livenessCheck" | "financialInfo" | "kybOngoing" | "approved")
     | null;
   stasisKYBStatus?: string | null;
   euroEAccount?: string | null;
@@ -2612,13 +2528,7 @@ export interface Country {
     capital?: string | null;
     gdp?: string | null;
     fact?: string | null;
-    region:
-      | "europe"
-      | "asia"
-      | "north_america"
-      | "south_america"
-      | "africa"
-      | "australia_oceania";
+    region: "europe" | "asia" | "north_america" | "south_america" | "africa" | "australia_oceania";
   };
   preferredStableCoin: "USDC" | "USDT" | "EURS";
   paymentTypes: PaymentTypesArray;

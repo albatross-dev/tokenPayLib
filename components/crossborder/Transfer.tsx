@@ -26,6 +26,8 @@ export default function Transfer() {
   const [selectedTransactionData, setSelectedTransactionData] = useState<FiatTransaction | null>(null);
   const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
 
+  const [loading, setLoading] = useState<boolean>(true);
+
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
 

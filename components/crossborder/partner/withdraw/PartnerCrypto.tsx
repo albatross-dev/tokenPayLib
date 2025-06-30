@@ -7,18 +7,11 @@ import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
 import { IoIosInformationCircle } from "react-icons/io";
 import { useTranslation } from "next-i18next";
 import { encodePacked } from "thirdweb/utils";
-import {
-  api,
-  AuthContext,
-  sendErrorReport,
-} from "../../../../../context/UserContext";
+import { api, AuthContext, sendErrorReport } from "../../../../../context/UserContext";
 import numberWithZeros from "../../../../utilities/math/numberWithZeros";
 import { TokensByChainId } from "../../../../utilities/crypto/currencies";
 import { SimpleToken } from "../../../../types/token.types";
-import {
-  convertAnyToAnyDirect,
-  uniswapAddresses,
-} from "../../../../utilities/crypto/convertAnyToAny";
+import { convertAnyToAnyDirect, uniswapAddresses } from "../../../../utilities/crypto/convertAnyToAny";
 import { PATHS } from "../../../../utilities/crypto/getPath";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
 import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
@@ -44,35 +37,22 @@ const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
 });
 
-const CryptoPartner: React.FC<CryptoPartnerProps> = ({
-  amount,
-  country,
-  method,
-}) => {
-  const [defaultToken, setDefaultToken] = useState<SimpleToken>(
-    TokensByChainId[polygon.id][method.acceptedCrypto]
-  );
+const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }) => {
+  const [defaultToken, setDefaultToken] = useState<SimpleToken>(TokensByChainId[polygon.id][method.acceptedCrypto]);
   const [differentToken, setDifferentToken] = useState(false);
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
   const [amountToSend, setAmountToSend] = useState(amount);
-  const [targetTokens, setTargetTokens] = useState<Record<
-    string,
-    SimpleToken
-  > | null>(null);
+  const [targetTokens, setTargetTokens] = useState<Record<string, SimpleToken> | null>(null);
   const [targetAddress, setTargetAddress] = useState("");
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<
-    bigint | null
-  >(null);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<bigint | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const account = useActiveAccount();
   const [newTxHash, setNewTxHash] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loadingQuote, setLoadingQuote] = useState(false);
-  const [quote, setQuote] = useState<[bigint, bigint, bigint, bigint] | null>(
-    null
-  );
+  const [quote, setQuote] = useState<[bigint, bigint, bigint, bigint] | null>(null);
   const [state, setState] = useState<TransactionState>("transaction");
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -93,20 +73,14 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
 
       if (!selectedToken) return;
 
-      const path =
-        PATHS[polygon.id][defaultToken.id.toUpperCase()][
-          selectedToken.id.toUpperCase()
-        ];
+      const path = PATHS[polygon.id][defaultToken.id.toUpperCase()][selectedToken.id.toUpperCase()];
 
       const encodedPath = encodePacked(path[0], path[1]);
 
       const quote = await readContract({
         contract: contract,
         method: "quoteExactInput",
-        params: [
-          encodedPath,
-          BigInt(amount * numberWithZeros(selectedToken?.decimals || 1)),
-        ],
+        params: [encodedPath, BigInt(amount * numberWithZeros(selectedToken?.decimals || 1))],
       });
       setQuote(quote as any);
       setLoadingQuote(false);
@@ -134,10 +108,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
 
       setSelectedTokenBalance(balance);
     } catch (error) {
-      sendErrorReport(
-        `PartnerCrypto - withdraw - Error fetching token balance for ${selectedToken.id}`,
-        error
-      );
+      sendErrorReport(`PartnerCrypto - withdraw - Error fetching token balance for ${selectedToken.id}`, error);
       console.error("Error fetching token balance:", error);
     }
   };
@@ -147,35 +118,25 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
 
     if (differentToken) {
       if (!selectedToken) {
-        validationErrors.selectedToken = tCrossborder(
-          "withdraw.partnerCrypto.errorSelectCrypto"
-        );
+        validationErrors.selectedToken = tCrossborder("withdraw.partnerCrypto.errorSelectCrypto");
       }
     }
 
     if (!amountToSend || amountToSend <= 0) {
-      validationErrors.amountToSend = tCrossborder(
-        "withdraw.partnerCrypto.errorValidAmount"
-      );
+      validationErrors.amountToSend = tCrossborder("withdraw.partnerCrypto.errorValidAmount");
     }
 
     if (!targetAddress || !/^0x[a-fA-F0-9]{40}$/.test(targetAddress)) {
-      validationErrors.targetAddress = tCrossborder(
-        "withdraw.partnerCrypto.errorValidEmail"
-      );
+      validationErrors.targetAddress = tCrossborder("withdraw.partnerCrypto.errorValidEmail");
     }
 
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
 
-  function processTargetTokens(
-    token: SimpleToken | null
-  ): Record<string, SimpleToken> | null {
+  function processTargetTokens(token: SimpleToken | null): Record<string, SimpleToken> | null {
     if (!token) return null;
-    let targetTokenArr = Object.keys(
-      PATHS[polygon.id][token.id.toUpperCase()]
-    ).map((tokenId) => {
+    let targetTokenArr = Object.keys(PATHS[polygon.id][token.id.toUpperCase()]).map((tokenId) => {
       return [tokenId, TokensByChainId[polygon.id][tokenId]];
     });
 
@@ -190,11 +151,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
     return targetTokens;
   }
 
-  const handleTransfer = async (
-    token: SimpleToken,
-    amount: bigint,
-    address: string
-  ): Promise<string> => {
+  const handleTransfer = async (token: SimpleToken, amount: bigint, address: string): Promise<string> => {
     const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
       client,
       account,
@@ -229,11 +186,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
         const divisor = BigInt(1000);
         const sendAmount = quote[0] - (quote[0] * feePercentage) / divisor;
 
-        let transactionHash = await handleTransfer(
-          selectedToken,
-          sendAmount,
-          targetAddress
-        );
+        let transactionHash = await handleTransfer(selectedToken, sendAmount, targetAddress);
 
         let transactionData: FiatTransactionRequest = {
           partner: "crypto",
@@ -264,13 +217,8 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
         await api.post("/api/fiatTransaction", transactionData);
       } catch (error) {
         const errors: ValidationErrors = {};
-        sendErrorReport(
-          `PartnerCrypto - withdraw - Error transfering token`,
-          error
-        );
-        errors.conversionError = tCrossborder(
-          "withdraw.partnerCrypto.errorConvertCrypto"
-        );
+        sendErrorReport(`PartnerCrypto - withdraw - Error transfering token`, error);
+        errors.conversionError = tCrossborder("withdraw.partnerCrypto.errorConvertCrypto");
         setErrors(errors);
         setIsLoading(false);
         return;
@@ -313,8 +261,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
       {state === "transaction" && (
         <div>
           <h2 className="text-2xl font-bold mb-4">
-            {getFiatInfoForStableCoin(defaultToken.name)?.id}{" "}
-            {tCrossborder("withdraw.partnerCrypto.sendHeader")}
+            {getFiatInfoForStableCoin(defaultToken.name)?.id} {tCrossborder("withdraw.partnerCrypto.sendHeader")}
           </h2>
           <div className="flex flex-row gap-2 items-center bg-gray-100 rounded p-4">
             <div className="relative w-8 h-8 bg-uhuBlue flex items-center text-white font-bold justify-center rounded-full">
@@ -325,16 +272,12 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
             <div className="bg-uhuBlue text-[11px] text-white rounded px-1 text">
               via <span className="font-bold">{defaultToken.name}</span>
             </div>
-            <div className="font-bold">
-              {parseFloat(amount.toString()).toLocaleString()}
-            </div>
+            <div className="font-bold">{parseFloat(amount.toString()).toLocaleString()}</div>
             <div>{getFiatInfoForStableCoin(defaultToken.name)?.symbol}</div>
           </div>
-          <div className="mt-4 text-sm text-gray-700">
-            {tCrossborder("withdraw.partnerCrypto.walletInfo")}
-          </div>
+          <div className="mt-4 text-sm text-gray-700">{tCrossborder("withdraw.partnerCrypto.walletInfo")}</div>
           <div className="mt-4 text-sm text-gray-700 flex gap-2 items-center bg-gray-100 rounded p-2">
-            <IoIosInformationCircle className="text-2xl text-blue-500 inline" />
+            <IoIosInformationCircle className="text-2xl text-uhuBlue inline" />
             {tCrossborder("withdraw.partnerCrypto.receiverInfo")}
           </div>
           <div className="">
@@ -348,22 +291,16 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
                 value={targetAddress}
                 onChange={(e) => setTargetAddress(e.target.value)}
               />
-              {errors.targetAddress && (
-                <p className="text-red-500 text-sm">{errors.targetAddress}</p>
-              )}
+              {errors.targetAddress && <p className="text-red-500 text-sm">{errors.targetAddress}</p>}
             </div>
 
-            {errors.conversionError && (
-              <p className="text-red-500 text-sm">{errors.conversionError}</p>
-            )}
+            {errors.conversionError && <p className="text-red-500 text-sm">{errors.conversionError}</p>}
             <button
               className="w-full bg-uhuBlue text-white py-2 rounded-lg hover:bg-blue-700"
               onClick={handleSend}
               disabled={isLoading || !selectedToken || loadingQuote}
             >
-              {isLoading
-                ? tCrossborder("withdraw.partnerCrypto.send")
-                : tCrossborder("withdraw.partnerCrypto.sendNow")}
+              {isLoading ? tCrossborder("withdraw.partnerCrypto.send") : tCrossborder("withdraw.partnerCrypto.sendNow")}
             </button>
           </div>
         </div>
@@ -374,9 +311,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({
           <h1 className="text-2xl font-bold mb-6 text-green-600 text-center">
             {tCrossborder("withdraw.partnerCrypto.transactionSuccess")}
           </h1>
-          <p className="text-center">
-            {tCrossborder("withdraw.partnerCrypto.transactionSuccessInfo")}
-          </p>
+          <p className="text-center">{tCrossborder("withdraw.partnerCrypto.transactionSuccessInfo")}</p>
         </div>
       )}
     </div>

@@ -1,11 +1,5 @@
 import React, { Fragment } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  Transition,
-} from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 import Loader from "../UI/Loader";
 import TokenSelector from "../Forms/TokenSelector";
@@ -60,11 +54,7 @@ export default function SendCryptoDialog({
 }: SendCryptoDialogProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-50"
-        onClose={() => setIsOpen(false)}
-      >
+      <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
             as={Fragment}
@@ -88,10 +78,7 @@ export default function SendCryptoDialog({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="max-w-md w-full transform rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle
-                as="h3"
-                className="text-2xl my-2d font-bold leading-6 text-gray-900"
-              >
+              <DialogTitle as="h3" className="text-2xl my-2d font-bold leading-6 text-gray-900">
                 {tAccount("sendCrypto.dialog.title")}
               </DialogTitle>
 
@@ -105,13 +92,11 @@ export default function SendCryptoDialog({
                   <div className="w-full border-b pb-2 text-4xl text-center text-gray-700 font-bold">
                     {tAccount("sendCrypto.dialog.successTitle")}
                   </div>
-                  <div className="text-center">
-                    {tAccount("sendCrypto.dialog.successText")}
-                  </div>
+                  <div className="text-center">{tAccount("sendCrypto.dialog.successText")}</div>
                   <div className="flex flex-row gap-2">
                     <button
                       type="button"
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                      className="bg-uhuBlue text-white px-4 py-2 rounded-md"
                       onClick={() => setIsLoading("normal")}
                     >
                       {tAccount("sendCrypto.dialog.newTransaction")}
@@ -129,14 +114,8 @@ export default function SendCryptoDialog({
                       selectedToken={selectedToken}
                       selectText={tAccount("sendCrypto.dialog.select")}
                     />
-                    {errors.selectedToken && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.selectedToken}
-                      </p>
-                    )}
-                    <div className="mt-4 mb-2">
-                      {tAccount("sendCrypto.dialog.step2")}
-                    </div>
+                    {errors.selectedToken && <p className="text-red-500 text-sm mt-1">{errors.selectedToken}</p>}
+                    <div className="mt-4 mb-2">{tAccount("sendCrypto.dialog.step2")}</div>
                     <div className="flex flex-row gap-2">
                       <input
                         type="number"
@@ -144,18 +123,10 @@ export default function SendCryptoDialog({
                         value={amount}
                         onChange={(e) => {
                           if (!selectedToken) {
-                            setFieldError(
-                              "amount",
-                              tAccount("sendCrypto.errors.selectTokenFirst")
-                            );
+                            setFieldError("amount", tAccount("sendCrypto.errors.selectTokenFirst"));
                           } else {
                             if (Number(e.target.value) > maxAmount) {
-                              setFieldError(
-                                "amount",
-                                tAccount(
-                                  "sendCrypto.errors.insufficientBalance"
-                                )
-                              );
+                              setFieldError("amount", tAccount("sendCrypto.errors.insufficientBalance"));
                             } else {
                               clearFieldError("amount");
                             }
@@ -168,30 +139,18 @@ export default function SendCryptoDialog({
                       <button
                         type="button"
                         className={`inline-flex items-center justify-center rounded-md border border-transparent ${
-                          selectedToken
-                            ? "bg-blue-100 text-blue-900"
-                            : "bg-gray-200 text-gray-500"
+                          selectedToken ? "bg-blue-100 text-blue-900" : "bg-gray-200 text-gray-500"
                         } px-4 py-2 text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
                         onClick={handleMaxClick}
                         disabled={!selectedToken}
                       >
                         {tAccount("sendCrypto.dialog.max")}
-                        {formatCrypto(
-                          selectedTokenBalance || 0,
-                          selectedToken?.decimals || 18,
-                          6
-                        )}{" "}
+                        {formatCrypto(selectedTokenBalance || 0, selectedToken?.decimals || 18, 6)}{" "}
                         {selectedToken?.name}
                       </button>
                     </div>
-                    {errors.amount && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.amount}
-                      </p>
-                    )}
-                    <div className="mt-4 mb-2">
-                      {tAccount("sendCrypto.dialog.step3")}
-                    </div>
+                    {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+                    <div className="mt-4 mb-2">{tAccount("sendCrypto.dialog.step3")}</div>
                     <input
                       type="text"
                       placeholder="0x42350897349087..."
@@ -202,11 +161,7 @@ export default function SendCryptoDialog({
                         clearFieldError("targetAddress");
                       }}
                     />
-                    {errors.targetAddress && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.targetAddress}
-                      </p>
-                    )}
+                    {errors.targetAddress && <p className="text-red-500 text-sm mt-1">{errors.targetAddress}</p>}
 
                     <div className="h-4"></div>
 
@@ -214,10 +169,7 @@ export default function SendCryptoDialog({
                       isLoading={isLoading}
                       onClick={handleSend}
                       active={Boolean(
-                        Object.keys(errors).length === 0 &&
-                          selectedToken &&
-                          amount > 0 &&
-                          targetAddress.length > 0
+                        Object.keys(errors).length === 0 && selectedToken && amount > 0 && targetAddress.length > 0
                       )}
                     >
                       {tAccount("sendCrypto.dialog.sendButton")}

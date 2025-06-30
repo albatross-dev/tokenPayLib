@@ -2,21 +2,6 @@ import { Chain, ContractOptions, getContract, readContract, ThirdwebClient } fro
 import { sendErrorReport } from "../../../context/UserContext";
 import { queryClient } from "@/pages/_app";
 
-// Custom error types to distinguish between different failure scenarios
-class ZeroBalanceError extends Error {
-  constructor(message: string = "Balance is 0") {
-    super(message);
-    this.name = "ZeroBalanceError";
-  }
-}
-
-class ContractError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ContractError";
-  }
-}
-
 /**
  * Fetches the balance of a given account address from a specified contract on a specified blockchain.
  *

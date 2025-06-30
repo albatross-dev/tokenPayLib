@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import QueryString from "qs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  ColumnDef,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable, ColumnDef } from "@tanstack/react-table";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { api, sendErrorReport } from "../../../context/UserContext";
 import { Collection } from "../../types/derivedPayload.types";
 import { TableQuery } from "./SimpleList";
+import Loader from "./Loader";
 
 interface TableProps {
   tableQuery: TableQuery;
@@ -32,24 +28,13 @@ interface FetchedData {
   status?: string;
 }
 
-export default function Table({
-  tableQuery,
-  setTableQuery,
-  columns,
-  collection,
-  loader,
-}: TableProps): JSX.Element {
+export default function Table({ tableQuery, setTableQuery, columns, collection, loader }: TableProps): JSX.Element {
   const queryClient = useQueryClient();
   const { t } = useTranslation("common");
 
-  async function fetchData(
-    query: TableQuery,
-    collection: Collection
-  ): Promise<FetchedData> {
+  async function fetchData(query: TableQuery, collection: Collection): Promise<FetchedData> {
     try {
-      const res = await api.get(
-        `/api/${collection.toString()}?${QueryString.stringify(query)}`
-      );
+      const res = await api.get(`/api/${collection.toString()}?${QueryString.stringify(query)}`);
       return res.data;
     } catch (error) {
       sendErrorReport("Table - Fetching data failed", error);
@@ -77,8 +62,7 @@ export default function Table({
       if (data.hasNextPage) {
         queryClient.prefetchQuery({
           queryKey: [collection, { ...tableQuery, page: data.page + 1 }],
-          queryFn: () =>
-            fetchData({ ...tableQuery, page: data.page + 1 }, collection),
+          queryFn: () => fetchData({ ...tableQuery, page: data.page + 1 }, collection),
         });
       }
       return data;
@@ -116,30 +100,34 @@ export default function Table({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 flex-shrink h-full overflow-y-auto">
-            {table.getRowModel().rows.map((row) => {
-              const isOlderThan30Min = row.original.updatedAt
-                ? moment().diff(moment(row.original.updatedAt), "minutes") > 30
-                : false;
-              return (
-                <tr
-                  key={row.id}
-                  className={`${
-                    isOlderThan30Min && row.original.status === "pending"
-                      ? "bg-red-100"
-                      : ""
-                  }`}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
+            {isLoading || !fetchedData
+              ? Array.from({ length: 3 }).map((item, index) => (
+                  <tr key={`row-${index}`}>
+                    {columns.map((column, index) => (
+                      <td
+                        key={`column-${index}`}
+                        className="py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                      >
+                        <div className="flex items-center justify-center h-8 w-full bg-gray-200 rounded-md animate-pulse"></div>
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              : table.getRowModel().rows.map((row) => {
+                  const isOlderThan30Min = row.original.updatedAt
+                    ? moment().diff(moment(row.original.updatedAt), "minutes") > 30
+                    : false;
+                  return (
+                    <tr
+                      key={row.id}
+                      className={`${isOlderThan30Min && row.original.status === "pending" ? "bg-red-100" : ""}`}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
           </tbody>
         </table>
       </div>

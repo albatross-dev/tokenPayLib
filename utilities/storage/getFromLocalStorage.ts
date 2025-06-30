@@ -1,5 +1,3 @@
-import { sendErrorReport } from "../../../context/UserContext";
-
 /**
  * Retrieves data from local storage based on the provided key.
  */
@@ -12,7 +10,6 @@ function getFromLocalStorage(key: string): any {
     const data = JSON.parse(dataJson);
     return data;
   } catch (error) {
-    sendErrorReport("getFromLocalStorage", error);
     console.error("Error fetching data from local storage:", error);
     return null;
   }
