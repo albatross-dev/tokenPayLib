@@ -12,7 +12,7 @@ export default function DepositTransactionPending({ transaction }: { transaction
       <div className="flex flex-col gap-2 bg-uhuGray p-4 rounded-lg shadow-sm">
         <div>{tCrossborder("withdraw.otcStates.send")}</div>
         <div className="font-bold text-6xl text-gray-600">
-          {transaction?.amount?.toLocaleString()} {transaction?.currency}
+          {transaction?.amount?.toLocaleString()} {transaction?.fiatOriginCurrency}
         </div>
         <div>{tCrossborder("withdraw.otcStates.otcAddressInfo")}</div>
         <div className="">{transaction?.transferInstructions}</div>
