@@ -1,19 +1,18 @@
 import FieldRenderer from "@/tokenPayLib/components/Forms/FieldRenderer";
 import { FormField } from "@/tokenPayLib/components/Forms/types";
 import { TFunction, useTranslation } from "next-i18next";
-import React from "react";
+import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-
-export interface HelpDeskWithdrawRequestFormData {
-  receiverName: string;
-  receiverIban: string;
-  receiverBank: string;
-  textareaContent: string;
-}
+import { useActiveAccount } from "thirdweb/react";
 
 interface HelpDeskRequestFormProps {
   error: string | null;
-  handleStartTransaction: (value: HelpDeskWithdrawRequestFormData) => void;
+  handleStartTransaction: (value: HelpDeskDepositRequestFormData) => void;
+}
+
+export interface HelpDeskDepositRequestFormData {
+  receivingWallet: string;
+  textareaContent: string;
 }
 
 function getRequestFormFields(tCrossborder: TFunction) {
@@ -24,20 +23,8 @@ function getRequestFormFields(tCrossborder: TFunction) {
     },
     {
       type: "text",
-      name: "receiverName",
-      label: tCrossborder("withdraw.helpdeskRequest.receiver"),
-      required: true,
-    },
-    {
-      type: "text",
-      name: "receiverIban",
-      label: tCrossborder("withdraw.helpdeskRequest.iban"),
-      required: true,
-    },
-    {
-      type: "text",
-      name: "receiverBank",
-      label: tCrossborder("withdraw.helpdeskRequest.bank"),
+      name: "receivingWallet",
+      label: tCrossborder("deposit.helpdeskRequest.receivingWallet"),
       required: true,
     },
     {
@@ -49,15 +36,23 @@ function getRequestFormFields(tCrossborder: TFunction) {
   ];
 }
 
-export default function HelpDeskRequestForm({ error, handleStartTransaction }: HelpDeskRequestFormProps) {
+export default function HelpDeskDepositRequestForm({ error, handleStartTransaction }: HelpDeskRequestFormProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   const methods = useForm();
   const { handleSubmit } = methods;
 
-  const onSubmit = (data: HelpDeskWithdrawRequestFormData) => {
+  const account = useActiveAccount();
+
+  const onSubmit = (data: HelpDeskDepositRequestFormData) => {
     handleStartTransaction(data);
   };
+
+  useEffect(() => {
+    if (account && account.address) {
+      methods.setValue("receivingWallet", account.address);
+    }
+  }, [account]);
 
   return (
     <div className="flex flex-col gap-4">

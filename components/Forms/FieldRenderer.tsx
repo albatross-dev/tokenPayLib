@@ -1,17 +1,9 @@
-import React from "react";
-import { FieldRendererProps, FormField } from "./types";
-import FormInput from "./FormInput";
-import ArrayField from "./ArrayField";
-import DocumentUploader from "./DocumentUploader";
-import CountrySelector from "./CountrySelector";
-import CurrencySelector from "./CurrencySelector";
-import DateInputField from "./DateInputField";
-import CustomDropdown from "./CustomDropdown";
-import TokenSelector from "./TokenSelector";
-import ChainSelector from "./ChainSelector";
-import DefaultInput from "./DefaultInput";
 import { useFormContext } from "react-hook-form";
+import ArrayField from "./ArrayField";
+import DateInputField from "./DateInputField";
+import DefaultInput from "./DefaultInput";
 import DocumentUploadField from "./DocumentUploader";
+import FormInput from "./FormInput";
 
 const FieldRenderer = ({
   fields,
@@ -27,9 +19,7 @@ const FieldRenderer = ({
     <>
       {fields.map((field, index) => {
         // Generate a unique field key
-        const fieldName = parentName
-          ? `${parentName}.${field.name ? field.name : index}`
-          : field.name;
+        const fieldName = parentName ? `${parentName}.${field.name ? field.name : index}` : field.name;
 
         // check if is visible field by checking if field.visible is a function and then run it
         if (field.visible && typeof field.visible === "function") {
@@ -95,18 +85,13 @@ const FieldRenderer = ({
                     defaultChecked={methods.getValues(fieldName) || false} // Ensure defaultChecked is handled
                     className="h-4 w-4 text-uhuBlue border-gray-300 rounded focus:ring-uhuBlue"
                   />
-                  <label
-                    htmlFor={fieldName}
-                    className="ml-2 block text-sm cursor-pointer text-gray-900"
-                  >
-                    {field.label}{" "}
-                    {parsedRequired && <span className="text-red-500">*</span>}
+                  <label htmlFor={fieldName} className="ml-2 block text-sm cursor-pointer text-gray-900">
+                    {field.label} {parsedRequired && <span className="text-red-500">*</span>}
                   </label>
                 </div>
               ) : field.type === "ui" ? (
                 field.content
-              ) : field.type === "custom" &&
-                typeof field.content === "function" ? (
+              ) : field.type === "custom" && typeof field.content === "function" ? (
                 field.content(methods) // Pass control and user to the custom component
               ) : field.type === "select" ? (
                 <FormInput
