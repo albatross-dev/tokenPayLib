@@ -46,6 +46,7 @@ interface TokenSwapSectionProps {
 
 export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
   const { t } = useTranslation("common");
+  const { t: tAccount } = useTranslation("account");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
 
@@ -519,18 +520,31 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     setError(null);
     // round to the decimals of the token
     const value = Number(e.target.value);
-    if (value > 0) {
-      if (value > (Number(selectedTokenBalance) || 0) / numberWithZeros(selectedToken?.decimals || 0)) {
-        setError(`${t("cannot_exceed")} ${formatCrypto(selectedTokenBalance || 0, selectedToken?.decimals || 18, 6)}.`);
-      }
-
-      const decimals = selectedToken?.decimals || 18;
-      const multiplier = Math.pow(10, decimals);
-      const roundedValue = Math.floor(value * multiplier) / multiplier;
-      setAmount(roundedValue.toString());
+    if (isNaN(value)) {
+      setError(tAccount("sendCrypto.errors.enterValidAmount"));
     } else {
-      setAmount(e.target.value);
+      setError(null);
+
+      // Convert comma to dot for decimal separator
+      const normalizedValue = e.target.value.replace(",", ".");
+      const decimalPart = normalizedValue.split(".")[1];
+      console.log("decimal check", decimalPart?.length, selectedToken?.decimals);
+      // check if the number has more decimals than the token
+      if (decimalPart?.length > selectedToken?.decimals) {
+        setError(tAccount("sendCrypto.errors.enterValidDecimals"));
+      } else {
+        setError(null);
+
+        // check if the number is greater than the max amount
+        if (value > (Number(selectedTokenBalance) || 0) / numberWithZeros(selectedToken?.decimals || 0)) {
+          setError(tAccount("sendCrypto.errors.insufficientBalance"));
+        } else {
+          setError(null);
+        }
+      }
     }
+
+    setAmount(e.target.value);
   }
 
   /**

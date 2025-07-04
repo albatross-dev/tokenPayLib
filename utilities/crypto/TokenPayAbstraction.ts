@@ -1,13 +1,9 @@
-import CustomRouterAbi from "../../assets/customSwapRouterAbi.json";
-import {
-  getContract,
-  prepareContractCall,
-  sendAndConfirmTransaction,
-  ThirdwebClient,
-} from "thirdweb";
+import { getContract, prepareContractCall, sendAndConfirmTransaction, ThirdwebClient } from "thirdweb";
 import { Chain } from "thirdweb/chains";
 import { Account } from "thirdweb/wallets";
+import CustomRouterAbi from "../../assets/customSwapRouterAbi.json";
 import { SimpleToken } from "../../types/token.types";
+import { retry } from "@/utilities/misc/retry";
 
 export interface TransactionResult {
   transactionHash: string;
@@ -17,17 +13,13 @@ export interface TokenContract {
   approve: (address: string, amount: bigint) => Promise<any>;
 }
 
-export const TokenPayAbstractionAddress =
-  "0x224498ff598ecbcbde689b593e64ac48e9b3be15";
+export const TokenPayAbstractionAddress = "0x224498ff598ecbcbde689b593e64ac48e9b3be15";
 export const TokenPayAbstractionAbi = CustomRouterAbi;
 
 /**
  * Gets the current token pay abstraction contract
  */
-export function getTokenPayAbstractionContract(
-  client: ThirdwebClient,
-  chain: Chain
-) {
+export function getTokenPayAbstractionContract(client: ThirdwebClient, chain: Chain) {
   return getContract({
     client,
     chain,
@@ -56,6 +48,12 @@ export async function tokenPayAbstractionSimpleTransfer(
 ): Promise<TransactionResult> {
   const contract = getTokenPayAbstractionContract(client, chain);
 
+  console.log("tokenPayAbstractionSimpleTransfer", {
+    amount,
+    token,
+    recipient,
+  });
+
   // get token contract and approve transaction
   const tokenContract = getContract({
     client,
@@ -70,10 +68,17 @@ export async function tokenPayAbstractionSimpleTransfer(
     params: [TokenPayAbstractionAddress, amount],
   });
 
-  await sendAndConfirmTransaction({
-    account,
-    transaction: approveToken,
-  });
+  // ⏳ Retry transfer transaction
+  await retry(
+    async () => {
+      sendAndConfirmTransaction({
+        account,
+        transaction: approveToken,
+      });
+    },
+    3,
+    300
+  );
 
   const transferCall = prepareContractCall({
     contract: contract,
@@ -81,10 +86,17 @@ export async function tokenPayAbstractionSimpleTransfer(
     params: [amount, token.contractAddress, recipient],
   });
 
-  const result = await sendAndConfirmTransaction({
-    account,
-    transaction: transferCall,
-  });
+  // ⏳ Retry transfer transaction
+  const result = await retry(
+    () =>
+      sendAndConfirmTransaction({
+        account,
+        transaction: transferCall,
+      }),
+    3,
+    300
+  );
 
+  console.log("tokenPayAbstractionSimpleTransfer result", result);
   return result;
 }

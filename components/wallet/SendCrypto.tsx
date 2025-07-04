@@ -28,7 +28,7 @@ interface SendCryptoProps {
 
 export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<string>("");
   const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>({});
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<number | null>(null);
   const [maxAmount, setMaxAmount] = useState(0);
@@ -60,7 +60,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       return;
     }
 
-    setAmount(maxAmount);
+    setAmount(maxAmount.toString());
   };
 
   const fetchTokenBalance = async (selectedToken: SimpleToken) => {
@@ -131,7 +131,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         await api.post("/api/cryptoTransfer", transferData);
 
         setTargetAddress("");
-        setAmount(0);
+        setAmount("");
         setIsLoading("success");
         setNewTxHash(transactionHash);
       } catch (error) {

@@ -264,8 +264,6 @@ export default function TransferSection() {
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
     let inputAmount = parseFloat(e.target.value);
 
-    console.log("inputAmount", inputAmount);
-
     if (selectedMethod?.type !== "crypto") {
       setSelectedMethod(null);
     }

@@ -16,8 +16,8 @@ interface SendCryptoDialogProps {
   setIsLoading: (isLoading: LoadingButtonStates) => void;
   selectedToken: SimpleToken | null;
   originTokens: Record<string, SimpleToken>;
-  amount: number;
-  setAmount: (amount: number) => void;
+  amount: string;
+  setAmount: (amount: string) => void;
   targetAddress: string;
   setTargetAddress: (targetAddress: string) => void;
   errors: Errors;
@@ -121,16 +121,37 @@ export default function SendCryptoDialog({
                         type="number"
                         className="p-2 w-full border rounded-md flex-1"
                         value={amount}
+                        placeholder="0.00"
                         onChange={(e) => {
                           if (!selectedToken) {
                             setFieldError("amount", tAccount("sendCrypto.errors.selectTokenFirst"));
                           } else {
-                            if (Number(e.target.value) > maxAmount) {
-                              setFieldError("amount", tAccount("sendCrypto.errors.insufficientBalance"));
+                            // check if the number is a valid number
+                            if (isNaN(Number(e.target.value))) {
+                              setFieldError("amount", tAccount("sendCrypto.errors.enterValidAmount"));
                             } else {
                               clearFieldError("amount");
+
+                              // Convert comma to dot for decimal separator
+                              const normalizedValue = e.target.value.replace(",", ".");
+                              const decimalPart = normalizedValue.split(".")[1];
+                              console.log("decimal check", decimalPart?.length, selectedToken?.decimals);
+                              // check if the number has more decimals than the token
+                              if (decimalPart?.length > selectedToken?.decimals) {
+                                setFieldError("amount", tAccount("sendCrypto.errors.enterValidDecimals"));
+                              } else {
+                                clearFieldError("amount");
+
+                                // check if the number is greater than the max amount
+                                if (Number(e.target.value) > maxAmount) {
+                                  setFieldError("amount", tAccount("sendCrypto.errors.insufficientBalance"));
+                                } else {
+                                  clearFieldError("amount");
+                                }
+                              }
                             }
-                            setAmount(Number(e.target.value));
+
+                            setAmount(e.target.value);
                           }
                         }}
                         max={maxAmount}
@@ -169,7 +190,11 @@ export default function SendCryptoDialog({
                       isLoading={isLoading}
                       onClick={handleSend}
                       active={Boolean(
-                        Object.keys(errors).length === 0 && selectedToken && amount > 0 && targetAddress.length > 0
+                        !isNaN(Number(amount)) &&
+                          Object.keys(errors).length === 0 &&
+                          selectedToken &&
+                          Number(amount) > 0 &&
+                          targetAddress.length > 0
                       )}
                     >
                       {tAccount("sendCrypto.dialog.sendButton")}
