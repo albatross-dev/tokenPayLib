@@ -71,13 +71,13 @@ export async function tokenPayAbstractionSimpleTransfer(
   // ⏳ Retry transfer transaction
   await retry(
     async () => {
-      sendAndConfirmTransaction({
+      await sendAndConfirmTransaction({
         account,
         transaction: approveToken,
       });
     },
     3,
-    300
+    1000
   );
 
   const transferCall = prepareContractCall({
@@ -88,13 +88,14 @@ export async function tokenPayAbstractionSimpleTransfer(
 
   // ⏳ Retry transfer transaction
   const result = await retry(
-    () =>
-      sendAndConfirmTransaction({
+    async () => {
+      return await sendAndConfirmTransaction({
         account,
         transaction: transferCall,
-      }),
+      });
+    },
     3,
-    300
+    1000
   );
 
   console.log("tokenPayAbstractionSimpleTransfer result", result);
