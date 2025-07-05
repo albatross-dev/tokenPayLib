@@ -51,7 +51,7 @@ interface TokenSwapSectionProps {
 
 export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
   const { t } = useTranslation("common");
-  const { t: tAccount } = useTranslation("account");
+  const { t: tAccount } = useTranslation("wallet");
   const activeChain = useActiveWalletChain();
   const account = useActiveAccount();
 
@@ -483,7 +483,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       console.log("decimal check", decimalPart?.length, selectedToken?.decimals);
       // check if the number has more decimals than the token
       if (decimalPart?.length > selectedToken?.decimals) {
-        setError(tAccount("sendCrypto.errors.enterValidDecimals"));
+        setError(tAccount("sendCrypto.errors.maxDecimals1") + (selectedToken?.decimals || 0) + tAccount("sendCrypto.errors.maxDecimals2"));
       } else {
         setError(null);
 

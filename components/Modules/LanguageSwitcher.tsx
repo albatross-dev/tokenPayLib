@@ -1,9 +1,8 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState, useRef } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { useTranslation } from "next-i18next";
-import React from "react";
 
 interface Language {
   label: string;
@@ -20,7 +19,7 @@ const defaultLangs: Languages = {
   fr: { label: "Français", emoji: "FR" },
 };
 
-export const smallDefautlLangs: Languages = {
+export const smallDefaultLangs: Languages = {
   en: { label: "English", emoji: "US" },
   de: { label: "Deutsch", emoji: "DE" },
 };
