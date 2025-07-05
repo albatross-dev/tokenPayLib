@@ -41,7 +41,6 @@ export default function TransferPanel({
         <Unlimit
           amount={amount}
           account={account}
-          user={user}
           country={selectedCountry}
         />
       );
