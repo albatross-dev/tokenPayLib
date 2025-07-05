@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
-import React, { useEffect } from "react";
-import { UseFormRegister, Path, UseFormGetFieldState, UseFormStateProps } from "react-hook-form";
+import { Path, UseFormGetFieldState, UseFormRegister } from "react-hook-form";
 
 interface DefaultInputProps<T extends Record<string, any>> {
   disabled?: boolean;
@@ -49,8 +48,8 @@ function DefaultInput<T extends Record<string, any>>({
         step={step}
         placeholder={placeholder?.toString()}
         {...methods.register(fieldName, {
-          validate: validate,
-          required: parsedRequired,
+          validate,
+          required: parsedRequired ? t("input_required") : false,
         })}
         className={`mt-1 p-2 w-full border rounded-md ${disabled ? "text-gray-500" : ""}`}
       />

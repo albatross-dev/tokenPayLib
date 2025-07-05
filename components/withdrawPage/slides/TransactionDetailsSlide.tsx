@@ -79,9 +79,15 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {selectedMethod?.type === "crypto"
-                ? getFiatInfoForStableCoin(preferredStableCoin)?.symbol
+                ? getFiatInfoForStableCoin(preferredStableCoin)?.symbol +
+                  " (" +
+                  getFiatInfoForStableCoin(preferredStableCoin)?.id +
+                  ")"
                 : getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
-                  ? getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.symbol
+                  ? getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.symbol +
+                    " (" +
+                    getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.id +
+                    ")"
                   : selectedCurrency?.name}
             </div>
           </div>

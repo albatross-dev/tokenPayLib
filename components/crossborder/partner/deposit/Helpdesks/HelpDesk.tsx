@@ -100,10 +100,10 @@ export default function HelpDesk({ country, amount, method, startCurrency, endCu
         currency: endCurrency,
         currencyDecimals: currencies[endCurrency].decimals,
         finalCurrency: endCurrency,
-        amount: amount,
+        amount,
         country: country.countryCode,
-        fromCountry: user?.vendorCountry || user?.country,
-        transactionDetails: transactionDetails,
+        fromCountry: user?.vendorCountry || user?.billingAddress?.country,
+        transactionDetails,
         finalamount: method.predictedOnrampAmount,
         type: "Deposit",
       });

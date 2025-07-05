@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Controller, useFormContext, Control } from "react-hook-form";
 import { BsFileEarmarkText } from "react-icons/bs";
 import { IoClose, IoAttachOutline } from "react-icons/io5";
+import { useTranslation } from "next-i18next";
 
 interface PreloadedFile {
   id: string | number;
@@ -18,13 +19,11 @@ interface DocumentUploadFieldProps {
   required?: boolean;
 }
 
-const isPreloadedFile = (file: FileType): file is PreloadedFile => {
-  return file !== null && "id" in file;
-};
+const isPreloadedFile = (file: FileType): file is PreloadedFile =>
+  file !== null && "id" in file;
 
-const isFile = (file: FileType): file is File => {
-  return file !== null && file instanceof File;
-};
+const isFile = (file: FileType): file is File =>
+  file !== null && file instanceof File;
 
 /**
  * DocumentUploadField component for handling file uploads within a form.
@@ -37,12 +36,12 @@ const isFile = (file: FileType): file is File => {
  *   required={true}
  * />
  */
-const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
+function DocumentUploadField({
   name,
   control,
   label,
   required,
-}: DocumentUploadFieldProps): JSX.Element => {
+}: DocumentUploadFieldProps): JSX.Element{
   const [filePreview, setFilePreview] = useState<FileType>(null);
   const [error, setError] = useState<string | null>(null);
   const hiddenInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +52,8 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
     getValues,
     trigger,
   } = useFormContext();
+
+  const { t } = useTranslation();
 
   // Fetch the existing file from the state (if available)
   useEffect(() => {
@@ -165,7 +166,7 @@ const DocumentUploadField: React.FC<DocumentUploadFieldProps> = ({
     <Controller
       name={name}
       control={control}
-      rules={{ required: required ? `${label} ist erforderlich` : false }}
+      rules={{ required: required ? `${label} ${t("is_required")}` : false }}
       render={({ field: { onChange } }) => (
         <div className="file-upload-container">
           {/* Upload Button */}

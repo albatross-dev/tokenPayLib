@@ -92,7 +92,10 @@ export default function TransactionDetailsForm({
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {Boolean(getFiatInfoForStableCoin(selectedCurrency?.symbol || ""))
-                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol
+                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol +
+                  " (" +
+                  getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.id +
+                  ")"
                 : selectedCurrency?.symbol}
             </div>
           </div>

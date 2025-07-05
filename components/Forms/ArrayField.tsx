@@ -1,8 +1,10 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { useFieldArray, UseFormReturn } from 'react-hook-form';
-import { IoTrashBinOutline } from 'react-icons/io5';
-import { FiPlus } from 'react-icons/fi';
 import { Dialog, Transition } from '@headlessui/react';
+import React, { Fragment, useEffect, useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { FiPlus } from 'react-icons/fi';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { useTranslation } from 'next-i18next';
+// eslint-disable-next-line import/no-cycle
 import FieldRenderer from './FieldRenderer';
 import { ArrayFieldProps } from './types';
 
@@ -12,11 +14,12 @@ import { ArrayFieldProps } from './types';
  * @param {ArrayFieldProps} props - Component properties
  * @returns {JSX.Element} Rendered array of form fields with add and remove functionality.
  */
-const ArrayField: React.FC<ArrayFieldProps> = ({
+function ArrayField({
   field,
-  methods,
   parentName,
-}) => {
+}: ArrayFieldProps): JSX.Element {
+  const methods = useFormContext();
+
   const {
     fields: arrayFields,
     append,
@@ -31,6 +34,14 @@ const ArrayField: React.FC<ArrayFieldProps> = ({
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [triggerRerender, setTriggerRerender] = useState<boolean>(false);
+  const { t } = useTranslation();
+
+  function getDefaultItem(): Record<string, string> {
+    return field.fields.reduce((acc: Record<string, string>, childField) => {
+      acc[childField.name] = "";
+      return acc;
+    }, {});
+  }
 
   // Ensure at least one empty item on initial render
   useEffect(() => {
@@ -40,12 +51,6 @@ const ArrayField: React.FC<ArrayFieldProps> = ({
     }
   }, [arrayFields, replace]);
 
-  function getDefaultItem(): Record<string, string> {
-    return field.fields.reduce((acc: Record<string, string>, childField) => {
-      acc[childField.name] = "";
-      return acc;
-    }, {});
-  }
 
   const handleDelete = (): void => {
     if (isAdding && itemToDelete === arrayFields.length - 1) {
@@ -65,22 +70,17 @@ const ArrayField: React.FC<ArrayFieldProps> = ({
     setIsAdding(true);
   };
 
-  const formValues = methods.watch();
-  useEffect(() => {
-    console.log("Form state updated");
-  }, [formValues]);
-
   return (
     <div key={triggerRerender.toString()} className="mb-4 flex flex-col gap-4">
       {arrayFields.map((item, index) => (
         <div
-          key={item.id + "array_item"}
+          key={`${item.id}-array_item`}
           className="mb-2 border rounded-lg p-4 relative"
         >
           <h3 className="text-sm font-semibold mb-2">
             {index + 1}. {field.label}{" "}
             {isAdding && index === arrayFields.length - 1 ? (
-              <span className="text-uhuBlue"> (Neu)</span>
+              <span className="text-uhuBlue"> ({t("new")})</span>
             ) : (
               ""
             )}
@@ -158,12 +158,11 @@ const ArrayField: React.FC<ArrayFieldProps> = ({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-700"
                   >
-                    Element löschen?
+                    {t("delete_element")}
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-700">
-                      Möchten Sie dieses Element wirklich löschen? Diese Aktion
-                      kann nicht rückgängig gemacht werden.
+                      {t("delete_element_description")}
                     </p>
                   </div>
 
@@ -173,14 +172,14 @@ const ArrayField: React.FC<ArrayFieldProps> = ({
                       className="btn p-2 rounded w-36 bg-gray-200"
                       onClick={() => setIsModalOpen(false)}
                     >
-                      Abbrechen
+                      {t("cancel")}
                     </button>
                     <button
                       onClick={handleDelete}
                       type="button"
                       className="w-36 bg-red-600 text-white p-2 rounded hover:bg-red-700"
                     >
-                      Löschen
+                      {t("delete")}
                     </button>
                   </div>
                 </Dialog.Panel>

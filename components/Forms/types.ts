@@ -72,8 +72,7 @@ export type FormField =
 
 export interface ArrayFieldProps extends BaseFieldProps {
   field: FormField;
-  methods: UseFormReturn<FieldValues, any, FieldValues>;
-  parentName: string;
+  parentName?: string;
 }
 
 // Document uploader specific types
