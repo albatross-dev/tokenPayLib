@@ -112,6 +112,7 @@ export default function LanguageSwitcher({ languages = defaultLangs }: LanguageS
               <MenuItem key={locale}>
                 {({ active }: { active: boolean }) => (
                   <button
+                    type="button"
                     onClick={() => changeLanguage(locale)}
                     className={`${
                       active ? "bg-gray-100" : "text-gray-900"

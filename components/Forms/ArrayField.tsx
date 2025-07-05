@@ -33,7 +33,6 @@ function ArrayField({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [triggerRerender, setTriggerRerender] = useState<boolean>(false);
   const { t } = useTranslation();
 
   function getDefaultItem(): Record<string, string> {
@@ -71,7 +70,7 @@ function ArrayField({
   };
 
   return (
-    <div key={triggerRerender.toString()} className="mb-4 flex flex-col gap-4">
+    <div className="mb-4 flex flex-col gap-4">
       {arrayFields.map((item, index) => (
         <div
           key={`${item.id}-array_item`}

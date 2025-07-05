@@ -1,5 +1,4 @@
 import { useFormContext, useFormState } from "react-hook-form";
-import { useEffect } from "react";
 import { useTranslation } from "next-i18next";
 // eslint-disable-next-line import/no-cycle
 import ArrayField from "./ArrayField";

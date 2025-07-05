@@ -3,7 +3,7 @@ import { Chain } from "thirdweb/chains";
 import { Account } from "thirdweb/wallets";
 import CustomRouterAbi from "../../assets/customSwapRouterAbi.json";
 import { SimpleToken } from "../../types/token.types";
-import retry from "@/utilities/misc/retry";
+import retry from "../misc/retry";
 
 export interface TransactionResult {
   transactionHash: string;
@@ -81,7 +81,7 @@ export async function tokenPayAbstractionSimpleTransfer(
   );
 
   const transferCall = prepareContractCall({
-    contract: contract,
+    contract,
     method: "simpleTransfer",
     params: [amount, token.contractAddress, recipient],
   });
