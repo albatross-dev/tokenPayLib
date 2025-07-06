@@ -4,7 +4,6 @@ export default async function loadTransaction(ctx: any) {
   const id = ctx.params?.id;
   try {
 
-    console.log("🔥 raw cookie header:", ctx.req.headers.cookie);
     // Get the cookies from the request context
     const cookieHeader = ctx.req.headers.cookie || "";
     
@@ -18,6 +17,7 @@ export default async function loadTransaction(ctx: any) {
     return data;
   } catch (error) {
     console.error("Error loading transaction", error);
+    console.log("🔥 raw cookie header:", ctx.req.headers.cookie);
     return null;
   }
 }
