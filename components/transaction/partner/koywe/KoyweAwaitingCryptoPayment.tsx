@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { FiatTransaction } from "../../../../types/payload-types";
+import client from "@/utilities/thirdweb-client";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
+import { BsChevronRight } from "react-icons/bs";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
+import { api, sendErrorReport } from "../../../../../context/UserContext";
+import { FiatTransaction } from "../../../../types/payload-types";
+import currencies from "../../../../utilities/crypto/currencies";
+import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
+import AddressDisplay from "../../../UI/AddressDisplay";
 import LoadingButton, {
   LoadingButtonError,
   LoadingButtonStates,
 } from "../../../UI/LoadingButton";
-import AddressDisplay from "../../../UI/AddressDisplay";
-import { BsChevronRight } from "react-icons/bs";
-import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
-import { polygon } from "thirdweb/chains";
-import { useActiveAccount } from "thirdweb/react";
-import { client } from "../../../../../pages/_app";
-import currencies from "../../../../utilities/crypto/currencies";
-import { api, sendErrorReport } from "../../../../../context/UserContext";
 
 export default function KoyweAwaitingCryptoPayment({
   transaction,
@@ -44,7 +44,7 @@ export default function KoyweAwaitingCryptoPayment({
 
       if (transactionHash) {
         await api.patch(`/api/fiatTransaction/${transaction.id}`, {
-          transactionHash: transactionHash,
+          transactionHash,
         });
 
         refetch();
@@ -53,14 +53,15 @@ export default function KoyweAwaitingCryptoPayment({
       } else {
         setIsLoading("error");
       }
-    } catch (error) {
-      sendErrorReport("Koywe - Awaiting Crypto Payment - Error", error.message);
+    } catch (e) {
+      const err = e as Error;
+      sendErrorReport("Koywe - Awaiting Crypto Payment - Error", err.message);
       const FormatedError: LoadingButtonError = {
-        message: error?.message,
+        message: err.message,
         title: "Koywe - Awaiting Crypto Payment - Error",
         error: {
-          message: error?.code,
-          error: error,
+          message: err.message,
+          error: err,
         },
       };
 
@@ -93,7 +94,7 @@ export default function KoyweAwaitingCryptoPayment({
       <div className="mt-4">
         <LoadingButton
           error={error}
-          onClick={handleSendCryptoPayment}
+          onClick={() => handleSendCryptoPayment()}
           isLoading={isLoading}
         >
           {tTransaction("koyweWithdrawPanel.sendCryptoPaymentNow")}

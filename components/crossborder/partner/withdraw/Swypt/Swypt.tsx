@@ -11,7 +11,7 @@ import {
   swyptContract,
   swyptContractAddress,
 } from "../../universal/swyptUtils";
-import { client } from "../../../../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import { FormData, SwyptProps, SwyptState } from "./types";
 import { InputSlide } from "./slides/InputSlide";
 import { LoadingSlide } from "./slides/LoadingSlide";

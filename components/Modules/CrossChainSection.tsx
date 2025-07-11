@@ -7,7 +7,7 @@ import tokenyByChain from "../../utilities/crypto/tokenByChain";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { ERC20ABI, formatCrypto, LogoByShortName, TokensByChainId } from "../../utilities/crypto/currencies";
 import { readContract, getContract } from "thirdweb";
-import { client } from "../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import getChainById from "../../utilities/crypto/getChainById";
 import MiniLoader from "../UI/MiniLoader";
 import BridgeModalUniversal from "../Modals/BridgeModalUniversal";

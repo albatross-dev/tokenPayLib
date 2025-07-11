@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useActiveAccount } from "thirdweb/react";
-import { polygon } from "thirdweb/chains";
+import client from "@/utilities/thirdweb-client";
 import { useTranslation } from "next-i18next";
-import { Account } from "thirdweb/wallets";
+import React, { useEffect, useState } from "react";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
 
 // Import slides
-import Loading from "./slides/Loading";
-import Error from "./slides/Error";
-import QuoteForm from "./slides/QuoteForm";
-import TransactionCreated from "./slides/TransactionCreated";
-import Success from "./slides/Success";
 import currencies from "../../../../../utilities/crypto/currencies";
-import { client } from "../../../../../../pages/_app";
+import Error from "./slides/Error";
+import Loading from "./slides/Loading";
+import QuoteForm from "./slides/QuoteForm";
+import Success from "./slides/Success";
+import TransactionCreated from "./slides/TransactionCreated";
+
 import { api, sendErrorReport } from "../../../../../../context/UserContext";
-import { Vendor, Consumer } from "../../../../../types/payload-types";
+import { Consumer, Vendor } from "../../../../../types/payload-types";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 

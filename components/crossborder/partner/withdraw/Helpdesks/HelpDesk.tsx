@@ -10,7 +10,7 @@ import LoadingHelpDesk from "./StateViews/HelpDesk/LoadingHelpDesk";
 import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestError";
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
-import { client } from "../../../../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import { polygon } from "thirdweb/chains";
 import { useTranslation } from "next-i18next";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";

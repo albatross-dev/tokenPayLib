@@ -9,7 +9,7 @@ import { convertAnyToAnyDirect, uniswapAddresses } from "../../utilities/crypto/
 import { IoIosSwap } from "react-icons/io";
 import { getContract, readContract } from "thirdweb";
 import { encodePacked } from "thirdweb/utils";
-import { client } from "../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 import { SimpleToken } from "../../types/token.types";
 import { formatCrypto } from "../../utilities/crypto/currencies";

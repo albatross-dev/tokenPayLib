@@ -12,7 +12,7 @@ import SelectBankAccount from "./slides/SelectBankAccount";
 import WithdrawView from "./slides/WithdrawView";
 import SuccessView from "./slides/SuccessView";
 import Loader from "../../../../UI/Loader";
-import { client } from "../../../../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import fetchBalance from "../../../../../utilities/crypto/fetchBalance";
 import fetchBankAccounts from "../../../../../utilities/partner/stasis/fetchBankAccounts";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";

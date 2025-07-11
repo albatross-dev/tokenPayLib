@@ -17,7 +17,7 @@ import { ConvertStateButtonWide } from "../UI/ConvertStateButton";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 
 
-import { client } from "../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 
 
