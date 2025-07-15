@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/UserContext";
 import moment from "moment";
@@ -13,6 +14,7 @@ import Link from "next/link";
 import { FiatTransaction } from "../../types/payload-types";
 import qs from "qs";
 import { api } from "../../../context/UserContext";
+import { getFiatInfoForStableCoin } from "@/tokenPayLib/utilities/stableCoinsMaps";
 
 interface TableQuery {
   type?: {
@@ -25,8 +27,6 @@ export default function Transfer() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedTransactionData, setSelectedTransactionData] = useState<FiatTransaction | null>(null);
   const [paymentsTableQuery, setPaymentsTableQuery] = useState<TableQuery>({});
-
-  const [loading, setLoading] = useState<boolean>(true);
 
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -64,7 +64,7 @@ export default function Transfer() {
       accessorKey: "currencyName",
       header: tCrossborder("transfer.currency"),
       cell: (props) => {
-        return <div className="table-cell uppercase">{props.getValue()}</div>;
+        return <div className="table-cell uppercase">{getFiatInfoForStableCoin(props.getValue())?.id}</div>;
       },
     },
     {

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { FiatCodes } from "../types/derivedPayload.types";
 export interface FiatInfo {
   id: FiatCodes;
@@ -132,7 +134,7 @@ export const STANDARD_STABLE_MAP: { [key: string]: FiatInfo } = {
 };
 
 export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefined => {
-  return STANDARD_STABLE_MAP[stableCoin];
+  return STANDARD_STABLE_MAP[stableCoin.toUpperCase()];
 };
 
 export function getFiatInfo(fiatCode: FiatCodes): FiatInfo | undefined {

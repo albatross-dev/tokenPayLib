@@ -1,28 +1,28 @@
-import MiniLoader from "../../UI/MiniLoader";
-import { useEffect, useState, useCallback } from "react";
-import { IoWarning } from "react-icons/io5";
-import { getFiatCurrencySymbol, getFiatCurrencyCode } from "../../../utilities/stableCoinsMaps";
+/* eslint-disable */
+
 import { useTranslation } from "next-i18next";
-import { getMetaData, getQuote } from "../../../utilities/partner/bitcoinvn";
+import { useCallback, useEffect, useState } from "react";
+import { IoWarning } from "react-icons/io5";
 import { api, sendErrorReport } from "../../../../context/UserContext";
-import duplicateByPaymentModality from "../../../utilities/crossborder/duplicateByPaymentModality";
-import { getSwyptQuote } from "../../crossborder/partner/universal/swyptUtils";
-import { PaymentTypesArray } from "../../../types/payload-types";
-import React from "react";
 import { FiatCodes } from "../../../types/derivedPayload.types";
+import { PaymentTypesArray } from "../../../types/payload-types";
+import duplicateByPaymentModality from "../../../utilities/crossborder/duplicateByPaymentModality";
+import { getMetaData, getQuote } from "../../../utilities/partner/bitcoinvn";
+import { getFiatCurrencyCode, getFiatCurrencySymbol } from "../../../utilities/stableCoinsMaps";
 import {
   getKoywePaymentMethods,
   getKoyweQuote,
   KoywePaymentMethod,
   KoyweQuoteResponse,
 } from "../../crossborder/partner/universal/koyweUtils";
+import { getSwyptQuote } from "../../crossborder/partner/universal/swyptUtils";
+import MiniLoader from "../../UI/MiniLoader";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
 export interface QuotePaymentType extends PaymentMethodType {
-  predictedAmount: number;
-  apiError: string | null;
   predictedOnrampAmount: number;
+  apiError: string | null;
   onrampMinAmount: number;
   onrampMaxAmount: number;
   context: {
@@ -300,34 +300,98 @@ export default function DepositMethodSelector({
         }
       });
 
+      console.log("sortedMethods", sortedMethods);
+
+
+      // for (const modality in sortedMethods) {
+      //   let cheapest: QuotePaymentType | null = null;
+      //   let nextLower: QuotePaymentType | null = null;
+      //   let nextHigher: QuotePaymentType | null = null;
+
+      //   sortedMethods[modality].methods.forEach((method) => {
+      //     if (method.apiError) return;
+
+      //     if (method.predictedOnrampAmount > 0) {
+      //       if (!cheapest || method.predictedOnrampAmount > cheapest.predictedOnrampAmount) {
+      //         cheapest = method;
+      //       }
+      //     } else {
+      //       if (Number(amount) < method.onrampMinAmount) {
+      //         if (!nextHigher || method.onrampMinAmount < nextHigher.onrampMinAmount) {
+      //           nextHigher = method;
+      //         }
+      //       } else if (Number(amount) > method.onrampMaxAmount) {
+      //         if (!nextLower || method.onrampMaxAmount > nextLower.onrampMaxAmount) {
+      //           nextLower = method;
+      //         }
+      //       }
+      //     }
+      //   });
+
+      //   sortedMethods[modality].cheapestMethod = cheapest;
+      //   sortedMethods[modality].nextLowerLimitMethod = nextLower;
+      //   sortedMethods[modality].nextMethodWithLimit = nextHigher;
+      // }
+
       for (const modality in sortedMethods) {
-        let cheapest: QuotePaymentType | null = null;
-        let nextLower: QuotePaymentType | null = null;
-        let nextHigher: QuotePaymentType | null = null;
+        const methodsInModality = sortedMethods[modality].methods;
+        const numMethods = methodsInModality.length;
 
-        sortedMethods[modality].methods.forEach((method) => {
-          if (method.apiError) return;
+        if (numMethods === 1) {
+          const singleMethod = methodsInModality[0];
+          const withinLimits = amount >= singleMethod.onrampMinAmount && amount <= singleMethod.onrampMaxAmount;
 
+          console.log("singleMethod", singleMethod);
+          console.log("withinLimits", withinLimits);
+          console.log("amount", amount);
+          console.log("singleMethod.onrampMaxAmount", singleMethod.onrampMaxAmount);
+          console.log("singleMethod.onrampMinAmount", singleMethod.onrampMinAmount);
+
+          if (withinLimits) {
+            if (singleMethod.predictedOnrampAmount > 0) {
+              sortedMethods[modality].cheapestMethod = singleMethod;
+            } else {
+              sortedMethods[modality].nextMethodWithLimit = singleMethod;
+            }
+          } else if (amount < singleMethod.onrampMinAmount) {
+            sortedMethods[modality].nextMethodWithLimit = singleMethod;
+          } else {
+            sortedMethods[modality].nextLowerLimitMethod = singleMethod;
+          }
+          continue;
+        }
+
+        let cheapestMethod: QuotePaymentType | null = null;
+        let nextMethodWithLimit: QuotePaymentType | null = null;
+
+        for (const method of methodsInModality) {
           if (method.predictedOnrampAmount > 0) {
-            if (!cheapest || method.predictedOnrampAmount > cheapest.predictedOnrampAmount) {
-              cheapest = method;
+            if (!cheapestMethod || method.predictedOnrampAmount > cheapestMethod.predictedOnrampAmount) {
+              cheapestMethod = method;
             }
           } else {
-            if (Number(amount) < method.onrampMinAmount) {
-              if (!nextHigher || method.onrampMinAmount < nextHigher.onrampMinAmount) {
-                nextHigher = method;
-              }
-            } else if (Number(amount) > method.onrampMaxAmount) {
-              if (!nextLower || method.onrampMaxAmount > nextLower.onrampMaxAmount) {
-                nextLower = method;
-              }
+            if (
+              method.onrampMaxAmount >= amount &&
+              (!nextMethodWithLimit || method.onrampMinAmount < nextMethodWithLimit.onrampMinAmount)
+            ) {
+              nextMethodWithLimit = method;
             }
           }
-        });
+        }
+        sortedMethods[modality].cheapestMethod = cheapestMethod;
+        sortedMethods[modality].nextMethodWithLimit = nextMethodWithLimit;
 
-        sortedMethods[modality].cheapestMethod = cheapest;
-        sortedMethods[modality].nextLowerLimitMethod = nextLower;
-        sortedMethods[modality].nextMethodWithLimit = nextHigher;
+        let nextLowerLimitMethod: QuotePaymentType | null = null;
+        for (const method of methodsInModality) {
+          if (
+            method.onrampMaxAmount <= amount &&
+            (!nextLowerLimitMethod || method.onrampMaxAmount > nextLowerLimitMethod.onrampMaxAmount)
+          ) {
+            nextLowerLimitMethod = method;
+          }
+        }
+
+        sortedMethods[modality].nextLowerLimitMethod = nextLowerLimitMethod;
       }
 
       setModalityMethodMap(sortedMethods);
@@ -450,7 +514,11 @@ export default function DepositMethodSelector({
                 </div>
               )}
 
-              {!cheapestMethod && nextLowerLimitMethod && (
+            
+            </div>
+          </div>
+
+          {!cheapestMethod && nextLowerLimitMethod && (
                 <p className="text-xs text-red-600 mt-1 text-right w-full">
                   {tCrossborder("deposit.depositmethodselector.amountExceedsMaxBy", {
                     difference: lowerLimitDiff.toLocaleString(undefined, {
@@ -461,7 +529,7 @@ export default function DepositMethodSelector({
                   })}
                 </p>
               )}
-              {!cheapestMethod && nextMethodWithLimit && (
+              { nextMethodWithLimit && (
                 <p className="text-xs text-blue-600 mt-1 text-right w-full">
                   {tCrossborder("deposit.depositmethodselector.amountUntilNextMethod", {
                     difference: higherLimitDiff.toLocaleString(undefined, {
@@ -472,8 +540,6 @@ export default function DepositMethodSelector({
                   })}
                 </p>
               )}
-            </div>
-          </div>
         </div>
       );
     });

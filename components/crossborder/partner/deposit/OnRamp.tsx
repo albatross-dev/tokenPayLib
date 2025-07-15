@@ -1,12 +1,9 @@
 import { useTranslation } from "next-i18next";
-import React from "react";
-import { useUhuConfig } from "../../../contexts/UhuConfigContext";
 import { Account } from "thirdweb/wallets";
 import {
-  Vendor,
-  Consumer,
-  PaymentTypesArray,
+  PaymentTypesArray
 } from "../../../../types/payload-types";
+import { useUhuConfig } from "../../../contexts/UhuConfigContext";
 
 interface OnRampProps {
   amount: number;
@@ -27,14 +24,15 @@ export default function OnRamp({ amount, account, method }: OnRampProps) {
       </div>
       <div className="mb-4">
         {tCrossborder("deposit.onramp.transactionInstructions1")}
-        <span
+        <button
+          type="button"
           className="text-uhuBlue cursor-pointer"
           onClick={() => {
             setIsHelpModalOpen(true);
           }}
         >
           {tCrossborder("deposit.onramp.transactionInstructions2")}
-        </span>
+        </button>
         {tCrossborder("deposit.onramp.transactionInstructions3")}
       </div>
       <div className="iframe-container">

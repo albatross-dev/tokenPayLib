@@ -1,9 +1,7 @@
-import React from "react";
 import { useTranslation } from "next-i18next";
+import React from "react";
 import {
-  Consumer,
-  PaymentTypesArray,
-  Vendor,
+  PaymentTypesArray
 } from "../../../../types/payload-types";
 import { useUhuConfig } from "../../../contexts/UhuConfigContext";
 
@@ -12,13 +10,11 @@ interface OnRampProps {
   method: PaymentTypesArray[number];
 }
 
-const OnRamp: React.FC<OnRampProps> = ({ amount, method }) => {
+export default function OnRamp({ amount, method }: OnRampProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
   const { setIsHelpModalOpen } = useUhuConfig();
 
   const offrampUrl = `https://onramp.money/main/sell/?appId=${process.env.NEXT_PUBLIC_ONRAMP_APP_ID}&coinAmount=${amount}&coinCode=${method.acceptedCrypto}&network=matic20&fiatType=${method.fiatTypeOfframp}`;
-
-  console.log("offrampUrl", offrampUrl);
 
   return (
     <div className="flex flex-col -mt-8">
@@ -27,14 +23,15 @@ const OnRamp: React.FC<OnRampProps> = ({ amount, method }) => {
       </div>
       <div className="mb-4">
         {tCrossborder("withdraw.onramp.infoText")}{" "}
-        <span
+        <button
+          type="button"
           className="text-uhuBlue cursor-pointer"
           onClick={() => {
             setIsHelpModalOpen(true);
           }}
         >
           {tCrossborder("withdraw.onramp.customerSupport")}
-        </span>
+        </button>
         .
       </div>
       <div className="iframe-container">
@@ -47,10 +44,8 @@ const OnRamp: React.FC<OnRampProps> = ({ amount, method }) => {
             border: "none",
           }}
           allowFullScreen
-        ></iframe>
+        />
       </div>
     </div>
   );
 };
-
-export default OnRamp;

@@ -23,14 +23,15 @@ export default function Unlimit({ amount, account, user, country }) {
       <div className="font-bold text-xl mb-2">{tCrossborder("deposit.unlimit.transactionTitle")}</div>
       <div className="mb-4">
         {tCrossborder("deposit.unlimit.transactionInstructions1")}
-        <span
+        <button
+          type="button"
           className="text-uhuBlue cursor-pointer"
           onClick={() => {
             setIsHelpModalOpen(true);
           }}
         >
           {tCrossborder("deposit.unlimit.transactionInstructions2")}
-        </span>
+        </button>
         {tCrossborder("deposit.unlimit.transactionInstructions3")}
       </div>
       <div className="iframe-container">
@@ -43,7 +44,7 @@ export default function Unlimit({ amount, account, user, country }) {
             border: "none",
           }}
           allowFullScreen
-        ></iframe>
+        />
       </div>
     </div>
   );
