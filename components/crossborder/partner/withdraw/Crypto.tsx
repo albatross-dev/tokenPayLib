@@ -1,17 +1,23 @@
 import React, { useEffect, useState, useContext } from "react";
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
+import { IoClose } from "react-icons/io5";
+import { useActiveAccount } from "thirdweb/react";
+import { parseUnits } from "ethers/lib/utils";
+import Image from "next/image";
+import { encodePacked } from "thirdweb/utils";
+import { useTranslation } from "next-i18next";
+import { Account } from "thirdweb/wallets";
+import LoadingButton, {
+  LoadingButtonStates,
+} from "@/tokenPayLib/components/UI/LoadingButton";
 import {
   api,
   AuthContext,
   sendErrorReport,
 } from "../../../../../context/UserContext";
-import { IoClose } from "react-icons/io5";
 import TokenSelector from "../../../Forms/TokenSelector";
-import { useActiveAccount } from "thirdweb/react";
 import { TokensByChainId } from "../../../../utilities/crypto/currencies";
-import { parseUnits } from "ethers/lib/utils";
-import Image from "next/image";
 import { PATHS } from "../../../../utilities/crypto/getPath";
 import QuoteV2Abi from "../../../../assets/quoteV2Abi.json";
 import {
@@ -19,16 +25,10 @@ import {
   uniswapAddresses,
 } from "../../../../utilities/crypto/convertAnyToAny";
 import numberWithZeros from "../../../../utilities/math/numberWithZeros";
-import { encodePacked } from "thirdweb/utils";
 import MiniLoader from "../../../UI/MiniLoader";
-import { useTranslation } from "next-i18next";
-import { Account } from "thirdweb/wallets";
 import { SimpleToken } from "../../../../types/token.types";
 import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
-import LoadingButton, {
-  LoadingButtonStates,
-} from "@/tokenPayLib/components/UI/LoadingButton";
 
 interface RawCryptoProps {
   amount: number;
@@ -85,8 +85,8 @@ export default function RawCrypto({
   useEffect(() => {
     async function fetchQuote() {
       setLoadingQuote(true);
-      let contract = getContract({
-        client: client,
+      const contract = getContract({
+        client,
         chain: polygon,
         address: uniswapAddresses[polygon.id].quote,
         abi: QuoteV2Abi as Array<any>,
@@ -101,7 +101,7 @@ export default function RawCrypto({
 
       try {
         const quote = await readContract({
-          contract: contract,
+          contract,
           method: "quoteExactInput",
           params: [
             encodedPath,
@@ -177,15 +177,11 @@ export default function RawCrypto({
     if (!token) return null;
     let targetTokenArr = Object.keys(
       PATHS[polygon.id][token.id.toUpperCase()]
-    ).map((tokenId) => {
-      return [tokenId, TokensByChainId[polygon.id][tokenId]];
-    });
+    ).map((tokenId) => [tokenId, TokensByChainId[polygon.id][tokenId]]);
 
-    targetTokenArr = targetTokenArr.filter((item) => {
-      return item[1] !== undefined;
-    });
+    targetTokenArr = targetTokenArr.filter((item) => item[1] !== undefined);
 
-    let targetTokens = Object.fromEntries(targetTokenArr);
+    const targetTokens = Object.fromEntries(targetTokenArr);
     setTargetTokens(targetTokens);
     setSelectedToken(targetTokenArr[0][1] as SimpleToken);
 
@@ -230,7 +226,7 @@ export default function RawCrypto({
         const divisor = BigInt(1000);
         const sendAmount = quote[0] - (quote[0] * feePercentage) / divisor;
 
-        let transactionHash = await handleTransfer(
+        const transactionHash = await handleTransfer(
           selectedToken,
           sendAmount.toString(),
           targetAddress
@@ -242,7 +238,7 @@ export default function RawCrypto({
           amount: Number(amount),
           currency: defaultToken.contractAddress,
           currencyName: defaultToken.id,
-          transactionHash: transactionHash,
+          transactionHash,
           UUID: transactionHash,
           sendingWallet: account?.address || "",
           currencyDecimals: defaultToken.decimals,
@@ -275,18 +271,18 @@ export default function RawCrypto({
         return;
       }
     } else {
-      let transactionHash = await handleTransfer(
+      const transactionHash = await handleTransfer(
         defaultToken,
         parseUnits(amount.toString(), defaultToken.decimals).toString(),
         targetAddress
       );
 
-      let transactionData: FiatTransactionRequest = {
+      const transactionData: FiatTransactionRequest = {
         partner: "crypto",
         amount: Number(amount),
         currency: defaultToken.contractAddress,
         currencyName: defaultToken.id,
-        transactionHash: transactionHash,
+        transactionHash,
         UUID: transactionHash,
         sendingWallet: account?.address || "",
         currencyDecimals: defaultToken.decimals,
@@ -326,11 +322,11 @@ export default function RawCrypto({
               selectedToken && differentToken && "text-gray-500 grayscale"
             } flex flex-row gap-2 items-center bg-gray-100 rounded p-4`}
           >
-            <div className={`relative w-8 h-8`}>
+            <div className="relative w-8 h-8">
               <Image src={defaultToken.icon} fill alt="token icon" />+
             </div>
             <div>{defaultToken.name}</div>
-            <div className="flex-1"></div>
+            <div className="flex-1" />
             <div className="font-bold">
               {parseFloat(amount.toString()).toLocaleString()}
             </div>
@@ -370,7 +366,7 @@ export default function RawCrypto({
                     </p>
                   )}
                   <div className="flex gap-2 justify-end items-center mt-2">
-                    <div className="flex-1"></div>
+                    <div className="flex-1" />
                     {loadingQuote && (
                       <div className="">
                         <MiniLoader />
@@ -412,7 +408,7 @@ export default function RawCrypto({
             <LoadingButton
               isLoading={isLoading}
               onClick={handleSend}
-              fullWidth={true}
+              fullWidth
               active={selectedToken && !loadingQuote}
             >
               {tCrossborder("withdraw.crypto.sendNow")}

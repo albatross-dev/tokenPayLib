@@ -10,7 +10,7 @@ export default function sortMethodByCurrencyWithdraw(
   methods: PaymentTypesArray,
   transfer: boolean
 ): Record<string, PaymentTypesArray> {
-  let sortedMethods: Record<string, any[]> = {};
+  const sortedMethods: Record<string, any[]> = {};
 
   methods.forEach((method) => {
     // Ensure acceptedCrypto is an array (split if it's a string)
@@ -27,9 +27,7 @@ export default function sortMethodByCurrencyWithdraw(
 
       if (transfer) {
         if (!method.withdrawOnly) sortedMethods[currency].push(method);
-      } else {
-        if (!method.noWithdraw) sortedMethods[currency].push(method);
-      }
+      } else if (!method.noWithdraw) sortedMethods[currency].push(method);
     });
   });
 
@@ -45,7 +43,7 @@ export default function sortMethodByCurrencyWithdraw(
 export function sortMethodByCurrencyDeposit(
   methods: PaymentTypesArray
 ): Record<string, PaymentTypesArray> {
-  let sortedMethods: Record<string, any[]> = {};
+  const sortedMethods: Record<string, any[]> = {};
 
   methods.forEach((method) => {
     // Ensure acceptedCrypto is an array (split if it's a string)
@@ -64,7 +62,7 @@ export function sortMethodByCurrencyDeposit(
 
       if (method.supportDeposit) {
         // copy method and replace acceptedCrypto with currency
-        let methodCopy = { ...method, acceptedCrypto: currency };
+        const methodCopy = { ...method, acceptedCrypto: currency };
         sortedMethods[currency].push(methodCopy);
       }
     });

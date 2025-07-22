@@ -7,9 +7,10 @@ import { encodePacked } from "thirdweb/utils";
 import QueryString from "qs";
 import { RxUpdate } from "react-icons/rx";
 
+import client from "@/utilities/thirdweb-client";
 import { showErrorPopup } from "../Modals/ErrorPrompt";
 import ExchangeModal from "../Modals/ExchangeModal";
-import fetchBalance from "../../utilities/crypto/fetchBalance";
+import fetchBalance, { fetchBalanceRaw } from "../../utilities/crypto/fetchBalance";
 import tokenyByChain from "../../utilities/crypto/tokenByChain";
 import TokenSelector from "../Forms/TokenSelector";
 
@@ -17,7 +18,6 @@ import { ConvertStateButtonWide } from "../UI/ConvertStateButton";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 
 
-import client from "@/utilities/thirdweb-client";
 import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 
 
@@ -153,7 +153,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
 
       setPools(newPools);
 
-      return pools;
+      return newPools;
     } catch (e) {
       console.error("Error fetching paths", e);
       return [];
@@ -174,6 +174,8 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
       ...prevState,
       targetTokens: "processing",
     }));
+
+    console.log("fetching paths for", token);
 
     const paths = await fetchPaths(token);
 
@@ -298,7 +300,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     setBalanceUpdate(true);
 
     if (selectedToken) {
-      const balance = await fetchBalance(
+      const balance = await fetchBalanceRaw(
         client,
         activeChain,
         selectedToken.contractAddress,
@@ -314,7 +316,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
     }
 
     if (selectedTargetToken) {
-      const balance = await fetchBalance(
+      const balance = await fetchBalanceRaw(
         client,
         activeChain,
         selectedTargetToken.contractAddress,
@@ -542,7 +544,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
         if (target) {
           setSelectedTargetToken(tt[target]);
         }
-  
         if (max) {
           setMaxAmountImmediately(ot[origin]);
         }

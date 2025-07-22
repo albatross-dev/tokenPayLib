@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 import {
   createKoyweBankAccount,
   getBankAccounts,
@@ -7,7 +8,6 @@ import {
   KoyweBankInfo,
 } from "../../../universal/koyweUtils";
 import { Country } from "../../../../../../types/payload-types";
-import { useTranslation } from "next-i18next";
 import Loader from "../../../../../UI/Loader";
 import MiniLoader from "../../../../../UI/MiniLoader";
 import LoadingButton, {
@@ -166,7 +166,7 @@ function KoyweCreateBankAccountForm({ country, setView, fetchBankAccounts }) {
           message: tCrossborder(
             "withdraw.koywe.bankAccountCreationErrorMessage"
           ),
-          error: error,
+          error,
         });
         sendErrorReport(
           "KoyweCreateBankAccountForm - Fetching supported banks failed",
@@ -196,7 +196,7 @@ function KoyweCreateBankAccountForm({ country, setView, fetchBankAccounts }) {
       setError({
         title: tCrossborder("withdraw.koywe.bankAccountCreationError"),
         message: tCrossborder("withdraw.koywe.bankAccountCreationErrorMessage"),
-        error: error,
+        error,
       });
       setLoadingButtonState("error");
     }

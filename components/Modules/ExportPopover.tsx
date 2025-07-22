@@ -120,8 +120,8 @@ export default function ExportPopover({
                     isLoading={loadingButtonState}
                     onClick={handleDataExport}
                     active={loadingButtonActive}
-                    fullWidth={true}
-                    showSuccessColor={true}
+                    fullWidth
+                    showSuccessColor
                   >
                     {loadingButtonState === "success"
                       ? t("ExportPopover.success")
@@ -145,9 +145,7 @@ function convertToCSV(
   if (arr.length === 0) return "";
 
   // Helper function to get nested object values
-  const getNestedValue = (obj: any, path: string) => {
-    return path.split(".").reduce((acc, part) => acc && acc[part], obj);
-  };
+  const getNestedValue = (obj: any, path: string) => path.split(".").reduce((acc, part) => acc && acc[part], obj);
 
   // Process the data
   const processedData = arr.map((obj) => {

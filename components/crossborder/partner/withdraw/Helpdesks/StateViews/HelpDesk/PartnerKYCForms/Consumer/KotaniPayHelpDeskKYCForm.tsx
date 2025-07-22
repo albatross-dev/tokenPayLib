@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
-import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
@@ -163,21 +163,19 @@ export default function KotaniPayHelpDeskKYCFormConsumer({ setValue, methods }: 
     },
     {
       type: "ui",
-      content: <div className="font-bold"></div>,
+      content: <div className="font-bold" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.kotanipay.acceptTermsLabel"),
       type: "custom",
-      content: (methods: UseFormReturn) => {
-        return (
+      content: (methods: UseFormReturn) => (
           <AcceptTermsCheckbox
             methods={methods}
             partnerName="KotaniPay"
             partnerTerms="https://docs.kotanipay.com/docs/terms-and-conditions"
           />
-        );
-      },
+        ),
     },
   ];
 

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { FieldValues, FormProvider, useForm, UseFormReturn, UseFormSetValue } from "react-hook-form";
+import { useTranslation } from "next-i18next";
 import OvexKYCForm from "./PartnerKYCForms/Vendor/OvexKYCForm";
 import BitcoinVNHelpDeskKYCForm from "./PartnerKYCForms/Vendor/BitcoinVNHelpDeskKYCForm";
 import KoyweHelpDeskKYCForm from "./PartnerKYCForms/Vendor/KoyweHelpDeskKYCForm";
 import KotaniPayHelpDeskKYCForm from "./PartnerKYCForms/Vendor/KotaniPayHelpDeskKYCForm";
-import { useTranslation } from "next-i18next";
 import { AuthContext } from "../../../../../../../../context/UserContext";
 import OvexKYCFormConsumer from "./PartnerKYCForms/Consumer/OvexKYCForm";
 import BitcoinVNHelpDeskKYCFormConsumer from "./PartnerKYCForms/Consumer/BitcoinVNHelpDeskKYCForm";

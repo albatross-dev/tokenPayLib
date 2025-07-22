@@ -91,7 +91,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   const [transaction, setTransaction] = useState<BitcoinVNTransaction | null>(
     null
   );
-  const selectedToken = currencies["USDC"];
+  const selectedToken = currencies.USDC;
   const [formData, setFormData] = useState({
     accountNumber: "",
     accountHolder: "",
@@ -161,7 +161,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
       } else {
         try {
           await api.patch(`/api/fiatTransaction/${fiatTransaction?.id}`, {
-            transactionHash: transactionHash,
+            transactionHash,
           });
 
           setState("success");

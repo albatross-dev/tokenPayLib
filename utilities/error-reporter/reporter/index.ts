@@ -194,7 +194,7 @@ export class Reporter {
       excObject = data;
     }
 
-    let compositeMessage = this.stringifyData(excObject);
+    const compositeMessage = this.stringifyData(excObject);
 
     // Create the log entry to be send
     const logEntry = {
@@ -203,7 +203,7 @@ export class Reporter {
       level,
       message,
       data: compositeMessage,
-      email: email,
+      email,
       userInformation: this.userInformation ? this.userInformation : undefined,
     };
 
@@ -354,9 +354,9 @@ export class Reporter {
     if (typeof data === "function") {
       if (data instanceof RegExp) {
         return data.toString();
-      } else {
+      } 
         return data();
-      }
+      
     }
 
     return data;
@@ -369,7 +369,7 @@ export class Reporter {
    * @return The stringified data.
    */
   private stringifyData(data: any): string {
-    let actualData = this.stringifyDataFunction(data);
+    const actualData = this.stringifyDataFunction(data);
 
     switch (typeof actualData) {
       case "string":
@@ -388,9 +388,9 @@ export class Reporter {
           actualData instanceof Boolean
         ) {
           return actualData.toString();
-        } else {
+        } 
           return JSON.stringify(actualData);
-        }
+        
       default:
         return "unknown";
     }

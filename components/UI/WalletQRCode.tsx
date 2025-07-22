@@ -9,7 +9,7 @@ import { useTranslation } from "next-i18next";
 /**
  * Component to display a QR code of the current wallet address
  */
-const WalletQRCode = () => {
+function WalletQRCode() {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -45,7 +45,7 @@ const WalletQRCode = () => {
               size={256}
               style={{ height: "auto", maxWidth: "100%", width: "100%" }}
               value={account.address}
-              viewBox={`0 0 256 256`}
+              viewBox="0 0 256 256"
             />
           </div>
           <p className="flex items-center justify-center bg-uhuBlue rounded-full text-sm mt-4 text-white py-1 font-mono pl-3">
@@ -63,6 +63,6 @@ const WalletQRCode = () => {
       )}
     </div>
   );
-};
+}
 
 export default WalletQRCode;

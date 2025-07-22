@@ -9,6 +9,7 @@ import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
 import Unlimit from "../../crossborder/partner/deposit/Unlimit";
 import DepositError from "../DepositError";
 import { QuotePaymentType } from "./DepositMethodSelector";
+
 interface DepositPanelProps {
   method: QuotePaymentType;
   amount: number;

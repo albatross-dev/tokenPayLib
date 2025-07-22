@@ -1,3 +1,5 @@
+import { Account } from "thirdweb/wallets";
+import React from "react";
 import {
   Consumer,
   Country,
@@ -13,8 +15,6 @@ import CryptoPartner from "../../partner/withdraw/PartnerCrypto";
 import Unlimit from "../../partner/withdraw/Unlimit";
 import HelpDesk from "../../partner/withdraw/Helpdesks/HelpDesk";
 import Koywe from "../../partner/withdraw/Koywe/Koywe";
-import { Account } from "thirdweb/wallets";
-import React from "react";
 
 interface TransferPanelProps {
   method?: PaymentTypesArray[number];

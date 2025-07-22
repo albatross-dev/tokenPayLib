@@ -1,4 +1,5 @@
 "use client";
+
 import { Consumer, Vendor } from "@/tokenPayLib/types/payload-types";
 import { SimpleToken } from "@/tokenPayLib/types/token.types";
 import { useEffect, useState } from "react";
@@ -112,11 +113,11 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
           targetAddress
         );
 
-        let transferData: FiatTransactionRequest = {
+        const transferData: FiatTransactionRequest = {
           amount: Number(amount),
           currency: selectedToken.contractAddress,
           currencyName: selectedToken.id.toUpperCase(),
-          transactionHash: transactionHash,
+          transactionHash,
           sendingWallet: account?.address,
           currencyDecimals: selectedToken.decimals,
           receivingWallet: targetAddress,
@@ -138,7 +139,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         console.log("error handle send", error);
         setErrorMessage({
           message: "Bitte versuchen Sie es später nochmal",
-          error: error,
+          error,
         });
         sendErrorReport("SendCrypto - Sending failed", error);
         setIsLoading("error");
@@ -175,7 +176,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       <div>
         {isClient && (
           <SimpleList
-            collection={"cryptoTransfer"}
+            collection="cryptoTransfer"
             columns={getSendCryptoColumns(tAccount)}
             loader={Boolean(newTxHash)}
           >

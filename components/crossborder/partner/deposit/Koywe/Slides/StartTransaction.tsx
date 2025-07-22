@@ -1,11 +1,11 @@
 import React from "react";
+import { useTranslation } from "next-i18next";
+import { HiChevronDoubleRight } from "react-icons/hi2";
 import {
   KoywePaymentMethod,
   KoyweQuoteResponse,
 } from "../../../universal/koyweUtils";
 import { QuotePaymentType } from "../../../../../depositPage/slides/DepositMethodSelector";
-import { useTranslation } from "next-i18next";
-import { HiChevronDoubleRight } from "react-icons/hi2";
 import { getFiatInfoForStableCoin } from "../../../../../../utilities/stableCoinsMaps";
 import LoadingButton, {
   LoadingButtonStates,

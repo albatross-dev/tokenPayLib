@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { useTranslation } from "next-i18next";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { SimpleToken } from "../../types/token.types";
 
 interface Token {
@@ -108,7 +108,7 @@ const ExchangeModal: React.FC<ExchangeModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
+                  className="inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   onClick={handleConfirmExchange}
                 >
                   {t("confirm")}

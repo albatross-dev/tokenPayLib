@@ -35,7 +35,7 @@ export default function TransactionPaymentPending({
         <div>{tCrossborder("withdraw.otcStates.otcAddressInfo")}</div>
         <div className="">
           <AddressDisplay
-            concat={true}
+            concat
             value={transaction?.burnAddress}
             className="bg-gray-200 rounded p-2 inline-flex items-center justify-center"
           />

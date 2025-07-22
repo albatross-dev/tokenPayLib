@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -6,7 +6,6 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { Fragment, useState } from "react";
 import { BsX } from "react-icons/bs";
 import { useTranslation } from "next-i18next";
 import AddressDisplay from "../UI/AddressDisplay";
@@ -84,7 +83,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                             <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-900">
                               {typeof value === "string" ? (
                                 value?.startsWith("0x") ? (
-                                  <AddressDisplay value={value} concat={true} />
+                                  <AddressDisplay value={value} concat />
                                 ) : (
                                   value
                                 )

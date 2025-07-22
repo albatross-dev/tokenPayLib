@@ -12,8 +12,7 @@ const CurrencyConversionSlide: React.FC<CurrencyConversionSlideProps> = ({
   swiperInstance,
   goToSlide,
   back,
-}) => {
-  return (
+}) => (
     <div className="relative z-[10] p-4 flex flex-col gap-4 max-w-4xl mx-auto">
       <button
         onClick={back}
@@ -35,6 +34,5 @@ const CurrencyConversionSlide: React.FC<CurrencyConversionSlideProps> = ({
       )}
     </div>
   );
-};
 
 export default CurrencyConversionSlide;

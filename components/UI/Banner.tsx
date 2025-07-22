@@ -18,7 +18,7 @@ export default function Banner({ color, href, children, rounded = "" }: BannerPr
       className={`${color} ${rounded} text-white font-bold px-4 py-1 flex flex-row justify-between items-center`}
     >
       <div>{children}</div>
-      <BsArrowUpRight className="ml-4"></BsArrowUpRight>
+      <BsArrowUpRight className="ml-4" />
     </div>
   </Link>;
 } 

@@ -1,4 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
+import client from "@/utilities/thirdweb-client";
+import { polygon } from "thirdweb/chains";
+import { useTranslation } from "next-i18next";
 import TransactionNone from "./StateViews/Transaction/TransactionNone";
 import TransactionStarted from "./StateViews/Transaction/TransactionStarted";
 import TransactionPending from "./StateViews/Transaction/TransactionPending";
@@ -10,9 +13,6 @@ import LoadingHelpDesk from "./StateViews/HelpDesk/LoadingHelpDesk";
 import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestError";
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
-import client from "@/utilities/thirdweb-client";
-import { polygon } from "thirdweb/chains";
-import { useTranslation } from "next-i18next";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";
 import { api, AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
 import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
@@ -191,7 +191,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
         currency: country.preferredStableCoin,
         currencyDecimals: currencies[country.preferredStableCoin].decimals,
         finalCurrency: country.countryInfo.currency,
-        amount: amount,
+        amount,
         country: country.countryCode,
         fromCountry: user?.vendorCountry || user?.country,
         transactionDetails: `${data.receiverName}\nIBAN: ${data.receiverIban}\nBank: ${data.receiverBank}\nComments: ${data.textareaContent}`,
@@ -214,7 +214,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
     try {
       setIsLoading("processing");
       const acceptedCrypto = currencies[method.acceptedCrypto];
-      const amountWithDecimals = amount * Math.pow(10, acceptedCrypto.decimals);
+      const amountWithDecimals = amount * 10**acceptedCrypto.decimals;
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
         account,
@@ -225,8 +225,8 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
       );
 
       await api.post("/api/fiatTransaction/paymentUpdate", {
-        transaction: transaction,
-        transactionHash: transactionHash,
+        transaction,
+        transactionHash,
       });
     } catch (error) {
       sendErrorReport("HelpDesk - Send payment failed", error);

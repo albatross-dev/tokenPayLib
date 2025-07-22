@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import ChainSelector, { chainsBridge } from "../Forms/ChainSelector";
 import Image from "next/image";
-import ConvertStateButton from "../UI/ConvertStateButton";
-import tokenyByChain from "../../utilities/crypto/tokenByChain";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import { ERC20ABI, formatCrypto, LogoByShortName, TokensByChainId } from "../../utilities/crypto/currencies";
 import { readContract, getContract } from "thirdweb";
 import client from "@/utilities/thirdweb-client";
+import ChainSelector, { chainsBridge } from "../Forms/ChainSelector";
+import ConvertStateButton from "../UI/ConvertStateButton";
+import tokenyByChain from "../../utilities/crypto/tokenByChain";
+import { ERC20ABI, formatCrypto, LogoByShortName, TokensByChainId } from "../../utilities/crypto/currencies";
 import getChainById from "../../utilities/crypto/getChainById";
 import MiniLoader from "../UI/MiniLoader";
 import BridgeModalUniversal from "../Modals/BridgeModalUniversal";
@@ -53,9 +53,9 @@ const CrossChainSection: React.FC = () => {
 
     setBalanceOfStableLoading(true);
     const stableContract = getContract({
-      client: client,
+      client,
       chain: getChainById(activeChain.id),
-      address: TokensByChainId[activeChain.id]["USDC"].contractAddress,
+      address: TokensByChainId[activeChain.id].USDC.contractAddress,
       abi: ERC20ABI as Array<any>,
     });
 
@@ -81,7 +81,7 @@ const CrossChainSection: React.FC = () => {
       <BridgeModalUniversal
         show={showBridgeModal}
         closeModal={() => setShowBridgeModal(false)}
-        token={activeChain ? TokensByChainId[activeChain?.id]["USDC"] : null}
+        token={activeChain ? TokensByChainId[activeChain?.id].USDC : null}
         chain={activeChain}
         spokePool={tokenyByChain[activeChain?.id]?.spokePool}
         maxAmount={Number(balanceOfStableData)}
@@ -129,16 +129,15 @@ const CrossChainSection: React.FC = () => {
             </span>
           </div>
 
-          <Image src={LogoByShortName["USDC"]} className="h-8 w-8" alt="USDC Logo" />
+          <Image src={LogoByShortName.USDC} className="h-8 w-8" alt="USDC Logo" />
         </div>
       </div>
       <div className="mt-4">{t("target_chain")}</div>
       <div className="flex flex-col gap-4 mt-4">
         {chainsBridge
           .filter((chain) => chain.chainId !== activeChain?.id)
-          .map((chain) => {
-            return (
-              <div key={chain.chainId + "chains"} className="flex flex-col">
+          .map((chain) => (
+              <div key={`${chain.chainId  }chains`} className="flex flex-col">
                 <div className="pt-2  pb-2 rounded-md flex flex-row items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Image src={chain.logo} className="h-5 w-5" alt={`${chain.name} Logo`} />
@@ -152,13 +151,12 @@ const CrossChainSection: React.FC = () => {
                     disabled={!account}
                     state={loading[`${chain.chainId}`]}
                   >
-                    <Image src={LogoByShortName["USDC"]} className="h-6 w-6" alt="USDC Logo" />
+                    <Image src={LogoByShortName.USDC} className="h-6 w-6" alt="USDC Logo" />
                   </ConvertStateButton>
                 </div>
               </div>
-            );
-          })}
-        <div></div>
+            ))}
+        <div />
       </div>
     </div>
   );

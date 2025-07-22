@@ -1,9 +1,9 @@
-import duplicateByPaymentModality from "../../../../utilities/crossborder/duplicateByPaymentModality";
-import sortMethodByCurrencyWithdraw from "../../../../utilities/crossborder/sortMethodByCurrency";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { PaymentTypesArray } from "../../../../types/payload-types";
 import { SwiperClass } from "swiper/react";
+import duplicateByPaymentModality from "../../../../utilities/crossborder/duplicateByPaymentModality";
+import sortMethodByCurrencyWithdraw from "../../../../utilities/crossborder/sortMethodByCurrency";
+import { PaymentTypesArray } from "../../../../types/payload-types";
 import { getFiatInfoForStableCoin } from "../../../../utilities/stableCoinsMaps";
 
 interface FiatBalanceSelectorProps {

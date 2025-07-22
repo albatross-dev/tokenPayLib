@@ -4,12 +4,12 @@ import { useTranslation } from "next-i18next";
 import { IoClose } from "react-icons/io5";
 import { RxUpdate } from "react-icons/rx";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import { convertAnyToAnyDirect, uniswapAddresses } from "../../utilities/crypto/convertAnyToAny";
 
 import { IoIosSwap } from "react-icons/io";
 import { getContract, readContract } from "thirdweb";
 import { encodePacked } from "thirdweb/utils";
 import client from "@/utilities/thirdweb-client";
+import { convertAnyToAnyDirect, uniswapAddresses } from "../../utilities/crypto/convertAnyToAny";
 import QuoteV2Abi from "../../assets/quoteV2Abi.json";
 import { SimpleToken } from "../../types/token.types";
 import { formatCrypto } from "../../utilities/crypto/currencies";
@@ -94,8 +94,8 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
         return;
       }
 
-      let contract = getContract({
-        client: client,
+      const contract = getContract({
+        client,
         chain: activeChain,
         address: uniswapAddresses[activeChain.id].quote,
         abi: QuoteV2Abi as any,
@@ -106,7 +106,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
       const encodedPath = encodePacked(path[0], path[1]);
 
       const quote = await readContract({
-        contract: contract,
+        contract,
         method: "quoteExactInput",
         params: [encodedPath, BigInt(amount * numberWithZeros(selectedToken?.decimals || 1))],
       });
@@ -200,7 +200,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
   }
 
   return (
-    <Transition appear show={show ? true : false} as={Fragment}>
+    <Transition appear show={!!show} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -284,7 +284,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                     ? STANDARD_STABLE_MAP[selectedToken?.name]?.symbol
                     : selectedToken?.name}
                 </div>
-                <div className="flex-1"></div>
+                <div className="flex-1" />
                 <button
                   type="button"
                   className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"

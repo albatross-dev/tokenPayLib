@@ -36,7 +36,7 @@ export const useSendCryptoForm = ({
     targetAddress: string,
     maxAmount?: number
   ): boolean => {
-    let newErrors: Errors = {};
+    const newErrors: Errors = {};
 
     if (!selectedToken) {
       newErrors.selectedToken = tAccount("sendCrypto.errors.selectToken");

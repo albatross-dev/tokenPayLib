@@ -64,8 +64,8 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
   useEffect(() => {
     async function fetchQuote() {
       setLoadingQuote(true);
-      let contract = getContract({
-        client: client,
+      const contract = getContract({
+        client,
         chain: polygon,
         address: uniswapAddresses[polygon.id].quote,
         abi: QuoteV2Abi as Array<any>,
@@ -78,7 +78,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
       const encodedPath = encodePacked(path[0], path[1]);
 
       const quote = await readContract({
-        contract: contract,
+        contract,
         method: "quoteExactInput",
         params: [encodedPath, BigInt(amount * numberWithZeros(selectedToken?.decimals || 1))],
       });
@@ -136,15 +136,11 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
 
   function processTargetTokens(token: SimpleToken | null): Record<string, SimpleToken> | null {
     if (!token) return null;
-    let targetTokenArr = Object.keys(PATHS[polygon.id][token.id.toUpperCase()]).map((tokenId) => {
-      return [tokenId, TokensByChainId[polygon.id][tokenId]];
-    });
+    let targetTokenArr = Object.keys(PATHS[polygon.id][token.id.toUpperCase()]).map((tokenId) => [tokenId, TokensByChainId[polygon.id][tokenId]]);
 
-    targetTokenArr = targetTokenArr.filter((item) => {
-      return item[1] !== undefined;
-    });
+    targetTokenArr = targetTokenArr.filter((item) => item[1] !== undefined);
 
-    let targetTokens = Object.fromEntries(targetTokenArr);
+    const targetTokens = Object.fromEntries(targetTokenArr);
     setTargetTokens(targetTokens);
     setSelectedToken(targetTokenArr[0][1] as SimpleToken);
 
@@ -186,14 +182,14 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
         const divisor = BigInt(1000);
         const sendAmount = quote[0] - (quote[0] * feePercentage) / divisor;
 
-        let transactionHash = await handleTransfer(selectedToken, sendAmount, targetAddress);
+        const transactionHash = await handleTransfer(selectedToken, sendAmount, targetAddress);
 
-        let transactionData: FiatTransactionRequest = {
+        const transactionData: FiatTransactionRequest = {
           partner: "crypto",
           amount: Number(amount),
           currency: defaultToken.contractAddress,
           currencyName: defaultToken.id,
-          transactionHash: transactionHash,
+          transactionHash,
           UUID: transactionHash,
           sendingWallet: account?.address || "",
           currencyDecimals: defaultToken.decimals,
@@ -224,7 +220,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
         return;
       }
     } else {
-      let transactionHash = await handleTransfer(
+      const transactionHash = await handleTransfer(
         defaultToken,
         BigInt(amount * numberWithZeros(defaultToken?.decimals || 1)),
         targetAddress
@@ -236,7 +232,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
         amount: Number(amount),
         currency: defaultToken.contractAddress,
         currencyName: defaultToken.id,
-        transactionHash: transactionHash,
+        transactionHash,
         UUID: transactionHash,
         sendingWallet: account?.address,
         currencyDecimals: defaultToken.decimals,
@@ -268,7 +264,7 @@ const CryptoPartner: React.FC<CryptoPartnerProps> = ({ amount, country, method }
               {getFiatInfoForStableCoin(defaultToken.name)?.symbol}
             </div>
             <div>{getFiatInfoForStableCoin(defaultToken.name)?.id}</div>
-            <div className="flex-1"></div>
+            <div className="flex-1" />
             <div className="bg-uhuBlue text-[11px] text-white rounded px-1 text">
               via <span className="font-bold">{defaultToken.name}</span>
             </div>

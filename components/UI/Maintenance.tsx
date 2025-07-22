@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import { FaTools } from "react-icons/fa";
 
-const Maintenance = () => {
+function Maintenance() {
   const { t } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement>(null);
   const [showText, setShowText] = useState(true);
@@ -40,6 +40,6 @@ const Maintenance = () => {
       )}
     </div>
   );
-};
+}
 
 export default Maintenance;

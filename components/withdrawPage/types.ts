@@ -1,6 +1,6 @@
 import { Swiper } from "swiper";
-import { Consumer, Country, Maintenance, PaymentTypesArray, Vendor } from "../../types/payload-types";
 import { Account } from "thirdweb/wallets";
+import { Consumer, Country, Maintenance, PaymentTypesArray, Vendor } from "../../types/payload-types";
 import { FiatCodes } from "../../types/derivedPayload.types";
 
 export interface WithdrawPageProps {

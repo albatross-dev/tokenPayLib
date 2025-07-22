@@ -1,6 +1,6 @@
 import React from "react";
-import { FiatTransaction } from "../../../../types/payload-types";
 import { useTranslation } from "next-i18next";
+import { FiatTransaction } from "../../../../types/payload-types";
 import KoyweAwaitingCryptoPayment from "./KoyweAwaitingCryptoPayment";
 
 export default function KoyweWithdrawPanel({

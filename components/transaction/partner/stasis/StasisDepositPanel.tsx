@@ -1,6 +1,6 @@
 import React from "react";
-import { FiatTransaction } from "../../../../types/payload-types";
 import { useTranslation } from "next-i18next";
+import { FiatTransaction } from "../../../../types/payload-types";
 import StasisAwaitingFiatPayment from "./StasisAwaitingFiatPayment";
 
 export default function StasisDepositPanel({

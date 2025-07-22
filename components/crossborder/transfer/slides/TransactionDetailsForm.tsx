@@ -91,11 +91,11 @@ export default function TransactionDetailsForm({
             />
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
-              {Boolean(getFiatInfoForStableCoin(selectedCurrency?.symbol || ""))
-                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol +
-                  " (" +
-                  getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.id +
-                  ")"
+              {getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
+                ? `${getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol 
+                  } (${ 
+                  getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.id 
+                  })`
                 : selectedCurrency?.symbol}
             </div>
           </div>
@@ -137,13 +137,13 @@ export default function TransactionDetailsForm({
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
                   src={(selectedCountry.countryInfo.background as CdnMedia).url}
-                  fill={true}
+                  fill
                   style={{ objectFit: "cover" }}
                   alt="Country Background"
                 />
               </div>
             )}
-            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black"></div>
+            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black" />
 
             <h2 className="left-8 bottom-0 absolute z-[3] text-white text-3xl font-bold mb-4">
               {selectedCountry?.countryInfo.name}

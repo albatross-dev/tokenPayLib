@@ -213,7 +213,7 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({
                     {action.buttonText}
                   </button>
                 ) : (
-                  <div></div>
+                  <div />
                 )}
 
                 <button

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -11,7 +11,6 @@ import {
 } from "@headlessui/react";
 import { animated, useSprings } from "@react-spring/web";
 import QueryString from "qs";
-import { useContext, useEffect, useRef, useState } from "react";
 import AnimateHeight from "react-animate-height";
 import { useTranslation } from "next-i18next";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
@@ -107,7 +106,7 @@ function CountriesInfo({ countries, selectedCountry, selectedContinent, countryS
   );
 
   function aggregatePaymentTypeInfo(paymentPartners: PaymentPartner[]): PaymentTypeInfo {
-    let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
+    const filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
     const paymentTypes = filledInPartners.reduce<PaymentTypeInfo>((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
@@ -116,7 +115,7 @@ function CountriesInfo({ countries, selectedCountry, selectedContinent, countryS
         if (!acc[partner.withdrawModality].find((c) => c.currency === currency.currency)) {
           acc[partner.withdrawModality].push({
             currency: currency.currency,
-            partner: partner,
+            partner,
           });
         }
       });
@@ -142,7 +141,7 @@ function CountriesInfo({ countries, selectedCountry, selectedContinent, countryS
               onClick={async () => {
                 try {
                   setIsLoading("processing");
-                  let timeStamp = new Date().toISOString();
+                  const timeStamp = new Date().toISOString();
                   await api.post(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/message`, {
                     timestamp: timeStamp,
                     loggerName: "Support Logger",
@@ -238,7 +237,7 @@ function CountriesInfo({ countries, selectedCountry, selectedContinent, countryS
                                       : null; // Return null if the array is empty
 
                                     // get unique currencies
-                                    let currencies = [];
+                                    const currencies = [];
                                     aggregatedPaymentTypes[withdrawModality].forEach((currency) => {
                                       if (!currencies.includes(currency.currency)) {
                                         currencies.push(currency.currency);
@@ -405,7 +404,7 @@ export default function ReceiveSection() {
             )}
           </TabPanel>
           <TabPanel className="relative">
-            <WalletQRCode></WalletQRCode>
+            <WalletQRCode />
           </TabPanel>
         </TabPanels>
       </TabGroup>

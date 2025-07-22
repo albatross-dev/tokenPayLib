@@ -1,11 +1,3 @@
-import currencies, {
-  currenciesArbitrum,
-  currenciesAvax,
-  currenciesBase,
-  currenciesBSC,
-  currenciesEthereum,
-  currenciesOP,
-} from "./currencies";
 import {
   ethereum,
   optimism,
@@ -17,6 +9,14 @@ import {
   Chain,
 } from "thirdweb/chains";
 import { encodePacked } from "thirdweb/utils";
+import currencies, {
+  currenciesArbitrum,
+  currenciesAvax,
+  currenciesBase,
+  currenciesBSC,
+  currenciesEthereum,
+  currenciesOP,
+} from "./currencies";
 import polygonPaths from "./paths/polygonPaths";
 import ethereumPaths from "./paths/ethereumPaths";
 import arbitumPaths from "./paths/arbitumPaths";
@@ -38,9 +38,9 @@ export const PATHS: Record<string, any> = {
     USDT: {
       USDC: [["address", "uint24", "address"],
         [
-          currenciesAvax["USDT"].contractAddress,
+          currenciesAvax.USDT.contractAddress,
           100, // Pool fee
-          currenciesAvax["USDC"].contractAddress,
+          currenciesAvax.USDC.contractAddress,
         ]],
     },
   },

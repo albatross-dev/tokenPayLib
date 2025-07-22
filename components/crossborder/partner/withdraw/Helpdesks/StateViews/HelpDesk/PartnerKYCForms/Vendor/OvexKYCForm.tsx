@@ -1,11 +1,10 @@
-import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import { UseFormReturn , UseFormSetValue } from "react-hook-form";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
-import { UseFormReturn } from "react-hook-form";
-import { UseFormSetValue } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
 
 let formDataPreloaded = false;
@@ -392,21 +391,19 @@ export default function OvexKYCForm({ setValue, methods }: OvexKYCFormProps) {
     },
     {
       type: "ui",
-      content: <div className="h-4"></div>,
+      content: <div className="h-4" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.acceptTermsLabel"),
       type: "custom",
-      content: (methods) => {
-        return (
+      content: (methods) => (
           <AcceptTermsCheckbox
             methods={methods}
-            partnerName={"Ovex"}
-            partnerTerms={"https://storage.googleapis.com/ovex-static-assets/legal/OVEX_Terms_and_Conditions.pdf"}
+            partnerName="Ovex"
+            partnerTerms="https://storage.googleapis.com/ovex-static-assets/legal/OVEX_Terms_and_Conditions.pdf"
           />
-        );
-      },
+        ),
     },
   ];
 

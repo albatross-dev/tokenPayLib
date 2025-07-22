@@ -42,8 +42,8 @@ const chains: ChainDetails[] = [
     logo: ARBITRUM_LOGO,
   },
   { chainId: 8453, name: "Base", chain: BASE_CHAIN, logo: BASE_LOGO },
-  //{ chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
-  //{ chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
+  // { chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
+  // { chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
 ];
 
 export const chainsBridge: ChainDetails[] = [
@@ -62,8 +62,8 @@ export const chainsBridge: ChainDetails[] = [
     logo: ARBITRUM_LOGO,
   },
   { chainId: 8453, name: "Base", chain: BASE_CHAIN, logo: BASE_LOGO },
-  //{ chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
-  //{ chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
+  // { chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
+  // { chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
 ];
 
 const chainsPublic: ChainDetails[] = [
@@ -77,8 +77,8 @@ const chainsPublic: ChainDetails[] = [
   },
   { chainId: 42161, name: "Arbitrum", chain: arbitrum, logo: ARBITRUM_LOGO },
   { chainId: 8453, name: "Base", chain: base, logo: BASE_LOGO },
-  //{ chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
-  //{ chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
+  // { chainId: 43114, name: "Avalanche", chain: avalanche, logo: AVALANCHE_LOGO },
+  // { chainId: 56, name: "BSC", chain: bsc, logo: BSC_LOGO },
 ];
 
 const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
@@ -124,7 +124,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
           titleKey: t("wallet.switchChainError"),
           messageKeyOrText: t("wallet.switchChainErrorDescription"),
           details: {
-            error: error,
+            error,
           },
           action: {
             buttonText: t("wallet.switchChainErrorButton"),
@@ -170,8 +170,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
         <BiChevronDown className="h-6 w-6 text-gray-700" />
       </MenuButton>
       <MenuItems className="origin-top-right absolute right-0 mt-2 w-full z-[30] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-        {chainList.map((chain: ChainDetails) => {
-          return (
+        {chainList.map((chain: ChainDetails) => (
             <MenuItem key={chain.name} as={Fragment}>
               <button
                 className={`hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm ${
@@ -184,8 +183,7 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
                 {router?.chainId === chain.chainId && <span className="ml-2 text-xs text-green-500">({t("pay")})</span>}
               </button>
             </MenuItem>
-          );
-        })}
+          ))}
       </MenuItems>
     </Menu>
   );

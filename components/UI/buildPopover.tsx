@@ -57,25 +57,25 @@ export default function buildPopover(
     }, []);
 
     const getPopoverPanelPosition = (): string => {
-      let classAll = "shadow-lg bg-white z-[99]";
+      const classAll = "shadow-lg bg-white z-[99]";
 
       if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        return 'left-0 bottom-0 w-full rounded-t-[2rem] fixed pb-18 pt-8 ' + classAll;
+        return `left-0 bottom-0 w-full rounded-t-[2rem] fixed pb-18 pt-8 ${  classAll}`;
       }
 
-      let classBase = "transform absolute rounded sm:w-96 max-h-96 overflow-scroll md:px-4 sm:px-0 " + classAll;
+      const classBase = `transform absolute rounded sm:w-96 max-h-96 overflow-scroll md:px-4 sm:px-0 ${  classAll}`;
 
       switch (position) {
         case 'top-left':
-          return 'bottom-full right-0 ' + classBase;
+          return `bottom-full right-0 ${  classBase}`;
         case 'top-right':
-          return 'bottom-full left-0 ' + classBase;
+          return `bottom-full left-0 ${  classBase}`;
         case 'bottom-left':
-          return 'top-full right-0 ' + classBase;
+          return `top-full right-0 ${  classBase}`;
         case 'bottom-right':
-          return 'top-full left-0 ' + classBase;
+          return `top-full left-0 ${  classBase}`;
         default:
-          return 'top-full right-0 ' + classBase;
+          return `top-full right-0 ${  classBase}`;
       }
     };
 
@@ -112,7 +112,7 @@ export default function buildPopover(
                   />
                 </div>
                 {getContent(t)}
-                <div className="sm:hidden h-16"></div>
+                <div className="sm:hidden h-16" />
               </PopoverPanel>
             </Transition>
           </>

@@ -182,6 +182,14 @@ const polygonCurrencies: Record<string, SimpleToken> = {
     abi: realusdcabi,
     icon: matic,
   },
+  POL: {
+    name: "Polygon",
+    id: "pol",
+    decimals: 18,
+    contractAddress: "0x0000000000000000000000000000000000001010",
+    abi: realusdcabi,
+    icon: matic,
+  },
   SHIB: {
     name: "SHIBA INU (PoS)",
     id: "shib",

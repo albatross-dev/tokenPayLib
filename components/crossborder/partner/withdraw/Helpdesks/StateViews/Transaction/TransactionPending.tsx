@@ -1,6 +1,7 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 import Loader from "../../../../../../UI/Loader";
+
 export default function TransactionPending() {
   const { t: tCrossborder } = useTranslation("crossborder");
 

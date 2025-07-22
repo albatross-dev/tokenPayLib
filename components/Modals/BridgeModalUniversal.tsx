@@ -24,7 +24,7 @@ interface BridgeModalUniversalProps {
   destinationChainId: number;
 }
 
-const BridgeModalUniversal = ({
+function BridgeModalUniversal({
   show,
   closeModal,
   token,
@@ -35,7 +35,7 @@ const BridgeModalUniversal = ({
   onStart,
   onFinish,
   destinationChainId,
-}: BridgeModalUniversalProps) => {
+}: BridgeModalUniversalProps) {
   const [amount, setAmount] = useState<number | null>(null);
   const [limits, setLimits] = useState<Limits | null>(null);
   const [quote, setQuote] = useState<QuoteData | null>(null);
@@ -82,7 +82,7 @@ const BridgeModalUniversal = ({
     if (amount <= 0) {
       setInputError(t("greater_zero"));
     } else if (amount > maxAllowed) {
-      setInputError(t("cannot_exceed") + " " + maxAllowed + " " + token?.id);
+      setInputError(`${t("cannot_exceed")  } ${  maxAllowed  } ${  token?.id}`);
     } else {
       setInputError("");
     }
@@ -179,7 +179,7 @@ const BridgeModalUniversal = ({
   }
 
   return (
-    <Transition appear show={show ? true : false} as={Fragment}>
+    <Transition appear show={!!show} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -209,7 +209,7 @@ const BridgeModalUniversal = ({
               </DialogTitle>
 
               <div className="flex flex-row gap-4 bg-red-100 text-red-600 my-4 rounded p-4 items-center">
-                <FiAlertCircle className="w-6 h-6 "></FiAlertCircle>
+                <FiAlertCircle className="w-6 h-6 " />
                 <div className="flex-1 font-bold">{t("after_transaction_note")}</div>
               </div>
 
@@ -297,6 +297,6 @@ const BridgeModalUniversal = ({
       </Dialog>
     </Transition>
   );
-};
+}
 
 export default BridgeModalUniversal;

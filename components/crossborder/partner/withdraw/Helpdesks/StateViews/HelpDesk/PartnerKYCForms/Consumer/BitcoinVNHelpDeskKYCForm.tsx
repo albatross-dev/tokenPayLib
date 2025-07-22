@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
-import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import { FormField } from "../../../../../../../../Forms/types";
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
@@ -54,21 +54,19 @@ export default function BitcoinVNHelpDeskKYCFormConsumer({ setValue, methods }: 
     },
     {
       type: "ui",
-      content: <div className="h-4"></div>,
+      content: <div className="h-4" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.acceptTermsLabel"),
       type: "custom",
-      content: (methods: UseFormReturn) => {
-        return (
+      content: (methods: UseFormReturn) => (
           <AcceptTermsCheckbox
             methods={methods}
             partnerName="BitcoinVN"
             partnerTerms="https://support.bitcoinvn.io/help/en-us/3-general/8-terms-of-service"
           />
-        );
-      },
+        ),
     },
   ];
 

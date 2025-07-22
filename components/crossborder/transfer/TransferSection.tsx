@@ -4,12 +4,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import "swiper/css";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { useActiveAccount } from "thirdweb/react";
+import { useTranslation } from "next-i18next";
+import { ParsedUrlQuery } from "node:querystring";
 import filterCountryData from "../../../utilities/crossborder/filterCountryData";
 import { RouterQuery } from "./types";
 
 // Import slide components
-import { useTranslation } from "next-i18next";
-import { ParsedUrlQuery } from "node:querystring";
 import { api, AuthContext, sendErrorReport } from "../../../../context/UserContext";
 import { FiatCodes } from "../../../types/derivedPayload.types";
 import { Country, PaymentTypesArray } from "../../../types/payload-types";
@@ -73,14 +73,13 @@ export default function TransferSection() {
   }
 
   useEffect(() => {
-    let selectedFiatSymbol: FiatCodes | null = getFiatInfoForStableCoin(preferredStableCoin)?.id;
+    const selectedFiatSymbol: FiatCodes | null = getFiatInfoForStableCoin(preferredStableCoin)?.id;
     if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       // Fetch exchange rate
       console.log("Fetching exchange rate", selectedFiatSymbol, payoutCurrency);
 
       fetchExchangeRate(selectedFiatSymbol);
-    } else {
-      if (payoutCurrency === "crypto") {
+    } else if (payoutCurrency === "crypto") {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
       } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
@@ -90,7 +89,6 @@ export default function TransferSection() {
         setExchangeRate(0);
         setLoadedExchangeRate(false);
       }
-    }
   }, [preferredStableCoin, payoutCurrency]);
 
   useEffect(() => {
@@ -111,7 +109,7 @@ export default function TransferSection() {
 
       console.log("countriesResponse", countriesResponse.data);
 
-      let filteredList = filterCountryData(
+      const filteredList = filterCountryData(
         user?.vendorCountry || user?.billingAddress?.country,
         countriesResponse.data.docs
       );
@@ -138,7 +136,7 @@ export default function TransferSection() {
       }
 
       if (country) {
-        let foundCountry = filteredList.find((c) => c.countryCode === country);
+        const foundCountry = filteredList.find((c) => c.countryCode === country);
         if (foundCountry) {
           setSelectedCountry(foundCountry);
           swiperInstance?.slideTo(1);
@@ -158,11 +156,11 @@ export default function TransferSection() {
   }
 
   function handlePayoutCurrencyUrlParam(currency: string | null) {
-    let query = { ...router.query, payoutCoin: currency || undefined };
+    const query = { ...router.query, payoutCoin: currency || undefined };
     router.push(
       {
         pathname: router.pathname,
-        query: query,
+        query,
       },
       undefined,
       { shallow: true }
@@ -177,7 +175,7 @@ export default function TransferSection() {
   }
 
   function setPreferredStableCoinUrlParam(coin: string) {
-    let query: RouterQuery = { ...router.query, stableCoin: coin || undefined };
+    const query: RouterQuery = { ...router.query, stableCoin: coin || undefined };
     delete query.payoutCoin;
     router.push(
       {
@@ -196,7 +194,7 @@ export default function TransferSection() {
   }
 
   function handleUrlContinentSelect(continent: string) {
-    let query: RouterQuery = {
+    const query: RouterQuery = {
       ...router.query,
       continent: continent || undefined,
     };
@@ -238,7 +236,7 @@ export default function TransferSection() {
   }
 
   function handleUrlCountrySelect(countryCode: string | undefined) {
-    let query: RouterQuery = {
+    const query: RouterQuery = {
       ...router.query,
       country: countryCode || undefined,
     };
@@ -262,7 +260,7 @@ export default function TransferSection() {
 
   // Handle amount input
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    let inputAmount = parseFloat(e.target.value);
+    const inputAmount = parseFloat(e.target.value);
 
     if (selectedMethod?.type !== "crypto") {
       setSelectedMethod(null);

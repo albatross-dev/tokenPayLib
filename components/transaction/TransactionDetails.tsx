@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
-import { FiatTransaction } from "../../types/payload-types";
 import { BsArrowClockwise, BsArrowLeft, BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { useQuery } from "@tanstack/react-query";
+import { getFiatInfoForStableCoin } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import PartnerPanel from "./partner/PartnerPanel";
 import { api } from "../../../context/UserContext";
-import { getFiatInfoForStableCoin } from "@/tokenPayLib/utilities/stableCoinsMaps";
+import { FiatTransaction } from "../../types/payload-types";
 
 export default function TransactionDetails({ transaction: initialTransaction }: { transaction: FiatTransaction }) {
   const { t: tTransaction } = useTranslation("transaction");

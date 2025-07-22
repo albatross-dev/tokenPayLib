@@ -11,7 +11,7 @@ const preprocessDataForHelpDesk = <T extends Record<string, any>>(
   user: User,
   setValue: UseFormSetValue<T>
 ): void => {
-  let userCp: Vendor | Consumer = JSON.parse(JSON.stringify(user));
+  const userCp: Vendor | Consumer = JSON.parse(JSON.stringify(user));
 
   // Remove specific transaction properties
   delete userCp.currentOvexTransaction;

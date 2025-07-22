@@ -51,7 +51,7 @@ async function getBalance(
   if (!account) return null;
 
   const contract = getContract({
-    client: client,
+    client,
     chain: polygon,
     address: currency.contractAddress,
     abi: currency.abi,
@@ -101,8 +101,8 @@ export default function CurrencyDisplay({
   const [isConverterOpen, setIsConverterOpen] = useState<boolean>(false);
 
   async function getMainCurrencyBalance(): Promise<void> {
-    let c = currencies[mainCurrencySymbol as keyof typeof currencies];
-    let cBalance = await getBalance(account, mainCurrencySymbol, c);
+    const c = currencies[mainCurrencySymbol as keyof typeof currencies];
+    const cBalance = await getBalance(account, mainCurrencySymbol, c);
     if (cBalance) {
       setMainCurrency(cBalance);
       onCurrencySelected(cBalance, cBalance.balance);
@@ -114,7 +114,7 @@ export default function CurrencyDisplay({
 
     const balancePromises = Object.entries(currencies).map(
       async ([symbol, currency]) => {
-        let balance = await getBalance(account, symbol, currency);
+        const balance = await getBalance(account, symbol, currency);
         return balance;
       }
     );
@@ -127,7 +127,7 @@ export default function CurrencyDisplay({
     );
 
     // blacklist some currencies
-    let blacklist = ["UHU", mainCurrencySymbol];
+    const blacklist = ["UHU", mainCurrencySymbol];
     resolvedBalances = resolvedBalances.filter(
       (balance) => !blacklist.includes(balance.symbol)
     );
@@ -170,7 +170,7 @@ export default function CurrencyDisplay({
         type="info"
         title="Lorem"
         message="Ipsum"
-      ></UniversalModal>
+       />
       <ConvertPopup
         show={isConverterOpen}
         closeModal={() => {
@@ -182,7 +182,7 @@ export default function CurrencyDisplay({
         }}
         token={currencies[convertCurrency as string]}
         targetToken={currencies[mainCurrencySymbol]}
-      ></ConvertPopup>
+       />
 
       <div className="w-full">
         {loading || mainCurrency === null ? (
@@ -190,15 +190,15 @@ export default function CurrencyDisplay({
             <div className="flex p-4 border w-full rounded">
               <div className="flex text-xl font-bold items-center gap-2 flex-1">
                 <MiniLoader />
-                <div className="w-12 h-4 animate-pulse rounded bg-gray-200"></div>
+                <div className="w-12 h-4 animate-pulse rounded bg-gray-200" />
               </div>
               <div className="flex flex-row items-center font-bold gap-6">
-                <div className="w-12 h-4 animate-pulse rounded bg-gray-200"></div>
+                <div className="w-12 h-4 animate-pulse rounded bg-gray-200" />
               </div>
             </div>
             <div
               className={`flex h-12 w-full bg-uhuGray flex-rоw gap-4 items-center animate-pulse rounded-lg p-2 shadow-sm `}
-            ></div>
+             />
           </div>
         ) : (
           <div>

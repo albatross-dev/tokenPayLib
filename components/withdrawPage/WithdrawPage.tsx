@@ -107,11 +107,10 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
   }
 
   useEffect(() => {
-    let selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.id;
+    const selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.id;
     if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       fetchExchangeRate(selectedFiatSymbol);
-    } else {
-      if (payoutCurrency === "crypto") {
+    } else if (payoutCurrency === "crypto") {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
       } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
@@ -121,7 +120,6 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
         setExchangeRate(0);
         setLoadedExchangeRate(false);
       }
-    }
   }, [preferredStableCoin, payoutCurrency]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {

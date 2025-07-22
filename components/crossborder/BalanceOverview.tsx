@@ -7,23 +7,24 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import currencies, {
-  formatNumberWithCurrency,
-} from "../../utilities/crypto/currencies";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
 
 import { createThirdwebClient, getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
-import { UhuConfigContext } from "../contexts/UhuConfigContext";
 import { useTranslation } from "next-i18next";
 import { HiInformationCircle } from "react-icons/hi2";
-import UniversalModal from "../Modals/UniversalModal";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import UniversalModal from "../Modals/UniversalModal";
+import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
+import currencies, {
+  formatNumberWithCurrency,
+} from "../../utilities/crypto/currencies";
 import ConvertPopup from "./ConverterPopup";
 import { SimpleToken } from "../../types/token.types";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
+
 interface Balance {
   symbol: string;
   balance: number;
@@ -69,15 +70,15 @@ export default function BalanceOverview() {
 
   const fetchBalances = async (): Promise<void> => {
     if (!account?.address) return;
-    let whiteList = [...euroWhitelist, ...usdWhitelist, ...popularWhitelist];
-    let currenciesToFetch = Object.entries(currencies).filter(([symbol]) =>
+    const whiteList = [...euroWhitelist, ...usdWhitelist, ...popularWhitelist];
+    const currenciesToFetch = Object.entries(currencies).filter(([symbol]) =>
       whiteList.includes(symbol)
     );
     const balancePromises = currenciesToFetch.map(
       async ([symbol, currency]: [string, SimpleToken]) => {
         try {
           if (symbol) {
-            let balance = await fetchBalance(
+            const balance = await fetchBalance(
               client,
               polygon,
               currency.contractAddress,
@@ -182,7 +183,7 @@ export default function BalanceOverview() {
         type="info"
         title={tCrossborder("balanceOverview.useUSDInfoHeadline")}
         message={tCrossborder("balanceOverview.useUSDInfoMessage")}
-      ></UniversalModal>
+       />
 
       <UniversalModal
         isOpen={isSuccessPopupOpen}
@@ -192,22 +193,22 @@ export default function BalanceOverview() {
         type="success"
         title={t("exchange_success_title")}
         message={t("exchange_success_message")}
-      ></UniversalModal>
+       />
 
       <ConvertPopup
         show={isConverterOpen}
         closeModal={() => {
           setIsConverterOpen(false);
         }}
-        token={currencies["EURS"]}
-        targetToken={currencies["USDC"]}
+        token={currencies.EURS}
+        targetToken={currencies.USDC}
         onSuccess={() => {
           fetchBalances();
           setIsConverterOpen(false);
           setIsSuccessPopupOpen(true);
         }}
-        showSwapButton={true}
-      ></ConvertPopup>
+        showSwapButton
+       />
 
       <div className="flex flex-col items-center md:items-start bg-uhuGray shadow-md w-full rounded-lg p-6">
         <div className="flex justify-between md:justify-start w-full mb-4 gap-4">
@@ -248,7 +249,7 @@ export default function BalanceOverview() {
             <HiInformationCircle className="h-6 w-6" />
             {tCrossborder("balanceOverview.usdRecomendedButton")}
           </div>
-          <div className="flex-1"></div>
+          <div className="flex-1" />
           <div
             onClick={() => {
               setIsConverterOpen(true);
@@ -260,7 +261,7 @@ export default function BalanceOverview() {
             {tCrossborder("balanceOverview.eurUsdConvert")}
           </div>
           <Link
-            href={"/deposit?source=crossborder"}
+            href="/deposit?source=crossborder"
             className={`border hover:bg-gray-200 rounded px-3 py-1 border-gray-300 ${
               router.route === "/deposit" ? "text-uhuBlue border-uhuBlue" : ""
             }`}
@@ -268,7 +269,7 @@ export default function BalanceOverview() {
             {tCrossborder("balanceOverview.depositBalance")}
           </Link>
           <Link
-            href={"/withdraw?source=crossborder"}
+            href="/withdraw?source=crossborder"
             className={`border hover:bg-gray-200  rounded px-3 py-1 border-gray-300 ${
               router.route === "/withdraw" ? "text-uhuBlue border-uhuBlue" : ""
             }`}

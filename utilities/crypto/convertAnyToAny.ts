@@ -24,6 +24,7 @@ import { SimpleToken, Token } from "../../types/token.types";
 import { ERC20ABI } from "./currencies";
 
 const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as ExchangeType;
+// const exchangeType: ExchangeType = "internal";
 
 export const uniswapAddresses: Record<string, { router: string; quote: string }> = {
   [ethereum.id]: {

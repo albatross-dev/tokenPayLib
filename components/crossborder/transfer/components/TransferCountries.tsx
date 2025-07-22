@@ -1,8 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
 import AnimateHeight from "react-animate-height";
-import { useEffect, useRef, useState } from "react";
 import { useSprings, animated } from "@react-spring/web";
 import { useTranslation } from "next-i18next";
 import duplicateByPaymentModality from "../../../../utilities/crossborder/duplicateByPaymentModality";
@@ -64,7 +63,7 @@ export default function TransferCountries({
    * @returns {PaymentTypes} - an object with the withdrawModality as key and an array of fiat currencies as value
    */
   function aggregatePaymentTypeInfo(paymentPartners: PaymentTypesArray): PaymentTypesArray {
-    let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
+    const filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
     const paymentTypes = filledInPartners.reduce((acc: PaymentTypesArray[number], partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];

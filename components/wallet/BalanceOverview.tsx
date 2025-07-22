@@ -2,15 +2,15 @@
 
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
-import { formatNumberWithCurrency } from "../../../utilities/currencies";
-import currencies from "../../utilities/crypto/currencies";
-import MiniLoader from "../UI/MiniLoader";
 
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { createThirdwebClient } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
+import MiniLoader from "../UI/MiniLoader";
+import currencies from "../../utilities/crypto/currencies";
+import { formatNumberWithCurrency } from "../../../utilities/currencies";
 import { sendErrorReport } from "../../../context/UserContext";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
@@ -132,10 +132,10 @@ export default function BalanceOverview() {
           </span>
         </div>
 
-        <div className="flex-1"></div>
+        <div className="flex-1" />
         <div>
           <Link
-            href={"/withdraw?source=wallet"}
+            href="/withdraw?source=wallet"
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
             {tAccount("withdrawal")}
@@ -143,7 +143,7 @@ export default function BalanceOverview() {
         </div>
         <div>
           <Link
-            href={"/deposit?source=wallet"}
+            href="/deposit?source=wallet"
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
             {tAccount("deposit")}

@@ -12,41 +12,41 @@ export const oldPolygonPaths = {
   USDC: {
     EUROE: [      ["address", "uint24", "address"],
       [
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["EUROE"].contractAddress,
+        currencies.EUROE.contractAddress,
       ]],
     WBTC: [      ["address", "uint24", "address", "uint24", "address"],
       [
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["WETH"].contractAddress,
+        currencies.WETH.contractAddress,
         500, // Pool fee
-        currencies["WBTC"].contractAddress,
+        currencies.WBTC.contractAddress,
       ]],
     WETH: [      ["address", "uint24", "address"],
       [
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["WETH"].contractAddress,
+        currencies.WETH.contractAddress,
       ]],
   },
   WBTC: {
     USDC: [      ["address", "uint24", "address", "uint24", "address"],
       [
-        currencies["WBTC"].contractAddress,
+        currencies.WBTC.contractAddress,
         500, // Pool fee
-        currencies["WETH"].contractAddress,
+        currencies.WETH.contractAddress,
         500, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]],
   },
   WETH: {
     USDC: [      ["address", "uint24", "address"],
       [
-        currencies["WETH"].contractAddress,
+        currencies.WETH.contractAddress,
         500, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]],
   },
   "USDC.E": {
@@ -54,55 +54,55 @@ export const oldPolygonPaths = {
       [
         currencies["USDC.E"].contractAddress,
         100, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["EUROE"].contractAddress,
+        currencies.EUROE.contractAddress,
       ]],
     USDC: [      ["address", "uint24", "address"],
       [
         currencies["USDC.E"].contractAddress,
         100, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]],
   },
   USDT: {
     EUROE: [      ["address", "uint24", "address", "uint24", "address"],
       [
-        currencies["USDT"].contractAddress,
+        currencies.USDT.contractAddress,
         100, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["EUROE"].contractAddress,
+        currencies.EUROE.contractAddress,
       ]],
     USDC: [      ["address", "uint24", "address"],
       [
-        currencies["USDT"].contractAddress,
+        currencies.USDT.contractAddress,
         100, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]],
   },
   EURS: {
     EUROE: [      ["address", "uint24", "address", "uint24", "address"],
       [
-        currencies["EURS"].contractAddress,
+        currencies.EURS.contractAddress,
         3000, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
         500, // Pool fee
-        currencies["EUROE"].contractAddress,
+        currencies.EUROE.contractAddress,
       ]],
     USDC: [      ["address", "uint24", "address"],
       [
-        currencies["EURS"].contractAddress,
+        currencies.EURS.contractAddress,
         3000, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]],
   },
   EUROE: {
     USDC: [      ["address", "uint24", "address"],
       [
-        currencies["EUROE"].contractAddress,
+        currencies.EUROE.contractAddress,
         500, // Pool fee
-        currencies["USDC"].contractAddress,
+        currencies.USDC.contractAddress,
       ]]
   }
 }

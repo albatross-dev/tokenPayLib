@@ -88,12 +88,10 @@ export async function tokenPayAbstractionSimpleTransfer(
 
   // ⏳ Retry transfer transaction
   const result = await retry(
-    async () => {
-      return await sendAndConfirmTransaction({
+    async () => sendAndConfirmTransaction({
         account,
         transaction: transferCall,
-      });
-    },
+      }),
     3,
     1000
   );

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import { UseFormSetValue, UseFormReturn, FieldValues } from "react-hook-form";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
-import { UseFormSetValue, UseFormReturn, FieldValues } from "react-hook-form";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import { FormField } from "../../../../../../../../Forms/types";
@@ -161,21 +161,19 @@ export default function OvexKYCFormConsumer({ setValue, methods }: OvexKYCFormPr
     },
     {
       type: "ui",
-      content: <div className="font-bold"></div>,
+      content: <div className="font-bold" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.acceptTermsLabel"),
       type: "custom",
-      content: (methods: UseFormReturn) => {
-        return (
+      content: (methods: UseFormReturn) => (
           <AcceptTermsCheckbox
             methods={methods}
             partnerName="Ovex"
             partnerTerms="https://storage.googleapis.com/ovex-static-assets/legal/OVEX_Terms_and_Conditions.pdf"
           />
-        );
-      },
+        ),
     },
   ];
 
