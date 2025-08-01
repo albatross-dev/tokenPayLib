@@ -215,7 +215,7 @@ export default function BalanceOverview() {
             <span
               className={`text-5xl font-bold ${
                 loading &&
-                "text-transparent bg-gray-300 animate-pulse rounded-lg"
+                "loadingPanel"
               }`}
             >
               {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
@@ -228,7 +228,7 @@ export default function BalanceOverview() {
             <span
               className={`text-5xl font-bold ${
                 loading &&
-                "text-transparent bg-gray-300 animate-pulse rounded-lg"
+                "loadingPanel"
               }`}
             >
               {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}

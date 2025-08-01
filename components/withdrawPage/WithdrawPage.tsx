@@ -7,12 +7,7 @@ import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
 import { sendErrorReport, useAuth } from "../../../context/UserContext";
 import currencies from "../../../utilities/currencies";
 import { FiatCodes } from "../../types/derivedPayload.types";
-import {
-  Consumer,
-  Country,
-  PaymentTypesArray,
-  Vendor,
-} from "../../types/payload-types";
+import { Consumer, Country, PaymentTypesArray, Vendor } from "../../types/payload-types";
 import { SimpleToken } from "../../types/token.types";
 import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
 import BalanceOverview from "../crossborder/BalanceOverview";
@@ -40,23 +35,16 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
     component: React.ReactNode;
   } | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [selectedCurrency, setSelectedCurrency] =
-    useState<SimpleToken | null>();
-  const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>(
-    []
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState<SimpleToken | null>();
+  const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>([]);
   const [preferredStableCoin, setPreferredStableCoin] = useState<string>("");
-  const [payoutCurrency, setPayoutCurrency] = useState<
-    FiatCodes | "crypto" | null
-  >(null);
+  const [payoutCurrency, setPayoutCurrency] = useState<FiatCodes | "crypto" | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(1);
   const [loadedExchangeRate, setLoadedExchangeRate] = useState<boolean>(false);
   const [maxAmount, setMaxAmount] = useState<number>(0);
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [selectedMethod, setSelectedMethod] = useState<
-    PaymentTypesArray[number] | null
-  >(null);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentTypesArray[number] | null>(null);
   const [swiperInstance, setSwiperInstance] = useState<any>(null);
 
   useEffect(() => {
@@ -64,8 +52,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
       try {
         const countryRes = await axios.get(
           `/api/countries?where[countryCode][equals]=${
-            (user as Vendor)?.vendorCountry ||
-            (user as Consumer)?.billingAddress?.country
+            (user as Vendor)?.vendorCountry || (user as Consumer)?.billingAddress?.country
           }`
         );
 
@@ -121,22 +108,13 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
 
   useEffect(() => {
     let selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.id;
-    if (
-      selectedFiatSymbol &&
-      payoutCurrency &&
-      payoutCurrency !== "crypto" &&
-      selectedFiatSymbol !== payoutCurrency
-    ) {
+    if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       fetchExchangeRate(selectedFiatSymbol);
     } else {
       if (payoutCurrency === "crypto") {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
-      } else if (
-        selectedFiatSymbol &&
-        payoutCurrency &&
-        selectedFiatSymbol === payoutCurrency
-      ) {
+      } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
       } else {
@@ -163,9 +141,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
     } else if (inputAmount > maxAmount) {
       setAmount(inputAmount.toString());
       setError(
-        `${tCrossborder(
-          "withdrawPage.errors.amountExceedsBalance"
-        )} ${maxAmount} ${
+        `${tCrossborder("withdrawPage.errors.amountExceedsBalance")} ${maxAmount} ${
           STANDARD_STABLE_MAP[selectedCurrency.id.toUpperCase()]
             ? STANDARD_STABLE_MAP[selectedCurrency.id.toUpperCase()]?.symbol
             : selectedCurrency.id
@@ -195,29 +171,14 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
     }
   };
 
-  if (!account || !isAutoConnecting || user === "loading" || !user) {
-    return (
-      <div className="p-10 bg-white w-full flex flex-col">
-        <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-          {t("no_wallet")}
-        </div>
-      </div>
-    );
-  }
   return (
     <>
-      <ErrorPopup
-        isOpen={isErrorPopupOpen}
-        closeModal={() => setIsErrorPopupOpen(false)}
-        errorMessage={errorMessage}
-      />
+      <ErrorPopup isOpen={isErrorPopupOpen} closeModal={() => setIsErrorPopupOpen(false)} errorMessage={errorMessage} />
 
       <div className="flex flex-col max-w-7xl w-full mx-auto p-4 md:p-10 gap-4">
         <div>
           <BalanceOverview />
-          <h1 className="text-xl font-bold mt-4">
-            {tCrossborder("withdrawPage.heading")}
-          </h1>
+          <h1 className="text-xl font-bold mt-4">{tCrossborder("withdrawPage.heading")}</h1>
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
@@ -228,12 +189,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
             </div>
           )}
           {state === "loaded" && (
-            <Swiper
-              onSwiper={setSwiperInstance}
-              allowTouchMove={false}
-              spaceBetween={50}
-              slidesPerView={1}
-            >
+            <Swiper onSwiper={setSwiperInstance} allowTouchMove={false} spaceBetween={50} slidesPerView={1}>
               <SwiperSlide>
                 {({ isActive }) =>
                   isActive ? (
@@ -241,10 +197,8 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                       selectedCountry={selectedCountry!}
                       setAvailableMethods={setAvailableMethods}
                       setPreferredStableCoin={(coin: string) => {
-                        setPreferredStableCoin(coin),
-                          setSelectedCurrency(
-                            currencies[coin as keyof typeof currencies]
-                          );
+                        (setPreferredStableCoin(coin),
+                          setSelectedCurrency(currencies[coin as keyof typeof currencies]));
                       }}
                       swiperInstance={swiperInstance}
                       goToSlide={goToSlide}
@@ -284,6 +238,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                       amount={amount}
                       handleAmountChange={handleAmountChange}
                       error={error}
+                      account={account}
                       availableMethods={availableMethods}
                       exchangeRate={exchangeRate}
                       loadedExchangeRate={loadedExchangeRate}
@@ -305,7 +260,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
                       selectedMethod={selectedMethod!}
                       amount={amount}
                       account={account}
-                      user={user}
+                      user={user as Consumer | Vendor}
                       selectedCountry={selectedCountry!}
                       preferredStableCoin={preferredStableCoin}
                       swiperInstance={swiperInstance}

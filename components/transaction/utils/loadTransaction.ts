@@ -1,22 +1,23 @@
 import { api } from "../../../../context/UserContext";
 
-export async function loadTransaction(ctx: any) {
+export default async function loadTransaction(ctx: any) {
   const id = ctx.params?.id;
   try {
+
     // Get the cookies from the request context
-    const cookies = ctx.req?.cookies || {};
+    const cookieHeader = ctx.req.headers.cookie || "";
+    
 
     // Create axios request with the cookies
     const { data } = await api.get(`/api/fiatTransaction/${id}`, {
       headers: {
-        Cookie: Object.entries(cookies)
-          .map(([key, value]) => `${key}=${value}`)
-          .join("; "),
+        Cookie: cookieHeader,
       },
     });
     return data;
   } catch (error) {
     console.error("Error loading transaction", error);
+    console.log("🔥 raw cookie header:", ctx.req.headers.cookie);
     return null;
   }
 }

@@ -6,6 +6,7 @@ interface ConvertStateButtonProps {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   state?: "normal" | "processing" | "error";
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
 export type ConvertStateButtonState = "normal" | "processing" | "error";
@@ -15,12 +16,16 @@ interface ConvertStateButtonWideProps {
   onClick: () => void;
   state?: ConvertStateButtonState;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
-export default function ConvertStateButton({ onClick, state, children }: ConvertStateButtonProps) {
+export default function ConvertStateButton({ onClick, state, children, disabled }: ConvertStateButtonProps) {
   return (
     <button
-      className="text-xs text-gray-700 flex flex-row items-center gap-2 bg-gray-100 rounded-full p-1"
+      disabled={disabled}
+      className={`text-xs text-gray-700 flex flex-row items-center gap-2 bg-gray-100 rounded-full p-1 ${
+        disabled ? "cursor-not-allowed" : ""
+      }`}
       onClick={(e) => {
         if (state !== "processing") {
           onClick(e);

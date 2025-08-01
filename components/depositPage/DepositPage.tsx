@@ -3,11 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ErrorPopup from "../Modals/ErrorPopup";
 import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
-import {
-  api,
-  AuthContext,
-  sendErrorReport,
-} from "../../../context/UserContext";
+import { api, AuthContext, sendErrorReport } from "../../../context/UserContext";
 import BalanceOverview from "../crossborder/BalanceOverview";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -50,20 +46,13 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   // The country of the user
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   // A object mapping available currencies to an array of methods for the specific currency
-  const [methodsByCurrency, setMethodsByCurrency] = useState<
-    Record<string, PaymentTypesArray>
-  >({});
+  const [methodsByCurrency, setMethodsByCurrency] = useState<Record<string, PaymentTypesArray>>({});
   // The method the user selected for its deposit
-  const [selectedMethod, setSelectedMethod] = useState<QuotePaymentType | null>(
-    null
-  );
+  const [selectedMethod, setSelectedMethod] = useState<QuotePaymentType | null>(null);
   // The currency the user wants to receive
-  const [preferredStableCoin, setPreferredStableCoin] = useState<string | null>(
-    null
-  );
+  const [preferredStableCoin, setPreferredStableCoin] = useState<string | null>(null);
   // The currency in which the user wants to pay
-  const [preferredFiatCurrency, setPreferredFiatCurrency] =
-    useState<FiatCodes>();
+  const [preferredFiatCurrency, setPreferredFiatCurrency] = useState<FiatCodes>();
   // The amount the user wants to receive
   const [amount, setAmount] = useState<string>("");
 
@@ -78,9 +67,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   // Methods that are available for the preferred stable coin
-  const availableMethodsForStableCoin = preferredStableCoin
-    ? methodsByCurrency[preferredStableCoin]
-    : null;
+  const availableMethodsForStableCoin = preferredStableCoin ? methodsByCurrency[preferredStableCoin] : null;
 
   // All fiat currencies that are available for the available Methods
   const availableFiatCurrencies = availableMethodsForStableCoin
@@ -97,9 +84,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   // All deposit methods that support the preferredStableCoin and the prefferedFiatTransaction
   const availableDepositMethods = preferredFiatCurrency
     ? availableMethodsForStableCoin?.filter((method) =>
-        method.currencies.find(
-          ({ currency }) => currency === preferredFiatCurrency
-        )
+        method.currencies.find(({ currency }) => currency === preferredFiatCurrency)
       ) || []
     : [];
 
@@ -124,20 +109,14 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
     async function getCountryData() {
       try {
         let countryRes = await api.get(
-          `/api/countries?where[countryCode][equals]=${
-            user?.vendorCountry || user?.billingAddress?.country
-          }`
+          `/api/countries?where[countryCode][equals]=${user?.vendorCountry || user?.billingAddress?.country}`
         );
 
         if (countryRes.data.docs.length === 0) {
           setErrorMessage({
             message: tCrossborder("depositPage.errors.countryNotFound"),
             component: (
-              <Banner
-                href={"/settings"}
-                color={"bg-red-400"}
-                rounded={"rounded"}
-              >
+              <Banner href={"/settings"} color={"bg-red-400"} rounded={"rounded"}>
                 <div suppressHydrationWarning>{t("no_country")}</div>
               </Banner>
             ),
@@ -145,9 +124,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
           setIsErrorPopupOpen(true);
         } else {
           setSelectedCountry(countryRes.data.docs[0]);
-          setMethodsByCurrency(
-            sortMethodByCurrencyDeposit(countryRes.data.docs[0].paymentTypes)
-          );
+          setMethodsByCurrency(sortMethodByCurrencyDeposit(countryRes.data.docs[0].paymentTypes));
           setState("loaded");
         }
       } catch (err) {
@@ -182,31 +159,14 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
     }
   };
 
-  // Check if a wallet is available
-  if (!account && !isAutoConnecting) {
-    return (
-      <div className="p-10 bg-white w-full flex flex-col">
-        <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-          {t("no_wallet")}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-      <ErrorPopup
-        isOpen={isErrorPopupOpen}
-        closeModal={() => setIsErrorPopupOpen(false)}
-        errorMessage={errorMessage}
-      />
+      <ErrorPopup isOpen={isErrorPopupOpen} closeModal={() => setIsErrorPopupOpen(false)} errorMessage={errorMessage} />
 
       <div className="flex flex-col max-w-7xl w-full mx-auto p-4 md:p-10 gap-4">
         <div>
           <BalanceOverview />
-          <h1 className="text-xl font-bold mt-4">
-            {tCrossborder("depositPage.heading")}
-          </h1>
+          <h1 className="text-xl font-bold mt-4">{tCrossborder("depositPage.heading")}</h1>
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
@@ -217,12 +177,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
             </div>
           )}
           {state === "loaded" && (
-            <Swiper
-              onSwiper={setSwiperInstance}
-              allowTouchMove={false}
-              spaceBetween={50}
-              slidesPerView={1}
-            >
+            <Swiper onSwiper={setSwiperInstance} allowTouchMove={false} spaceBetween={50} slidesPerView={1}>
               <SwiperSlide>
                 {({ isActive }) =>
                   isActive ? (

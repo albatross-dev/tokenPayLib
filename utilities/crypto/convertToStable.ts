@@ -1,9 +1,4 @@
-import {
-  getContract,
-  readContract,
-  prepareContractCall,
-  sendAndConfirmTransaction,
-} from "thirdweb";
+import { getContract, readContract, prepareContractCall, sendAndConfirmTransaction } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import SwapRouterAbi from "@/assets/swapRouterAbi.json";
 import QuoteV2Abi from "@/tokenPayLib/assets/quoteV2Abi.json";
@@ -97,8 +92,8 @@ async function convertToStablePolygon(
 
     success();
   } catch (e: any) {
-    sendErrorReport(`Error converting ${amount} ${token.symbol} to EUROE`, e);
-    console.error(`Error converting ${amount} ${token.symbol} to EUROE`, e);
+    sendErrorReport(`Error converting ${amount} ${token.symbol} to Stablecoin`, e);
+    console.error(`Error converting ${amount} ${token.symbol} to Stablecoin`, e);
     error(e);
   }
 }

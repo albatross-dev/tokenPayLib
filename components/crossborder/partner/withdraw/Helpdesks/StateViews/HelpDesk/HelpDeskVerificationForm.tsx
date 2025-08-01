@@ -14,7 +14,7 @@ import { PaymentTypesArray } from "../../../../../../../types/payload-types";
 interface FormRendererProps {
   method: PaymentTypesArray[number];
   setValue: UseFormSetValue<FieldValues>;
-  methods: UseFormReturn<FieldValues, any, undefined>;
+  methods: UseFormReturn<FieldValues, any, FieldValues>;
 }
 
 function FormRenderer({ method, setValue, methods }: FormRendererProps) {
@@ -29,59 +29,29 @@ function FormRenderer({ method, setValue, methods }: FormRendererProps) {
       case "ovex":
         return <OvexKYCForm setValue={setValue} methods={methods} />;
       case "bitcoin_vn_helpdesk":
-        return (
-          <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />
-        );
+        return <BitcoinVNHelpDeskKYCForm setValue={setValue} methods={methods} />;
       case "koywe_helpdesk":
         return <KoyweHelpDeskKYCForm setValue={setValue} methods={methods} />;
       case "kotanipay_helpdesk":
-        return (
-          <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />
-        );
+        return <KotaniPayHelpDeskKYCForm setValue={setValue} methods={methods} />;
       case "coinhako_helpdesk":
-        return (
-          <div className="mb-4 bg-gray-100 rounded p-4">
-            {tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}
-          </div>
-        );
+        return <div className="mb-4 bg-gray-100 rounded p-4">{tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}</div>;
       default:
-        return (
-          <div className="mb-4 bg-gray-100 rounded p-4">
-            {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
-          </div>
-        );
+        return <div className="mb-4 bg-gray-100 rounded p-4">{tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}</div>;
     }
   } else {
     switch (method?.type) {
       case "ovex":
         return <OvexKYCFormConsumer setValue={setValue} methods={methods} />;
       case "bitcoin_vn_helpdesk":
-        return (
-          <BitcoinVNHelpDeskKYCFormConsumer
-            setValue={setValue}
-            methods={methods}
-          />
-        );
+        return <BitcoinVNHelpDeskKYCFormConsumer setValue={setValue} methods={methods} />;
       case "kotanipay_helpdesk":
-        return (
-          <KotaniPayHelpDeskKYCFormConsumer
-            setValue={setValue}
-            methods={methods}
-          />
-        );
+        return <KotaniPayHelpDeskKYCFormConsumer setValue={setValue} methods={methods} />;
       case "coinhako_helpdesk":
-        return (
-          <div className="mb-4 bg-gray-100 rounded p-4">
-            {tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}
-          </div>
-        );
+        return <div className="mb-4 bg-gray-100 rounded p-4">{tCrossborder("withdraw.helpDeskKYC.coinHackoInfo")}</div>;
       case "koywe_helpdesk":
       default:
-        return (
-          <div className="mb-4 bg-gray-100 rounded p-4">
-            {tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}
-          </div>
-        );
+        return <div className="mb-4 bg-gray-100 rounded p-4">{tCrossborder("withdraw.helpDeskKYC.noInfoNeeded")}</div>;
     }
   }
 }
@@ -91,10 +61,7 @@ interface HelpDeskVerificationFormProps {
   method: PaymentTypesArray[number];
 }
 
-export default function HelpDeskVerificationForm({
-  handleVerificationRequest,
-  method,
-}: HelpDeskVerificationFormProps) {
+export default function HelpDeskVerificationForm({ handleVerificationRequest, method }: HelpDeskVerificationFormProps) {
   const methods = useForm();
   const { handleSubmit, setValue } = methods;
 
@@ -102,9 +69,7 @@ export default function HelpDeskVerificationForm({
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div className="font-bold text-xl">
-        {tCrossborder("withdraw.helpDeskKYC.noAccessInfo")}
-      </div>
+      <div className="font-bold text-xl">{tCrossborder("withdraw.helpDeskKYC.noAccessInfo")}</div>
       <div>{tCrossborder("withdraw.helpDeskKYC.noAccessText")}</div>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleVerificationRequest)}>

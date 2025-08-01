@@ -7,11 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import PartnerPanel from "./partner/PartnerPanel";
 import { api } from "../../../context/UserContext";
 
-export default function TransactionDetails({
-  transaction: initialTransaction,
-}: {
-  transaction: FiatTransaction;
-}) {
+export default function TransactionDetails({ transaction: initialTransaction }: { transaction: FiatTransaction }) {
   const { t: tTransaction } = useTranslation("transaction");
 
   // Use TanStack Query with the initial data from SSR
@@ -24,9 +20,7 @@ export default function TransactionDetails({
     queryKey: ["transaction", initialTransaction.id],
     queryFn: async () => {
       console.log("Fetching transaction data...");
-      const { data } = await api.get(
-        `/api/fiatTransaction/${initialTransaction.id}`
-      );
+      const { data } = await api.get(`/api/fiatTransaction/${initialTransaction.id}`);
       console.log("Transaction data fetched:", data);
       return data;
     },
@@ -69,11 +63,7 @@ export default function TransactionDetails({
               className="ml-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
               title={tTransaction("transactionDetails.refreshButton")}
             >
-              <BsArrowClockwise
-                className={`w-5 h-5 text-gray-600 ${
-                  isFetching ? "animate-spin" : ""
-                }`}
-              />
+              <BsArrowClockwise className={`w-5 h-5 text-gray-600 ${isFetching ? "animate-spin" : ""}`} />
             </button>
           </h1>
           <span className="px-2 py-1 rounded text-sm font-bold bg-uhuBlue text-white">
@@ -84,35 +74,21 @@ export default function TransactionDetails({
         <div className="flex items-center justify-between p-6 bg-gray-50 rounded-lg">
           <div className="flex-1">
             <div className="flex flex-col items-center">
-              <span className="text-sm text-gray-500">
-                {tTransaction("transactionDetails.fromNetwork")}
-              </span>
-              <span className="font-medium capitalize">
-                {transaction.fromNetwork}
-              </span>
-              <span className="text-sm text-gray-500 mt-2">
-                {tTransaction("transactionDetails.amount")}
-              </span>
+              <span className="text-sm text-gray-500">{tTransaction("transactionDetails.fromNetwork")}</span>
+              <span className="font-medium capitalize">{transaction.fromNetwork}</span>
+              <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.amount")}</span>
               <span className="font-medium">
                 {transaction.amount}{" "}
-                {transaction.fromNetwork === "fiat"
-                  ? transaction.fiatOriginCurrency
-                  : transaction.currencyName}
+                {transaction.fromNetwork === "fiat" ? transaction.fiatOriginCurrency : transaction.currencyName}
               </span>
             </div>
           </div>
 
           <div className="flex flex-col items-center mx-4">
             <BsChevronRight className="w-6 h-6 text-gray-400" />
-            <span className="text-sm text-gray-500 mt-2">
-              {tTransaction("transactionDetails.type")}
-            </span>
-            <span className="font-medium capitalize">
-              {tTransaction(`transactionDetails.${transaction.type}`)}
-            </span>
-            <span className="text-sm text-gray-500 mt-2">
-              {tTransaction("transactionDetails.statusLabel")}
-            </span>
+            <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.type")}</span>
+            <span className="font-medium capitalize">{tTransaction(`transactionDetails.${transaction.type}`)}</span>
+            <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.statusLabel")}</span>
             <span className="font-medium capitalize">
               {tTransaction(`transactionDetails.status.${transaction.status}`)}
             </span>
@@ -120,15 +96,9 @@ export default function TransactionDetails({
 
           <div className="flex-1">
             <div className="flex flex-col items-center">
-              <span className="text-sm text-gray-500">
-                {tTransaction("transactionDetails.toNetwork")}
-              </span>
-              <span className="font-medium capitalize">
-                {transaction.toNetwork}
-              </span>
-              <span className="text-sm text-gray-500 mt-2">
-                {tTransaction("transactionDetails.finalAmount")}
-              </span>
+              <span className="text-sm text-gray-500">{tTransaction("transactionDetails.toNetwork")}</span>
+              <span className="font-medium capitalize">{transaction.toNetwork}</span>
+              <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.finalAmount")}</span>
               <span className="font-medium">
                 {transaction.finalamount} {transaction.finalCurrency}
               </span>
@@ -137,9 +107,7 @@ export default function TransactionDetails({
         </div>
 
         <div className="mt-6 border border-uhuBlue rounded-md p-4">
-          <div className="text-xl font-bold text-uhuBlue mb-2">
-            {tTransaction("transactionDetails.actions")}
-          </div>
+          <div className="text-xl font-bold text-uhuBlue mb-2">{tTransaction("transactionDetails.actions")}</div>
           <PartnerPanel transaction={transaction} refetch={refetch} />
         </div>
 
@@ -147,38 +115,30 @@ export default function TransactionDetails({
           <div className="space-y-4">
             {transaction.toAccountBankName && (
               <div className="flex flex-col">
-                <span className="text-sm text-gray-500">
-                  {tTransaction("transactionDetails.bankName")}
-                </span>
+                <span className="text-sm text-gray-500">{tTransaction("transactionDetails.bankName")}</span>
 
-                <span className="font-medium">
-                  {transaction.toAccountBankName}
-                </span>
+                <span className="font-medium">{transaction.toAccountBankName}</span>
               </div>
             )}
-            <div className="flex flex-col">
-              <span className="text-sm text-gray-500">
-                {tTransaction("transactionDetails.accountNumber")}
-              </span>
-              <span className="font-medium">
-                {transaction.toAccountIdentifier}
-              </span>
-            </div>
+            {transaction.toAccountIdentifier && (
+              <div className="flex flex-col">
+                <span className="text-sm text-gray-500">{tTransaction("transactionDetails.accountNumber")}</span>
+                <span className="font-medium">{transaction.toAccountIdentifier}</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-6 pt-6 border-t border-gray-200">
           <div className="flex justify-between text-sm text-gray-500">
             <span>
               {tTransaction("transactionDetails.createdAt")}:{" "}
-              {typeof transaction.createdAt === "string" &&
-              !isNaN(Date.parse(transaction.createdAt))
+              {typeof transaction.createdAt === "string" && !isNaN(Date.parse(transaction.createdAt))
                 ? new Date(transaction.createdAt).toLocaleString("de-DE")
                 : transaction.createdAt}
             </span>
             <span>
               {tTransaction("transactionDetails.updatedAt")}:{" "}
-              {typeof transaction.updatedAt === "string" &&
-              !isNaN(Date.parse(transaction.updatedAt))
+              {typeof transaction.updatedAt === "string" && !isNaN(Date.parse(transaction.updatedAt))
                 ? new Date(transaction.updatedAt).toLocaleString("de-DE")
                 : transaction.updatedAt}
             </span>

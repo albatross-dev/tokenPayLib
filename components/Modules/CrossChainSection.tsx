@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import ChainSelector, { chainsBridge } from "../Forms/ChainSelector";
 import Image from "next/image";
 import ConvertStateButton from "../UI/ConvertStateButton";
 import tokenyByChain from "../../utilities/crypto/tokenByChain";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import {
-  ERC20ABI,
-  formatCrypto,
-  LogoByShortName,
-  TokensByChainId,
-} from "../../utilities/crypto/currencies";
+import { ERC20ABI, formatCrypto, LogoByShortName, TokensByChainId } from "../../utilities/crypto/currencies";
 import { readContract, getContract } from "thirdweb";
 import { client } from "../../../pages/_app";
 import getChainById from "../../utilities/crypto/getChainById";
@@ -35,11 +30,8 @@ const CrossChainSection: React.FC = () => {
 
   // bridge modal
   const [showBridgeModal, setShowBridgeModal] = useState<boolean>(false);
-  const [balanceOfStableLoading, setBalanceOfStableLoading] =
-    useState<boolean>(false);
-  const [balanceOfStableData, setBalanceOfStableData] = useState<bigint>(
-    BigInt(0)
-  );
+  const [balanceOfStableLoading, setBalanceOfStableLoading] = useState<boolean>(false);
+  const [balanceOfStableData, setBalanceOfStableData] = useState<bigint>(BigInt(0));
   const [selectedChain, setSelectedChain] = useState<ChainDetails | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
@@ -89,7 +81,7 @@ const CrossChainSection: React.FC = () => {
       <BridgeModalUniversal
         show={showBridgeModal}
         closeModal={() => setShowBridgeModal(false)}
-        token={TokensByChainId[activeChain?.id]["USDC"]}
+        token={activeChain ? TokensByChainId[activeChain?.id]["USDC"] : null}
         chain={activeChain}
         spokePool={tokenyByChain[activeChain?.id]?.spokePool}
         maxAmount={Number(balanceOfStableData)}
@@ -124,23 +116,20 @@ const CrossChainSection: React.FC = () => {
         <div className="mb-2">{t("info_text_chain_p2")}</div>
       </div>
       <div>{t("active_chain")}</div>
-      <ChainSelector type="chain" chainList={chainsBridge} />
+      <ChainSelector disabled={!account} type="chain" chainList={chainsBridge} />
 
       <div className="flex mt-4 flex-row items-center justify-between bg-gray-100 rounded-lg p-4">
         <div className="text-xl font-bold">{t("info_usdc_balance")}</div>
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 items-center">
           <div className="font-bold text-xl">
-            {balanceOfStableLoading ? (
-              <MiniLoader></MiniLoader>
-            ) : (
-              formatCrypto(Number(balanceOfStableData), 6, 6)
-            )}
+            <span className="flex flex-row items-center gap-2">
+              <span className={`${(balanceOfStableLoading || !account) && "loadingPanel"}`}>
+                {formatCrypto(Number(balanceOfStableData), 6, 6)}
+              </span>
+            </span>
           </div>
-          <Image
-            src={LogoByShortName["USDC"]}
-            className="h-8 w-8"
-            alt="USDC Logo"
-          />
+
+          <Image src={LogoByShortName["USDC"]} className="h-8 w-8" alt="USDC Logo" />
         </div>
       </div>
       <div className="mt-4">{t("target_chain")}</div>
@@ -152,11 +141,7 @@ const CrossChainSection: React.FC = () => {
               <div key={chain.chainId + "chains"} className="flex flex-col">
                 <div className="pt-2  pb-2 rounded-md flex flex-row items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Image
-                      src={chain.logo}
-                      className="h-5 w-5"
-                      alt={`${chain.name} Logo`}
-                    />
+                    <Image src={chain.logo} className="h-5 w-5" alt={`${chain.name} Logo`} />
                     <div className="text-lg font-semibold">{chain.name}</div>
                   </div>
                   <ConvertStateButton
@@ -164,13 +149,10 @@ const CrossChainSection: React.FC = () => {
                       setSelectedChain(chain);
                       setShowBridgeModal(true);
                     }}
+                    disabled={!account}
                     state={loading[`${chain.chainId}`]}
                   >
-                    <Image
-                      src={LogoByShortName["USDC"]}
-                      className="h-6 w-6"
-                      alt="USDC Logo"
-                    />
+                    <Image src={LogoByShortName["USDC"]} className="h-6 w-6" alt="USDC Logo" />
                   </ConvertStateButton>
                 </div>
               </div>

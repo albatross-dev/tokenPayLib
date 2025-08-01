@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 import { UseFormSetValue, UseFormReturn } from "react-hook-form";
@@ -14,10 +14,7 @@ interface BitcoinVNHelpDeskKYCFormProps {
 
 let formDataPreloaded = false;
 
-export default function BitcoinVNHelpDeskKYCFormConsumer({
-  setValue,
-  methods,
-}: BitcoinVNHelpDeskKYCFormProps) {
+export default function BitcoinVNHelpDeskKYCFormConsumer({ setValue, methods }: BitcoinVNHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -38,28 +35,18 @@ export default function BitcoinVNHelpDeskKYCFormConsumer({
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.consumer.idDocument")}</div>,
     },
     {
       type: "array",
       name: "stasisRepresentativeProofOfIdentity",
       label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocument"),
-      newLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.idDocumentNewLabel"
-      ),
-      removeLabel: tCrossborder(
-        "withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"
-      ),
+      newLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentNewLabel"),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentRemoveLabel"),
       fields: [
         {
           name: "representativeProofOfIdentityPage",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.consumer.idDocumentFileLabel"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.consumer.idDocumentFileLabel"),
           type: "file",
           required: true,
         },

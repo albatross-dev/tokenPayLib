@@ -1,12 +1,4 @@
-import {
-  polygon,
-  ethereum,
-  optimism,
-  arbitrum,
-  base,
-  avalanche,
-  bsc,
-} from "thirdweb/chains";
+import { polygon, ethereum, optimism, arbitrum, base, avalanche, bsc } from "thirdweb/chains";
 
 import currencies, {
   ChainLogoByChainId,
@@ -47,11 +39,6 @@ const tokenyByChain = {
         symbol: "EURS",
         contract: currencies["EURS"],
         logo: LogoByShortName["EURS"],
-      },
-      {
-        symbol: "EUROE",
-        contract: currencies["EUROE"],
-        logo: LogoByShortName["EUROE"],
       },
     ],
   },
@@ -106,7 +93,6 @@ const tokenyByChain = {
         contract: currenciesEthereum["EURS"],
         logo: LogoByShortName["EURS"],
       },
-      //{ symbol: "EUROE", contract: currenciesEthereum["EUROE"], logo: EUROE_Logo },
     ],
   },
   [optimism.id]: {
@@ -124,7 +110,6 @@ const tokenyByChain = {
         contract: currenciesOP["USDT"],
         logo: LogoByShortName["USDT"],
       },
-      //{ symbol: "EUROE", contract: currenciesOP["EUROE"], logo: EUROE_Logo },
     ],
   },
   [avalanche.id]: {
@@ -141,7 +126,6 @@ const tokenyByChain = {
         contract: currenciesAvax["USDT"],
         logo: LogoByShortName["USDT"],
       },
-      //{ symbol: "EUROE", contract: currenciesAvax["EUROE"], logo: EUROE_Logo },
     ],
   },
   [bsc.id]: {
@@ -229,7 +213,6 @@ export const tokenyByChainCheckout = {
         contract: currenciesEthereum["USDT"],
         logo: LogoByShortName["USDT"],
       },
-      //{ symbol: "EUROE", contract: currenciesEthereum["EUROE"], logo: EUROE_Logo },
     ],
   },
   [optimism.id]: {
@@ -247,7 +230,6 @@ export const tokenyByChainCheckout = {
         contract: currenciesOP["USDT"],
         logo: LogoByShortName["USDT"],
       },
-      //{ symbol: "EUROE", contract: currenciesOP["EUROE"], logo: EUROE_Logo },
     ],
   },
   [avalanche.id]: {
@@ -258,13 +240,11 @@ export const tokenyByChainCheckout = {
         contract: currenciesAvax["USDC"],
         logo: LogoByShortName["USDC"],
       },
-      //{ symbol: "USDC.E", contract: currenciesAvax["USDC.E"], logo: USDC_Logo },
       {
         symbol: "USDT",
         contract: currenciesAvax["USDT"],
         logo: LogoByShortName["USDT"],
       },
-      //{ symbol: "EUROE", contract: currenciesAvax["EUROE"], logo: EUROE_Logo },
     ],
   },
   [bsc.id]: {
@@ -283,6 +263,5 @@ export const tokenyByChainCheckout = {
     ],
   },
 };
-
 
 export default tokenyByChain;

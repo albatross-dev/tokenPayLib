@@ -1,25 +1,22 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { Consumer, Vendor } from "@/tokenPayLib/types/payload-types";
-import { useActiveAccount } from "thirdweb/react";
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import { polygon } from "thirdweb/chains";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
-import { api, sendErrorReport, useAuth } from "../../../context/UserContext";
-import SimpleList from "../UI/SimpleList";
-import {
-  chainTypesIds,
-  TokensByChainId,
-} from "../../utilities/crypto/currencies";
-import { useTranslation } from "react-i18next";
-import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
-import { getSendCryptoColumns } from "./sendCryptoColumns";
-import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
-import SendCryptoDialog from "./SendCryptoDialog";
-import fetchBalance from "../../utilities/crypto/fetchBalance";
-import { FiatTransactionRequest } from "../../types/derivedPayload.types";
 import { SimpleToken } from "@/tokenPayLib/types/token.types";
+import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { createThirdwebClient } from "thirdweb";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
+import { api, sendErrorReport, useAuth } from "../../../context/UserContext";
+import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
+import { FiatTransactionRequest } from "../../types/derivedPayload.types";
+import { chainTypesIds, TokensByChainId } from "../../utilities/crypto/currencies";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
+import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { LoadingButtonStates } from "../UI/LoadingButton";
+import SimpleList from "../UI/SimpleList";
+import { getSendCryptoColumns } from "./sendCryptoColumns";
+import SendCryptoDialog from "./SendCryptoDialog";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
@@ -31,13 +28,9 @@ interface SendCryptoProps {
 
 export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
-  const [amount, setAmount] = useState(0);
-  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>(
-    {}
-  );
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState<
-    number | null
-  >(null);
+  const [amount, setAmount] = useState<string>("");
+  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>({});
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<number | null>(null);
   const [maxAmount, setMaxAmount] = useState(0);
   const account = useActiveAccount();
   const [targetAddress, setTargetAddress] = useState("");
@@ -47,8 +40,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   const [isClient, setIsClient] = useState(false);
   const { user } = useAuth() as { user: Consumer | Vendor | null };
   const { t: tAccount } = useTranslation("wallet");
-  const { errors, validate, setFieldError, clearFieldError } =
-    useSendCryptoForm({ tAccount });
+  const { errors, validate, setFieldError, clearFieldError } = useSendCryptoForm({ tAccount });
 
   useEffect(() => {
     setIsClient(true);
@@ -68,7 +60,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       return;
     }
 
-    setAmount(maxAmount);
+    setAmount(maxAmount.toString());
   };
 
   const fetchTokenBalance = async (selectedToken: SimpleToken) => {
@@ -89,8 +81,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
     setSelectedTokenBalance(Number(balance));
 
     // Calculate max amount immediately
-    const calculatedMaxAmount =
-      Number(balance) / numberWithZeros(selectedToken?.decimals || 1);
+    const calculatedMaxAmount = Number(balance) / numberWithZeros(selectedToken?.decimals || 1);
     setMaxAmount(calculatedMaxAmount);
 
     // Check if balance is zero and show error message
@@ -140,7 +131,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
         await api.post("/api/cryptoTransfer", transferData);
 
         setTargetAddress("");
-        setAmount(0);
+        setAmount("");
         setIsLoading("success");
         setNewTxHash(transactionHash);
       } catch (error) {
@@ -188,11 +179,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
             columns={getSendCryptoColumns(tAccount)}
             loader={Boolean(newTxHash)}
           >
-            <button
-              onClick={() => setIsOpen(true)}
-              suppressHydrationWarning
-              className="btn-primary"
-            >
+            <button onClick={() => setIsOpen(true)} suppressHydrationWarning className="btn-primary">
               {tAccount("sendCrypto.table.newTransaction")}
             </button>
           </SimpleList>

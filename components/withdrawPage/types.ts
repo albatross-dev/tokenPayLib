@@ -1,11 +1,5 @@
 import { Swiper } from "swiper";
-import {
-  Consumer,
-  Country,
-  Maintenance,
-  PaymentTypesArray,
-  Vendor,
-} from "../../types/payload-types";
+import { Consumer, Country, Maintenance, PaymentTypesArray, Vendor } from "../../types/payload-types";
 import { Account } from "thirdweb/wallets";
 import { FiatCodes } from "../../types/derivedPayload.types";
 
@@ -49,6 +43,7 @@ export interface TransactionDetailsSlideProps extends SlideProps {
   setSelectedMethod: (method: PaymentTypesArray[number] | null) => void;
   selectedMethod: PaymentTypesArray[number] | null;
   clearData: () => void;
+  account: Account;
 }
 
 export interface PartnerPanelSlideProps extends SlideProps {

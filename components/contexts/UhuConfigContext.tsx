@@ -7,9 +7,11 @@ import {
   useContext,
   useEffect,
   useState,
+  useMemo,
 } from "react";
 import { sendErrorReport } from "../../../context/UserContext";
 import { Maintenance, Router, UhuConfig } from "../../types/payload-types";
+
 moment.locale("de");
 
 const timeZone = "Europe/Berlin";
@@ -32,7 +34,7 @@ interface UhuConfigProviderProps {
   children: ReactNode;
 }
 
-export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
+export function UhuConfigProvider({ children }: UhuConfigProviderProps) {
   const [uhuConfig, setUhuConfig] = useState<UhuConfig | "loading" | null>(
     "loading"
   );
@@ -110,17 +112,20 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
     getCurrentRouter();
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      uhuConfig,
+      currentRouter,
+      setUhuConfig,
+      maintenance,
+      isHelpModalOpen,
+      setIsHelpModalOpen,
+    }),
+    [uhuConfig, currentRouter, maintenance, isHelpModalOpen]
+  );
+
   return (
-    <UhuConfigContext.Provider
-      value={{
-        uhuConfig,
-        currentRouter,
-        setUhuConfig,
-        maintenance,
-        isHelpModalOpen,
-        setIsHelpModalOpen,
-      }}
-    >
+    <UhuConfigContext.Provider value={contextValue}>
       {children}
     </UhuConfigContext.Provider>
   );
