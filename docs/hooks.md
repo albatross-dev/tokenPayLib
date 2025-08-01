@@ -522,5 +522,12 @@ describe("useSendCryptoForm", () => {
 ## Related Modules
 
 - [Components](./components.md) - UI components that work with these hooks
+  - [LoadingButton](./components.md#loadingbutton) - Works with form validation states
+  - [AddressDisplay](./components.md#addressdisplay) - Displays validated addresses
 - [Types](./types.md) - TypeScript types used by hooks
+  - [SimpleToken](./types.md#simpletoken) - Token type for validation
+  - [ErrorMessage](./types.md#errormessage) - Error handling types
+- [Utilities](./utilities.md) - Utility functions used in hook logic
+  - [Form utilities](./utilities.md#form-utilities) - Data processing functions
+  - [Validation utilities](./utilities.md#crypto-utilities) - Address and amount validation
 - [Utilities](./utilities.md) - Utility functions used in hook logic

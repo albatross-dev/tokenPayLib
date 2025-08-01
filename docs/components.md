@@ -442,6 +442,13 @@ export default function SafeApp() {
 ## Related Modules
 
 - [Hooks](./hooks.md) - React hooks that work with these components
+  - [useSendCryptoForm](./hooks.md#usesendcryptoform) - Form validation for crypto transfers
 - [Types](./types.md) - TypeScript types used by components
+  - [SimpleToken](./types.md#simpletoken) - Token type for UI components
+  - [ErrorMessage](./types.md#errormessage) - Error handling in components
 - [Utilities](./utilities.md) - Utility functions for component logic
+  - [truncate](./utilities.md#truncate) - Used by AddressDisplay component
+  - [TokenPayAbstraction](./utilities.md#tokenpayabstraction) - Crypto operations
 - [Assets](./assets.md) - Icons and assets used in components
+  - [CryptoIcon](./assets.md#crypto-icons) - Token and chain icons
+  - [Contract ABIs](./assets.md#contract-abis) - Smart contract interfaces
