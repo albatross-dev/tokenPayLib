@@ -107,20 +107,18 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
   }
 
   useEffect(() => {
-    let selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.id;
+    const selectedFiatSymbol = STANDARD_STABLE_MAP[preferredStableCoin]?.id;
     if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       fetchExchangeRate(selectedFiatSymbol);
+    } else if (payoutCurrency === "crypto") {
+      setExchangeRate(1);
+      setLoadedExchangeRate(true);
+    } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
+      setExchangeRate(1);
+      setLoadedExchangeRate(true);
     } else {
-      if (payoutCurrency === "crypto") {
-        setExchangeRate(1);
-        setLoadedExchangeRate(true);
-      } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
-        setExchangeRate(1);
-        setLoadedExchangeRate(true);
-      } else {
-        setExchangeRate(0);
-        setLoadedExchangeRate(false);
-      }
+      setExchangeRate(0);
+      setLoadedExchangeRate(false);
     }
   }, [preferredStableCoin, payoutCurrency]);
 
@@ -182,7 +180,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.dashboard?.withdraw?.page && <Maintenance />}
+          {maintenance?.dashboard?.withdraw?.page && <Maintenance text={maintenance?.dashboard?.withdraw?.message} />}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader />
