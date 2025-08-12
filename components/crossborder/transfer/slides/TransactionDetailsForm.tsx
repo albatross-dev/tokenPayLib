@@ -30,8 +30,6 @@ interface TransactionDetailsFormProps {
   clearData: () => void;
 }
 
-const isDevelopment = process.env.NEXT_PUBLIC_NEXT_ENV === "development";
-
 export default function TransactionDetailsForm({
   selectedCountry,
   selectedCurrency,
@@ -121,10 +119,11 @@ export default function TransactionDetailsForm({
 
         <div className="flex justify-end">
           <button
+            type="button"
             className={`${
-              selectedMethod && (!error || isDevelopment) ? "bg-uhuBlue" : "bg-gray-300"
+              selectedMethod && (!error ) && amount ? "bg-uhuBlue" : "bg-gray-300"
             } text-white font-bold py-2 px-4 rounded-lg mt-4`}
-            disabled={!selectedMethod || (error && !isDevelopment)}
+            disabled={!selectedMethod || Boolean(error) || !amount}
             onClick={() => swiperInstance?.slideTo(4)}
           >
             {tCrossborder("transferSection.next")}

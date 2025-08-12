@@ -300,9 +300,6 @@ export default function DepositMethodSelector({
         }
       });
 
-      console.log("sortedMethods", sortedMethods);
-
-
       // for (const modality in sortedMethods) {
       //   let cheapest: QuotePaymentType | null = null;
       //   let nextLower: QuotePaymentType | null = null;
@@ -501,7 +498,7 @@ export default function DepositMethodSelector({
                         maximumFractionDigits: 5,
                       })}
                       {" " + endCurrencySymbol}
-                    </span>
+                    </span> {cheapestMethod.type === "unlimit" || cheapestMethod.type === "onramp_money" ? tCrossborder("deposit.depositmethodselector.estimated") : ""}
                   </div>
                 </div>
               ) : hasApiError ? (

@@ -1,7 +1,9 @@
+/* eslint-disable consistent-return */
+
 "use client";
 
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -31,7 +33,7 @@ export default function BalanceOverview() {
   const [totalUsdBalance, setTotalUsdBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const euroWhitelist = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
+  const euroWhitelist = ["EURS", "UHU"]; // Whitelisted EUR stablecoins
   const usdWhitelist = ["USDC", "USDT"]; // Whitelisted USD stablecoins
 
   useEffect(() => {
@@ -101,6 +103,7 @@ export default function BalanceOverview() {
     fetchBalances();
 
     const interval = setInterval(fetchBalances, 10000); // Refresh every 10 seconds
+    
     return () => clearInterval(interval); // Cleanup on unmount
   }, [account, client, uhuConfig, loading]);
 

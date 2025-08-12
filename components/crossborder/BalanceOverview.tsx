@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from "react";
 
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
+import { createThirdwebClient } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
 import { useTranslation } from "next-i18next";
@@ -43,7 +43,6 @@ export default function BalanceOverview() {
   const { uhuConfig } = useContext(UhuConfigContext);
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
-  const [balances, setBalances] = useState<Balance[]>([]);
   const [totalEuroBalance, setTotalEuroBalance] = useState<number>(0);
   const [totalUsdBalance, setTotalUsdBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -54,7 +53,7 @@ export default function BalanceOverview() {
 
   const [isUSDInfoModalOpen, setIsUSDInfoModalOpen] = useState<boolean>(false);
 
-  const euroWhitelist: string[] = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
+  const euroWhitelist: string[] = ["EURS", "UHU"]; // Whitelisted EUR stablecoins
   const usdWhitelist: string[] = ["USDC", "USDT"]; // Whitelisted USD stablecoins
   const popularWhitelist: string[] = [
     "WETH",
@@ -124,7 +123,6 @@ export default function BalanceOverview() {
       }
     });
 
-    setBalances(resolvedBalances.sort((a, b) => b.balance - a.balance));
     setTotalEuroBalance(euroBalanceSum);
     setTotalUsdBalance(usdBalanceSum);
 
@@ -159,19 +157,28 @@ export default function BalanceOverview() {
   }, [fetchBalances, lastFetchTime]);
 
   useEffect(() => {
-    setIsClient(true);
+    let interval: NodeJS.Timeout;
+
     if (uhuConfig !== "loading") {
       debouncedFetchBalances();
-      const interval = setInterval(debouncedFetchBalances, 10000);
-      return () => {
-        clearInterval(interval);
-        // Also clear any pending timeout when component unmounts
-        if (fetchTimeoutRef.current) {
-          clearTimeout(fetchTimeoutRef.current);
-        }
-      };
+      interval = setInterval(debouncedFetchBalances, 10000);
+      
     }
+
+    return () => {
+      if(interval) {
+        clearInterval(interval);
+      }
+      // Also clear any pending timeout when component unmounts
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
   }, [account, client, uhuConfig, loading, debouncedFetchBalances]);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <>
@@ -240,7 +247,8 @@ export default function BalanceOverview() {
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
-          <div
+          <button
+            type="button"
             className="flex flex-row gap-2 items-center text-blue-500 cursor-pointer"
             onClick={() => {
               setIsUSDInfoModalOpen(true);
@@ -248,9 +256,10 @@ export default function BalanceOverview() {
           >
             <HiInformationCircle className="h-6 w-6" />
             {tCrossborder("balanceOverview.usdRecomendedButton")}
-          </div>
+          </button>
           <div className="flex-1" />
-          <div
+          <button
+            type="button"
             onClick={() => {
               setIsConverterOpen(true);
             }}
@@ -259,7 +268,7 @@ export default function BalanceOverview() {
             }`}
           >
             {tCrossborder("balanceOverview.eurUsdConvert")}
-          </div>
+          </button>
           <Link
             href="/deposit?source=crossborder"
             className={`border hover:bg-gray-200 rounded px-3 py-1 border-gray-300 ${

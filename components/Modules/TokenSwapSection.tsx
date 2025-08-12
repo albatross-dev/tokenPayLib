@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import delay from "@/tokenPayLib/utilities/misc/delay";
-import { getContract, readContract } from "thirdweb";
+import { Chain, getContract, readContract } from "thirdweb";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { encodePacked } from "thirdweb/utils";
 import QueryString from "qs";
@@ -47,6 +47,85 @@ interface TokenSwapSectionProps {
   preAmount?: number;
 }
 
+  /**
+   * Fetch paths from the backend
+   */
+  export async function fetchPathsForTarget(targetToken: SimpleToken, activeChain: Chain): Promise<Pool[]> {
+    try {
+      const query = {
+        where: {
+          and: [
+            {
+              outputToken: {
+                equals: targetToken.id.toUpperCase(),
+              },
+            },
+            {
+              chain: {
+                equals: activeChain.id.toString(),
+              },
+            },
+          ],
+        },
+        limit: 200,
+      };
+
+      const stringifiedQuery = QueryString.stringify(query, {
+        addQueryPrefix: true,
+      });
+
+      const pathsRes = await api.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`);
+
+      const newPools: Pool[] = pathsRes?.data?.docs || [];
+
+      // parse paths from pool
+
+      return newPools;
+    } catch (e) {
+      console.error("Error fetching paths", e);
+      return [];
+    }
+  }
+
+  /**
+   * Fetch paths from the backend
+   */
+  export async function fetchPaths(originToken: SimpleToken, activeChain: Chain): Promise<Pool[]> {
+    try {
+      const query = {
+        where: {
+          and: [
+            {
+              inputToken: {
+                equals: originToken.id.toUpperCase(),
+              },
+            },
+            {
+              chain: {
+                equals: activeChain.id.toString(),
+              },
+            },
+          ],
+        },
+        limit: 200,
+      };
+
+      const stringifiedQuery = QueryString.stringify(query, {
+        addQueryPrefix: true,
+      });
+
+      const pathsRes = await api.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`);
+
+      const newPools: Pool[] = pathsRes?.data?.docs || [];
+
+      // parse paths from pool
+
+      return newPools;
+    } catch (e) {
+      console.error("Error fetching paths", e);
+      return [];
+    }
+  }
 
 
 export default function TokenSwapSection({ origin, target, max, preAmount }: TokenSwapSectionProps) {
@@ -119,49 +198,6 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
   }
 
   /**
-   * Fetch paths from the backend
-   */
-  async function fetchPaths(originToken: SimpleToken): Promise<Pool[]> {
-    try {
-      const query = {
-        where: {
-          and: [
-            {
-              inputToken: {
-                equals: originToken.id.toUpperCase(),
-              },
-            },
-            {
-              chain: {
-                equals: activeChain.id.toString(),
-              },
-            },
-          ],
-        },
-        limit: 200,
-      };
-
-      const stringifiedQuery = QueryString.stringify(query, {
-        addQueryPrefix: true,
-      });
-
-      const pathsRes = await api.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pool/${stringifiedQuery}`);
-
-      const newPools: Pool[] = pathsRes?.data?.docs || [];
-
-      // parse paths from pool
-
-      setPools(newPools);
-
-      return newPools;
-    } catch (e) {
-      console.error("Error fetching paths", e);
-      return [];
-    }
-  }
-
-  /**
-   /**
     * Processes target tokens for a given origin token by:
     * 1. Fetching available swap paths from the backend
     * 2. Converting paths into a map of output tokens
@@ -177,7 +213,9 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
 
     console.log("fetching paths for", token);
 
-    const paths = await fetchPaths(token);
+    const paths = await fetchPaths(token, activeChain);
+
+    setPools(paths);
 
     console.log("paths", paths);
 
@@ -432,7 +470,7 @@ export default function TokenSwapSection({ origin, target, max, preAmount }: Tok
           console.log("retrying exchange", retryCounter);
         } else {
           retryCounter = 0;
-          console.error("Error converting to EUROE", error);
+          console.error("Error converting to Stable Coin", error);
 
           setExchangeState("error");
 

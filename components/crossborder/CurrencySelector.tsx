@@ -9,21 +9,14 @@ import { useTranslation } from "next-i18next";
 import { HiInformationCircle } from "react-icons/hi2";
 import ConvertPopup from "./ConverterPopup";
 import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
-import { sendErrorReport } from "../../../context/UserContext";
 import UniversalModal from "../Modals/UniversalModal";
 import { UhuConfigContext } from "../contexts/UhuConfigContext";
 import currencies from "../../utilities/crypto/currencies";
 import MiniLoader from "../UI/MiniLoader";
 import { SimpleToken } from "../../types/token.types";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { fetchPathsForTarget } from "../Modules/TokenSwapSection";
 
-interface Currency {
-  contractAddress: string;
-  abi: any;
-  currency: string;
-  icon: string;
-  decimals: number;
-}
 
 export interface Balance {
   symbol: string;
@@ -97,7 +90,6 @@ export default function CurrencyDisplay({
     useState<boolean>(false);
 
   const [convertCurrency, setConvertCurrency] = useState<string | null>(null);
-  const [maxConvBalance, setMaxConvBalance] = useState<number>(0);
   const [isConverterOpen, setIsConverterOpen] = useState<boolean>(false);
 
   async function getMainCurrencyBalance(): Promise<void> {
@@ -109,12 +101,19 @@ export default function CurrencyDisplay({
     }
   }
 
-  const fetchBalances = async (): Promise<void> => {
+  async function fetchOriginTokens(): Promise<SimpleToken[]> {
+    if (!selectedCurrency) return [];
+    const paths = await fetchPathsForTarget(currencies[selectedCurrency?.symbol as keyof typeof currencies], polygon);
+    console.log("paths", paths);
+    return paths.map(path => currencies[path.inputToken as keyof typeof currencies]);
+  }
+
+  const fetchBalances = async (currenciesList: SimpleToken[]): Promise<void> => {
     if (!account?.address) return;
 
-    const balancePromises = Object.entries(currencies).map(
-      async ([symbol, currency]) => {
-        const balance = await getBalance(account, symbol, currency);
+    const balancePromises = currenciesList.map(
+      async (currency) => {
+        const balance = await getBalance(account, currency.id, currency);
         return balance;
       }
     );
@@ -145,18 +144,21 @@ export default function CurrencyDisplay({
     }
   }, [mainCurrencySymbol, account]);
 
+  async function fetchCurrencies() {
+    const currenciesList = await fetchOriginTokens();
+    fetchBalances(currenciesList);
+  }
+
   useEffect(() => {
     setIsClient(true);
+    fetchCurrencies();
 
-    fetchBalances();
-
-    const interval = setInterval(fetchBalances, 10000);
+    const interval = setInterval(fetchCurrencies, 10000);
     return () => clearInterval(interval);
   }, [account, client, uhuConfig, loading, mainCurrencySymbol]);
 
-  const handleConvertClick = (currency: string, balance: number): void => {
+  const handleConvertClick = (currency: string): void => {
     setConvertCurrency(currency);
-    setMaxConvBalance(balance);
     setIsConverterOpen(true);
   };
 
@@ -177,10 +179,10 @@ export default function CurrencyDisplay({
           setIsConverterOpen(false);
         }}
         onSuccess={() => {
-          fetchBalances();
+          fetchCurrencies();
           getMainCurrencyBalance();
         }}
-        token={currencies[convertCurrency as string]}
+        token={currencies[(convertCurrency as string)?.toUpperCase()]}
         targetToken={currencies[mainCurrencySymbol]}
        />
 
@@ -221,7 +223,7 @@ export default function CurrencyDisplay({
                   <div>{STANDARD_STABLE_MAP[mainCurrency?.symbol].id}</div>
                 ) : (
                   <div className="font-medium text-sm">
-                    {mainCurrency?.symbol}
+                    {mainCurrency?.symbol.toUpperCase()}
                   </div>
                 )}
               </div>
@@ -244,7 +246,7 @@ export default function CurrencyDisplay({
                   <div className="flex items-center gap-2 flex-1">
                     {STANDARD_STABLE_MAP[balance.symbol] ? (
                       <div className="w-6 h-6 flex items-center justify-center bg-uhuBlue text-white rounded-full">
-                        {STANDARD_STABLE_MAP[balance.symbol].symbol}
+                        {STANDARD_STABLE_MAP[balance.symbol].symbol.toUpperCase()}
                       </div>
                     ) : (
                       <Image
@@ -261,14 +263,15 @@ export default function CurrencyDisplay({
                     ) : (
                       <div className="flex flex-row items-center gap-2 font-medium text-sm">
                         {balance.symbol}
-                        <div
+                        <button
+                          type="button"
                           className="flex flex-row gap-2 items-center text-gray-500 cursor-pointer"
                           onClick={() => {
                             setAlternateCoinInfoOpen(true);
                           }}
                         >
                           <HiInformationCircle className="h-6 w-6" />
-                        </div>
+                        </button>
                       </div>
                     )}
                   </div>
@@ -277,17 +280,17 @@ export default function CurrencyDisplay({
                       {isClient && Number(balance.balance).toFixed(5)}
                     </div>
                   </div>
-                  <div
+                  <button
+                    type="button"
                     onClick={() => {
                       handleConvertClick(
-                        balance.symbol,
-                        Number(balance.balance)
+                        balance.symbol
                       );
                     }}
                     className="px-2 py-1 bg-uhuBlue cursor-pointer rounded-full font-bold text-white"
                   >
                     {tCrossborder("durrencyDisplay.convert")}
-                  </div>
+                  </button>
                 </div>
               ))}
             </div>

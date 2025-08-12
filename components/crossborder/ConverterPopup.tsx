@@ -30,14 +30,14 @@ interface ConvertPopupProps {
   showSwapButton?: boolean;
 }
 
-const ConvertPopup: React.FC<ConvertPopupProps> = ({
+function ConvertPopup({
   show,
   closeModal,
   token,
   targetToken,
   onSuccess,
   showSwapButton = false,
-}) => {
+}: ConvertPopupProps) {
   const { t } = useTranslation();
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -57,6 +57,36 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
   const [retryCounter, setRetryCounter] = useState<number>(0);
 
   const { maintenance } = useUhuConfig();
+
+  async function fetchBalances(selected: SimpleToken, target: SimpleToken) {
+    if (!account?.address || !activeChain) return;
+    setBalanceUpdate(true);
+
+    if (selected) {
+      const balance = await fetchBalance(
+        client,
+        activeChain,
+        selected.contractAddress,
+        selected.abi,
+        account.address
+      );
+      setSelectedTokenBalance(balance);
+    }
+
+    if (target) {
+      const balance = await fetchBalance(
+        client,
+        activeChain,
+        target.contractAddress,
+        target.abi,
+        account.address
+      );
+      setSelectedTargetTokenBalance(balance);
+    }
+
+    setBalanceUpdate(false);
+  }
+
 
   useEffect(() => {
     async function update() {
@@ -105,12 +135,12 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
 
       const encodedPath = encodePacked(path[0], path[1]);
 
-      const quote = await readContract({
+      const quoteResult = await readContract({
         contract,
         method: "quoteExactInput",
         params: [encodedPath, BigInt(amount * numberWithZeros(selectedToken?.decimals || 1))],
       });
-      setQuote(quote);
+      setQuote(quoteResult);
     }
     // Validate the amount and set error messages
     if (!amount || amount <= 0) {
@@ -128,51 +158,17 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
   }, [selectedToken, selectedTargetToken, amount, activeChain]);
 
   // fetch all necessary balances
-  async function fetchBalances(selectedToken: SimpleToken, selectedTargetToken: SimpleToken) {
-    if (!account?.address || !activeChain) return;
-    setBalanceUpdate(true);
-
-    if (selectedToken) {
-      const balance = await fetchBalance(
-        client,
-        activeChain,
-        selectedToken.contractAddress,
-        selectedToken.abi,
-        account.address
-      );
-      setSelectedTokenBalance(balance);
-    }
-
-    if (selectedTargetToken) {
-      const balance = await fetchBalance(
-        client,
-        activeChain,
-        selectedTargetToken.contractAddress,
-        selectedTargetToken.abi,
-        account.address
-      );
-      setSelectedTargetTokenBalance(balance);
-    }
-
-    setBalanceUpdate(false);
-  }
-
+  
   const handleMaxClick = () => {
     setAmount((Number(selectedTokenBalance) || 1) / numberWithZeros(selectedToken?.decimals || 1));
   };
 
-  const handleConfirmExchange = () => {
-    if (amount) {
-      handleExchangeAny(amount * numberWithZeros(selectedToken?.decimals || 1));
-    }
-  };
-
-  // handle exchanges from the exchange function
-  async function handleExchangeAny(amount: number) {
+   // handle exchanges from the exchange function
+   async function handleExchangeAny(a: number) {
     setExchangeState("processing");
     await convertAnyToAnyDirect(
       selectedToken,
-      amount,
+      a,
       account,
       () => {
         fetchBalances(selectedToken, selectedToken);
@@ -184,7 +180,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
       (error) => {
         setRetryCounter(retryCounter + 1);
         if (retryCounter < 3) {
-          handleExchangeAny(amount);
+          handleExchangeAny(a);
         } else {
           console.error("Error converting to EUROE", error);
           setExchangeState("error");
@@ -198,6 +194,14 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
       selectedTargetToken
     );
   }
+
+  const handleConfirmExchange = () => {
+    if (amount) {
+      handleExchangeAny(amount * numberWithZeros(selectedToken?.decimals || 1));
+    }
+  };
+
+ 
 
   return (
     <Transition appear show={!!show} as={Fragment}>
@@ -225,7 +229,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="relative max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              {maintenance !== "loading" && maintenance && maintenance.common.crossborder && <Maintenance />}
+              {maintenance !== "loading" && maintenance && maintenance.common.crossborder.conversionDialog && <Maintenance />}
               <DialogTitle
                 as="h3"
                 className="text-lg flex items-center justify-between font-medium leading-6 text-gray-900"
@@ -242,7 +246,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                   {showSwapButton && (
                     <IoIosSwap
                       className="w-6 h-6 p-1 cursor-pointer bg-uhuBlue rounded-full text-white flex items-center justify-center"
-                      onClick={swapTokens}
+                      onClick={()=>{swapTokens()}}
                     />
                   )}
                 </div>
@@ -251,7 +255,8 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
 
               <div className="flex flex-row gap-4 mt-4 text-gray-700 items-center justify-between text-gray-600 font-bold">
                 <div>{tCrossborder("convertPopup.howMuch")}</div>
-                <div
+                <button
+                  type="button"
                   className="flex gap-2 bg-gray-200 items-center rounded-full cursor-pointer text-sm px-[6px] py-[2px]"
                   onClick={async () => {
                     setBalanceUpdate(true);
@@ -261,7 +266,7 @@ const ConvertPopup: React.FC<ConvertPopupProps> = ({
                 >
                   <div className="text-[11px]">{tCrossborder("convertPopup.reloadRate")}</div>
                   <RxUpdate className={`w-4 h-4 ${balanceUpdate && "animate-spin"}`} />
-                </div>
+                </button>
               </div>
               <input
                 type="number"

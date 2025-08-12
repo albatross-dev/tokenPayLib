@@ -11,6 +11,8 @@ import { FiatTransaction } from "../../types/payload-types";
 export default function TransactionDetails({ transaction: initialTransaction }: { transaction: FiatTransaction }) {
   const { t: tTransaction } = useTranslation("transaction");
 
+console.log(initialTransaction)
+
   // Use TanStack Query with the initial data from SSR
   const {
     data: transaction,
@@ -81,7 +83,7 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
               <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.amount")}</span>
               <span className="font-medium">
                 {transaction.amount}{" "}
-                {transaction.fromNetwork === "fiat" ? transaction.fiatOriginCurrency : transaction.currencyName}
+                {transaction.fromNetwork === "fiat" ? (transaction.fiatOriginCurrency || getFiatInfoForStableCoin(transaction.currencyName)?.id)  : (getFiatInfoForStableCoin(transaction.currencyName)?.id || transaction.currencyName)}
               </span>
             </div>
           </div>
@@ -92,7 +94,9 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
             <span className="font-medium capitalize">{tTransaction(`transactionDetails.${transaction.type}`)}</span>
             <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.statusLabel")}</span>
             <span className="font-medium capitalize">
-              {tTransaction(`transactionDetails.status.${transaction.status}`)}
+              {transaction.partner === "crypto" || 
+              transaction.partner === "stasis_crypto_only" ||
+              transaction.partner === "koywe_crypto_only" ? tTransaction(`transactionDetails.status.success`): tTransaction(`transactionDetails.status.${transaction.status}`)}
             </span>
           </div>
 
@@ -102,7 +106,8 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
               <span className="font-medium capitalize">{transaction.toNetwork}</span>
               <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.finalAmount")}</span>
               <span className="font-medium">
-                {transaction.finalamount} {transaction.fromNetwork === "fiat" ? getFiatInfoForStableCoin(transaction.finalCurrency).id : transaction.finalCurrency}
+
+                {transaction.finalamount} {getFiatInfoForStableCoin(transaction.finalCurrency)?.id || transaction.finalCurrency}
               </span>
             </div>
             
