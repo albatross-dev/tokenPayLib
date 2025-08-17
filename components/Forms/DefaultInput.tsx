@@ -1,10 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  UseFormRegister,
-  Path,
-  UseFormGetFieldState,
-  UseFormStateProps,
-} from "react-hook-form";
+import { useTranslation } from "next-i18next";
+import { Path, UseFormGetFieldState, UseFormRegister } from "react-hook-form";
 
 interface DefaultInputProps<T extends Record<string, any>> {
   disabled?: boolean;
@@ -37,36 +32,26 @@ function DefaultInput<T extends Record<string, any>>({
   parsedRequired,
   step,
   validate,
-}: DefaultInputProps<T>): JSX.Element {
+}: DefaultInputProps<T>): React.ReactNode {
   const { getFieldState } = methods;
   const fieldState = getFieldState(fieldName);
 
-  useEffect(() => {
-    console.log("fieldState", fieldName, fieldState);
-  }, [fieldState]);
+  const { t } = useTranslation("common");
 
   return (
     <>
       <input
         id={String(fieldName)}
-        name={String(fieldName)}
         type={type}
         disabled={disabled}
         step={step}
         placeholder={placeholder?.toString()}
         {...methods.register(fieldName, {
-          validate: validate,
-          required: parsedRequired,
+          validate,
+          required: parsedRequired ? t("input_required") : false,
         })}
-        className={`mt-1 p-2 w-full border rounded-md ${
-          disabled ? "text-gray-500" : ""
-        }`}
+        className={`mt-1 p-2 w-full border rounded-md ${disabled ? "text-gray-500" : ""}`}
       />
-      {fieldState.error && (
-        <p className="text-red-500 text-sm">
-          {fieldState.error?.message?.toString()}
-        </p>
-      )}
     </>
   );
 }

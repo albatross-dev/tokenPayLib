@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { getSwyptQuote } from "../../universal/swyptUtils";
 import { Account } from "thirdweb/wallets";
+import { getSwyptQuote } from "../../universal/swyptUtils";
 import {
   Consumer,
   FiatTransaction,
@@ -20,6 +19,7 @@ import {
   FormData,
 } from "./Slides";
 import {
+  api,
   AuthContext,
   sendErrorReport,
 } from "../../../../../../context/UserContext";
@@ -65,10 +65,10 @@ export default function Swypt({
         attempts++;
 
         try {
-          const res = await axios.post(
+          const res = await api.post(
             "/api/fiatTransaction/swypt/onrampStatus",
             {
-              transactionId: transactionId,
+              transactionId,
             }
           );
           console.log("res", res);
@@ -134,7 +134,7 @@ export default function Swypt({
         const checkStatus = async () => {
           if (typeof user.currentSwyptOnRampTransaction === "object") {
             try {
-              let status = await pollTransactionStatusFrontend(
+              const status = await pollTransactionStatusFrontend(
                 user.currentSwyptOnRampTransaction.UUID
               );
               if (status === "awaitTransaction") {
@@ -185,7 +185,7 @@ export default function Swypt({
       setState("loading");
 
       // create transaction
-      await axios.post("/api/fiatTransaction/swypt/onramp", {
+      await api.post("/api/fiatTransaction/swypt/onramp", {
         phone: formData.phone,
         amount: amount.toString(),
         selectedTokenId: selectedToken.id,
@@ -217,9 +217,9 @@ export default function Swypt({
     }
 
     try {
-      let result = await axios.get("/api/fiatTransaction/swypt/deposit");
+      const result = await api.get("/api/fiatTransaction/swypt/deposit");
 
-      let processedState = result.data.status;
+      const processedState = result.data.status;
 
       refreshAuthentication();
       setState(processedState === "completed" ? "success" : "error");

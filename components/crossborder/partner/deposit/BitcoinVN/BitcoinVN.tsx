@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Account } from "thirdweb/wallets";
 import { Consumer, Vendor } from "../../../../../types/payload-types";
 import {
@@ -12,7 +11,7 @@ import {
   BitcoinVNTransaction,
 } from "./Slides";
 import { getQuote } from "../../../../../utilities/partner/bitcoinvn";
-import { sendErrorReport } from "../../../../../../context/UserContext";
+import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import { BitcoinVNQuote } from "../../universal/bitcoinVNUtils";
 
 interface BitcoinVNProps {
@@ -65,7 +64,7 @@ export default function BitcoinVN({
     setState("loading");
 
     try {
-      const result = await axios.post<BitcoinVNTransaction>(
+      const result = await api.post<BitcoinVNTransaction>(
         "/api/fiatTransaction/bitcoinVN/v2/createDeposit",
         {
           quote: quote?.id,

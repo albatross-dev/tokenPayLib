@@ -15,9 +15,13 @@ const MAX_MESSAGE_LENGTH: number = 4096;
 
 export class TelegramTransport implements Transport {
   private botToken: string;
+
   private chatId: string;
+
   private parseMode?: TelegramParseMode;
+
   private formatter: Formatter = defaultFormatter;
+
   private level: LogLevel = LogLevel.INFO;
 
   constructor({
@@ -63,6 +67,8 @@ export class TelegramTransport implements Transport {
           },
         });
 
+        console.log("response", response);
+
         if (response.status !== 200) {
           console.error(
             "Failed to send message with Http Status: ",
@@ -73,7 +79,7 @@ export class TelegramTransport implements Transport {
           continue;
         }
 
-        const data = response.data;
+        const {data} = response;
 
         if (data.ok !== true) {
           console.error(

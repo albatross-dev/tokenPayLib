@@ -1,6 +1,6 @@
 import { Control, FieldValues, UseFormReturn } from "react-hook-form";
-import { SimpleToken } from "../../types/token.types";
 import { Chain } from "thirdweb";
+import { SimpleToken } from "../../types/token.types";
 import { CheckoutSession } from "../../types/payload-types";
 import { FiatInfo } from "../../utilities/stableCoinsMaps";
 import { Availability } from "../../utilities/CountriesConfig";
@@ -58,7 +58,6 @@ export type InputType =
   | "token"
   | "chain";
 
-
 // Field renderer types
 export type FormField =
   | BaseFieldProps
@@ -73,8 +72,7 @@ export type FormField =
 
 export interface ArrayFieldProps extends BaseFieldProps {
   field: FormField;
-  methods: UseFormReturn<FieldValues, any, undefined>;
-  parentName: string;
+  parentName?: string;
 }
 
 // Document uploader specific types
@@ -116,7 +114,6 @@ export interface CountrySelectorProps extends BaseFieldProps {
   validCountries?: string[];
 }
 
-
 export interface CurrencySelectorProps extends BaseFieldProps {
   currencies: FiatInfo[];
 }
@@ -141,6 +138,7 @@ export interface TokenSelectorProps extends BaseFieldProps {
   onSelect: (token: SimpleToken) => void;
   selectText?: string;
   displayContent?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export interface ChainDetails {
@@ -151,7 +149,6 @@ export interface ChainDetails {
   main?: boolean;
 }
 
-
 // Chain selector specific types
 export interface ChainSelectorProps extends BaseFieldProps {
   supportedChains?: number[];
@@ -160,6 +157,7 @@ export interface ChainSelectorProps extends BaseFieldProps {
   chainList?: ChainDetails[] | undefined;
   returnOnly?: boolean | undefined;
   onChain?: (chain: ChainDetails) => void | undefined;
+  disabled?: boolean | undefined;
 }
 
 export interface FieldRendererProps {

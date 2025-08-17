@@ -1,8 +1,9 @@
 import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
+import { useTranslation } from 'next-i18next';
 import { PartnerPanelSlideProps } from '../types';
 import TransferPanel from '../../crossborder/transfer/components/TransferPanel';
-import { useTranslation } from 'next-i18next';
+
 const PartnerPanelSlide: React.FC<PartnerPanelSlideProps> = ({
   selectedMethod,
   amount,

@@ -6,9 +6,6 @@ import { useTranslation } from "next-i18next";
 import { SimpleToken } from "../../types/token.types";
 import { TokenSelectorProps } from "./types";
 
-
-
-
 /**
  * TokenSelector component allows users to select a token from a dropdown menu.
  * It includes a search functionality to filter tokens by name or id.
@@ -23,6 +20,7 @@ export default function TokenSelector({
   onSelect,
   selectText,
   displayContent,
+  disabled,
 }: TokenSelectorProps): JSX.Element {
   const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -40,32 +38,36 @@ export default function TokenSelector({
   return (
     <Menu as="div" className="relative inline-block text-left w-full mt-4">
       <MenuButton
-        className={`inline-flex w-full justify-between items-center rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none`}
+        disabled={disabled}
+        className={`inline-flex w-full justify-between items-center rounded-md border shadow-sm px-2 py-2  text-sm font-medium focus:outline-none ${
+          disabled ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
       >
-        {displayContent ? (
-          displayContent
-        ) : (
-          <>
-            <div className="flex items-center">
+        {displayContent || (
+          <div className="flex items-center">
               {selectedToken ? (
                 <>
-                  <Image
-                    src={selectedToken.icon}
-                    alt={selectedToken.name}
-                    width={24}
-                    height={24}
-                    className="h-6 w-6 mr-2"
-                  />
+                  {selectedToken.icon ? (
+                    <Image
+                      src={selectedToken.icon}
+                      alt={selectedToken.name}
+                      width={24}
+                      height={24}
+                      className="h-6 w-6 mr-2"
+                    />
+                  ) : (
+                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full" />
+                  )}
+
                   <span>{selectedToken.name}</span>
                 </>
               ) : (
                 <>
                   <div className="h-6 w-6 mr-2 bg-gray-200 rounded-full" />
-                  <span>{selectText ? selectText : t("select")}</span>
+                  <span>{selectText || t("select")}</span>
                 </>
               )}
             </div>
-          </>
         )}
         <BiChevronDown className="h-6 w-6 text-gray-700" />
       </MenuButton>
@@ -77,7 +79,9 @@ export default function TokenSelector({
             type="text"
             placeholder={t("search")}
             value={searchTerm}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -100,7 +104,7 @@ export default function TokenSelector({
                       className="h-6 w-6 mr-2"
                     />
                   ) : (
-                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full"></div>
+                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full" />
                   )}
                   <span>{tokens[tokenId]?.name || tokenId}</span>
                 </button>
@@ -115,4 +119,4 @@ export default function TokenSelector({
       </MenuItems>
     </Menu>
   );
-} 
+}

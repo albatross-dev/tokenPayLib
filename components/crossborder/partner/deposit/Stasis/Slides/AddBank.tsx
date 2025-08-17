@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { useTranslation } from "next-i18next";
 import { IoAdd } from "react-icons/io5";
 import { NewBankAccount, StasisErrors } from "../../../universal/stasis.types";
-import LoadingButton, {
-  LoadingButtonStates,
-} from "../../../../../UI/LoadingButton";
-import axios from "axios";
-import { sendErrorReport } from "../../../../../../../context/UserContext";
+import LoadingButton, { LoadingButtonStates } from "../../../../../UI/LoadingButton";
+import { api, sendErrorReport } from "../../../../../../../context/UserContext";
+
 interface AddBankProps {
   loadingState: LoadingButtonStates;
   errors: StasisErrors;
@@ -29,10 +27,7 @@ export function AddBank({
   const handleAddBankAccount = async () => {
     setLoadingState("processing");
     try {
-      await axios.post(
-        "/api/fiatTransaction/stasis/createBankAccount",
-        newBankAccount
-      );
+      await api.post("/api/fiatTransaction/stasis/createBankAccount", newBankAccount);
       await fetchBankAccounts();
       setView("selectBank");
       setErrors({
@@ -42,6 +37,7 @@ export function AddBank({
       setLoadingState("normal");
     } catch (error) {
       sendErrorReport("Stasis - Deposit - Creating bank account failed", error);
+      setView("selectBank");
       setErrors({
         ...errors,
         bankAccount: tCrossborder("deposit.stasis.errors.bankAccountCreate"),
@@ -59,8 +55,7 @@ export function AddBank({
     bank_address: "",
   });
 
-  const isFormComplete = () => {
-    return Boolean(
+  const isFormComplete = () => Boolean(
       newBankAccount.name &&
         newBankAccount.iban &&
         newBankAccount.bank_code &&
@@ -68,15 +63,11 @@ export function AddBank({
         newBankAccount.holder_name &&
         newBankAccount.bank_address
     );
-  };
 
   return (
     <div className="w-full">
       <div className="mb-2">
-        <label
-          htmlFor="holder_name"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="holder_name" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.accountName")}
         </label>
         <input
@@ -91,14 +82,11 @@ export function AddBank({
               name: e.target.value,
             })
           }
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
         />
       </div>
       <div className="mb-2">
-        <label
-          htmlFor="holder_name"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="holder_name" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.accountHolderName")}
         </label>
         <input
@@ -113,14 +101,11 @@ export function AddBank({
               holder_name: e.target.value,
             })
           }
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
         />
       </div>
       <div className="mb-2">
-        <label
-          htmlFor="iban"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="iban" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.iban")}
         </label>
         <input
@@ -135,14 +120,11 @@ export function AddBank({
               iban: e.target.value,
             })
           }
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
         />
       </div>
       <div className="mb-2">
-        <label
-          htmlFor="bank_code"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="bank_code" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.bic")}
         </label>
         <input
@@ -157,14 +139,11 @@ export function AddBank({
               bank_code: e.target.value,
             })
           }
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
         />
       </div>
       <div className="mb-2">
-        <label
-          htmlFor="bank_name"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="bank_name" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.bankName")}
         </label>
         <input
@@ -179,15 +158,12 @@ export function AddBank({
               bank_name: e.target.value,
             })
           }
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
         />
       </div>
 
       <div className="mb-2">
-        <label
-          htmlFor="bank_address"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="bank_address" className="block text-sm font-medium text-gray-700">
           {tCrossborder("deposit.stasis.addBank.bankAddress")}
         </label>
         <input
@@ -196,7 +172,7 @@ export function AddBank({
           id="bank_address"
           required
           value={newBankAccount.bank_address}
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-uhuBlue"
           onChange={(e) =>
             setNewBankAccount({
               ...newBankAccount,
@@ -206,18 +182,11 @@ export function AddBank({
         />
       </div>
 
-      <LoadingButton
-        active={isFormComplete()}
-        isLoading={loadingState}
-        onClick={handleAddBankAccount}
-      >
-        <IoAdd className="mr-2" />{" "}
-        {tCrossborder("deposit.stasis.addBank.button")}
+      <LoadingButton active={isFormComplete()} isLoading={loadingState} onClick={handleAddBankAccount}>
+        <IoAdd className="mr-2" /> {tCrossborder("deposit.stasis.addBank.button")}
       </LoadingButton>
 
-      {errors.bankAccount && (
-        <p className="text-red-500 text-sm mt-2">{errors.bankAccount}</p>
-      )}
+      {errors.bankAccount && <p className="text-red-500 text-sm mt-2">{errors.bankAccount}</p>}
     </div>
   );
 }

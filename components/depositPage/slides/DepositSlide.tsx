@@ -1,7 +1,7 @@
 import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import { Consumer, Country, Vendor } from "../../../types/payload-types";
 import { Account } from "thirdweb/wallets";
+import { Consumer, Country, Vendor } from "../../../types/payload-types";
 import Loader from "../../UI/Loader";
 import DepositPanel from "./DepositPanel";
 import { QuotePaymentType } from "./DepositMethodSelector";
@@ -26,8 +26,7 @@ const DepositSlide: React.FC<DepositSlideProps> = ({
   user,
   selectedCountry,
   onBack,
-}) => {
-  return (
+}) => (
     <div className="relative z-[10]  flex flex-col gap-4  max-w-4xl mx-auto">
       <button
         onClick={onBack}
@@ -53,6 +52,5 @@ const DepositSlide: React.FC<DepositSlideProps> = ({
       )}
     </div>
   );
-};
 
 export default DepositSlide;

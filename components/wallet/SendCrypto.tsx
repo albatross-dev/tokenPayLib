@@ -1,27 +1,26 @@
 "use client";
-import React, { useEffect, useState, useContext } from "react";
-import { useActiveAccount } from "thirdweb/react";
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
+
+import { Consumer, Vendor } from "@/tokenPayLib/types/payload-types";
+import { SimpleToken } from "@/tokenPayLib/types/token.types";
+import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { createThirdwebClient } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import numberWithZeros from "../../utilities/math/numberWithZeros";
-import axios from "axios";
-import { AuthContext, sendErrorReport } from "../../../context/UserContext";
-import SimpleList from "../UI/SimpleList";
-import {
-  formatCrypto,
-  TokensByChainId,
-} from "../../utilities/crypto/currencies";
-import { useTranslation } from "react-i18next";
-import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
-import { getSendCryptoColumns } from "./sendCryptoColumns";
+import { useActiveAccount } from "thirdweb/react";
+import { api, sendErrorReport, useAuth } from "../../../context/UserContext";
 import { useSendCryptoForm } from "../../hooks/useSendCryptoForm";
-import SendCryptoDialog from "./SendCryptoDialog";
-import fetchBalance from "../../utilities/crypto/fetchBalance";
-import { useUhuConfig } from "../contexts/UhuConfigContext";
 import { FiatTransactionRequest } from "../../types/derivedPayload.types";
+import { chainTypesIds, TokensByChainId } from "../../utilities/crypto/currencies";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
+import { tokenPayAbstractionSimpleTransfer } from "../../utilities/crypto/TokenPayAbstraction";
+import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { LoadingButtonStates } from "../UI/LoadingButton";
+import SimpleList from "../UI/SimpleList";
+import { getSendCryptoColumns } from "./sendCryptoColumns";
+import SendCryptoDialog from "./SendCryptoDialog";
 
 const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
 });
 
 interface SendCryptoProps {
@@ -29,33 +28,32 @@ interface SendCryptoProps {
 }
 
 export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
-  const [selectedToken, setSelectedToken] = useState(null);
-  const [amount, setAmount] = useState(0);
-  const [originTokens, setOriginTokens] = useState({});
-  const [selectedTokenBalance, setSelectedTokenBalance] = useState(null);
+  const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
+  const [amount, setAmount] = useState<string>("");
+  const [originTokens, setOriginTokens] = useState<Record<string, SimpleToken>>({});
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<number | null>(null);
   const [maxAmount, setMaxAmount] = useState(0);
   const account = useActiveAccount();
   const [targetAddress, setTargetAddress] = useState("");
-  const [isLoading, setIsLoading] = useState("normal");
-  const [newTxHash, setNewTxHash] = useState(null);
+  const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
+  const [newTxHash, setNewTxHash] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth() as { user: Consumer | Vendor | null };
   const { t: tAccount } = useTranslation("wallet");
-  const { errors, validate, setFieldError, clearFieldError } =
-    useSendCryptoForm({ tAccount });
+  const { errors, validate, setFieldError, clearFieldError } = useSendCryptoForm({ tAccount });
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   useEffect(() => {
-    setOriginTokens(TokensByChainId[polygon.id]);
+    setOriginTokens(TokensByChainId[polygon.id as chainTypesIds]);
   }, []);
 
   useEffect(() => {
-    if (newTxHash) fetchTokenBalance(selectedToken);
-  }, [newTxHash]);
+    if (newTxHash && selectedToken) fetchTokenBalance(selectedToken);
+  }, [newTxHash, selectedToken]);
 
   const handleMaxClick = () => {
     if (!selectedToken) {
@@ -63,10 +61,15 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       return;
     }
 
-    setAmount(maxAmount);
+    setAmount(maxAmount.toString());
   };
 
-  const fetchTokenBalance = async (selectedToken) => {
+  const fetchTokenBalance = async (selectedToken: SimpleToken) => {
+    if (!account) {
+      console.error("No account found");
+      return;
+    }
+
     setSelectedToken(selectedToken);
     const balance = await fetchBalance(
       client,
@@ -76,11 +79,10 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       account.address
     );
 
-    setSelectedTokenBalance(balance);
+    setSelectedTokenBalance(Number(balance));
 
     // Calculate max amount immediately
-    const calculatedMaxAmount =
-      Number(balance) / numberWithZeros(selectedToken?.decimals || 1);
+    const calculatedMaxAmount = Number(balance) / numberWithZeros(selectedToken?.decimals || 1);
     setMaxAmount(calculatedMaxAmount);
 
     // Check if balance is zero and show error message
@@ -92,10 +94,14 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
   };
 
   const handleSend = async () => {
+    if (!selectedToken) {
+      return;
+    }
+
     // Validate with current data before proceeding
     const isValid = validate(selectedToken, amount, targetAddress, maxAmount);
 
-    if (isValid) {
+    if (isValid && account && user) {
       setIsLoading("processing");
       try {
         const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
@@ -107,11 +113,11 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
           targetAddress
         );
 
-        let transferData: FiatTransactionRequest = {
+        const transferData: FiatTransactionRequest = {
           amount: Number(amount),
           currency: selectedToken.contractAddress,
           currencyName: selectedToken.id.toUpperCase(),
-          transactionHash: transactionHash,
+          transactionHash,
           sendingWallet: account?.address,
           currencyDecimals: selectedToken.decimals,
           receivingWallet: targetAddress,
@@ -123,21 +129,17 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
           transferData.consumer = user.id;
         }
 
-        await axios.post("/api/cryptoTransfer", transferData);
+        await api.post("/api/cryptoTransfer", transferData);
 
         setTargetAddress("");
-        setAmount(0);
+        setAmount("");
         setIsLoading("success");
         setNewTxHash(transactionHash);
-
-        setTimeout(() => {
-          setIsLoading("normal");
-        }, 20000);
       } catch (error) {
         console.log("error handle send", error);
         setErrorMessage({
           message: "Bitte versuchen Sie es später nochmal",
-          error: error,
+          error,
         });
         sendErrorReport("SendCrypto - Sending failed", error);
         setIsLoading("error");
@@ -153,6 +155,7 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       <SendCryptoDialog
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        setIsLoading={setIsLoading}
         isLoading={isLoading}
         selectedToken={selectedToken}
         originTokens={originTokens}
@@ -173,15 +176,11 @@ export default function SendCrypto({ setErrorMessage }: SendCryptoProps) {
       <div>
         {isClient && (
           <SimpleList
-            collection={"cryptoTransfer"}
+            collection="cryptoTransfer"
             columns={getSendCryptoColumns(tAccount)}
-            loader={newTxHash}
+            loader={Boolean(newTxHash)}
           >
-            <button
-              onClick={() => setIsOpen(true)}
-              suppressHydrationWarning
-              className="btn-primary"
-            >
+            <button onClick={() => setIsOpen(true)} suppressHydrationWarning className="btn-primary">
               {tAccount("sendCrypto.table.newTransaction")}
             </button>
           </SimpleList>

@@ -11,6 +11,7 @@ export type ConsoleTransportConfig = {
 export class ConsoleTransport implements Transport {
 
     private formatter: Formatter = defaultFormatter;
+
     private level: LogLevel = LogLevel.INFO;
 
     constructor({ formatter, level }: ConsoleTransportConfig) {

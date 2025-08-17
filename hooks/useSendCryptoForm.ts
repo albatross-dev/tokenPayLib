@@ -1,7 +1,8 @@
 import { TFunction } from "i18next";
 import { useState } from "react";
+import { SimpleToken } from "../types/token.types";
 
-interface Errors {
+export interface Errors {
   selectedToken?: string;
   amount?: string;
   targetAddress?: string;
@@ -9,21 +10,33 @@ interface Errors {
 }
 
 interface UseSendCryptoFormProps {
-  tAccount: TFunction
+  tAccount: TFunction;
 }
 
 interface UseSendCryptoFormReturn {
   errors: Errors;
-  validate: (selectedToken: string | null, amount: string | number, targetAddress: string, maxAmount?: number) => boolean;
+  validate: (
+    selectedToken: SimpleToken | null,
+    amount: string | number,
+    targetAddress: string,
+    maxAmount?: number
+  ) => boolean;
   setFieldError: (field: string, error: string) => void;
   clearFieldError: (field: string) => void;
 }
 
-export const useSendCryptoForm = ({ tAccount }: UseSendCryptoFormProps): UseSendCryptoFormReturn => {
+export const useSendCryptoForm = ({
+  tAccount,
+}: UseSendCryptoFormProps): UseSendCryptoFormReturn => {
   const [errors, setErrors] = useState<Errors>({});
 
-  const validate = (selectedToken: string | null, amount: string | number, targetAddress: string, maxAmount?: number): boolean => {
-    let newErrors: Errors = {};
+  const validate = (
+    selectedToken: SimpleToken | null,
+    amount: string | number,
+    targetAddress: string,
+    maxAmount?: number
+  ): boolean => {
+    const newErrors: Errors = {};
 
     if (!selectedToken) {
       newErrors.selectedToken = tAccount("sendCrypto.errors.selectToken");
@@ -64,4 +77,4 @@ export const useSendCryptoForm = ({ tAccount }: UseSendCryptoFormProps): UseSend
     setFieldError,
     clearFieldError,
   };
-}; 
+};

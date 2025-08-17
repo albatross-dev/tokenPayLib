@@ -1,0 +1,41 @@
+## Stasis
+
+- **Path**: `src/tokenPayLib/components/crossborder/partner/withdraw/Stasis/Stasis.tsx`
+- **Category**: crossborder
+- **Summary**: Cross-border transfer flows, partner integrations, and slides.
+
+### Purpose
+Describe what this component does in the product flow and when to use it.
+
+### Props
+Document props and types here. If props are inferred from TypeScript, see the source file.
+
+### Usage
+Basic import and render example:
+
+
+```tsx
+import Stasis from 'src/tokenPayLib/components/crossborder/partner/withdraw/Stasis/Stasis';
+
+export default function Example() {
+  return (
+    <div>
+      <Stasis />
+    </div>
+  );
+}
+
+```
+
+### Dependencies
+- External: `react`, `react-icons/io5`, `next-i18next`, `thirdweb/chains`, `@/utilities/thirdweb-client`
+- Internal: `../../../../../../utilities/currencies`, `./slides/types`, `./slides/SelectBankAccount`, `./slides/WithdrawView`, `./slides/SuccessView`, `../../../../UI/Loader`, `../../../../../utilities/crypto/fetchBalance`, `../../../../../utilities/partner/stasis/fetchBankAccounts`, `../../../../../utilities/crypto/TokenPayAbstraction`, `../../universal/stasis.types`, `../../../../../types/token.types`, `../../deposit/Stasis/Slides`, `../../../../UI/LoadingButton`, `../../../../../../context/UserContext`
+
+### Related
+Other components in `crossborder`
+
+### Notes
+- Edge cases, loading/empty states, accessibility, i18n keys, etc.
+
+### Source
+See `src/tokenPayLib/components/crossborder/partner/withdraw/Stasis/Stasis.tsx`

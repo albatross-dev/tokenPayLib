@@ -1,19 +1,15 @@
 import { Account } from "thirdweb/wallets";
+import { Consumer, Country, Vendor } from "../../../types/payload-types";
+import BitcoinVN from "../../crossborder/partner/deposit/BitcoinVN/BitcoinVN";
+import HelpDesk from "../../crossborder/partner/deposit/Helpdesks/HelpDesk";
+import Koywe from "../../crossborder/partner/deposit/Koywe/Koywe";
 import OnRamp from "../../crossborder/partner/deposit/OnRamp";
-import Unlimit from "../../crossborder/partner/deposit/Unlimit";
-import {
-  Consumer,
-  Vendor,
-  PaymentTypesArray,
-  Country,
-} from "../../../types/payload-types";
-import React from "react";
 import Stasis from "../../crossborder/partner/deposit/Stasis/Stasis";
 import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
-import BitcoinVN from "../../crossborder/partner/deposit/BitcoinVN/BitcoinVN";
+import Unlimit from "../../crossborder/partner/deposit/Unlimit";
 import DepositError from "../DepositError";
 import { QuotePaymentType } from "./DepositMethodSelector";
-import Koywe from "../../crossborder/partner/deposit/Koywe/Koywe";
+
 interface DepositPanelProps {
   method: QuotePaymentType;
   amount: number;
@@ -35,14 +31,7 @@ export default function DepositPanel({
 }: DepositPanelProps) {
   switch (method?.type) {
     case "unlimit":
-      return (
-        <Unlimit
-          amount={amount}
-          account={account}
-          user={user}
-          country={country}
-        />
-      );
+      return <Unlimit amount={amount} account={account} method={method} country={country} />;
     case "onramp_money":
       return <OnRamp amount={amount} account={account} method={method} />;
     case "bitcoin_vn":
@@ -75,7 +64,15 @@ export default function DepositPanel({
     case "kotanipay_helpdesk":
     case "coinhako_helpdesk":
     case "ovex":
-      return <DepositError errorType="helpdesk" />;
+      return (
+        <HelpDesk
+          method={method}
+          amount={amount}
+          country={country}
+          startCurrency={startCurrency}
+          endCurrency={endCurrency}
+        />
+      );
 
     default:
       return <DepositError errorType="unavailable" />;

@@ -4,17 +4,12 @@ export type FormattedLog = { log: any };
 
 export type Formatter = (entrie: LogEntry) => FormattedLog;
 
-export const defaultFormatter: Formatter = (entry: LogEntry) => {
-  return { log: entry };
-};
+export const defaultFormatter: Formatter = (entry: LogEntry) => ({ log: entry });
 
-export const stringifyFormatter: Formatter = (entry: LogEntry) => {
-  return { log: JSON.stringify(entry) };
-};
+export const stringifyFormatter: Formatter = (entry: LogEntry) => ({ log: JSON.stringify(entry) });
 
 export const telegramHTMLFormatter: Formatter = (entry: LogEntry) => {
-  const formatHeader = (page: number) => {
-    return `
+  const formatHeader = (page: number) => `
 <b>Page: </b> ${page}\n
 <b>Log-Level: </b>${
       LogLevelStrings.get(entry.level) || entry.level.toString()
@@ -22,19 +17,12 @@ export const telegramHTMLFormatter: Formatter = (entry: LogEntry) => {
 <b>Logger: </b>${entry.loggerName}\n
 <b>Timestamp: </b>${entry.timestamp}\n
 ${entry.email ? `<b>User: </b>${entry.email}\n` : ""}`;
-  };
 
-  const formatMessage = (message: string) => {
-    return `<b>Message: </b>${message}\n`;
-  };
+  const formatMessage = (message: string) => `<b>Message: </b>${message}\n`;
 
-  const formatData = (dataString: string) => {
-    return `<b>Data: </b>\n<pre>${dataString}</pre>\n\n`;
-  };
+  const formatData = (dataString: string) => `<b>Data: </b>\n<pre>${dataString}</pre>\n\n`;
 
-  const formatBrowserInformation = (infoString: string) => {
-    return `<b>Browser Information: </b>\n<pre>${infoString}</pre>`;
-  };
+  const formatBrowserInformation = (infoString: string) => `<b>Browser Information: </b>\n<pre>${infoString}</pre>`;
 
   let stringifiedData: string = entry.data
     ? prettifyJSONString(entry.data)

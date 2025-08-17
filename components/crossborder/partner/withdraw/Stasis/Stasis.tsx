@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { useTranslation } from "next-i18next";
-import { useActiveAccount } from "thirdweb/react";
 import { polygon } from "thirdweb/chains";
-import axios from "axios";
+import client from "@/utilities/thirdweb-client";
 import currencies from "../../../../../../utilities/currencies";
 import { StasisProps } from "./slides/types";
 
@@ -14,7 +13,6 @@ import SelectBankAccount from "./slides/SelectBankAccount";
 import WithdrawView from "./slides/WithdrawView";
 import SuccessView from "./slides/SuccessView";
 import Loader from "../../../../UI/Loader";
-import { client } from "../../../../../../pages/_app";
 import fetchBalance from "../../../../../utilities/crypto/fetchBalance";
 import fetchBankAccounts from "../../../../../utilities/partner/stasis/fetchBankAccounts";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
@@ -22,15 +20,11 @@ import { BankAccount, StasisErrors } from "../../universal/stasis.types";
 import { SimpleToken } from "../../../../../types/token.types";
 import { AddBank, StasisKYC } from "../../deposit/Stasis/Slides";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
+import { api } from "../../../../../../context/UserContext";
 
 const POOL_FEE = 0.004;
 
-export default function Stasis({
-  amount,
-  account,
-  user,
-  preferredStableCoin,
-}: StasisProps) {
+export default function Stasis({ amount, account, user, preferredStableCoin }: StasisProps) {
   const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
   const [errors, setErrors] = useState<StasisErrors>({
     bankAccount: null,
@@ -38,13 +32,9 @@ export default function Stasis({
     amount: null,
     send: null,
   });
-  const [selectedToken, setSelectedToken] = useState<SimpleToken>(
-    currencies[preferredStableCoin]
-  );
-  const [selectedTokenBalance, setSelectedTokenBalance] =
-    useState<BigInt | null>(null);
-  const [selectedBankAccount, setSelectedBankAccount] =
-    useState<BankAccount | null>(null);
+  const [selectedToken, setSelectedToken] = useState<SimpleToken>(currencies[preferredStableCoin]);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<BigInt | null>(null);
+  const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
   const [view, setView] = useState<string>("select"); // 'select', 'add', or 'withdraw'
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
 
@@ -75,7 +65,7 @@ export default function Stasis({
   };
 
   const validate = () => {
-    let newErrors: StasisErrors = {
+    const newErrors: StasisErrors = {
       bankAccount: null,
       cryptoAccount: null,
       amount: null,
@@ -85,19 +75,18 @@ export default function Stasis({
       newErrors.amount = tCrossborder("withdraw.stasis.errorLargerAmount");
     }
     if (Number(amount) > Number(selectedTokenBalance)) {
-      //newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
+      // newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
     }
     if (!selectedBankAccount) {
-      newErrors.bankAccount = tCrossborder(
-        "withdraw.stasis.errorChooseBankAccount"
-      );
+      newErrors.bankAccount = tCrossborder("withdraw.stasis.errorChooseBankAccount");
     }
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === null);
   };
 
   const handleSend = async () => {
-    if (Number(amount) < 10) {
+    // TODO: This is a temporary fix to avoid errors with the Stasis API
+    if (Number(amount) < 0.01) {
       setErrors({
         ...errors,
         amount: tCrossborder("withdraw.stasis.errorMinAmount"),
@@ -112,14 +101,11 @@ export default function Stasis({
       try {
         let withdrawalResponse;
         try {
-          withdrawalResponse = await axios.post(
-            "/api/fiatTransaction/stasis/createWithdraw",
-            {
-              incoming_amount: Number(amount - amount * POOL_FEE),
-              bankAccountId: selectedBankAccount?.uuid,
-              preferredStableCoin: selectedToken,
-            }
-          );
+          withdrawalResponse = await api.post("/api/fiatTransaction/stasis/createWithdraw", {
+            incoming_amount: Number(amount - amount * POOL_FEE),
+            bankAccountId: selectedBankAccount?.uuid,
+            preferredStableCoin: selectedToken,
+          });
         } catch (e) {
           console.error("Error creating withdrawal", e);
           if (e.response.status === 404) {
@@ -149,8 +135,8 @@ export default function Stasis({
           depositAddress
         );
 
-        await axios.patch(`/api/fiatTransaction/${transaction.id}`, {
-          transactionHash: transactionHash,
+        await api.patch(`/api/fiatTransaction/${transaction.id}`, {
+          transactionHash,
         });
 
         setIsLoading("success");
@@ -168,17 +154,12 @@ export default function Stasis({
   const renderHeader = () => (
     <div className="flex w-full items-center mb-4 bg-gray-100 p-4 rounded-lg shadow-sm">
       {view !== "select" && (
-        <button
-          className="mr-4 text-gray-500 hover:text-gray-700 transition"
-          onClick={() => setView("select")}
-        >
+        <button className="mr-4 text-gray-500 hover:text-gray-700 transition" onClick={() => setView("select")}>
           <IoArrowBack className="w-6 h-6" />
         </button>
       )}
       <div className="text-2xl font-bold leading-6 text-gray-900 flex-grow">
-        {view === "add"
-          ? tCrossborder("withdraw.stasis.newBankAccount")
-          : tCrossborder("withdraw.stasis.payout")}
+        {view === "add" ? tCrossborder("withdraw.stasis.newBankAccount") : tCrossborder("withdraw.stasis.payout")}
       </div>
     </div>
   );
@@ -248,9 +229,7 @@ export default function Stasis({
             } catch (error) {
               setErrors({
                 ...errors,
-                bankAccount: tCrossborder(
-                  "withdraw.stasis.errorFetchBankAccounts"
-                ),
+                bankAccount: tCrossborder("withdraw.stasis.errorFetchBankAccounts"),
               });
               setIsLoading("normal");
               console.error("Error fetching bank accounts", error);

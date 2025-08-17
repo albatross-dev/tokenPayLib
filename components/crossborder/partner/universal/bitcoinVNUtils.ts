@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "../../../../../context/UserContext";
 
 export interface BitcoinVNQuote {
   id: string;
@@ -22,7 +22,7 @@ interface BitcoinVNMetadata {
 
 export async function getBitcoinVNMetaData(): Promise<BitcoinVNMetadata> {
   try {
-    const result = await axios.get<BitcoinVNMetadata>(
+    const result = await api.get<BitcoinVNMetadata>(
       "/api/fiatTransaction/bitcoinVN/getMetaData"
     );
     return result.data;
@@ -36,7 +36,7 @@ export async function getBitcoinVNQuote(
   amount: number
 ): Promise<BitcoinVNQuote> {
   try {
-    const result = await axios.post<BitcoinVNQuote>(
+    const result = await api.post<BitcoinVNQuote>(
       "/api/fiatTransaction/bitcoinVN/quote",
       {
         depositAmount: amount,

@@ -1,8 +1,8 @@
 import React from 'react';
+import { useTranslation } from "next-i18next";
 import ContinentsMap from "../../../UI/ContinentMap";
 import TransferCountries from "../components/TransferCountries";
 import Loader from "../../../UI/Loader";
-import { useTranslation } from "next-i18next";
 import { Country } from '../../../../types/payload-types';
 
 interface ContinentSelectionProps {

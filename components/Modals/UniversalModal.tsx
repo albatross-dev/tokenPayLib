@@ -121,7 +121,7 @@ const UniversalModal: React.FC<UniversalModalProps> = ({
                     {customButtonTitle}
                   </button>
                 ) : (
-                  <div></div>
+                  <div />
                 )}
                 <button
                   type="button"

@@ -1,40 +1,43 @@
+/* eslint-disable consistent-return */
+
 "use client";
 
-import React, { useState, useEffect, useContext } from "react";
-import { formatNumberWithCurrency } from "../../../utilities/currencies";
-import currencies from "../../utilities/crypto/currencies";
-import MiniLoader from "../UI/MiniLoader";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import { polygon } from "thirdweb/chains";
-import { useActiveAccount } from "thirdweb/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { createThirdwebClient } from "thirdweb";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
+import MiniLoader from "../UI/MiniLoader";
+import currencies from "../../utilities/crypto/currencies";
+import { formatNumberWithCurrency } from "../../../utilities/currencies";
 import { sendErrorReport } from "../../../context/UserContext";
-import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import fetchBalance from "../../utilities/crypto/fetchBalance";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
+import { useUhuConfig } from "../contexts/UhuConfigContext";
+import { Balance } from "../crossborder/CurrencySelector";
 
 const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
 });
 
 export default function BalanceOverview() {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState(false);
-  const { uhuConfig } = useContext(UhuConfigContext);
+  const { uhuConfig } = useUhuConfig();
   const { t: tAccount } = useTranslation("wallet");
-  const [balances, setBalances] = useState([]);
+  const [balances, setBalances] = useState<Balance[] | null>(null);
   const [totalEuroBalance, setTotalEuroBalance] = useState(0);
   const [totalUsdBalance, setTotalUsdBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const euroWhitelist = ["EUROE", "EURS", "UHU"]; // Whitelisted EUR stablecoins
+  const euroWhitelist = ["EURS", "UHU"]; // Whitelisted EUR stablecoins
   const usdWhitelist = ["USDC", "USDT"]; // Whitelisted USD stablecoins
 
   useEffect(() => {
     setIsClient(true);
-
 
     if (uhuConfig === "loading") return;
 
@@ -43,27 +46,19 @@ export default function BalanceOverview() {
 
       const balancePromises = Object.entries(currencies).map(
         async ([symbol, currency]) => {
-          const contract = getContract({
-            client: client,
-            chain: polygon,
-            address: currency.contractAddress,
-            abi: currency.abi,
-          });
-
           try {
-            const result = await readContract({
-              contract,
-              method: "function balanceOf(address) view returns (uint256)",
-              params: [account.address],
-            });
-
-            const balance =
-              Number(result || 0) / numberWithZeros(currency.decimals);
+            const balance = await fetchBalance(
+              client,
+              polygon,
+              currency.contractAddress,
+              currency.abi,
+              account.address
+            );
 
             if (balance > 0) {
               return {
                 symbol,
-                balance,
+                balance: Number(balance) / numberWithZeros(currency.decimals),
                 currency: currency.id,
                 icon: currency.icon,
                 decimals: currency.decimals,
@@ -108,6 +103,7 @@ export default function BalanceOverview() {
     fetchBalances();
 
     const interval = setInterval(fetchBalances, 10000); // Refresh every 10 seconds
+    
     return () => clearInterval(interval); // Cleanup on unmount
   }, [account, client, uhuConfig, loading]);
 
@@ -115,7 +111,11 @@ export default function BalanceOverview() {
     <div className="flex flex-col items-center md:items-start bg-uhuGray shadow-md w-full rounded-lg p-6">
       <div className="flex justify-between md:justify-start w-full mb-4 gap-4">
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "loadingPanel"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalEuroBalance, "EUR")}
           </span>
           <span className="text-gray-500">
@@ -123,7 +123,11 @@ export default function BalanceOverview() {
           </span>
         </div>
         <div className="flex flex-col items-center md:items-start">
-          <span className={`text-5xl font-bold ${loading && "animate-pulse"}`}>
+          <span
+            className={`text-5xl font-bold ${
+              loading && "loadingPanel"
+            }`}
+          >
             {isClient && formatNumberWithCurrency(totalUsdBalance, "USD")}
           </span>
           <span className="text-gray-500">
@@ -131,10 +135,10 @@ export default function BalanceOverview() {
           </span>
         </div>
 
-        <div className="flex-1"></div>
+        <div className="flex-1" />
         <div>
           <Link
-            href={"/withdraw"}
+            href="/withdraw?source=wallet"
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
             {tAccount("withdrawal")}
@@ -142,14 +146,14 @@ export default function BalanceOverview() {
         </div>
         <div>
           <Link
-            href={"/deposit"}
+            href="/deposit?source=wallet"
             className="border hover:bg-gray-200 rounded px-3 py-1 border-gray-300"
           >
-             {tAccount("deposit")}
+            {tAccount("deposit")}
           </Link>
         </div>
       </div>
-      {loading ? (
+      {loading || !balances ? (
         <div className="flex justify-center items-center py-4">
           <MiniLoader />
         </div>

@@ -1,5 +1,6 @@
 import { HiQuestionMarkCircle, HiLockClosed, HiCheck } from "react-icons/hi2";
 import React from "react";
+import clsx from "clsx";
 import showErrorPopup, { ErrorDetails } from "../Modals/ErrorPrompt";
 
 export type LoadingButtonStates = "processing" | "error" | "success" | "normal";
@@ -17,6 +18,8 @@ interface LoadingButtonProps {
   openError?: () => void;
   active?: boolean;
   error?: LoadingButtonError;
+  fullWidth?: boolean;
+  showSuccessColor?: boolean;
 }
 
 const LoadingButton: React.FC<LoadingButtonProps> = ({
@@ -26,16 +29,36 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   openError,
   active = true,
   error,
+  fullWidth = false,
+  showSuccessColor = false,
 }) => {
-  let buttonStyles =
-    "bw-full h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent w-full md:w-auto text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ";
+  const buttonStyles = clsx(
+    "h-10 flex space-x-2 justify-between items-center px-4 py-3 border border-transparent text-sm font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 relative",
+    {
+      "w-full": fullWidth,
+      "w-full md:w-auto": !fullWidth,
+      "bg-uhuBlue opacity-50 cursor-not-allowed": isLoading === "processing",
+      "bg-red-500 hover:bg-red-600 focus:ring-red-500": isLoading === "error",
+      "bg-green-500 hover:bg-green-600 focus:ring-green-500":
+        isLoading === "success" && showSuccessColor,
+      "bg-uhuBlue hover:bg-uhuBlue focus:ring-uhuBlue":
+        isLoading !== "processing" &&
+        isLoading !== "error" &&
+        !(isLoading === "success" && showSuccessColor),
+      "opacity-50 cursor-not-allowed": !active,
+    }
+  );
+
+  const contentStyles = clsx("flex items-center", {
+    "w-full justify-center": fullWidth,
+    "justify-between": !fullWidth,
+  });
+
   let buttonContent: React.ReactNode = children;
 
   if (isLoading === "processing") {
-    buttonStyles += "bg-uhuBlue opacity-50 cursor-not-allowed";
     buttonContent = (
-      <>
-        <div className="w-7"></div>
+      <div className={contentStyles}>
         {children}
         <svg
           className="animate-spin h-5 w-5 text-white ml-2"
@@ -50,26 +73,33 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
             r="10"
             stroke="currentColor"
             strokeWidth="4"
-          ></circle>
+           />
           <path
             className="opacity-75"
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          ></path>
+           />
         </svg>
-      </>
+      </div>
     );
   } else if (isLoading === "error") {
-    buttonStyles += "bg-red-500 hover:bg-red-600 focus:ring-red-500";
     buttonContent = (
-      <>
-        <div className="w-7"></div>
+      <div className={contentStyles}>
         {children}
         {error && (
           <HiQuestionMarkCircle
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              showErrorPopup(error.title, error.message, error.error);
+              showErrorPopup({
+                titleKey: error.title,
+                messageKeyOrText: error.message,
+                details: {
+                  error: {
+                    ...error.error,
+                    message: error.error.message ?? undefined,
+                  },
+                },
+              });
             }}
             className="h-5 w-5 text-white ml-2"
           />
@@ -83,21 +113,14 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
             className="h-5 w-5 text-white ml-2"
           />
         )}
-      </>
+      </div>
     );
   } else {
-    buttonStyles += " bg-uhuBlue hover:bg-uhuBlue focus:ring-uhuBlue";
-    buttonContent = (
-      <>
-        <div></div>
-        {children}
-      </>
-    );
+    buttonContent = <div className={contentStyles}>{children}</div>;
   }
 
   if (!active) {
-    buttonStyles += " opacity-50 cursor-not-allowed";
-    buttonContent = <>{children}</>;
+    buttonContent = <div className={contentStyles}>{children}</div>;
   }
 
   return (
@@ -111,7 +134,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
         <HiCheck className="h-5 w-5 text-white ml-2" />
       ) : isLoading !== "processing" && isLoading !== "error" ? (
         active ? (
-          <div></div>
+          <div />
         ) : (
           <HiLockClosed className="h-5 w-5 text-white ml-2" />
         )

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
+import router from "next/router";
+import { Account } from "thirdweb/wallets";
 import { QuotePaymentType } from "../../../../depositPage/slides/DepositMethodSelector";
-import { Account } from "thirdweb/dist/types/wallets/interfaces/wallet";
 import { Country } from "../../../../../types/payload-types";
 import {
   createKoyweDepositTransaction,
@@ -14,10 +16,8 @@ import {
   LoadingButtonStates,
 } from "../../../../UI/LoadingButton";
 import Loader from "../../../../UI/Loader";
-import { useTranslation } from "next-i18next";
 import SelectPaymentMethodSlide from "./Slides/SelectPaymentMethodSlide";
 import StartTransaction from "./Slides/StartTransaction";
-import router from "next/router";
 import UnverifiedSlide from "../../withdraw/Koywe/Slides/UnverifiedSlide";
 import currencies from "../../../../../utilities/crypto/currencies";
 
@@ -66,12 +66,12 @@ export default function Koywe({ method, account, country }: KoyweProps) {
   }, []);
 
   async function startTransaction() {
-    let token = currencies[method.acceptedCrypto.toUpperCase()];
-    let currencyName = token.name;
-    let currency = token.contractAddress;
-    let currencyDecimals = token.decimals;
+    const token = currencies[method.acceptedCrypto.toUpperCase()];
+    const currencyName = token.name;
+    const currency = token.contractAddress;
+    const currencyDecimals = token.decimals;
 
-    let finalCurrency = "USDC";
+    const finalCurrency = "USDC";
 
     try {
       setLoadingState("processing");
@@ -95,7 +95,7 @@ export default function Koywe({ method, account, country }: KoyweProps) {
       setError({
         message: tCrossborder("deposit.koywe.errors.startTransaction"),
         title: tCrossborder("deposit.koywe.errors.startTransactionTitle"),
-        error: error,
+        error,
       });
     }
   }

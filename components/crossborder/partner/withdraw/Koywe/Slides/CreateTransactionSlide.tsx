@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { HiChevronDoubleRight } from "react-icons/hi";
+import { useTranslation } from "next-i18next";
+import moment from "moment";
+import { useRouter } from "next/router";
 import {
   Country,
   PaymentTypesArray,
@@ -13,15 +17,12 @@ import LoadingButton, {
   LoadingButtonError,
   LoadingButtonStates,
 } from "../../../../../UI/LoadingButton";
-import { HiChevronDoubleRight } from "react-icons/hi";
-import { useTranslation } from "next-i18next";
 import { getFiatInfoForStableCoin } from "../../../../../../utilities/stableCoinsMaps";
-import moment from "moment";
 import showErrorPopup, {
   ErrorDetails,
 } from "../../../../../Modals/ErrorPrompt";
 import currencies from "../../../../../../utilities/crypto/currencies";
-import { useRouter } from "next/router";
+
 export default function CreateTransactionSlide({
   selectedBankAccount,
   amount,
@@ -58,10 +59,10 @@ export default function CreateTransactionSlide({
         setState("normal");
       } catch (error) {
         console.error("Error fetching quote:", error);
-        showErrorPopup(
-          tCrossborder("withdraw.koywe.quoteError"),
-          error.response?.data || error
-        );
+        showErrorPopup({
+          titleKey: tCrossborder("withdraw.koywe.quoteError"),
+          messageKeyOrText: error.response?.data || error,
+        });
       }
     };
     fetchQuote();
@@ -70,16 +71,16 @@ export default function CreateTransactionSlide({
   async function handleStartTransaction() {
     setLoadingButtonState("processing");
 
-    let token = currencies[method.acceptedCrypto.toUpperCase()];
-    let currencyName = token.name;
-    let currency = token.contractAddress;
-    let currencyDecimals = token.decimals;
+    const token = currencies[method.acceptedCrypto.toUpperCase()];
+    const currencyName = token.name;
+    const currency = token.contractAddress;
+    const currencyDecimals = token.decimals;
 
-    let finalCurrency = country.countryInfo.currency;
+    const finalCurrency = country.countryInfo.currency;
 
     try {
       const transactionId = await createKoyweTransaction({
-        quote: quote,
+        quote,
         bankAccount: selectedBankAccount,
         currency,
         currencyName,

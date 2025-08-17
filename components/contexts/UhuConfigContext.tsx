@@ -1,8 +1,21 @@
-import axios from 'axios';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import axios from "axios";
+import moment from "moment-timezone";
 import qs from "qs";
-import { sendErrorReport } from '../../../context/UserContext';
-import { Maintenance, Router, UhuConfig } from '../../types/payload-types';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
+import { sendErrorReport } from "../../../context/UserContext";
+import { Maintenance, Router, UhuConfig } from "../../types/payload-types";
+
+moment.locale("de");
+
+const timeZone = "Europe/Berlin";
+const zonedDate = moment().tz(timeZone);
 
 interface UhuConfigContextType {
   uhuConfig: UhuConfig | "loading" | null;
@@ -13,25 +26,38 @@ interface UhuConfigContextType {
   setIsHelpModalOpen: (isOpen: boolean) => void;
 }
 
-export const UhuConfigContext = createContext<UhuConfigContextType | null>(null);
+export const UhuConfigContext = createContext<UhuConfigContextType | null>(
+  null
+);
 
 interface UhuConfigProviderProps {
   children: ReactNode;
 }
 
-export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
-  const [uhuConfig, setUhuConfig] = useState<UhuConfig | "loading" | null>("loading");
-  const [currentRouter, setCurrentRouter] = useState<Router | "loading" | null>("loading");
-  const [maintenance, setMaintenance] = useState<Maintenance | "loading" | null>("loading");
+export function UhuConfigProvider({ children }: UhuConfigProviderProps) {
+  const [uhuConfig, setUhuConfig] = useState<UhuConfig | "loading" | null>(
+    "loading"
+  );
+  const [currentRouter, setCurrentRouter] = useState<Router | "loading" | null>(
+    "loading"
+  );
+  const [maintenance, setMaintenance] = useState<
+    Maintenance | "loading" | null
+  >("loading");
   const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
 
   async function getUhuConfig(): Promise<void> {
     try {
-      const res = await axios.get<UhuConfig>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/uhuConfig`, {
-        withCredentials: true,
-      });
+      const res = await axios.get<UhuConfig>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/uhuConfig`,
+        {
+          withCredentials: true,
+        }
+      );
 
-      const resMaintenance = await axios.get<Maintenance>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/maintenance`);
+      const resMaintenance = await axios.get<Maintenance>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/globals/maintenance`
+      );
       setMaintenance(resMaintenance.data);
       setUhuConfig(res.data);
     } catch (error) {
@@ -42,12 +68,23 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
   }
 
   async function getCurrentRouter() {
+    const routerType = zonedDate.month() % 2 === 0 ? "a" : "b";
+
     // Construct the query object
     const query = {
       where: {
-        useAfter: {
-          less_than_equal: new Date().toISOString(), // Convert the date to ISO string
-        },
+        and: [
+          {
+            useAfter: {
+              less_than_equal: new Date().toISOString(), // Convert the date to ISO string
+            },
+          },
+          {
+            routerType: {
+              equals: routerType,
+            },
+          },
+        ],
       },
       sort: "-useAfter",
       limit: 1,
@@ -56,9 +93,10 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
     const stringifiedQuery = qs.stringify(query, { addQueryPrefix: true });
 
     try {
-      const response = await axios.get<{docs: Router[]}>(`/api/router${stringifiedQuery}`);
+      const response = await axios.get<{ docs: Router[] }>(
+        `/api/router${stringifiedQuery}`
+      );
       const router = response.data;
-      console.log(router);
 
       setCurrentRouter(router.docs[0]);
       return router;
@@ -74,15 +112,20 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
     getCurrentRouter();
   }, []);
 
-  return (
-    <UhuConfigContext.Provider value={{
+  const contextValue = useMemo(
+    () => ({
       uhuConfig,
       currentRouter,
       setUhuConfig,
       maintenance,
       isHelpModalOpen,
-      setIsHelpModalOpen
-    }}>
+      setIsHelpModalOpen,
+    }),
+    [uhuConfig, currentRouter, maintenance, isHelpModalOpen]
+  );
+
+  return (
+    <UhuConfigContext.Provider value={contextValue}>
       {children}
     </UhuConfigContext.Provider>
   );
@@ -91,7 +134,7 @@ export const UhuConfigProvider = ({ children }: UhuConfigProviderProps) => {
 export const useUhuConfig = (): UhuConfigContextType => {
   const context = useContext(UhuConfigContext);
   if (!context) {
-    throw new Error('useUhuConfig must be used within a UhuConfigProvider');
+    throw new Error("useUhuConfig must be used within a UhuConfigProvider");
   }
   return context;
-}; 
+};

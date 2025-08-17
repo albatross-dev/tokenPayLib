@@ -19,12 +19,12 @@ interface DateInputFieldProps<T extends Record<string, any>> {
  * @param {DateInputFieldProps<T>} props - The component props
  * @returns {JSX.Element} The rendered date input field component
  */
-const DateInputField = <T extends Record<string, any>>({
+function DateInputField<T extends Record<string, any>>({
   fieldName,
   methods,
   parsedRequired,
   disabled
-}: DateInputFieldProps<T>): JSX.Element => {
+}: DateInputFieldProps<T>): JSX.Element {
   const [formattedDate, setFormattedDate] = useState<string>("");
 
   /**
@@ -63,11 +63,11 @@ const DateInputField = <T extends Record<string, any>>({
         disabled={disabled}
         type="date"
         {...methods.register(fieldName, { required: parsedRequired })}
-        className={`mt-1 p-2 w-full border rounded-md`}
+        className="mt-1 p-2 w-full border rounded-md"
         onChange={handleDateChange}
       />
     </div>
   );
-};
+}
 
 export default DateInputField; 

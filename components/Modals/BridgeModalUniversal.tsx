@@ -1,23 +1,12 @@
 import React, { useState, Fragment, useEffect } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  Transition,
-} from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
 import { FiAlertCircle } from "react-icons/fi";
 import { useTranslation } from "next-i18next";
 import { useActiveAccount } from "thirdweb/react";
 import { Chain } from "thirdweb";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { sendErrorReport } from "../../../context/UserContext";
-import {
-  QuoteData,
-  Limits,
-  fetchLimitsAndQuote,
-  acrossBridgeDeposit,
-} from "../../utilities/crypto/bridgeUtils";
+import { QuoteData, Limits, fetchLimitsAndQuote, acrossBridgeDeposit } from "../../utilities/crypto/bridgeUtils";
 import { SimpleToken } from "../../types/token.types";
 import Loader from "../UI/Loader";
 import MiniLoader from "../UI/MiniLoader";
@@ -35,7 +24,7 @@ interface BridgeModalUniversalProps {
   destinationChainId: number;
 }
 
-const BridgeModalUniversal = ({
+function BridgeModalUniversal({
   show,
   closeModal,
   token,
@@ -46,7 +35,7 @@ const BridgeModalUniversal = ({
   onStart,
   onFinish,
   destinationChainId,
-}: BridgeModalUniversalProps) => {
+}: BridgeModalUniversalProps) {
   const [amount, setAmount] = useState<number | null>(null);
   const [limits, setLimits] = useState<Limits | null>(null);
   const [quote, setQuote] = useState<QuoteData | null>(null);
@@ -61,9 +50,7 @@ const BridgeModalUniversal = ({
 
   useEffect(() => {
     if (typeof maxAmount === "number") {
-      setAmount(
-        (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0)
-      );
+      setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
     }
   }, [maxAmount]);
 
@@ -77,7 +64,6 @@ const BridgeModalUniversal = ({
       status: 0,
     });
 
-    console.log("all params", chain, token, amount, destinationChainId);
     if (chain && token && amount && destinationChainId) {
       fetchLimitsAndQuoteData();
     }
@@ -90,37 +76,38 @@ const BridgeModalUniversal = ({
       return;
     }
 
-    const maxAllowed =
-      (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0);
+    const maxAllowed = (Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0);
     console.log("Amount:", amount, "Max allowed:", maxAllowed);
 
     if (amount <= 0) {
       setInputError(t("greater_zero"));
     } else if (amount > maxAllowed) {
-      setInputError(t("cannot_exceed") + " " + maxAllowed + " " + token?.id);
+      setInputError(`${t("cannot_exceed")  } ${  maxAllowed  } ${  token?.id}`);
     } else {
       setInputError("");
     }
   }, [amount, maxAmount, token]);
 
+  /**
+   * Fetches the limits and quote data for a given token and chain
+   */
   const fetchLimitsAndQuoteData = async () => {
     const tokenAddress = token?.contractAddress;
     const originChainId = chain?.id;
 
-    if (!tokenAddress || !originChainId || amount === null) {
+    if (!tokenAddress || !originChainId || amount === null || amount <= 0) {
       return;
     }
 
     try {
       setLoading(true);
-      const { limits: limitsData, quote: quoteData } =
-        await fetchLimitsAndQuote(
-          tokenAddress,
-          originChainId,
-          destinationChainId,
-          amount,
-          token.decimals
-        );
+      const { limits: limitsData, quote: quoteData } = await fetchLimitsAndQuote(
+        tokenAddress,
+        originChainId,
+        destinationChainId,
+        amount,
+        token.decimals
+      );
       setLoading(false);
       setLimits(limitsData);
       setQuote(quoteData);
@@ -139,10 +126,16 @@ const BridgeModalUniversal = ({
     }
   };
 
+  /**
+   * Handles the click event for the "Max" button
+   */
   const handleMaxClick = () => {
     setAmount((Number(maxAmount) || 0) / numberWithZeros(token?.decimals || 0));
   };
 
+  /**
+   * Handles the click event for the "Confirm" button
+   */
   const handleConfirmBridge = () => {
     if (amount === null) return;
 
@@ -150,6 +143,9 @@ const BridgeModalUniversal = ({
     closeModal();
   };
 
+  /**
+   * Handles the bridge operation
+   */
   async function handleBridge(amount: number): Promise<void> {
     onStart();
     const tokenAddress = token?.contractAddress;
@@ -160,15 +156,10 @@ const BridgeModalUniversal = ({
       return;
     }
 
-    console.log(
-      "accrossBridgeDeposit",
-      tokenAddress,
-      originChainId,
-      destinationChainId,
-      amount,
-      account,
-      token
-    );
+    if (!account) {
+      console.error("No account found");
+      return;
+    }
 
     const success = await acrossBridgeDeposit({
       tokenAddress,
@@ -188,7 +179,7 @@ const BridgeModalUniversal = ({
   }
 
   return (
-    <Transition appear show={show ? true : false} as={Fragment}>
+    <Transition appear show={!!show} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -213,60 +204,44 @@ const BridgeModalUniversal = ({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle
-                as="h3"
-                className="text-lg font-medium leading-6 text-gray-900"
-              >
+              <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
                 {`${t("transfer_of")} ${token?.id}`}
               </DialogTitle>
 
               <div className="flex flex-row gap-4 bg-red-100 text-red-600 my-4 rounded p-4 items-center">
-                <FiAlertCircle className="w-6 h-6 "></FiAlertCircle>
-                <div className="flex-1 font-bold">
-                  {t("after_transaction_note")}
-                </div>
+                <FiAlertCircle className="w-6 h-6 " />
+                <div className="flex-1 font-bold">{t("after_transaction_note")}</div>
               </div>
 
-              <p className="text-gray-700">
-                {t("enter_amount_transfer", { symbol: token?.id })}
-              </p>
+              <p className="text-gray-700">{t("enter_amount_transfer", { symbol: token?.id })}</p>
 
               <input
                 type="number"
                 className="mt-2 p-2 w-full border rounded-md"
                 value={amount === null ? "" : amount}
                 onChange={(e) => {
-                  const value =
-                    e.target.value === "" ? null : Number(e.target.value);
+                  const value = e.target.value === "" ? null : Number(e.target.value);
                   setAmount(value);
                 }}
                 min={0}
               />
 
-              {inputError && (
-                <div className="mt-1 text-red-500">{inputError}</div>
-              )}
+              {inputError && <div className="mt-1 text-red-500">{inputError}</div>}
 
               {quote?.status === 400 && quote?.code === "AMOUNT_TOO_LOW" && (
-                <div className="mt-1 text-red-500">
-                  {t("bridge_amount_to_low")}
-                </div>
+                <div className="mt-1 text-red-500">{t("bridge_amount_to_low")}</div>
               )}
 
               <div className="rounded bg-gray-100 p-4 mt-4 flex flex-col gap-4">
                 {limits && !loading && (
                   <div className="">
                     <p className="text-gray-700">
-                      {t("maximum_instant_amount")}{" "}
-                      {limits.maxDepositInstant /
-                        numberWithZeros(token?.decimals || 0)}{" "}
+                      {t("maximum_instant_amount")} {limits.maxDepositInstant / numberWithZeros(token?.decimals || 0)}{" "}
                       {token?.id}
                     </p>
                     <p className="text-gray-700">
                       {t("maximum_short_term_amount")}{" "}
-                      {limits.maxDepositShortDelay /
-                        numberWithZeros(token?.decimals || 0)}{" "}
-                      {token.id}
+                      {limits.maxDepositShortDelay / numberWithZeros(token?.decimals || 0)} {token.id}
                     </p>
                   </div>
                 )}
@@ -274,19 +249,15 @@ const BridgeModalUniversal = ({
                 {quote && quote?.status === 200 && (
                   <div className="">
                     <p className="text-gray-700">
-                      {t("rate")}{" "}
-                      {quote.totalRelayFee.total /
-                        numberWithZeros(token?.decimals || 0)}{" "}
-                      {token.id}
+                      {t("rate")} {quote.totalRelayFee.total / numberWithZeros(token?.decimals || 0)} {token.id}
                     </p>
                     <p className="text-gray-700">
-                      {t("time_of_exchange_rate")}{" "}
-                      {new Date(quote.timestamp * 1000).toLocaleString()}
+                      {t("time_of_exchange_rate")} {new Date(quote.timestamp * 1000).toLocaleString()}
                     </p>
                   </div>
                 )}
 
-                {quote && quote?.status !== 200 && (
+                {quote && quote?.status !== 200 && quote?.code !== "AMOUNT_TOO_LOW" && (
                   <div className="mt-4 text-red-500">{quote?.code}</div>
                 )}
 
@@ -326,6 +297,6 @@ const BridgeModalUniversal = ({
       </Dialog>
     </Transition>
   );
-};
+}
 
 export default BridgeModalUniversal;

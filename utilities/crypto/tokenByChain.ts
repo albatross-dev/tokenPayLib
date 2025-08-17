@@ -1,12 +1,4 @@
-import {
-  polygon,
-  ethereum,
-  optimism,
-  arbitrum,
-  base,
-  avalanche,
-  bsc,
-} from "thirdweb/chains";
+import { polygon, ethereum, optimism, arbitrum, base, avalanche, bsc } from "thirdweb/chains";
 
 import currencies, {
   ChainLogoByChainId,
@@ -20,18 +12,18 @@ import currencies, {
   formatCrypto,
   LogoByShortName,
   UHU,
-} from "../../utilities/crypto/currencies";
+} from "./currencies";
 
 const tokenyByChain = {
   [polygon.id]: {
     chain: polygon,
     spokePool: "0x9295ee1d8C5b022Be115A2AD3c30C72E34e7F096",
-    //spokePoolWrapper: "0x224498FF598EcBCBde689b593E64Ac48e9b3BE15", // custom wrapper
+    // spokePoolWrapper: "0x224498FF598EcBCBde689b593E64Ac48e9b3BE15", // custom wrapper
     tokens: [
       {
         symbol: "USDC",
-        contract: currencies["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currencies.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDC.E",
@@ -40,18 +32,13 @@ const tokenyByChain = {
       },
       {
         symbol: "USDT",
-        contract: currencies["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currencies.USDT,
+        logo: LogoByShortName.USDT,
       },
       {
         symbol: "EURS",
-        contract: currencies["EURS"],
-        logo: LogoByShortName["EURS"],
-      },
-      {
-        symbol: "EUROE",
-        contract: currencies["EUROE"],
-        logo: LogoByShortName["EUROE"],
+        contract: currencies.EURS,
+        logo: LogoByShortName.EURS,
       },
     ],
   },
@@ -61,8 +48,8 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesBase["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesBase.USDC,
+        logo: LogoByShortName.USDC,
       },
     ],
   },
@@ -72,8 +59,8 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesArbitrum["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesArbitrum.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDC.E",
@@ -82,8 +69,8 @@ const tokenyByChain = {
       },
       {
         symbol: "USDT",
-        contract: currenciesArbitrum["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesArbitrum.USDT,
+        logo: LogoByShortName.USDT,
       },
     ],
   },
@@ -93,20 +80,19 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesEthereum["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesEthereum.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currenciesEthereum["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesEthereum.USDT,
+        logo: LogoByShortName.USDT,
       },
       {
         symbol: "EURS",
-        contract: currenciesEthereum["EURS"],
-        logo: LogoByShortName["EURS"],
+        contract: currenciesEthereum.EURS,
+        logo: LogoByShortName.EURS,
       },
-      //{ symbol: "EUROE", contract: currenciesEthereum["EUROE"], logo: EUROE_Logo },
     ],
   },
   [optimism.id]: {
@@ -115,16 +101,15 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesOP["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesOP.USDC,
+        logo: LogoByShortName.USDC,
       },
-      //{ symbol: "USDC.E", contract: currenciesOP["USDC.E"], logo: USDC_Logo },
+      // { symbol: "USDC.E", contract: currenciesOP["USDC.E"], logo: USDC_Logo },
       {
         symbol: "USDT",
-        contract: currenciesOP["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesOP.USDT,
+        logo: LogoByShortName.USDT,
       },
-      //{ symbol: "EUROE", contract: currenciesOP["EUROE"], logo: EUROE_Logo },
     ],
   },
   [avalanche.id]: {
@@ -132,16 +117,15 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesAvax["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesAvax.USDC,
+        logo: LogoByShortName.USDC,
       },
-      //{ symbol: "USDC.E", contract: currenciesAvax["USDC.E"], logo: USDC_Logo },
+      // { symbol: "USDC.E", contract: currenciesAvax["USDC.E"], logo: USDC_Logo },
       {
         symbol: "USDT",
-        contract: currenciesAvax["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesAvax.USDT,
+        logo: LogoByShortName.USDT,
       },
-      //{ symbol: "EUROE", contract: currenciesAvax["EUROE"], logo: EUROE_Logo },
     ],
   },
   [bsc.id]: {
@@ -149,13 +133,13 @@ const tokenyByChain = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesBSC["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesBSC.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currenciesBSC["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesBSC.USDT,
+        logo: LogoByShortName.USDT,
       },
     ],
   },
@@ -168,18 +152,18 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "EURS",
-        contract: currencies["EURS"],
-        logo: LogoByShortName["EURS"],
+        contract: currencies.EURS,
+        logo: LogoByShortName.EURS,
       },
       {
         symbol: "USDC",
-        contract: currencies["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currencies.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currencies["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currencies.USDT,
+        logo: LogoByShortName.USDT,
       },
     ],
   },
@@ -189,8 +173,8 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesBase["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesBase.USDC,
+        logo: LogoByShortName.USDC,
       },
     ],
   },
@@ -200,13 +184,13 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesArbitrum["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesArbitrum.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currenciesArbitrum["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesArbitrum.USDT,
+        logo: LogoByShortName.USDT,
       },
     ],
   },
@@ -216,20 +200,19 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "EURS",
-        contract: currenciesEthereum["EURS"],
-        logo: LogoByShortName["EURS"],
+        contract: currenciesEthereum.EURS,
+        logo: LogoByShortName.EURS,
       },
       {
         symbol: "USDC",
-        contract: currenciesEthereum["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesEthereum.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currenciesEthereum["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesEthereum.USDT,
+        logo: LogoByShortName.USDT,
       },
-      //{ symbol: "EUROE", contract: currenciesEthereum["EUROE"], logo: EUROE_Logo },
     ],
   },
   [optimism.id]: {
@@ -238,16 +221,15 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesOP["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesOP.USDC,
+        logo: LogoByShortName.USDC,
       },
-      //{ symbol: "USDC.E", contract: currenciesOP["USDC.E"], logo: USDC_Logo },
+      // { symbol: "USDC.E", contract: currenciesOP["USDC.E"], logo: USDC_Logo },
       {
         symbol: "USDT",
-        contract: currenciesOP["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesOP.USDT,
+        logo: LogoByShortName.USDT,
       },
-      //{ symbol: "EUROE", contract: currenciesOP["EUROE"], logo: EUROE_Logo },
     ],
   },
   [avalanche.id]: {
@@ -255,16 +237,14 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesAvax["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesAvax.USDC,
+        logo: LogoByShortName.USDC,
       },
-      //{ symbol: "USDC.E", contract: currenciesAvax["USDC.E"], logo: USDC_Logo },
       {
         symbol: "USDT",
-        contract: currenciesAvax["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesAvax.USDT,
+        logo: LogoByShortName.USDT,
       },
-      //{ symbol: "EUROE", contract: currenciesAvax["EUROE"], logo: EUROE_Logo },
     ],
   },
   [bsc.id]: {
@@ -272,17 +252,16 @@ export const tokenyByChainCheckout = {
     tokens: [
       {
         symbol: "USDC",
-        contract: currenciesBSC["USDC"],
-        logo: LogoByShortName["USDC"],
+        contract: currenciesBSC.USDC,
+        logo: LogoByShortName.USDC,
       },
       {
         symbol: "USDT",
-        contract: currenciesBSC["USDT"],
-        logo: LogoByShortName["USDT"],
+        contract: currenciesBSC.USDT,
+        logo: LogoByShortName.USDT,
       },
     ],
   },
 };
-
 
 export default tokenyByChain;

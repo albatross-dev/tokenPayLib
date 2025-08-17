@@ -17,9 +17,9 @@ import {
   HiExclamationTriangle,
 } from "react-icons/hi2";
 
-const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
+function ErrorPopup({ isOpen, closeModal, errorMessage }) {
   return (
-    <Transition appear show={isOpen ? true : false} as={Fragment}>
+    <Transition appear show={!!isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -115,6 +115,6 @@ const ErrorPopup = ({ isOpen, closeModal, errorMessage }) => {
       </Dialog>
     </Transition>
   );
-};
+}
 
 export default ErrorPopup;

@@ -68,7 +68,7 @@ export function Deposit({
           </div>
         )}
 
-        <LoadingButton isLoading={loadingState} active={true} onClick={onSend}>
+        <LoadingButton isLoading={loadingState} active onClick={onSend}>
           {tCrossborder("deposit.stasis.deposit.button")}
         </LoadingButton>
 

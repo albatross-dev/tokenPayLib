@@ -1,22 +1,14 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 import { Account } from "thirdweb/wallets";
-import {
-  Consumer,
-  PaymentTypesArray,
-  Country,
-  Vendor,
-} from "../../../../../types/payload-types";
+import { Consumer, PaymentTypesArray, Country, Vendor } from "../../../../../types/payload-types";
 import Loader from "../../../../UI/Loader";
-import React from "react";
-import {
-  getKoyweAccountState,
-  KoyweBankAccount,
-} from "../../universal/koyweUtils";
+import { getKoyweAccountState, KoyweBankAccount } from "../../universal/koyweUtils";
 import SelectBankAccountSlide from "./Slides/SelectBankAccountSlide";
 import UnverifiedSlide from "./Slides/UnverifiedSlide";
 import CreateTransactionSlide from "./Slides/CreateTransactionSlide";
+
 interface KoyweProps {
   amount: number;
   account: Account;
@@ -25,23 +17,14 @@ interface KoyweProps {
   country: Country;
 }
 
-export default function Koywe({
-  amount,
-  account,
-  user,
-  method,
-  country,
-}: KoyweProps) {
+export default function Koywe({ amount, account, user, method, country }: KoyweProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
   const [state, setState] = useState<"loading" | "error" | "normal">("loading");
 
-  const [selectedBankAccount, setSelectedBankAccount] =
-    useState<KoyweBankAccount | null>(null);
+  const [selectedBankAccount, setSelectedBankAccount] = useState<KoyweBankAccount | null>(null);
 
-  const [view, setView] = useState<
-    "unverified" | "bankAccount" | "createTransaction"
-  >("bankAccount");
+  const [view, setView] = useState<"unverified" | "bankAccount" | "createTransaction">("bankAccount");
 
   // ###################
   // # Component Logic #
@@ -77,9 +60,7 @@ export default function Koywe({
   );
 
   const renderError = () => (
-    <div className="text-center text-red-600 py-10">
-      {tCrossborder("withdraw.koywe.error")}
-    </div>
+    <div className="text-center text-red-600 py-10">{tCrossborder("withdraw.koywe.error")}</div>
   );
 
   return (
@@ -90,10 +71,7 @@ export default function Koywe({
         renderError()
       ) : state === "normal" ? (
         view === "bankAccount" ? (
-          <SelectBankAccountSlide
-            country={country}
-            onSelectBankAccount={handleOnSelectBankAccount}
-          />
+          <SelectBankAccountSlide country={country} onSelectBankAccount={handleOnSelectBankAccount} />
         ) : view === "unverified" ? (
           <UnverifiedSlide />
         ) : view === "createTransaction" ? (

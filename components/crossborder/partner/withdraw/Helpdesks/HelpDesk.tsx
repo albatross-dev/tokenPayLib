@@ -1,39 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
+import client from "@/utilities/thirdweb-client";
+import { polygon } from "thirdweb/chains";
+import { useTranslation } from "next-i18next";
 import TransactionNone from "./StateViews/Transaction/TransactionNone";
 import TransactionStarted from "./StateViews/Transaction/TransactionStarted";
 import TransactionPending from "./StateViews/Transaction/TransactionPending";
 import TransactionDone from "./StateViews/Transaction/TransactionDone";
 import HelpDeskVerificationForm from "./StateViews/HelpDesk/HelpDeskVerificationForm";
-import HelpDeskRequestForm from "./StateViews/HelpDesk/HelpDeskRequestForm";
+import HelpDeskRequestForm, { HelpDeskWithdrawRequestFormData } from "./StateViews/HelpDesk/HelpDeskRequestForm";
 import VerificationInProgress from "./StateViews/HelpDesk/VerificationInProgress";
 import LoadingHelpDesk from "./StateViews/HelpDesk/LoadingHelpDesk";
 import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestError";
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
-import axios from "axios";
-import { client } from "../../../../../../pages/_app";
-import { polygon } from "thirdweb/chains";
-import { useTranslation } from "next-i18next";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";
-import {
-  AuthContext,
-  sendErrorReport,
-} from "../../../../../../context/UserContext";
+import { api, AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
 import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
 import currencies from "../../../../../utilities/crypto/currencies";
 import getFormData from "../../../../../utilities/forms/getFormData";
 
-import { FiatTransaction } from "../../../../../types/payload-types";
+import { Consumer, FiatTransaction, PaymentTypesArray, Vendor } from "../../../../../types/payload-types";
 import { ErrorMessage } from "../../../../../types/errorMessage.types";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
 
-const DESK_STATE_LOADING: DeskState = "loading";
-const DESK_STATE_ONGOING: DeskState = "ongoing";
-const DESK_STATE_UNVERIFIED: DeskState = "unverified";
-const DESK_STATE_VERIFIED: DeskState = "verified";
-const DESK_STATE_VERIFICATION_REQUESTED: DeskState = "in_progress";
-const DESK_STATE_FAILED: DeskState = "verificationRequestError";
+export const DESK_STATE_LOADING: DeskState = "loading";
+export const DESK_STATE_ONGOING: DeskState = "ongoing";
+export const DESK_STATE_UNVERIFIED: DeskState = "unverified";
+export const DESK_STATE_VERIFIED: DeskState = "verified";
+export const DESK_STATE_VERIFICATION_REQUESTED: DeskState = "in_progress";
+export const DESK_STATE_FAILED: DeskState = "verificationRequestError";
 
 const TRANSACTION_STATE_STARTED: TransactionState = "started";
 const TRANSACTION_STATE_PENDING: TransactionState = "pending";
@@ -41,12 +37,59 @@ const TRANSACTION_STATE_DONE: TransactionState = "done";
 const TRANSACTION_STATE_MANUEL: TransactionState = "manuel";
 const TRANSACTION_STATE_PAYMENT_PENDING: TransactionState = "paymentPending";
 
-const HelpDesk: React.FC<HelpDeskProps> = ({
-  country,
-  amount,
-  account,
+/**
+ * Handle the verification request for the helpdesk
+ */
+
+export interface HelpDeskVerificationRequestProps {
+  data: Record<string, any>;
+  setState: (state: DeskState) => void;
+  refreshAuthentication: () => void;
+  setShouldUpdate?: (shouldUpdate: boolean) => void;
+  user: Consumer | Vendor;
+  method: PaymentTypesArray[number];
+}
+export async function handleVerificationRequest({
+  data,
+  setState,
+  refreshAuthentication,
+  setShouldUpdate,
+  user,
   method,
-}) => {
+}: HelpDeskVerificationRequestProps) {
+  setShouldUpdate?.(false);
+  setState(DESK_STATE_LOADING);
+  try {
+    try {
+      const processedData = preprocessDataForServer(data);
+      const formData = getFormData(processedData);
+
+      await api.patch(`/api/${user!.type}/${user!.id}`, formData, {
+        headers: { "Content-Type": undefined },
+      });
+
+      setShouldUpdate?.(true);
+    } catch (e) {
+      sendErrorReport("HelpDesk - Verification request failed patch user", e);
+      console.error(e);
+      setState(DESK_STATE_FAILED);
+      return;
+    }
+
+    const sendData = {
+      partnerType: method.type,
+    };
+    await api.post("/api/fiatTransaction/helpDeskVerificationRequest", sendData);
+    refreshAuthentication();
+    setState(DESK_STATE_VERIFICATION_REQUESTED);
+  } catch (e) {
+    sendErrorReport("HelpDesk - Verification request failed custom endpoint", e);
+    console.error(e);
+    setState(DESK_STATE_FAILED);
+  }
+}
+
+function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
   const { user, refreshAuthentication } = useContext(AuthContext);
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -62,9 +105,6 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
 
   // error message for the payment
   const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
-
-  // state for the transaction details textarea
-  const [textareaContent, setTextareaContent] = useState("");
 
   // state for tracking the payment progress
   const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
@@ -134,74 +174,28 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
 
   useEffect(() => {
     // update the transaction every 10 seconds
-    const interval = setInterval(refreshAuthentication, 10000);
+    const interval = setInterval(() => refreshAuthentication(), 10000);
     return () => clearInterval(interval);
   }, []);
 
   /**
-   * Handle the verification request for the helpdesk
-   */
-  async function handleVerificationRequest(data: Record<string, any>) {
-    setShouldUpdate(false);
-    setState(DESK_STATE_LOADING);
-    try {
-      try {
-        const processedData = preprocessDataForServer(data);
-        const formData = getFormData(processedData);
-
-        await axios.patch(`/api/${user!.type}/${user!.id}`, formData, {
-          headers: { "Content-Type": undefined },
-        });
-
-        setShouldUpdate(true);
-      } catch (e) {
-        sendErrorReport("HelpDesk - Verification request failed patch user", e);
-        console.error(e);
-        setState(DESK_STATE_FAILED);
-        return;
-      }
-
-      const sendData = {
-        partnerType: method.type,
-      };
-      await axios.post(
-        "/api/fiatTransaction/helpDeskVerificationRequest",
-        sendData
-      );
-      refreshAuthentication();
-      setState(DESK_STATE_VERIFICATION_REQUESTED);
-    } catch (e) {
-      sendErrorReport(
-        "HelpDesk - Verification request failed custom endpoint",
-        e
-      );
-      console.error(e);
-      setState(DESK_STATE_FAILED);
-    }
-  }
-
-  /**
    * Handle the start of a transaction
    */
-  async function handleStartTransaction() {
-    if (!textareaContent.trim()) {
-      setError(tCrossborder("withdraw.helpDesk.errorText"));
-      return;
-    }
-
+  async function handleStartTransaction(data: HelpDeskWithdrawRequestFormData) {
     setError(null);
     setState(DESK_STATE_LOADING);
     try {
-      await axios.post("/api/fiatTransaction/helpDeskRequest", {
+      await api.post("/api/fiatTransaction/helpDeskRequest", {
         partnerType: method.type,
         currencyName: country.preferredStableCoin,
         currency: country.preferredStableCoin,
         currencyDecimals: currencies[country.preferredStableCoin].decimals,
         finalCurrency: country.countryInfo.currency,
-        amount: amount,
+        amount,
         country: country.countryCode,
         fromCountry: user?.vendorCountry || user?.country,
-        transactionDetails: textareaContent,
+        transactionDetails: `${data.receiverName}\nIBAN: ${data.receiverIban}\nBank: ${data.receiverBank}\nComments: ${data.textareaContent}`,
+        type: "Withdraw",
       });
       setState(DESK_STATE_ONGOING);
 
@@ -220,7 +214,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
     try {
       setIsLoading("processing");
       const acceptedCrypto = currencies[method.acceptedCrypto];
-      const amountWithDecimals = amount * Math.pow(10, acceptedCrypto.decimals);
+      const amountWithDecimals = amount * 10**acceptedCrypto.decimals;
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
         account,
@@ -230,15 +224,15 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
         transaction!.burnAddress
       );
 
-      await axios.post("/api/fiatTransaction/paymentUpdate", {
-        transaction: transaction,
-        transactionHash: transactionHash,
+      await api.post("/api/fiatTransaction/paymentUpdate", {
+        transaction,
+        transactionHash,
       });
-    } catch (error) {
-      sendErrorReport("HelpDesk - Send payment failed", error);
+    } catch (e) {
+      sendErrorReport("HelpDesk - Send payment failed", e);
       setErrorMessage({
         message: tCrossborder("withdraw.helpDesk.errorTryLater"),
-        error: error as Error,
+        error: e as Error,
       });
       setIsLoading("error");
       setTimeout(() => {
@@ -258,25 +252,21 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
     <div className="mb-16">
       {state === DESK_STATE_ONGOING && transaction && (
         <>
-          {transaction.status === TRANSACTION_STATE_STARTED && (
-            <TransactionStarted />
-          )}
-          {transaction.status === TRANSACTION_STATE_PENDING && (
-            <TransactionPending />
-          )}
+          {transaction.status === TRANSACTION_STATE_STARTED && <TransactionStarted />}
+          {transaction.status === TRANSACTION_STATE_PENDING && <TransactionPending />}
           {transaction.status === TRANSACTION_STATE_PAYMENT_PENDING && (
             <TransactionPaymentPending
-              handleSend={handleSend}
+              handleSend={() => handleSend()}
               isLoading={isLoading}
               transaction={transaction}
               errorMessage={errorMessage}
             />
           )}
           {transaction.status === TRANSACTION_STATE_DONE && (
-            <TransactionDone handleNewTransaction={handleNewTransaction} />
+            <TransactionDone handleNewTransaction={() => handleNewTransaction()} />
           )}
           {transaction.status === TRANSACTION_STATE_MANUEL && (
-            <TransactionManual handleNewTransaction={handleNewTransaction} />
+            <TransactionManual handleNewTransaction={() => handleNewTransaction()} />
           )}
           {transaction === null && <TransactionNone />}
         </>
@@ -284,20 +274,15 @@ const HelpDesk: React.FC<HelpDeskProps> = ({
       {state === DESK_STATE_UNVERIFIED && (
         <HelpDeskVerificationForm
           method={method}
-          handleVerificationRequest={handleVerificationRequest}
+          handleVerificationRequest={(data) =>
+            handleVerificationRequest({ data, setState, refreshAuthentication, setShouldUpdate, user, method })
+          }
         />
       )}
       {state === DESK_STATE_VERIFIED && (
-        <HelpDeskRequestForm
-          textareaContent={textareaContent}
-          setTextareaContent={setTextareaContent}
-          error={error}
-          handleStartTransaction={handleStartTransaction}
-        />
+        <HelpDeskRequestForm error={error} handleStartTransaction={(data) => handleStartTransaction(data)} />
       )}
-      {state === DESK_STATE_VERIFICATION_REQUESTED && (
-        <VerificationInProgress />
-      )}
+      {state === DESK_STATE_VERIFICATION_REQUESTED && <VerificationInProgress />}
       {state === DESK_STATE_LOADING && <LoadingHelpDesk />}
       {state === DESK_STATE_FAILED && <VerificationRequestError />}
     </div>

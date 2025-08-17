@@ -1,26 +1,29 @@
-import React, { use, useContext, useEffect, useRef, useState } from "react";
-import QueryString from "qs";
-import axios from "axios";
-import Loader from "../UI/Loader";
-import ContinentsMap from "../UI/ContinentMap";
-import WalletQRCode from "../UI/WalletQRCode";
-import { useSprings, animated } from "@react-spring/web";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from "@headlessui/react";
-import { FiChevronDown, FiSearch } from "react-icons/fi";
+import { animated, useSprings } from "@react-spring/web";
+import QueryString from "qs";
 import AnimateHeight from "react-animate-height";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
+import { FiChevronDown, FiSearch } from "react-icons/fi";
+import { useActiveAccount } from "thirdweb/react";
+import { api, AuthContext, sendErrorReport } from "../../../context/UserContext";
+import duplicateByPaymentModality from "../../utilities/crossborder/duplicateByPaymentModality";
+import { LogLevel } from "../../utilities/error-reporter/reporter";
 import UniversalModal from "../Modals/UniversalModal";
 import AddressDisplay from "../UI/AddressDisplay";
-import { useActiveAccount } from "thirdweb/react";
-import { AuthContext, sendErrorReport } from "../../../context/UserContext";
-import { LogLevel } from "../../utilities/error-reporter/reporter";
+import ContinentsMap from "../UI/ContinentMap";
+import Loader from "../UI/Loader";
 import LoadingButton from "../UI/LoadingButton";
-import duplicateByPaymentModality from "../../utilities/crossborder/duplicateByPaymentModality";
+import WalletQRCode from "../UI/WalletQRCode";
 
 interface Currency {
   currency: string;
@@ -60,12 +63,7 @@ interface PaymentTypeInfo {
 
 type LoadingState = "normal" | "processing" | "success" | "error";
 
-function CountriesInfo({
-  countries,
-  selectedCountry,
-  selectedContinent,
-  countrySelected,
-}: CountriesInfoProps) {
+function CountriesInfo({ countries, selectedCountry, selectedContinent, countrySelected }: CountriesInfoProps) {
   const containerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredCountries, setFilteredCountries] = useState<Country[]>(countries);
@@ -84,11 +82,7 @@ function CountriesInfo({
 
   useEffect(() => {
     setFilteredCountries(
-      countries?.filter((country) =>
-        country.countryInfo.name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      )
+      countries?.filter((country) => country.countryInfo.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [searchTerm, countries]);
 
@@ -112,18 +106,16 @@ function CountriesInfo({
   );
 
   function aggregatePaymentTypeInfo(paymentPartners: PaymentPartner[]): PaymentTypeInfo {
-    let filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
+    const filledInPartners = duplicateByPaymentModality(paymentPartners, "withdrawModality");
     const paymentTypes = filledInPartners.reduce<PaymentTypeInfo>((acc, partner) => {
       if (!acc[partner.withdrawModality]) {
         acc[partner.withdrawModality] = [];
       }
       partner.currencies.forEach((currency) => {
-        if (
-          !acc[partner.withdrawModality].find((c) => c.currency === currency.currency)
-        ) {
+        if (!acc[partner.withdrawModality].find((c) => c.currency === currency.currency)) {
           acc[partner.withdrawModality].push({
             currency: currency.currency,
-            partner: partner,
+            partner,
           });
         }
       });
@@ -139,30 +131,37 @@ function CountriesInfo({
         closeModal={() => {
           setIsCountryInfoOpen(false);
         }}
-        title={`Geld aus Zielland ${modalSelectedCountry?.countryInfo.name} empfangen`}
-        message={<div className="my-4 flex flex-col gap-4">
-          {tCrossborder("receiveSection.thankyou")}
-          <AddressDisplay concat={false} value={account?.address} />
-          <LoadingButton isLoading={isLoading} onClick={async()=>{
-          try {
-            setIsLoading("processing");
-            let timeStamp = new Date().toISOString();
-            await axios.post(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/message`, {
-              timestamp: timeStamp,
-              loggerName: "Support Logger",
-              level: LogLevel.INFO,
-              message: `User ${user.email} requested a transaction support for country ${modalSelectedCountry?.countryInfo.name}`,
-            });
-            setIsLoading("success");
-            setTimeout(() => {
-              setIsLoading("normal");
-            }, 5000);
-          } catch (error) {
-            sendErrorReport("ReceiveSection - Requesting support failed", error);
-            setIsLoading("error");
-          }
-        }}>{tCrossborder("receiveSection.helpRequested")}</LoadingButton>
-        </div>}
+        title={`${tCrossborder("receiveSection.title")} ${modalSelectedCountry?.countryInfo.name} ${tCrossborder("receiveSection.receive")}`}
+        message={
+          <div className="my-4 flex flex-col gap-4">
+            {tCrossborder("receiveSection.thankyou")}
+            <AddressDisplay concat={false} value={account?.address || t("no_wallet")} />
+            <LoadingButton
+              isLoading={isLoading}
+              onClick={async () => {
+                try {
+                  setIsLoading("processing");
+                  const timeStamp = new Date().toISOString();
+                  await api.post(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/message`, {
+                    timestamp: timeStamp,
+                    loggerName: "Support Logger",
+                    level: LogLevel.INFO,
+                    message: `User ${user.email} requested a transaction support for country ${modalSelectedCountry?.countryInfo.name}`,
+                  });
+                  setIsLoading("success");
+                  setTimeout(() => {
+                    setIsLoading("normal");
+                  }, 5000);
+                } catch (error) {
+                  sendErrorReport("ReceiveSection - Requesting support failed", error);
+                  setIsLoading("error");
+                }
+              }}
+            >
+              {tCrossborder("receiveSection.helpRequested")}
+            </LoadingButton>
+          </div>
+        }
       />
       <div className="w-full max-w-4xl mx-auto mb-16">
         <div className="bg-white shadow-md rounded-lg border">
@@ -173,7 +172,7 @@ function CountriesInfo({
               <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search for a country..."
+                placeholder={tCrossborder("transferCountries.searchCountryPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -182,18 +181,14 @@ function CountriesInfo({
           </div>
 
           {filteredCountries?.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">
-              {tCrossborder("receiveSection.notSupported")}
-            </div>
+            <div className="p-6 text-center text-gray-500">{tCrossborder("receiveSection.notSupported")}</div>
           ) : (
             <div>
               {springs.map((style, index) => {
                 const country = filteredCountries[index];
                 const isOpen = openCountry === country.countryInfo.name;
 
-                const aggregatedPaymentTypes = aggregatePaymentTypeInfo(
-                  country.paymentTypes
-                );
+                const aggregatedPaymentTypes = aggregatePaymentTypeInfo(country.paymentTypes);
 
                 return (
                   <animated.div style={style} key={country.countryInfo.name}>
@@ -209,9 +204,7 @@ function CountriesInfo({
                             className="w-full flex items-center justify-between py-3 px-4 text-left font-medium"
                             onClick={() =>
                               setOpenCountry((prev) =>
-                                prev === country.countryInfo.name
-                                  ? null
-                                  : country.countryInfo.name
+                                prev === country.countryInfo.name ? null : country.countryInfo.name
                               )
                             }
                           >
@@ -221,120 +214,82 @@ function CountriesInfo({
                               </div>
                               <div>{country.countryInfo.name}</div>
                             </div>
-                            <FiChevronDown
-                              className={`w-6 h-6 transition-transform ${
-                                isOpen ? "rotate-180" : ""
-                              }`}
-                            />
+                            <FiChevronDown className={`w-6 h-6 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                           </DisclosureButton>
 
-                          <AnimateHeight
-                            duration={300}
-                            height={isOpen ? "auto" : 0}
-                          >
+                          <AnimateHeight duration={300} height={isOpen ? "auto" : 0}>
                             <DisclosurePanel static>
                               <div className="flex flex-col p-4 bg-gray-100">
                                 <div className="text-gray-700 flex flex-col gap-2">
-                                  {Object.keys(aggregatedPaymentTypes).map(
-                                    (withdrawModality, index) => {
+                                  {Object.keys(aggregatedPaymentTypes).map((withdrawModality, index) => {
+                                    // Get the partner with the smallest fee
+                                    const minimumFeePartner = aggregatedPaymentTypes[withdrawModality]?.length
+                                      ? aggregatedPaymentTypes[withdrawModality].reduce((prev, current) =>
+                                          prev.partner.fee < current.partner.fee ? prev : current
+                                        )
+                                      : null; // Return null if the array is empty
 
-                                      // Get the partner with the smallest fee
-                                      const minimumFeePartner =
-                                        aggregatedPaymentTypes[withdrawModality]
-                                          ?.length
-                                          ? aggregatedPaymentTypes[
-                                              withdrawModality
-                                            ].reduce((prev, current) =>
-                                              prev.partner.fee <
-                                              current.partner.fee
-                                                ? prev
-                                                : current
-                                            )
-                                          : null; // Return null if the array is empty
+                                    // Get the partner with the smallest minAmount
+                                    const minimumAmountPartner = aggregatedPaymentTypes[withdrawModality]?.length
+                                      ? aggregatedPaymentTypes[withdrawModality].reduce((prev, current) =>
+                                          prev.partner.minAmount < current.partner.minAmount ? prev : current
+                                        )
+                                      : null; // Return null if the array is empty
 
-                                      // Get the partner with the smallest minAmount
-                                      const minimumAmountPartner =
-                                        aggregatedPaymentTypes[withdrawModality]
-                                          ?.length
-                                          ? aggregatedPaymentTypes[
-                                              withdrawModality
-                                            ].reduce((prev, current) =>
-                                              prev.partner.minAmount <
-                                              current.partner.minAmount
-                                                ? prev
-                                                : current
-                                            )
-                                          : null; // Return null if the array is empty
+                                    // get unique currencies
+                                    const currencies = [];
+                                    aggregatedPaymentTypes[withdrawModality].forEach((currency) => {
+                                      if (!currencies.includes(currency.currency)) {
+                                        currencies.push(currency.currency);
+                                      }
+                                    });
 
-                                      // get unique currencies
-                                      let currencies = [];
-                                      aggregatedPaymentTypes[
-                                        withdrawModality
-                                      ].forEach((currency) => {
-                                        if (
-                                          !currencies.includes(
-                                            currency.currency
-                                          )
-                                        ) {
-                                          currencies.push(currency.currency);
-                                        }
-                                      });
-
-                                      return (
-                                        <div
-                                          key={index}
-                                          className="flex flex-row justify-between"
-                                        >
-                                          <div className="flex flex-col ">
-                                            <div className="font-bold">
-                                              {t(withdrawModality)}
-                                            </div>
-                                            <div className="text-sm text-gray-500">
-                                              {currencies.map((currency) => (
-                                                <span key={currency}>
-                                                  {currency}{" "}
-                                                </span>
-                                              ))}
-                                            </div>
-                                          </div>
-                                          <div
-                                            className={`flex flex-col `}
-                                          >
-                                            <div className={`${minimumFeePartner?"":"hidden"} `}>
-                                            {tCrossborder("receiveSection.feeFrom")}
-                                              
-                                              <span className="text-gray-500 font-bold">
-                                                {" "}
-                                                {minimumFeePartner?.partner.fee}%
-                                              </span>
-                                            </div>
-                                            <div className={`${minimumFeePartner?"":"hidden"} `}>
-                                            {tCrossborder("receiveSection.min")}
-                                              <span className="text-gray-500 font-bold">
-                                                {" "}
-                                                {
-                                                  minimumAmountPartner?.partner.minAmount
-                                                }
-                                                {" "} {minimumAmountPartner?.currency}
-                                              </span>
-                                            </div>
+                                    return (
+                                      <div key={index} className="flex flex-row justify-between">
+                                        <div className="flex flex-col ">
+                                          <div className="font-bold">{t(withdrawModality)}</div>
+                                          <div className="text-sm text-gray-500">
+                                            {currencies.map((currency) => (
+                                              <span key={currency}>{currency} </span>
+                                            ))}
                                           </div>
                                         </div>
-                                      );
-                                    }
-                                  )}
+                                        <div className={`flex flex-col `}>
+                                          <div className={`${minimumFeePartner ? "" : "hidden"} `}>
+                                            {tCrossborder("receiveSection.feeFrom")}
+
+                                            <span className="text-gray-500 font-bold">
+                                              {" "}
+                                              {minimumFeePartner?.partner.fee}%
+                                            </span>
+                                          </div>
+                                          <div
+                                            className={`${
+                                              minimumFeePartner
+                                                ? "hidden" // TODO: figure out how to display min amount correctly
+                                                : "hidden"
+                                            } `}
+                                          >
+                                            {tCrossborder("receiveSection.min")}
+                                            <span className="text-gray-500 font-bold">
+                                              {" "}
+                                              {minimumAmountPartner?.partner.minAmount} {minimumAmountPartner?.currency}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                                 <div className="flex justify-end">
                                   <button
                                     className="bg-uhuBlue rounded shadow py-1 px-4 text-white font-bold"
                                     onClick={() => {
-                                      setModalSelectedCountry(country)
-                                      console.log("country", country);
+                                      setModalSelectedCountry(country);
                                       setIsCountryInfoOpen(true);
                                     }}
                                   >
-                                     {tCrossborder("receiveSection.selectReceivingCountry")}
-                                    
+                                    {tCrossborder("receiveSection.selectReceivingCountry")}
                                   </button>
                                 </div>
                               </div>
@@ -376,11 +331,9 @@ export default function ReceiveSection() {
           ],
         },
       };
-      
+
       try {
-        const countriesResponse = await axios.get<{ docs: Country[] }>(
-          `/api/countries?${QueryString.stringify(query)}`
-        );
+        const countriesResponse = await api.get<{ docs: Country[] }>(`/api/countries?${QueryString.stringify(query)}`);
 
         const sortedCountries = [...countriesResponse.data.docs].sort((a, b) => {
           if (a.countryInfo.name < b.countryInfo.name) return -1;
@@ -412,24 +365,19 @@ export default function ReceiveSection() {
   return (
     <div className="p-4 w-full">
       <div className="text-darkBlue flex flex-col items-center gap-4 mt-12">
-        <h2 className="text-2xl font-bold">
-        {tCrossborder("receiveSection.welcome")}
-          
-        </h2>
+        <h2 className="text-2xl font-bold">{tCrossborder("receiveSection.welcome")}</h2>
       </div>
 
       <TabGroup className="flex-1 flex flex-col mt-4">
         <TabList className="flex-wrap rounded-lg flex gap-2">
           <div className="relative flex-1">
             <Tab className="flex-1 data-[selected]:bg-uhuBlue rounded p-2 border-2 border-uhuBlue data-[selected]:text-white w-full h-full">
-            {tCrossborder("receiveSection.receiveFiat")}
-              
+              {tCrossborder("receiveSection.receiveFiat")}
             </Tab>
           </div>
           <div className="relative flex-1">
             <Tab className="flex-1 data-[selected]:bg-uhuBlue rounded p-2 border-2 border-uhuBlue data-[selected]:text-white w-full h-full">
-              
-            {tCrossborder("receiveSection.receiveCrypto")}
+              {tCrossborder("receiveSection.receiveCrypto")}
             </Tab>
           </div>
         </TabList>
@@ -439,10 +387,7 @@ export default function ReceiveSection() {
               <p className="text-sm">{tCrossborder("receiveSection.selectRegionFirst")}</p>
             </div>
             <div className="max-w-4xl w-full h-92 mx-auto mb-8">
-              <ContinentsMap
-                onClick={handleCountrySelect}
-                selectedContinent={selectedContinent}
-              />
+              <ContinentsMap onClick={handleCountrySelect} selectedContinent={selectedContinent} />
             </div>
 
             {loading ? (
@@ -459,7 +404,7 @@ export default function ReceiveSection() {
             )}
           </TabPanel>
           <TabPanel className="relative">
-            <WalletQRCode></WalletQRCode>
+            <WalletQRCode />
           </TabPanel>
         </TabPanels>
       </TabGroup>

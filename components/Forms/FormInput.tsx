@@ -8,10 +8,10 @@ import {
 import { FiUploadCloud } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
-import CustomDropdown from "./CustomDropdown";
 import { Controller, Control } from "react-hook-form";
-import CountrySelector from "./CountrySelector";
 import { useTranslation } from "next-i18next";
+import CustomDropdown from "./CustomDropdown";
+import CountrySelector from "./CountrySelector";
 import { CountryDictionary } from "./types";
 
 interface ClassOverrides {
@@ -64,7 +64,7 @@ const FormInput = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   FormInputProps
 >((props, ref) => {
-  const { textarea, select, advancedSelect, input } =
+  const { textarea, input } =
     props.classOverrides || {};
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [filePreviews, setFilePreviews] = useState<File[]>([]);
@@ -108,7 +108,9 @@ const FormInput = forwardRef<
           <textarea
             {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
             ref={ref as React.Ref<HTMLTextAreaElement>}
-            className={twMerge(props.className, textarea)}
+            className={twMerge(`${props.error && "border-red-300"} ${
+                  props.disabled && "text-gray-500 bg-gray-100"
+                } ${props.className} w-full border rounded-md px-2 focus:ring-[1px] focus:ring-uhuBlue`,props.className, textarea)}
           />
         );
 
@@ -121,17 +123,15 @@ const FormInput = forwardRef<
             rules={{
               required: props.required ? t("selection_required") : false,
             }}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <>
+            render={({ field: { onChange, value } }) => (
                 <CustomDropdown
                   name={props.name}
-                  options={props.options}
+                  options={props.options || []}
                   value={value}
                   onChange={onChange}
                   placeholder={t("select")}
                   disabled={props.disabled}
                 />
-              </>
             )}
           />
         );
@@ -157,9 +157,6 @@ const FormInput = forwardRef<
                   }}
                   disabled={props.disabled}
                 />
-                {error && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </>
             )}
           />
@@ -167,16 +164,17 @@ const FormInput = forwardRef<
 
       case "switch":
         return (
-          <label className="switch">
+          <label className="switch" htmlFor={props.name} aria-label={props.label || props.name}>
             <input
               type="checkbox"
               name={props.name}
+              id={props.name}
               ref={ref as React.Ref<HTMLInputElement>}
               onChange={props.onChange}
               checked={props.checked}
               onBlur={props.onBlur}
             />
-            <span className="slider round"></span>
+            <span className="slider round" />
           </label>
         );
 
@@ -187,10 +185,10 @@ const FormInput = forwardRef<
             control={props.control}
             rules={{
               required: props.required
-                ? `${props.label} ist erforderlich`
+                ? t("selection_required")
                 : false,
             }}
-            render={({ field: { onChange }, fieldState: { error } }) => (
+            render={({ field: { onChange } }) => (
               <div>
                 <input
                   type="file"
@@ -204,6 +202,7 @@ const FormInput = forwardRef<
                   <div>
                     {filePreviews.length === 0 ? (
                       <button
+                        type="button"
                         onClick={handleUploadClick}
                         className="flex items-center space-x-2 text-uhuBlue"
                       >
@@ -214,7 +213,7 @@ const FormInput = forwardRef<
                       <div className="flex flex-col w-full">
                         {filePreviews.map((file, index) => (
                           <div
-                            key={index}
+                            key={file.name}
                             className="flex flex-1 items-center space-x-2 w-full"
                           >
                             <BsFileEarmarkText className="text-gray-600" />
@@ -282,12 +281,6 @@ const FormInput = forwardRef<
   return (
     <div className="">
       <div className="flex justify-start items-center space-x-2">
-        <label
-          htmlFor={props.name}
-          className="block text-sm font-medium text-gray-700"
-        >
-          {props.error || props.label}
-        </label>
         <div className={`group relative ${props.explanation ? "" : "hidden"}`}>
           <BsFillQuestionCircleFill className="text-gray-500 h-4 w-4" />
           <div className="hidden group-hover:block absolute z-50 text-xs text-gray-700 bg-white shadow p-2 w-64">

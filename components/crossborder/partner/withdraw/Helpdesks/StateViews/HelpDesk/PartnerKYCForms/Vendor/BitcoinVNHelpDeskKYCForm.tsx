@@ -1,13 +1,13 @@
-import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
+import { UseFormReturn , UseFormSetValue } from "react-hook-form";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import { FormField } from "../../../../../../../../Forms/types";
-import { UseFormReturn } from "react-hook-form";
-import { UseFormSetValue } from "react-hook-form";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
+
 let formDataPreloaded = false;
 
 interface BitcoinVNHelpDeskKYCFormProps {
@@ -15,10 +15,7 @@ interface BitcoinVNHelpDeskKYCFormProps {
   methods: UseFormReturn;
 }
 
-export default function BitcoinVNHelpDeskKYCForm({
-  setValue,
-  methods,
-}: BitcoinVNHelpDeskKYCFormProps) {
+export default function BitcoinVNHelpDeskKYCForm({ setValue, methods }: BitcoinVNHelpDeskKYCFormProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
 
@@ -40,22 +37,14 @@ export default function BitcoinVNHelpDeskKYCForm({
   const ovexB2BKYCInfo: FormField[] = [
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documents")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documents")}</div>,
     },
     {
       type: "array",
       name: "commercialRegistrations",
       label: t("information.fields.documents.commercialRegistrations"),
-      newLabel: t(
-        "information.fields.documents.commercialRegistrations_newLabel"
-      ),
-      removeLabel: t(
-        "information.fields.documents.commercialRegistrations_removeLabel"
-      ),
+      newLabel: t("information.fields.documents.commercialRegistrations_newLabel"),
+      removeLabel: t("information.fields.documents.commercialRegistrations_removeLabel"),
       fields: [
         {
           name: "commercialRegister",
@@ -67,26 +56,18 @@ export default function BitcoinVNHelpDeskKYCForm({
     },
     {
       type: "ui",
-      content: (
-        <div className="font-bold">
-          {tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documentInstructions")}
-        </div>
-      ),
+      content: <div className="font-bold">{tCrossborder("withdraw.helpDeskKYC.bitcoinvn.documentInstructions")}</div>,
     },
     {
       type: "array",
       name: "bitcoinVNDocs",
       label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDocs"),
       newLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.newDocument"),
-      removeLabel: tCrossborder(
-        "withdraw.helpDeskKYC.bitcoinvn.removeDocument"
-      ),
+      removeLabel: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.removeDocument"),
       fields: [
         {
           name: "bitcoinVNDoc",
-          label: tCrossborder(
-            "withdraw.helpDeskKYC.bitcoinvn.representativeDoc"
-          ),
+          label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.representativeDoc"),
           type: "file",
           required: true,
         },
@@ -94,23 +75,19 @@ export default function BitcoinVNHelpDeskKYCForm({
     },
     {
       type: "ui",
-      content: <div className="h-4"></div>,
+      content: <div className="h-4" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.bitcoinvn.acceptTermsLabel"),
       type: "custom",
-      content: (methods) => {
-        return (
+      content: (methods) => (
           <AcceptTermsCheckbox
             methods={methods}
-            partnerName={"BitcoinVN"}
-            partnerTerms={
-              "https://support.bitcoinvn.io/help/en-us/3-general/8-terms-of-service"
-            }
+            partnerName="BitcoinVN"
+            partnerTerms="https://support.bitcoinvn.io/help/en-us/3-general/8-terms-of-service"
           />
-        );
-      },
+        ),
     },
   ];
 

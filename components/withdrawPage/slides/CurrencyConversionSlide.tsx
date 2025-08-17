@@ -1,7 +1,7 @@
-import React from 'react';
-import { FiArrowLeft } from 'react-icons/fi';
-import { CurrencyConversionSlideProps } from '../types';
-import FiatReceivingSelector from '../../crossborder/transfer/components/FiatReceivingSelector';
+import React from "react";
+import { FiArrowLeft } from "react-icons/fi";
+import FiatReceivingSelector from "../../crossborder/transfer/components/FiatReceivingSelector";
+import { CurrencyConversionSlideProps } from "../types";
 
 const CurrencyConversionSlide: React.FC<CurrencyConversionSlideProps> = ({
   selectedCountry,
@@ -11,9 +11,8 @@ const CurrencyConversionSlide: React.FC<CurrencyConversionSlideProps> = ({
   setPayoutCurrency,
   swiperInstance,
   goToSlide,
-  back
-}) => {
-  return (
+  back,
+}) => (
     <div className="relative z-[10] p-4 flex flex-col gap-4 max-w-4xl mx-auto">
       <button
         onClick={back}
@@ -35,6 +34,5 @@ const CurrencyConversionSlide: React.FC<CurrencyConversionSlideProps> = ({
       )}
     </div>
   );
-};
 
-export default CurrencyConversionSlide; 
+export default CurrencyConversionSlide;

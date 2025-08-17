@@ -1,71 +1,49 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import QueryString from "qs";
-import axios from "axios";
-import { useActiveAccount } from "thirdweb/react";
-import { Swiper, SwiperSlide, SwiperClass } from "swiper/react";
-import "swiper/css";
 import { useRouter } from "next/router";
+import QueryString from "qs";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import "swiper/css";
+import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+import { useTranslation } from "next-i18next";
+import { ParsedUrlQuery } from "node:querystring";
 import filterCountryData from "../../../utilities/crossborder/filterCountryData";
 import { RouterQuery } from "./types";
 
 // Import slide components
-import ContinentSelection from "./slides/ContinentSelection";
-import BalanceSelection from "./slides/BalanceSelection";
-import CurrencyConversionSelection from "./slides/CurrencyConversionSelection";
-import TransactionDetailsForm from "./slides/TransactionDetailsForm";
-import PartnerPanel from "./slides/PartnerPanel";
-import { Country, PaymentTypesArray } from "../../../types/payload-types";
-import { AuthContext, sendErrorReport } from "../../../../context/UserContext";
-import { ParsedUrlQuery } from "node:querystring";
-import {
-  FiatInfo,
-  getFiatInfoForStableCoin,
-  STANDARD_STABLE_MAP,
-} from "../../../utilities/stableCoinsMaps";
-import { Balance } from "../CurrencySelector";
+import { api, AuthContext, sendErrorReport } from "../../../../context/UserContext";
 import { FiatCodes } from "../../../types/derivedPayload.types";
-import { useTranslation } from "next-i18next";
-
-const isDevelopment = process.env.NEXT_PUBLIC_NEXT_ENV === "development";
+import { Country, PaymentTypesArray } from "../../../types/payload-types";
+import { getFiatInfoForStableCoin, STANDARD_STABLE_MAP } from "../../../utilities/stableCoinsMaps";
+import { Balance } from "../CurrencySelector";
+import BalanceSelection from "./slides/BalanceSelection";
+import ContinentSelection from "./slides/ContinentSelection";
+import CurrencyConversionSelection from "./slides/CurrencyConversionSelection";
+import PartnerPanel from "./slides/PartnerPanel";
+import TransactionDetailsForm from "./slides/TransactionDetailsForm";
 
 export default function TransferSection() {
   // Next.js router for query parameter handling
   const router = useRouter();
-  const { continent, country, stableCoin, payoutCoin } =
-    router.query as RouterQuery;
+  const { continent, country } = router.query as RouterQuery;
 
-  const [selectedContinent, setSelectedContinent] = useState<string>(
-    continent || "europe"
-  );
+  const [selectedContinent, setSelectedContinent] = useState<string>(continent || "europe");
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
-    null
-  );
+  const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(null);
   const [countryData, setCountryData] = useState<Country[] | null>(null);
 
-  const [selectedCurrency, setSelectedCurrency] = useState<Balance | null>(
-    null
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState<Balance | null>(null);
   const [maxAmount, setMaxAmount] = useState<number>(0);
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [selectedMethod, setSelectedMethod] = useState<
-    PaymentTypesArray[number] | null
-  >(null);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentTypesArray[number] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [payoutCurrency, setPayoutCurrency] = useState<
-    FiatCodes | "crypto" | null
-  >(null);
+  const [payoutCurrency, setPayoutCurrency] = useState<FiatCodes | "crypto" | null>(null);
 
-  const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>(
-    []
-  );
+  const [availableMethods, setAvailableMethods] = useState<PaymentTypesArray>([]);
   const [preferredStableCoin, setPreferredStableCoin] = useState<string>("");
   const [exchangeRate, setExchangeRate] = useState<number>(1);
   const [loadedExchangeRate, setLoadedExchangeRate] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
-  const account = useActiveAccount();
   const containerRef = useRef<HTMLDivElement>(null);
   const countrySelectRef = useRef<HTMLDivElement>(null);
   const [clicked, setClicked] = useState<boolean>(false);
@@ -75,50 +53,38 @@ export default function TransferSection() {
   async function fetchExchangeRate(selectedFiatSymbol: FiatCodes) {
     try {
       console.log("Fetching exchange rate", selectedFiatSymbol, payoutCurrency);
-      const response = await axios.post(`/api/fiatTransaction/exchangeRate`, {
+      const response = await api.post(`/api/fiatTransaction/exchangeRate`, {
         startCurrency: selectedFiatSymbol,
         endCurrency: payoutCurrency,
       });
 
       console.log("Exchange rate response", response.data);
       setExchangeRate(response.data.rate);
-    } catch (error) {
-      sendErrorReport("TransferSection - Fetching exchange rate failed", error);
-      console.error("Error fetching exchange rate:", error);
+    } catch (e) {
+      sendErrorReport("TransferSection - Fetching exchange rate failed", e);
+      console.error("Error fetching exchange rate:", e);
       return;
     }
     setLoadedExchangeRate(true);
   }
 
   useEffect(() => {
-    let selectedFiatSymbol: FiatCodes | null =
-      getFiatInfoForStableCoin(preferredStableCoin)?.id;
-    if (
-      selectedFiatSymbol &&
-      payoutCurrency &&
-      payoutCurrency !== "crypto" &&
-      selectedFiatSymbol !== payoutCurrency
-    ) {
+    const selectedFiatSymbol: FiatCodes | null = getFiatInfoForStableCoin(preferredStableCoin)?.id;
+    if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       // Fetch exchange rate
       console.log("Fetching exchange rate", selectedFiatSymbol, payoutCurrency);
 
       fetchExchangeRate(selectedFiatSymbol);
-    } else {
-      if (payoutCurrency === "crypto") {
+    } else if (payoutCurrency === "crypto") {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
-      } else if (
-        selectedFiatSymbol &&
-        payoutCurrency &&
-        selectedFiatSymbol === payoutCurrency
-      ) {
+      } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
         setExchangeRate(1);
         setLoadedExchangeRate(true);
       } else {
         setExchangeRate(0);
         setLoadedExchangeRate(false);
       }
-    }
   }, [preferredStableCoin, payoutCurrency]);
 
   useEffect(() => {
@@ -135,11 +101,11 @@ export default function TransferSection() {
           ],
         },
       };
-      const countriesResponse = await axios(
-        `/api/countries?${QueryString.stringify(query)}`
-      );
+      const countriesResponse = await api.get(`/api/countries?${QueryString.stringify(query)}&limit=1000`);
 
-      let filteredList = filterCountryData(
+      console.log("countriesResponse", countriesResponse.data);
+
+      const filteredList = filterCountryData(
         user?.vendorCountry || user?.billingAddress?.country,
         countriesResponse.data.docs
       );
@@ -158,10 +124,7 @@ export default function TransferSection() {
       setCountryData(filteredList);
 
       if (clicked) {
-        const top =
-          (countrySelectRef.current?.getBoundingClientRect().top || 0) +
-          window.scrollY -
-          100;
+        const top = (countrySelectRef.current?.getBoundingClientRect().top || 0) + window.scrollY - 100;
         window.scrollTo({
           top,
           behavior: "smooth",
@@ -169,7 +132,7 @@ export default function TransferSection() {
       }
 
       if (country) {
-        let foundCountry = filteredList.find((c) => c.countryCode === country);
+        const foundCountry = filteredList.find((c) => c.countryCode === country);
         if (foundCountry) {
           setSelectedCountry(foundCountry);
           swiperInstance?.slideTo(1);
@@ -183,17 +146,32 @@ export default function TransferSection() {
     }
   }, [selectedContinent, swiperInstance]);
 
+
+  function handlePayoutCurrencyUrlParam(currency: string | null) {
+    const query = { ...router.query, payoutCoin: currency || undefined };
+    router.push(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true }
+    );
+  }
+
+
   function handleSetPayoutCurrency(currency: FiatCodes) {
     setPayoutCurrency(currency);
     handlePayoutCurrencyUrlParam(currency);
   }
 
-  function handlePayoutCurrencyUrlParam(currency: string | null) {
-    let query = { ...router.query, payoutCoin: currency || undefined };
+  function setPreferredStableCoinUrlParam(coin: string) {
+    const query: RouterQuery = { ...router.query, stableCoin: coin || undefined };
+    delete query.payoutCoin;
     router.push(
       {
         pathname: router.pathname,
-        query: query,
+        query: query as ParsedUrlQuery,
       },
       undefined,
       { shallow: true }
@@ -207,29 +185,10 @@ export default function TransferSection() {
     }
   }
 
-  function setPreferredStableCoinUrlParam(coin: string) {
-    let query: RouterQuery = { ...router.query, stableCoin: coin || undefined };
-    delete query.payoutCoin;
-    router.push(
-      {
-        pathname: router.pathname,
-        query: query as ParsedUrlQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
-  }
-
-  function handleContinentSelect(continent: string) {
-    setSelectedContinent(continent);
-    handleUrlContinentSelect(continent);
-    setClicked(true);
-  }
-
-  function handleUrlContinentSelect(continent: string) {
-    let query: RouterQuery = {
+  function handleUrlContinentSelect(continentParam: string) {
+    const query: RouterQuery = {
       ...router.query,
-      continent: continent || undefined,
+      continent: continentParam || undefined,
     };
     // remove country query parameter
     delete query.country;
@@ -245,11 +204,18 @@ export default function TransferSection() {
     );
   }
 
+  function handleContinentSelect(continentParam: string) {
+    setSelectedContinent(continentParam);
+    handleUrlContinentSelect(continentParam);
+    setClicked(true);
+  }
+
+
+
   function handleSlideChange() {
     // Scroll to the top of the container or page
     if (containerRef.current) {
-      const top =
-        containerRef.current.getBoundingClientRect().top + window.scrollY - 85;
+      const top = containerRef.current.getBoundingClientRect().top + window.scrollY - 85;
       window.scrollTo({
         top,
         behavior: "smooth",
@@ -259,18 +225,8 @@ export default function TransferSection() {
     }
   }
 
-  function handleCountrySelected(country: Country | null) {
-    setSelectedCountry(country);
-    handleUrlCountrySelect(country?.countryCode);
-    setSelectedMethod(null);
-    setError("");
-    if (swiperInstance) {
-      swiperInstance.slideTo(1); // Go to Slide 2
-    }
-  }
-
   function handleUrlCountrySelect(countryCode: string | undefined) {
-    let query: RouterQuery = {
+    const query: RouterQuery = {
       ...router.query,
       country: countryCode || undefined,
     };
@@ -286,6 +242,18 @@ export default function TransferSection() {
     );
   }
 
+  function handleCountrySelected(countryParam: Country | null) {
+    setSelectedCountry(countryParam);
+    handleUrlCountrySelect(countryParam?.countryCode);
+    setSelectedMethod(null);
+    setError("");
+    if (swiperInstance) {
+      swiperInstance.slideTo(1); // Go to Slide 2
+    }
+  }
+
+
+
   function clearData() {
     setSelectedMethod(null);
     setAmount("");
@@ -294,12 +262,17 @@ export default function TransferSection() {
 
   // Handle amount input
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    let inputAmount = parseFloat(e.target.value);
+    
+    const inputAmount = parseFloat(e.target.value);
 
-    console.log("inputAmount", inputAmount);
+    console.log("handleAmountChange", inputAmount, selectedCurrency?.balance, inputAmount > selectedCurrency?.balance);
 
     if (selectedMethod?.type !== "crypto") {
       setSelectedMethod(null);
+    }
+
+    if (!selectedCurrency) {
+      return;
     }
 
     if (isNaN(inputAmount) || inputAmount < 0) {
@@ -307,17 +280,13 @@ export default function TransferSection() {
       setError("");
     } else if (inputAmount > selectedCurrency?.balance) {
       setAmount(e.target.value);
-      !isDevelopment &&
-        setError(
-          `${tCrossborder("withdrawPage.errors.amountExceedsBalance")} ${
-            selectedCurrency?.balance
-          } ${
-            STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]
-              ? STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]
-                  ?.symbol
-              : selectedCurrency.symbol
-          }`
-        );
+      setError(
+        `${tCrossborder("withdrawPage.errors.amountExceedsBalance")} ${selectedCurrency?.balance} ${
+          STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]
+            ? STANDARD_STABLE_MAP[selectedCurrency.currency.toUpperCase()]?.symbol
+            : selectedCurrency.symbol
+        }`
+      );
     } else {
       setAmount(e.target.value);
       setError("");
@@ -325,13 +294,10 @@ export default function TransferSection() {
   }
 
   return (
-    <div
-      className="overflow-y-hidden w-full mx-auto relative p-4"
-      ref={containerRef}
-    >
+    <div className="overflow-y-hidden w-full mx-auto relative p-4" ref={containerRef}>
       <Swiper
         onSwiper={setSwiperInstance}
-        onSlideChange={handleSlideChange}
+        onSlideChange={()=>handleSlideChange()}
         allowTouchMove={false}
         spaceBetween={50}
         slidesPerView={1}
@@ -344,8 +310,8 @@ export default function TransferSection() {
                 selectedContinent={selectedContinent}
                 countryData={countryData}
                 selectedCountry={selectedCountry}
-                handleContinentSelect={handleContinentSelect}
-                handleCountrySelected={handleCountrySelected}
+                handleContinentSelect={(c)=>handleContinentSelect(c)}
+                handleCountrySelected={(c)=>handleCountrySelected(c)}
               />
             ) : null
           }
@@ -358,7 +324,7 @@ export default function TransferSection() {
                 selectedCountry={selectedCountry}
                 availableMethods={availableMethods}
                 setAvailableMethods={setAvailableMethods}
-                handlePreferredStableCoin={handlePreferredStableCoin}
+                handlePreferredStableCoin={(c)=>handlePreferredStableCoin(c)}
                 swiperInstance={swiperInstance}
               />
             ) : null
@@ -371,9 +337,9 @@ export default function TransferSection() {
               <CurrencyConversionSelection
                 selectedCountry={selectedCountry}
                 availableMethods={availableMethods}
-                setSelectedMethod={setSelectedMethod}
+                setSelectedMethod={(m)=>setSelectedMethod(m)}
                 setAvailableMethods={setAvailableMethods}
-                handleSetPayoutCurrency={handleSetPayoutCurrency}
+                handleSetPayoutCurrency={(c)=>handleSetPayoutCurrency(c as FiatCodes)}
                 swiperInstance={swiperInstance}
               />
             ) : null
@@ -399,9 +365,9 @@ export default function TransferSection() {
                 payoutCurrency={payoutCurrency}
                 swiperInstance={swiperInstance}
                 setSelectedCurrency={setSelectedCurrency}
-                handleAmountChange={handleAmountChange}
+                handleAmountChange={(e)=>handleAmountChange(e)}
                 setSelectedMethod={setSelectedMethod}
-                clearData={clearData}
+                clearData={()=>clearData()}
               />
             ) : null
           }

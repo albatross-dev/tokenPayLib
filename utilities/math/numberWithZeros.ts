@@ -5,5 +5,5 @@
  */
 export default function numberWithZeros(n: number): number {
   if (n <= 0) return 0; // Handle cases less than or equal to 0
-  return Math.pow(10, n);
-} 
+  return 10**n;
+}

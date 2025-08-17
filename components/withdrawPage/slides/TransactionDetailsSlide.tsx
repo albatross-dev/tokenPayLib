@@ -3,11 +3,7 @@ import { useTranslation } from "next-i18next";
 import { FiArrowLeft } from "react-icons/fi";
 import Image from "next/image";
 import { TransactionDetailsSlideProps } from "../types";
-import {
-  getFiatInfo,
-  getFiatInfoForStableCoin,
-  STANDARD_STABLE_MAP,
-} from "../../../utilities/stableCoinsMaps";
+import { getFiatInfo, getFiatInfoForStableCoin, STANDARD_STABLE_MAP } from "../../../utilities/stableCoinsMaps";
 import CurrencyDisplay from "../../crossborder/CurrencySelector";
 import MethodSelector from "../../crossborder/transfer/components/MethodSelector";
 import { CdnMedia } from "../../../types/payload-types";
@@ -31,6 +27,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
   selectedMethod,
   clearData,
   back,
+  account,
 }) => {
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -51,14 +48,11 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
         </button>
 
         <h2 className="text-2xl">
-          {tCrossborder("withdrawPage.transactionDetails.selectedCountry")}{" "}
-          {selectedCountry?.countryInfo.name}{" "}
+          {tCrossborder("withdrawPage.transactionDetails.selectedCountry")} {selectedCountry?.countryInfo.name}{" "}
           {tCrossborder("withdrawPage.transactionDetails.selectedCountry2")}
         </h2>
 
-        <p className="text-xl font-bold">
-          {tCrossborder("withdrawPage.transactionDetails.balance")}
-        </p>
+        <p className="text-xl font-bold">{tCrossborder("withdrawPage.transactionDetails.balance")}</p>
         <CurrencyDisplay
           selectedCurrency={selectedCurrency}
           mainCurrencySymbol={preferredStableCoin}
@@ -68,27 +62,33 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
         />
 
         <div className="flex flex-col gap-4">
-          <h2 className="text-xl font-bold">
-            {tCrossborder("withdrawPage.transactionDetails.selectAmount")}
-          </h2>
+          <h2 className="text-xl font-bold">{tCrossborder("withdrawPage.transactionDetails.selectAmount")}</h2>
           <div className="relative">
             <input
               type="number"
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                !account ? "bg-gray-100" : ""
+              }`}
               placeholder="0.00"
               min="0"
               max={maxAmount}
               value={amount}
               onChange={handleAmountChange}
+              disabled={!account}
             />
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {selectedMethod?.type === "crypto"
-                ? getFiatInfoForStableCoin[preferredStableCoin]?.symbol
+                ? `${getFiatInfoForStableCoin(preferredStableCoin)?.symbol 
+                  } (${ 
+                  getFiatInfoForStableCoin(preferredStableCoin)?.id 
+                  })`
                 : getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
-                ? getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
-                    ?.symbol
-                : selectedCurrency?.name}
+                  ? `${getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.symbol 
+                    } (${ 
+                    getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.id 
+                    })`
+                  : selectedCurrency?.name}
             </div>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -104,7 +104,7 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
             setSelectedMethod={setSelectedMethod}
             selectedMethod={selectedMethod}
             sendingCurrency={STANDARD_STABLE_MAP[preferredStableCoin]}
-            finalCurrency={getFiatInfo(payoutCurrency as FiatCodes)}
+            finalCurrency={getFiatInfo(payoutCurrency as FiatCodes) || null}
           />
         )}
 
@@ -125,16 +125,14 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
             {selectedCountry?.countryInfo.background && (
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
-                  src={
-                    (selectedCountry?.countryInfo.background as CdnMedia).url
-                  }
-                  fill={true}
+                  src={(selectedCountry?.countryInfo.background as CdnMedia).url || ""}
+                  fill
                   objectFit="cover"
                   alt="Country background"
                 />
               </div>
             )}
-            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black"></div>
+            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black" />
 
             <h2 className="left-8 bottom-0 absolute z-[3] text-white text-3xl font-bold mb-4">
               {selectedCountry?.countryInfo.name}
@@ -148,31 +146,19 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
               </div>
               <div className="flex-1 gap-2 flex flex-col">
                 <p>
-                  <strong>
-                    {tCrossborder("withdrawPage.transactionDetails.capital")}
-                  </strong>{" "}
+                  <strong>{tCrossborder("withdrawPage.transactionDetails.capital")}</strong>{" "}
                   {selectedCountry?.countryInfo.capital}
                 </p>
                 <p>
-                  <strong>
-                    {tCrossborder("withdrawPage.transactionDetails.population")}
-                  </strong>{" "}
+                  <strong>{tCrossborder("withdrawPage.transactionDetails.population")}</strong>{" "}
                   {selectedCountry?.countryInfo.population?.toLocaleString()}
                 </p>
                 <p>
-                  <strong>
-                    {tCrossborder("withdrawPage.transactionDetails.currency")}
-                  </strong>{" "}
-                  {
-                    selectedCountry?.countryInfo.currency[
-                      Symbol.for(selectedCountry?.countryInfo.currency)
-                    ]
-                  }
+                  <strong>{tCrossborder("withdrawPage.transactionDetails.currency")}</strong>{" "}
+                  {selectedCountry?.countryInfo.currency[Symbol.for(selectedCountry?.countryInfo.currency) as any]}
                 </p>
                 <p>
-                  <strong>
-                    {tCrossborder("withdrawPage.transactionDetails.gdp")}
-                  </strong>{" "}
+                  <strong>{tCrossborder("withdrawPage.transactionDetails.gdp")}</strong>{" "}
                   {selectedCountry?.countryInfo.gdp?.toLocaleString()} USD
                 </p>
               </div>

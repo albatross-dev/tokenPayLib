@@ -1,22 +1,20 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { useActiveAccount } from "thirdweb/react";
-import { polygon } from "thirdweb/chains";
+import client from "@/utilities/thirdweb-client";
 import { useTranslation } from "next-i18next";
-import { Account } from "thirdweb/wallets";
+import React, { useEffect, useState } from "react";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
 
 // Import slides
-import Loading from "./slides/Loading";
-import Error from "./slides/Error";
-import QuoteForm from "./slides/QuoteForm";
-import TransactionCreated from "./slides/TransactionCreated";
-import Success from "./slides/Success";
 import currencies from "../../../../../utilities/crypto/currencies";
-import { client } from "../../../../../../pages/_app";
-import { sendErrorReport } from "../../../../../../context/UserContext";
-import { Vendor, Consumer } from "../../../../../types/payload-types";
+import Error from "./slides/Error";
+import Loading from "./slides/Loading";
+import QuoteForm from "./slides/QuoteForm";
+import Success from "./slides/Success";
+import TransactionCreated from "./slides/TransactionCreated";
+
+import { api, sendErrorReport } from "../../../../../../context/UserContext";
+import { Consumer, Vendor } from "../../../../../types/payload-types";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
-import { FiatTransactionRequest } from "../../../../../types/derivedPayload.types";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 
 const POOL_FEE = 0.004;
@@ -93,7 +91,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   const [transaction, setTransaction] = useState<BitcoinVNTransaction | null>(
     null
   );
-  const selectedToken = currencies["USDC"];
+  const selectedToken = currencies.USDC;
   const [formData, setFormData] = useState({
     accountNumber: "",
     accountHolder: "",
@@ -113,7 +111,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
 
   async function getQuote() {
     try {
-      const result = await axios.post("/api/fiatTransaction/bitcoinVN/quote", {
+      const result = await api.post("/api/fiatTransaction/bitcoinVN/quote", {
         depositAmount: amount - amount * POOL_FEE,
         settleAmount: null,
       });
@@ -142,7 +140,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
       );
 
       // get transaction from database
-      const fiatTransactionRes = await axios.get(
+      const fiatTransactionRes = await api.get(
         `/api/fiatTransaction/?where[transactionDetails][equals]=${transaction.shortId}`
       );
 
@@ -162,8 +160,8 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
         }, 20000);
       } else {
         try {
-          await axios.patch(`/api/fiatTransaction/${fiatTransaction?.id}`, {
-            transactionHash: transactionHash,
+          await api.patch(`/api/fiatTransaction/${fiatTransaction?.id}`, {
+            transactionHash,
           });
 
           setState("success");
@@ -194,7 +192,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
 
   async function getInfo() {
     try {
-      const result = await axios.get("/api/fiatTransaction/bitcoinVN/getInfo");
+      const result = await api.get("/api/fiatTransaction/bitcoinVN/getInfo");
       setBankList(
         result.data.transferMethods.vnd.details.banks.map((bank: string) => ({
           value: bank,
@@ -212,7 +210,7 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   async function createTransaction() {
     setState("loading");
     try {
-      const result = await axios.post(
+      const result = await api.post(
         "/api/fiatTransaction/bitcoinVN/createOrder",
         {
           quote: quote?.id,

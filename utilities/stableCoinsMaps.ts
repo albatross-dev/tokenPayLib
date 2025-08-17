@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { FiatCodes } from "../types/derivedPayload.types";
 export interface FiatInfo {
   id: FiatCodes;
@@ -63,9 +65,7 @@ const STABLE_FIAT_MAP: {
   USDC: { id: "USD", symbol: "$" },
   USDT: { id: "USD", symbol: "$" },
   EURS: { id: "EUR", symbol: "€" },
-  EUROE: { id: "EUR", symbol: "€" }
 };
-
 
 /**
  * Maps stablecoin ticker symbols to their corresponding fiat currency codes.
@@ -75,7 +75,6 @@ const STABLECOIN_TO_FIAT_MAP: { [key: string]: "USD" | "EUR" } = {
   USDC: "USD",
   USDT: "USD",
   EURS: "EUR",
-  EUROE: "EUR",
 };
 
 /**
@@ -128,19 +127,18 @@ const FIAT_SYMBOLS_MAP: { [key: string]: string } = {
 };
 
 export const STANDARD_STABLE_MAP: { [key: string]: FiatInfo } = {
-  USDC: getFiatInfo("USD"),
-  EURS: getFiatInfo("EUR"),
-  EUROE: getFiatInfo("EUR"),
-  USDT: getFiatInfo("USD"),
-  UHU: getFiatInfo("EUR"),
+  USDC: getFiatInfo("USD")!,
+  EURS: getFiatInfo("EUR")!,
+  USDT: getFiatInfo("USD")!,
+  UHU: getFiatInfo("EUR")!,
 };
 
 export const getFiatInfoForStableCoin = (stableCoin: string): FiatInfo | undefined => {
-  return STANDARD_STABLE_MAP[stableCoin];
-}
-
+  return STANDARD_STABLE_MAP[stableCoin.toUpperCase()];
+};
 
 export function getFiatInfo(fiatCode: FiatCodes): FiatInfo | undefined {
+  if (fiatCode === null || fiatCode === undefined) return undefined;
   return FIAT_INFO_MAP[fiatCode];
 }
 
@@ -157,5 +155,6 @@ export function getFiatCurrencyCode(stablecoin: string): "USD" | "EUR" | undefin
  * Handles case-insensitivity.
  */
 export function getFiatCurrencySymbol(fiatCode: FiatCodes): string | undefined {
+  if (fiatCode === null || fiatCode === undefined) return undefined;
   return FIAT_SYMBOLS_MAP[fiatCode];
 }

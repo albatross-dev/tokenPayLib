@@ -1,22 +1,19 @@
-import React from "react";
 import { useTranslation } from "next-i18next";
-import { useUhuConfig } from "../../../contexts/UhuConfigContext";
-import { Consumer, Country, Vendor } from "../../../../types/payload-types";
 import { Account } from "thirdweb/wallets";
+import { Country } from "../../../../types/payload-types";
+import { useUhuConfig } from "../../../contexts/UhuConfigContext";
 
 interface UnlimitProps {
   amount: number;
   account: Account;
-  user: Consumer | Vendor;
   country: Country;
 }
 
-const Unlimit: React.FC<UnlimitProps> = ({
+function Unlimit({
   amount,
   account,
-  user,
   country,
-}) => {
+}: UnlimitProps){
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
   const { setIsHelpModalOpen } = useUhuConfig();
@@ -25,8 +22,8 @@ const Unlimit: React.FC<UnlimitProps> = ({
     country.countryCode
   }&partnerAccountId=${
     process.env.NEXT_PUBLIC_GATEFI_PARTNER_ACCOUNT_ID
-  }&cryptoCurrency=usdc&cryptoAmount=${amount}&fiatAmountLock=false&fiatCurrency=${
-    country.countryInfo.currency
+  }&cryptoCurrency=USDC_POLYGON&cryptoAmount=${amount}&fiatAmountLock=false&fiatCurrency=${
+    country.countryInfo.currency.toUpperCase()
   }&payout=BANK&themeMode=light&redirectUrl=${encodeURIComponent(
     "https://exchange.usetokenpay.com"
   )}&backToButtonLabel=${encodeURIComponent(
@@ -40,14 +37,15 @@ const Unlimit: React.FC<UnlimitProps> = ({
       </div>
       <div className="mb-4">
         {tCrossborder("withdraw.unlimit.partnerText")}{" "}
-        <span
+        <button
           className="text-uhuBlue cursor-pointer"
+          type="button"
           onClick={() => {
             setIsHelpModalOpen(true);
           }}
         >
           {tCrossborder("withdraw.unlimit.customerSupport")}
-        </span>
+        </button>
         .
       </div>
       <div className="iframe-container">
@@ -60,7 +58,7 @@ const Unlimit: React.FC<UnlimitProps> = ({
             border: "none",
           }}
           allowFullScreen
-        ></iframe>
+        />
       </div>
     </div>
   );

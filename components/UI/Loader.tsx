@@ -27,7 +27,7 @@ export default function Loader(): JSX.Element {
   return (
     <ProcessingAnimation
       textSlideC={{ textSlide, setTextSlide }}
-      loading={true}
+      loading
     />
   )
 }
@@ -64,9 +64,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({ textSl
     let interval: NodeJS.Timeout | undefined;
     if (loading) {
       interval = setInterval(() => {
-        setTextSlide((prev) => {
-          return (prev + 1) % texts.length;
-        });
+        setTextSlide((prev) => (prev + 1) % texts.length);
       }, 6000);
     } else {
       clearInterval(interval);
@@ -93,7 +91,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({ textSl
         viewBox="0 0 1026 1026"
         fill="none"
         aria-hidden="true"
-        className={`absolute inset-0 h-full w-full animate-spin-slow`}
+        className="absolute inset-0 h-full w-full animate-spin-slow"
       >
         <path
           d="M1025 513c0 282.77-229.23 512-512 512S1 795.77 1 513 230.23 1 513 1s512 229.23 512 512Z"
@@ -125,7 +123,7 @@ export const ProcessingAnimation: React.FC<ProcessingAnimationProps> = ({ textSl
         viewBox="0 0 1026 1026"
         fill="none"
         aria-hidden="true"
-        className={`absolute inset-0 h-full w-full animate-spin-reverse-slower`}
+        className="absolute inset-0 h-full w-full animate-spin-reverse-slower"
       >
         <path
           d="M913 513c0 220.914-179.086 400-400 400S113 733.914 113 513s179.086-400 400-400 400 179.086 400 400Z"

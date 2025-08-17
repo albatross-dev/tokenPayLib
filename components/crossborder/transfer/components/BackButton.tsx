@@ -1,6 +1,7 @@
-import React from 'react';
+import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 interface BackButtonProps {
   clearData?: () => void;
@@ -24,4 +25,4 @@ export default function BackButton({ clearData, onBack }: BackButtonProps) {
       {tCrossborder("transferSection.back")}
     </button>
   );
-} 
+}

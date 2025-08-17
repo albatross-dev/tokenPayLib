@@ -5,10 +5,8 @@ import erc20abi from "@/tokenPayLib/assets/ERC20ABI.json";
 import alpha from "@/tokenPayLib/assets/payment-icons/polygon/alpha.png";
 import tether from "@/tokenPayLib/assets/payment-icons/polygon/tether.png";
 import usdc from "@/tokenPayLib/assets/payment-icons/polygon/usdc.png";
-import euroe from "@/tokenPayLib/assets/payment-icons/polygon/euroe.png";
 import eurs from "@/tokenPayLib/assets/payment-icons/polygon/eurs.webp";
 import wbtc from "@/tokenPayLib/assets/payment-icons/polygon/wbtc.svg";
-import numberWithZeros from "../math/numberWithZeros";
 
 import POLYGON_LOGO from "@/tokenPayLib/assets/chain-icons/polygon-matic-logo.svg";
 import ETHEREUM_LOGO from "@/tokenPayLib/assets/chain-icons/eth-logo.svg";
@@ -18,19 +16,19 @@ import BASE_LOGO from "@/tokenPayLib/assets/chain-icons/base-logo.svg";
 import AVALANCHE_LOGO from "@/tokenPayLib/assets/chain-icons/avax-logo.svg";
 import BSC_LOGO from "@/tokenPayLib/assets/chain-icons/bsc-logo.svg";
 
+import { StaticImageData } from "next/image";
 import polygonCurrencies from "./currencies/polygon";
 import baseCurrencies from "./currencies/base";
 import arbitrumCurrencies from "./currencies/arbitrum";
 import ethereumCurrencies from "./currencies/ethereum";
 import optimismCurrencies from "./currencies/optimism";
 import { SimpleToken } from "../../types/token.types";
-import { StaticImageData } from "next/image";
+import numberWithZeros from "../math/numberWithZeros";
 
 export const LogoByShortName: Record<string, string | StaticImageData> = {
   USDC: usdc,
   "USDC.E": usdc,
   USDT: tether,
-  EUROE: euroe,
   EURS: eurs,
   UHU: alpha,
 };
@@ -47,25 +45,21 @@ export const ChainLogoByChainId: Record<string, string> = {
 
 export const ERC20ABI = erc20abi;
 
-export function formatNumberWithCurrency(
-  number: number,
-  currency?: string,
-  includeSymbol: boolean = true
-): string {
+export function formatNumberWithCurrency(number: number, currency?: string, includeSymbol: boolean = true): string {
   if (includeSymbol) {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
-      currency: currency,
+      currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(number);
-  } else {
+  } 
     return new Intl.NumberFormat("de-DE", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(number);
-  }
+  
 }
 
 export const numberFormatter = new Intl.NumberFormat("de-DE", {
@@ -73,15 +67,11 @@ export const numberFormatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 
   // These options are needed to round to whole numbers if that's what you want.
-  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-  //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+  // minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+  // maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 });
 
-export function formatCrypto(
-  amount: number,
-  decimals: number,
-  fractionDigits = 2
-): string {
+export function formatCrypto(amount: number, decimals: number, fractionDigits = 2): string {
   return new Intl.NumberFormat("de-DE", {
     style: "decimal",
     minimumFractionDigits: 2,
@@ -94,11 +84,9 @@ const currencies: Record<string, SimpleToken> = polygonCurrencies;
 
 export const currenciesBase: Record<string, SimpleToken> = baseCurrencies;
 
-export const currenciesArbitrum: Record<string, SimpleToken> =
-  arbitrumCurrencies;
+export const currenciesArbitrum: Record<string, SimpleToken> = arbitrumCurrencies;
 
-export const currenciesEthereum: Record<string, SimpleToken> =
-  ethereumCurrencies;
+export const currenciesEthereum: Record<string, SimpleToken> = ethereumCurrencies;
 
 export const currenciesOP: Record<string, SimpleToken> = optimismCurrencies;
 
@@ -126,14 +114,6 @@ export const currenciesAvax: Record<string, SimpleToken> = {
     contractAddress: "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
     abi: realusdtabi,
     icon: tether,
-  },
-  EUROE: {
-    name: "EUROE",
-    id: "euroe",
-    decimals: 6,
-    contractAddress: "0x820802Fa8a99901F52e39acD21177b0BE6EE2974",
-    abi: realusdtabi,
-    icon: euroe,
   },
 };
 
@@ -201,14 +181,6 @@ const currenciesStable: Record<string, SimpleToken> = {
     abi: realusdtabi as Array<any>,
     icon: tether,
   },
-  EUROE: {
-    name: "EUROE",
-    id: "euroe",
-    decimals: 6,
-    contractAddress: "0x820802Fa8a99901F52e39acD21177b0BE6EE2974",
-    abi: realusdtabi as Array<any>,
-    icon: euroe,
-  },
   EURS: {
     name: "EURS",
     id: "eurs",
@@ -235,12 +207,9 @@ const currenciesStable: Record<string, SimpleToken> = {
   },
 };
 
-type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
+export type chainTypesIds = 1 | 10 | 42161 | 8453 | 43114 | 56 | 137;
 
-export const TokensByChainId: Record<
-  chainTypesIds,
-  Record<string, SimpleToken>
-> = {
+export const TokensByChainId: Record<chainTypesIds, Record<string, SimpleToken>> = {
   137: currencies,
   1: currenciesEthereum,
   10: currenciesOP,

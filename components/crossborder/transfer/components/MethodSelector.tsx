@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  getBitcoinVNMetaData,
-  getBitcoinVNQuote,
-} from "../../partner/universal/bitcoinVNUtils";
-import MiniLoader from "../../../UI/MiniLoader";
-import { useTranslation } from "react-i18next";
+/* eslint-disable */
+
+import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";
-import { getSwyptQuote } from "../../partner/universal/swyptUtils";
 import { PaymentTypesArray } from "../../../../types/payload-types";
-import {
-  FiatInfo,
-  STANDARD_STABLE_MAP,
-} from "../../../../utilities/stableCoinsMaps";
+import { FiatInfo } from "../../../../utilities/stableCoinsMaps";
+import MiniLoader from "../../../UI/MiniLoader";
+import { getBitcoinVNMetaData, getBitcoinVNQuote } from "../../partner/universal/bitcoinVNUtils";
 import { getKoyweQuote } from "../../partner/universal/koyweUtils";
+import { getSwyptQuote } from "../../partner/universal/swyptUtils";
 
 export type PaymentMethodType = PaymentTypesArray[number];
 
@@ -66,8 +62,6 @@ export default function MethodSelector({
 
   const quoteMethods = methods as QuotePaymentType[];
 
-  console.log("sortedMethods", sortedMethods);
-
   useEffect(() => {
     async function update() {
       console.log("update started");
@@ -95,9 +89,7 @@ export default function MethodSelector({
             method.maxAmount = bitcoinVNMetadata.max;
 
             try {
-              const bitcoinVNQuote = await getBitcoinVNQuote(
-                amount - amount * 0.004
-              );
+              const bitcoinVNQuote = await getBitcoinVNQuote(amount - amount * 0.004);
               method.predictedAmount = bitcoinVNQuote.settleAmount;
             } catch (error) {
               method.predictedAmount = 0;
@@ -112,17 +104,10 @@ export default function MethodSelector({
               method.predictedAmount = 0;
             } else {
               try {
-                const swyptQuote = await getSwyptQuote(
-                  amount,
-                  "KES",
-                  "USDC",
-                  "Polygon",
-                  "offramp"
-                );
+                const swyptQuote = await getSwyptQuote(amount, "KES", "USDC", "Polygon", "offramp");
 
                 // Apply your platform fee (0.4%)
-                method.predictedAmount =
-                  swyptQuote.outputAmount - swyptQuote.outputAmount * 0.004;
+                method.predictedAmount = swyptQuote.outputAmount - swyptQuote.outputAmount * 0.004;
               } catch (error) {
                 console.error("SwyptQuote - Error fetching quote:", error);
                 method.predictedAmount = 0;
@@ -143,8 +128,7 @@ export default function MethodSelector({
                 console.log("quoteObj", quoteObj);
                 const koyweQuote = await getKoyweQuote(quoteObj);
                 console.log("koyweQuote", koyweQuote);
-                method.predictedAmount =
-                  koyweQuote.amountOut - koyweQuote.amountOut * 0.004;
+                method.predictedAmount = koyweQuote.amountOut - koyweQuote.amountOut * 0.004;
               } catch (error) {
                 console.error("KoyweQuote - Error fetching quote:", error);
                 method.predictedAmount = 0;
@@ -158,9 +142,7 @@ export default function MethodSelector({
               method.predictedAmount = 0;
               break;
             }
-            method.predictedAmount =
-              amount * exchangeRate -
-              amount * exchangeRate * (method.fee / 100);
+            method.predictedAmount = amount * exchangeRate - amount * exchangeRate * (method.fee / 100);
             break;
           default:
             if (amount < method.minAmount || amount > method.maxAmount) {
@@ -168,9 +150,7 @@ export default function MethodSelector({
               break;
             }
             method.predictedAmount =
-              amount * exchangeRate -
-              amount * exchangeRate * 0.004 -
-              amount * exchangeRate * (method.fee / 100);
+              amount * exchangeRate - amount * exchangeRate * 0.004 - amount * exchangeRate * (method.fee / 100);
             break;
         }
       }
@@ -182,20 +162,18 @@ export default function MethodSelector({
 
         if (numMethods === 1) {
           const singleMethod = methodsInModality[0];
-          const withinLimits =
-            amount >= singleMethod.minAmount &&
-            amount <= singleMethod.maxAmount;
+          const withinLimits = amount >= singleMethod.minAmount && amount <= singleMethod.maxAmount;
 
           if (withinLimits) {
             if (singleMethod.predictedAmount > 0) {
               sortedMethods[modality].cheapestMethod = singleMethod;
             } else {
-              //sortedMethods[modality].nextMethodWithLimit = singleMethod;
+              sortedMethods[modality].nextMethodWithLimit = singleMethod;
             }
           } else if (amount < singleMethod.minAmount) {
-            //sortedMethods[modality].nextMethodWithLimit = singleMethod;
+            sortedMethods[modality].nextMethodWithLimit = singleMethod;
           } else {
-            //sortedMethods[modality].nextLowerLimitMethod = singleMethod;
+            sortedMethods[modality].nextLowerLimitMethod = singleMethod;
           }
           continue;
         }
@@ -205,17 +183,13 @@ export default function MethodSelector({
 
         for (const method of methodsInModality) {
           if (method.predictedAmount > 0) {
-            if (
-              !cheapestMethod ||
-              method.predictedAmount > cheapestMethod.predictedAmount
-            ) {
+            if (!cheapestMethod || method.predictedAmount > cheapestMethod.predictedAmount) {
               cheapestMethod = method;
             }
           } else {
             if (
               method.maxAmount >= amount &&
-              (!nextMethodWithLimit ||
-                method.minAmount < nextMethodWithLimit.minAmount)
+              (!nextMethodWithLimit || method.minAmount < nextMethodWithLimit.minAmount)
             ) {
               nextMethodWithLimit = method;
             }
@@ -228,8 +202,7 @@ export default function MethodSelector({
         for (const method of methodsInModality) {
           if (
             method.maxAmount <= amount &&
-            (!nextLowerLimitMethod ||
-              method.maxAmount > nextLowerLimitMethod.maxAmount)
+            (!nextLowerLimitMethod || method.maxAmount > nextLowerLimitMethod.maxAmount)
           ) {
             nextLowerLimitMethod = method;
           }
@@ -257,14 +230,10 @@ export default function MethodSelector({
   if (!loadedExchangeRate) {
     return (
       <div>
-        <h2 className="text-xl font-bold mb-2 mt-8">
-          {tCrossborder("methodSelector.selectMethod")}
-        </h2>
+        <h2 className="text-xl font-bold mb-2 mt-8">{tCrossborder("methodSelector.selectMethod")}</h2>
         <div className="flex p-4 border w-full rounded">
           <div className="flex text-xl font-bold items-center gap-2 flex-1">
-            <div className="text-sm px-2 rounded">
-              {tCrossborder("methodSelector.loadingExchangeRates")}
-            </div>
+            <div className="text-sm px-2 rounded">{tCrossborder("methodSelector.loadingExchangeRates")}</div>
           </div>
           <div className="flex flex-row items-center font-bold gap-6">
             <IoWarning className="text-gray-600" />
@@ -277,14 +246,10 @@ export default function MethodSelector({
   if (!selectable) {
     return (
       <div>
-        <h2 className="text-xl font-bold mb-2 mt-8">
-          {tCrossborder("methodSelector.selectMethod")}
-        </h2>
+        <h2 className="text-xl font-bold mb-2 mt-8">{tCrossborder("methodSelector.selectMethod")}</h2>
         <div className="flex p-4 border w-full rounded">
           <div className="flex text-xl font-bold items-center gap-2 flex-1">
-            <div className="text-sm px-2 rounded">
-              {tCrossborder("methodSelector.selectAmount")}
-            </div>
+            <div className="text-sm px-2 rounded">{tCrossborder("methodSelector.selectAmount")}</div>
           </div>
           <div className="flex flex-row items-center font-bold gap-6">
             <IoWarning className="text-gray-600" />
@@ -296,9 +261,7 @@ export default function MethodSelector({
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2 mt-8">
-        {tCrossborder("methodSelector.selectMethod")}
-      </h2>
+      <h2 className="text-xl font-bold mb-2 mt-8">{tCrossborder("methodSelector.selectMethod")}</h2>
       {loading ? (
         <div>
           <div className="flex flex-col gap-2 justify-center items-center py-4 w-full">
@@ -325,8 +288,8 @@ export default function MethodSelector({
                   selectedMethod?.withdrawModality == modality
                     ? "bg-uhuBlue text-white ring-1 ring-uhuBlue "
                     : sortedMethods[modality].cheapestMethod
-                    ? "text-gray-800 cursor-pointer"
-                    : "text-gray-500 border-gray-200"
+                      ? "text-gray-800 cursor-pointer"
+                      : "text-gray-500 border-gray-200"
                 }`}
                 onClick={() => {
                   if (sortedMethods[modality].cheapestMethod) {
@@ -338,18 +301,12 @@ export default function MethodSelector({
                 {sortedMethods[modality].cheapestMethod ? (
                   <div className="flex-1 flex flex-row justify-between items-center">
                     <div className="text-[9px] bg-uhuBlue text-white px-1 rounded">
-                      via{" "}
-                      <span className="font-bold">
-                        {sortedMethods[modality].cheapestMethod.name}
-                      </span>
+                      via <span className="font-bold">{sortedMethods[modality].cheapestMethod.name}</span>
                     </div>
                     <div>
                       ≈{" "}
                       <span className="font-bold">
-                        {sortedMethods[
-                          modality
-                        ].cheapestMethod.predictedAmount.toFixed(5)}{" "}
-                        {finalCurrency?.symbol}
+                        {sortedMethods[modality].cheapestMethod.predictedAmount.toFixed(5)} {finalCurrency?.symbol}
                       </span>
                     </div>
                   </div>
@@ -360,16 +317,12 @@ export default function MethodSelector({
                 )}
               </div>
               <div className="flex flex-row justify-between">
-                {!sortedMethods[modality].cheapestMethod &&
-                sortedMethods[modality].nextLowerLimitMethod ? (
+                {!sortedMethods[modality].cheapestMethod && sortedMethods[modality].nextLowerLimitMethod ? (
                   <div className="flex flex-row justify-between text-sm">
                     <div>
                       {tCrossborder("methodSelector.notEnoughMoney")}{" "}
                       <span className="font-bold text-red-500">
-                        {(
-                          amount -
-                          sortedMethods[modality].nextLowerLimitMethod.maxAmount
-                        ).toFixed(2)}{" "}
+                        {(amount - sortedMethods[modality].nextLowerLimitMethod.maxAmount).toFixed(2)}{" "}
                         {sendingCurrency?.symbol}
                       </span>
                     </div>
@@ -383,10 +336,7 @@ export default function MethodSelector({
                     <div className="text-sm">
                       {tCrossborder("methodSelector.missingAmount")}{" "}
                       <span className="font-bold text-uhuBlue">
-                        {(
-                          sortedMethods[modality].nextMethodWithLimit
-                            .minAmount - amount
-                        ).toFixed(2)}{" "}
+                        {(sortedMethods[modality].nextMethodWithLimit.minAmount - amount).toFixed(2)}{" "}
                         {sendingCurrency?.symbol}
                       </span>{" "}
                       {tCrossborder("methodSelector.missingAmount1")}
@@ -395,10 +345,7 @@ export default function MethodSelector({
                 )}
               </div>
               {sortedMethods[modality].methods.map((method, index1) => (
-                <div
-                  key={`modality_${index}_${index1}`}
-                  className="flex flex-row justify-between hidden"
-                >
+                <div key={`modality_${index}_${index1}`} className="flex flex-row justify-between hidden">
                   <div>{method.name}</div>
                   <div>{method.minAmount}</div>
                   <div>{method.maxAmount}</div>
