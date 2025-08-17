@@ -89,7 +89,7 @@ export async function handleVerificationRequest({
   }
 }
 
-const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method }) => {
+function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
   const { user, refreshAuthentication } = useContext(AuthContext);
 
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -174,7 +174,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
 
   useEffect(() => {
     // update the transaction every 10 seconds
-    const interval = setInterval(refreshAuthentication, 10000);
+    const interval = setInterval(() => refreshAuthentication(), 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -228,11 +228,11 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
         transaction,
         transactionHash,
       });
-    } catch (error) {
-      sendErrorReport("HelpDesk - Send payment failed", error);
+    } catch (e) {
+      sendErrorReport("HelpDesk - Send payment failed", e);
       setErrorMessage({
         message: tCrossborder("withdraw.helpDesk.errorTryLater"),
-        error: error as Error,
+        error: e as Error,
       });
       setIsLoading("error");
       setTimeout(() => {
@@ -256,17 +256,17 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
           {transaction.status === TRANSACTION_STATE_PENDING && <TransactionPending />}
           {transaction.status === TRANSACTION_STATE_PAYMENT_PENDING && (
             <TransactionPaymentPending
-              handleSend={handleSend}
+              handleSend={() => handleSend()}
               isLoading={isLoading}
               transaction={transaction}
               errorMessage={errorMessage}
             />
           )}
           {transaction.status === TRANSACTION_STATE_DONE && (
-            <TransactionDone handleNewTransaction={handleNewTransaction} />
+            <TransactionDone handleNewTransaction={() => handleNewTransaction()} />
           )}
           {transaction.status === TRANSACTION_STATE_MANUEL && (
-            <TransactionManual handleNewTransaction={handleNewTransaction} />
+            <TransactionManual handleNewTransaction={() => handleNewTransaction()} />
           )}
           {transaction === null && <TransactionNone />}
         </>
@@ -280,7 +280,7 @@ const HelpDesk: React.FC<HelpDeskProps> = ({ country, amount, account, method })
         />
       )}
       {state === DESK_STATE_VERIFIED && (
-        <HelpDeskRequestForm error={error} handleStartTransaction={handleStartTransaction} />
+        <HelpDeskRequestForm error={error} handleStartTransaction={(data) => handleStartTransaction(data)} />
       )}
       {state === DESK_STATE_VERIFICATION_REQUESTED && <VerificationInProgress />}
       {state === DESK_STATE_LOADING && <LoadingHelpDesk />}
