@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import { FaTools } from "react-icons/fa";
 
-function Maintenance() {
+function Maintenance({ text }: { text?: string }) {
   const { t } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement>(null);
   const [showText, setShowText] = useState(true);
@@ -35,7 +35,7 @@ function Maintenance() {
       {showText && (
         <div className="flex items-center flex-col gap-2 text-center">
           <h3>{t("maintenance.title")}</h3>
-          <p className="text-center">{t("maintenance.p1")}</p>
+          <p className="text-center">{text ?? t("maintenance.p1")}</p>
         </div>
       )}
     </div>

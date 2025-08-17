@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 import { sendErrorReport, useAuth } from "../../../context/UserContext";
 import currencies from "../../../utilities/currencies";
 import { FiatCodes } from "../../types/derivedPayload.types";
@@ -14,18 +14,17 @@ import BalanceOverview from "../crossborder/BalanceOverview";
 import ErrorPopup from "../Modals/ErrorPopup";
 import Banner from "../UI/Banner";
 import Loader from "../UI/Loader";
-import Maintenance from "../UI/Maintenance";
 import BalanceSelectionSlide from "./slides/BalanceSelectionSlide";
 import CurrencyConversionSlide from "./slides/CurrencyConversionSlide";
 import PartnerPanelSlide from "./slides/PartnerPanelSlide";
 import TransactionDetailsSlide from "./slides/TransactionDetailsSlide";
 import { WithdrawPageProps } from "./types";
+import Maintenance from "../UI/Maintenance";
 
-const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
+function WithdrawPage({ maintenance }: WithdrawPageProps) {
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
   const { user } = useAuth() as { user: Consumer | Vendor | null | "loading" };
-  const isAutoConnecting = useIsAutoConnecting();
   const account = useActiveAccount();
 
   const [state, setState] = useState<"loading" | "loaded">("loading");
@@ -180,7 +179,7 @@ const WithdrawPage: React.FC<WithdrawPageProps> = ({ maintenance }) => {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.dashboard?.withdraw?.page && <Maintenance />}
+          {maintenance?.dashboard?.withdraw?.page && <Maintenance text={maintenance?.dashboard?.withdraw?.message} />}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader />

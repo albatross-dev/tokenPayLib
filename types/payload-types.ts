@@ -2741,6 +2741,7 @@ export interface Maintenance {
     };
     crossborder?: {
       page?: boolean | null;
+      message?: string | null;
     };
     payments?: {
       statistics?: boolean | null;
@@ -2755,17 +2756,22 @@ export interface Maintenance {
       currentPeriodUsers?: (string | Consumer)[] | null;
       lastPeriod?: boolean | null;
       lastPeriodUsers?: (string | Consumer)[] | null;
+      page?: boolean | null;
+      message?: string | null;
     };
   };
   dashboard: {
     withdraw?: {
       page?: boolean | null;
+      message?: string | null;
     };
     deposit?: {
       page?: boolean | null;
+      message?: string | null;
     };
     crossborder?: {
       page?: boolean | null;
+      message?: string | null;
     };
     paymentLinks?: {
       page?: boolean | null;

@@ -24,6 +24,7 @@ import FiatSelectionSlide from "./slides/FiatSelectionSlide";
 interface MaintenanceProps {
   deposit?: {
     page?: boolean;
+    message?: string;
   };
 }
 
@@ -169,7 +170,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.deposit?.page && <Maintenance />}
+          {maintenance?.deposit?.page && <Maintenance text={maintenance?.deposit?.message} />}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader />
