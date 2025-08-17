@@ -20,12 +20,12 @@ export default function filterCountryData(
         (whiteCountry) =>
           (whiteCountry as Country).countryCode === originCountryISO
       );
-    } else {
+    } 
       return !country.receivingFromCountryBlackList?.some(
         (blackCountry) =>
           (blackCountry as Country).countryCode === originCountryISO
       );
-    }
+    
   });
 
   // filter payment methods by black and whitelist
@@ -37,12 +37,12 @@ export default function filterCountryData(
           (whiteCountry) =>
             (whiteCountry as Country).countryCode === originCountryISO
         );
-      } else {
+      } 
         return !method.blackList?.some(
           (blackCountry) =>
             (blackCountry as Country).countryCode === originCountryISO
         );
-      }
+      
     });
     return country;
   });

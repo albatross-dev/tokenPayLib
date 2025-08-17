@@ -2,7 +2,6 @@ import { api, AuthContext, sendErrorReport } from "@/context/UserContext";
 import { QuotePaymentType } from "@/tokenPayLib/components/depositPage/slides/DepositMethodSelector";
 import { Country } from "@/tokenPayLib/types/payload-types";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -29,7 +28,6 @@ interface HelpDeskProps {
 }
 
 export default function HelpDesk({ country, amount, method, startCurrency, endCurrency }: HelpDeskProps) {
-  const { t: tCrossborder } = useTranslation("crossborder");
 
   const { user, refreshAuthentication } = useContext(AuthContext);
 
@@ -76,13 +74,10 @@ export default function HelpDesk({ country, amount, method, startCurrency, endCu
     setState(DESK_STATE_LOADING);
     try {
       let transactionDetails = "";
-      if (user?.type === "consumer") {
-        transactionDetails = `Name: ${user.firstName} ${user.lastName}\nReceiving Wallet: ${data.receivingWallet}\nComments: ${data.textareaContent}`;
-      } else {
-        transactionDetails = `Name: ${user.companyName}\nReceiving Wallet: ${data.receivingWallet}\nComments: ${data.textareaContent}`;
-      }
+      transactionDetails = `Receiving Wallet: ${data.receivingWallet}${data.textareaContent ? `\nComments: ${data.textareaContent}` : ""}`;
 
       console.log("all params", {
+        data,
         startCurrency,
         endCurrency,
         amount,
@@ -128,7 +123,7 @@ export default function HelpDesk({ country, amount, method, startCurrency, endCu
         />
       )}
       {state === DESK_STATE_VERIFIED && (
-        <HelpDeskDepositRequestForm error={error} handleStartTransaction={handleStartTransaction} />
+        <HelpDeskDepositRequestForm error={error} handleStartTransaction={(data) => handleStartTransaction(data)} />
       )}
       {state === DESK_STATE_VERIFICATION_REQUESTED && <VerificationInProgress />}
       {state === DESK_STATE_LOADING && <LoadingHelpDesk />}

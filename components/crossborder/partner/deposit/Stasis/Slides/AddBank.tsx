@@ -4,6 +4,7 @@ import { IoAdd } from "react-icons/io5";
 import { NewBankAccount, StasisErrors } from "../../../universal/stasis.types";
 import LoadingButton, { LoadingButtonStates } from "../../../../../UI/LoadingButton";
 import { api, sendErrorReport } from "../../../../../../../context/UserContext";
+
 interface AddBankProps {
   loadingState: LoadingButtonStates;
   errors: StasisErrors;
@@ -54,8 +55,7 @@ export function AddBank({
     bank_address: "",
   });
 
-  const isFormComplete = () => {
-    return Boolean(
+  const isFormComplete = () => Boolean(
       newBankAccount.name &&
         newBankAccount.iban &&
         newBankAccount.bank_code &&
@@ -63,7 +63,6 @@ export function AddBank({
         newBankAccount.holder_name &&
         newBankAccount.bank_address
     );
-  };
 
   return (
     <div className="w-full">

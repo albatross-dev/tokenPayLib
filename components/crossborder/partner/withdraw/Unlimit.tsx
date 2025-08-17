@@ -22,7 +22,7 @@ function Unlimit({
     country.countryCode
   }&partnerAccountId=${
     process.env.NEXT_PUBLIC_GATEFI_PARTNER_ACCOUNT_ID
-  }&cryptoCurrency=USDC&cryptoAmount=${amount}&fiatAmountLock=false&fiatCurrency=${
+  }&cryptoCurrency=USDC_POLYGON&cryptoAmount=${amount}&fiatAmountLock=false&fiatCurrency=${
     country.countryInfo.currency.toUpperCase()
   }&payout=BANK&themeMode=light&redirectUrl=${encodeURIComponent(
     "https://exchange.usetokenpay.com"

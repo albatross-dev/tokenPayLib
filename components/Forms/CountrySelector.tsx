@@ -3,13 +3,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BiChevronDown } from "react-icons/bi";
 import { useTranslation } from "next-i18next";
 import countriesISO from "i18n-iso-countries";
-import { ALL_COUNTRIES_N } from "../../utilities/CountriesConfig";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
+import { ALL_COUNTRIES_N } from "../../utilities/CountriesConfig";
 
 /**
  * Tooltip component that displays additional information on hover
  */
-const Tooltip = ({ text }: { text: string }): JSX.Element => {
+function Tooltip({ text }: { text: string }): JSX.Element {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -19,7 +19,7 @@ const Tooltip = ({ text }: { text: string }): JSX.Element => {
         onMouseLeave={() => setShowTooltip(false)}
         className="cursor-help ml-1"
       >
-        <BsFillQuestionCircleFill className="h-4 w-4 text-gray-700"></BsFillQuestionCircleFill>
+        <BsFillQuestionCircleFill className="h-4 w-4 text-gray-700" />
       </span>
       {showTooltip && (
         <div className="whitespace-wrap! flex w-44 z-99 text-center justify-center absolute bottom-full mb-1  left-1/2 transform -translate-x-1/2 px-2 py-1 text-sm text-white bg-black rounded-md shadow-lg">
@@ -28,7 +28,7 @@ const Tooltip = ({ text }: { text: string }): JSX.Element => {
       )}
     </div>
   );
-};
+}
 
 interface Country {
   name: string;
@@ -142,7 +142,7 @@ export default function CountrySelector({
         {selectedCountryObj?.iso &&
           countriesISO.getName(selectedCountryObj.iso, i18n.language)}
       </div>
-      <div></div>
+      <div />
     </div>
   ) : (
     <Menu as="div" className="relative inline-block text-left w-full">
@@ -175,7 +175,7 @@ export default function CountrySelector({
                 <span className="mr-2">{displayCountries[countryId].flag}</span>
                 <span>{countriesISO.getName(countryId, i18n.language)}</span>
                 {displayCountries[countryId].restrictions && (
-                  <Tooltip text="Restrictions Apply"></Tooltip>
+                  <Tooltip text="Restrictions Apply" />
                 )}
               </button>
             </MenuItem>

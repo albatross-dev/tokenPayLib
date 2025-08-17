@@ -123,7 +123,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
       return;
     }
 
-    let success = await acrossBridgeDeposit({
+    const success = await acrossBridgeDeposit({
       tokenAddress,
       originChainId,
       destinationChainId,
@@ -141,7 +141,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
   }
 
   return (
-    <Transition appear show={show ? true : false} as={Fragment}>
+    <Transition appear show={!!show} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <TransitionChild
@@ -174,7 +174,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
               </DialogTitle>
 
               <div className="flex flex-row gap-4 bg-red-100 text-red-600 my-4 rounded p-4 items-center">
-                <FiAlertCircle className="w-6 h-6 "></FiAlertCircle>
+                <FiAlertCircle className="w-6 h-6 " />
                 <div className="flex-1 font-bold">
                   {t("after_transaction_note")}
                 </div>
@@ -239,7 +239,7 @@ const BridgeModal: React.FC<BridgeModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
+                  className="inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-blue-100 text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   onClick={handleConfirmBridge}
                 >
                   {t("confirm")}

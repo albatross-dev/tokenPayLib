@@ -32,7 +32,7 @@ export default function ConvertStateButton({ onClick, state, children, disabled 
         }
       }}
     >
-      <BiRightArrowAlt className="w-6 h-6"></BiRightArrowAlt>
+      <BiRightArrowAlt className="w-6 h-6" />
       {state === "processing" ? (
         <svg
           className="animate-spin h-6 w-6 text-black"
@@ -47,15 +47,15 @@ export default function ConvertStateButton({ onClick, state, children, disabled 
             r="10"
             stroke="currentColor"
             strokeWidth="4"
-          ></circle>
+           />
           <path
             className="opacity-75"
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          ></path>
+           />
         </svg>
       ) : state === "error" ? (
-        <FiAlertCircle className="w-6 h-6 text-red-600"></FiAlertCircle>
+        <FiAlertCircle className="w-6 h-6 text-red-600" />
       ) : (
         children
       )}
@@ -90,17 +90,17 @@ export function ConvertStateButtonWide({ enabled, onClick, state, children }: Co
             r="10"
             stroke="currentColor"
             strokeWidth="4"
-          ></circle>
+           />
           <path
             className="opacity-75"
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          ></path>
+           />
         </svg>
       ) : state === "error" ? (
-        <FiAlertCircle className="w-6 h-6 text-red-600"></FiAlertCircle>
+        <FiAlertCircle className="w-6 h-6 text-red-600" />
       ) : (
-        <BiRightArrowAlt className="w-6 h-6"></BiRightArrowAlt>
+        <BiRightArrowAlt className="w-6 h-6" />
       )}
     </button>
   );

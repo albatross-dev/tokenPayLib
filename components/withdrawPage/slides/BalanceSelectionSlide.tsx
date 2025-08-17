@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { BalanceSelectionSlideProps } from "../types";
 import FiatBalanceSelector from "../../crossborder/transfer/components/FiatBalanceSelector";
-import { useRouter } from "next/router";
 import BackButton from "../../crossborder/transfer/components/BackButton";
 
 const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
@@ -14,7 +14,7 @@ const BalanceSelectionSlide: React.FC<BalanceSelectionSlideProps> = ({
   const { t: tCrossborder } = useTranslation("crossborder");
 
   const router = useRouter();
-  const source = router.query.source;
+  const {source} = router.query;
 
   function goBack() {
     if (source === "crossborder") {

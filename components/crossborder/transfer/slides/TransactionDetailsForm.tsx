@@ -30,8 +30,6 @@ interface TransactionDetailsFormProps {
   clearData: () => void;
 }
 
-const isDevelopment = process.env.NEXT_PUBLIC_NEXT_ENV === "development";
-
 export default function TransactionDetailsForm({
   selectedCountry,
   selectedCurrency,
@@ -91,11 +89,11 @@ export default function TransactionDetailsForm({
             />
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
-              {Boolean(getFiatInfoForStableCoin(selectedCurrency?.symbol || ""))
-                ? getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol +
-                  " (" +
-                  getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.id +
-                  ")"
+              {getFiatInfoForStableCoin(selectedCurrency?.symbol || "")
+                ? `${getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.symbol 
+                  } (${ 
+                  getFiatInfoForStableCoin(selectedCurrency?.symbol || "")?.id 
+                  })`
                 : selectedCurrency?.symbol}
             </div>
           </div>
@@ -121,10 +119,11 @@ export default function TransactionDetailsForm({
 
         <div className="flex justify-end">
           <button
+            type="button"
             className={`${
-              selectedMethod && (!error || isDevelopment) ? "bg-uhuBlue" : "bg-gray-300"
+              selectedMethod && (!error ) && amount ? "bg-uhuBlue" : "bg-gray-300"
             } text-white font-bold py-2 px-4 rounded-lg mt-4`}
-            disabled={!selectedMethod || (error && !isDevelopment)}
+            disabled={!selectedMethod || Boolean(error) || !amount}
             onClick={() => swiperInstance?.slideTo(4)}
           >
             {tCrossborder("transferSection.next")}
@@ -137,13 +136,13 @@ export default function TransactionDetailsForm({
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
                   src={(selectedCountry.countryInfo.background as CdnMedia).url}
-                  fill={true}
+                  fill
                   style={{ objectFit: "cover" }}
                   alt="Country Background"
                 />
               </div>
             )}
-            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black"></div>
+            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black" />
 
             <h2 className="left-8 bottom-0 absolute z-[3] text-white text-3xl font-bold mb-4">
               {selectedCountry?.countryInfo.name}

@@ -1,6 +1,5 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef , Fragment } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { Fragment } from "react";
 import { BiChevronDown } from "react-icons/bi";
 
 interface DropdownOption {
@@ -75,7 +74,7 @@ const CustomDropdown = forwardRef<HTMLInputElement, CustomDropdownProps>(({
                         {option.label}
                       </div>
                     );
-                  } else {
+                  } 
                     return (
                       <MenuItem key={option.value}>
                         {({ active }: { active: boolean }) => (
@@ -91,7 +90,7 @@ const CustomDropdown = forwardRef<HTMLInputElement, CustomDropdownProps>(({
                         )}
                       </MenuItem>
                     );
-                  }
+                  
                 })}
               </div>
             </MenuItems>

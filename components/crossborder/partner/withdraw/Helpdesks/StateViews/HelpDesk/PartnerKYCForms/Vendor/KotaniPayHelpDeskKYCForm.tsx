@@ -1,13 +1,14 @@
-import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "next-i18next";
+import { UseFormSetValue, UseFormReturn } from "react-hook-form";
+import FieldRenderer from "../../../../../../../../Forms/FieldRenderer";
 import AcceptTermsCheckbox from "../Helper/AcceptTermsCheckbox";
 import { AuthContext } from "../../../../../../../../../../context/UserContext";
 import preprocessDataForHelpDesk from "../Helper/processAndSerValues";
 
-import { UseFormSetValue, UseFormReturn } from "react-hook-form";
 import { FormField } from "../../../../../../../../Forms/types";
 import { requiredDocuments, visibleDocuments } from "../../../../../../../../../utilities/kyc/requiredDocumentsInfo";
+
 let formDataPreloaded = false;
 
 interface KotaniPayHelpDeskKYCFormProps {
@@ -379,17 +380,13 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
       label: t("information.fields.documents.registerDocuments"),
       newLabel: t("information.fields.documents.registerDocuments_newLabel"),
       removeLabel: t("information.fields.documents.registerDocuments_removeLabel"),
-      visible: (methods) => {
-        return visibleDocuments["registerDocuments"].includes(methods.getValues("vendorLegalType"));
-      },
+      visible: (methods) => visibleDocuments.registerDocuments.includes(methods.getValues("vendorLegalType")),
       fields: [
         {
           name: "registerDocument",
           label: t("information.fields.documents.registerDocuments"),
           type: "file",
-          required: (methods) => {
-            return requiredDocuments["registerDocuments"].includes(methods.getValues("vendorLegalType"));
-          },
+          required: (methods) => requiredDocuments.registerDocuments.includes(methods.getValues("vendorLegalType")),
         },
       ],
     },
@@ -399,17 +396,13 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
       label: t("information.fields.documents.shareholderDocs"),
       newLabel: t("information.fields.documents.shareholderDocs_newLabel"),
       removeLabel: t("information.fields.documents.shareholderDocs_removeLabel"),
-      visible: (methods) => {
-        return visibleDocuments["shareholderDocs"].includes(methods.getValues("vendorLegalType"));
-      },
+      visible: (methods) => visibleDocuments.shareholderDocs.includes(methods.getValues("vendorLegalType")),
       fields: [
         {
           name: "shareholders",
           label: t("information.fields.documents.shareholderDocs"),
           type: "file",
-          required: (methods) => {
-            return requiredDocuments["shareholderDocs"].includes(methods.getValues("vendorLegalType"));
-          },
+          required: (methods) => requiredDocuments.shareholderDocs.includes(methods.getValues("vendorLegalType")),
         },
       ],
     },
@@ -419,17 +412,13 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
       label: t("information.fields.documents.statutes"),
       newLabel: t("information.fields.documents.statutes_newLabel"),
       removeLabel: t("information.fields.documents.statutes_removeLabel"),
-      visible: (methods) => {
-        return visibleDocuments["statutes"].includes(methods.getValues("vendorLegalType"));
-      },
+      visible: (methods) => visibleDocuments.statutes.includes(methods.getValues("vendorLegalType")),
       fields: [
         {
           name: "statute",
           label: t("information.fields.documents.statutes"),
           type: "file",
-          required: (methods) => {
-            return requiredDocuments["statutes"].includes(methods.getValues("vendorLegalType"));
-          },
+          required: (methods) => requiredDocuments.statutes.includes(methods.getValues("vendorLegalType")),
         },
       ],
     },
@@ -456,21 +445,19 @@ export default function KotaniPayHelpDeskKYCForm({ setValue, methods }: KotaniPa
     },
     {
       type: "ui",
-      content: <div className="h-4"></div>,
+      content: <div className="h-4" />,
     },
     {
       name: "acceptTerms",
       label: tCrossborder("withdraw.helpDeskKYC.kotanipay.acceptTermsLabel"),
       type: "custom",
-      content: (methods) => {
-        return (
+      content: (methods) => (
           <AcceptTermsCheckbox
             methods={methods}
-            partnerName={"KotaniPay"}
-            partnerTerms={"https://docs.kotanipay.com/docs/terms-and-conditions"}
+            partnerName="KotaniPay"
+            partnerTerms="https://docs.kotanipay.com/docs/terms-and-conditions"
           />
-        );
-      },
+        ),
     },
   ];
 

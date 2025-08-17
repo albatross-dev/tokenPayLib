@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import currencies from "../../../utilities/crypto/currencies";
 import { PaymentTypesArray } from "../../../types/payload-types";
 import { STANDARD_STABLE_MAP } from "../../../utilities/stableCoinsMaps";
 import BackButton from "../../crossborder/transfer/components/BackButton";
-import { useRouter } from "next/router";
 
 interface CryptoSelectionSlideProps {
   methodsByCurrency: Record<string, PaymentTypesArray>;
@@ -21,7 +21,7 @@ const CryptoSelectionSlide: React.FC<CryptoSelectionSlideProps> = ({
   const methodsByCurrencyKeys: string[] = Object.keys(methodsByCurrency);
 
   const router = useRouter();
-  const source = router.query.source;
+  const {source} = router.query;
 
   function goBack() {
     if (source === "crossborder") {
@@ -65,7 +65,7 @@ const CryptoSelectionSlide: React.FC<CryptoSelectionSlideProps> = ({
               currencyDetails?.icon && (
                 <Image
                   src={currencyDetails?.icon}
-                  fill={true}
+                  fill
                   alt="currency icon"
                 />
               )

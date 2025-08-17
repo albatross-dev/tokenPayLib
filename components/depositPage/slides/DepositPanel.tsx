@@ -9,6 +9,7 @@ import Swypt from "../../crossborder/partner/deposit/Swypt/Swypt";
 import Unlimit from "../../crossborder/partner/deposit/Unlimit";
 import DepositError from "../DepositError";
 import { QuotePaymentType } from "./DepositMethodSelector";
+
 interface DepositPanelProps {
   method: QuotePaymentType;
   amount: number;
@@ -30,7 +31,7 @@ export default function DepositPanel({
 }: DepositPanelProps) {
   switch (method?.type) {
     case "unlimit":
-      return <Unlimit amount={amount} account={account} user={user} country={country} />;
+      return <Unlimit amount={amount} account={account} method={method} country={country} />;
     case "onramp_money":
       return <OnRamp amount={amount} account={account} method={method} />;
     case "bitcoin_vn":

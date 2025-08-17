@@ -1,6 +1,6 @@
 import { Control, FieldValues, UseFormReturn } from "react-hook-form";
-import { SimpleToken } from "../../types/token.types";
 import { Chain } from "thirdweb";
+import { SimpleToken } from "../../types/token.types";
 import { CheckoutSession } from "../../types/payload-types";
 import { FiatInfo } from "../../utilities/stableCoinsMaps";
 import { Availability } from "../../utilities/CountriesConfig";

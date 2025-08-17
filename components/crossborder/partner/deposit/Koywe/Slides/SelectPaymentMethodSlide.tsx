@@ -3,6 +3,7 @@ import { useTranslation } from "next-i18next";
 import { KoywePaymentMethod, KoyweQuoteResponse } from "../../../universal/koyweUtils";
 import { QuotePaymentType } from "../../../../../depositPage/slides/DepositMethodSelector";
 import { getFiatInfoForStableCoin } from "../../../../../../utilities/stableCoinsMaps";
+
 export default function SelectPaymentMethodSlide({
   method,
   setSelectedQuote,

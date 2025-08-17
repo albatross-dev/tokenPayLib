@@ -1,16 +1,16 @@
+import client from "@/utilities/thirdweb-client";
 import {
   Chain,
   getContract,
   prepareContractCall,
   sendAndConfirmTransaction,
 } from "thirdweb";
-import { client } from "../../../pages/_app";
 import { Account } from "thirdweb/wallets";
-import currencies from "../crypto/currencies";
-import CustomWrapperABI from "../../assets/customSwapRouterAbi.json";
+import currencies from "./currencies";
 import { api, sendErrorReport } from "../../../context/UserContext";
+import CustomWrapperABI from "../../assets/customSwapRouterAbi.json";
 import { SimpleToken } from "../../types/token.types";
-import { AxiosError } from "axios";
+
 
 // Define the ABI for the depositV3 function
 const SpokePoolAbi = [
@@ -107,10 +107,10 @@ export async function approveTokens(params: ApproveTokensParams) {
   console.log("approveTokens", params);
 
   const tokenContract = getContract({
-    client: client,
-    chain: chain,
+    client,
+    chain,
     address: tokenContractAddress,
-    abi: currencies["USDC"].abi,
+    abi: currencies.USDC.abi,
   });
 
   const approveCall = prepareContractCall({
@@ -121,7 +121,7 @@ export async function approveTokens(params: ApproveTokensParams) {
 
   console.log("approveCall", approveCall);
 
-  let res = await sendAndConfirmTransaction({
+  const res = await sendAndConfirmTransaction({
     account,
     transaction: approveCall,
   });
@@ -155,8 +155,8 @@ export async function deposit(params: DepositParams): Promise<void> {
 
   if (isCustomWrapper) {
     const spokePoolContract = getContract({
-      client: client,
-      chain: chain,
+      client,
+      chain,
       address: spokePoolAddress,
       abi: CustomWrapperABI as Array<any>,
     });
@@ -180,8 +180,8 @@ export async function deposit(params: DepositParams): Promise<void> {
     });
   } else {
     const spokePoolContract = getContract({
-      client: client,
-      chain: chain,
+      client,
+      chain,
       address: spokePoolAddress,
       abi: SpokePoolAbi as any,
     });
@@ -206,7 +206,7 @@ export async function deposit(params: DepositParams): Promise<void> {
     });
   }
 
-  let res = await sendAndConfirmTransaction({
+  const res = await sendAndConfirmTransaction({
     account,
     transaction: depositCall,
   });
@@ -241,7 +241,7 @@ export async function acrossBridgeDeposit(
     const { totalRelayFee, timestamp } = quoteData;
 
     // Step 2: Check Limits
-    const { maxDepositInstant, maxDepositShortDelay, maxDeposit } = limits;
+    const { maxDeposit } = limits;
 
     if (amount > maxDeposit) {
       throw new Error("Deposit amount exceeds maximum allowed limit.");
@@ -260,7 +260,7 @@ export async function acrossBridgeDeposit(
 
     console.log("acrossBridgeDeposit usedAddress", spokePoolAddress);
 
-    let res = await approveTokens({
+    const res = await approveTokens({
       spokePoolAddress,
       tokenContractAddress: tokenAddress,
       chain,
@@ -276,8 +276,7 @@ export async function acrossBridgeDeposit(
     const outputToken = "0x0000000000000000000000000000000000000000"; // Auto-resolve the destination equivalent token
     const outputAmount = amount - totalRelayFee.total;
     const fillDeadline = Math.floor(Date.now() / 1000) + 18000; // 5 hours
-    const exclusiveRelayer = quoteData.exclusiveRelayer;
-    const exclusivityDeadline = quoteData.exclusivityDeadline;
+    const { exclusiveRelayer, exclusivityDeadline } = quoteData;
 
     await deposit({
       spokePoolAddress,
@@ -325,7 +324,7 @@ export async function fetchLimitsAndQuote(
     tokenDecimals
   );
 
-  const rawAmount = Math.floor(amount * Math.pow(10, tokenDecimals)).toString();
+  const rawAmount = Math.floor(amount * 10 ** tokenDecimals).toString();
 
   let limits = null;
   let quote = null;
@@ -360,13 +359,13 @@ export async function fetchLimitsAndQuote(
       {
         params: {
           token: tokenAddress,
-          originChainId: originChainId,
-          destinationChainId: destinationChainId,
+          originChainId,
+          destinationChainId,
           amount: rawAmount.toString().replace(",", "."),
         },
       }
     );
-    let quoteData = quoteResponse.data;
+    const quoteData = quoteResponse.data;
     quoteData.status = 200;
 
     quote = quoteData;

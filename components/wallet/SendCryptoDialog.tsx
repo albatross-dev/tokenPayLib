@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@headlessui/react";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
+import { SimpleToken } from "@/tokenPayLib/types/token.types";
+import { TFunction } from "i18next";
+import { Errors } from "@/tokenPayLib/hooks/useSendCryptoForm";
 import Loader from "../UI/Loader";
 import TokenSelector from "../Forms/TokenSelector";
 import { formatCrypto } from "../../utilities/crypto/currencies";
 import LoadingButton, { LoadingButtonStates } from "../UI/LoadingButton";
-import { SimpleToken } from "@/tokenPayLib/types/token.types";
-import { TFunction } from "i18next";
-import { Errors } from "@/tokenPayLib/hooks/useSendCryptoForm";
 
 interface SendCryptoDialogProps {
   isOpen: boolean;
@@ -184,7 +184,7 @@ export default function SendCryptoDialog({
                     />
                     {errors.targetAddress && <p className="text-red-500 text-sm mt-1">{errors.targetAddress}</p>}
 
-                    <div className="h-4"></div>
+                    <div className="h-4" />
 
                     <LoadingButton
                       isLoading={isLoading}

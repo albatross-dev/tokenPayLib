@@ -1,14 +1,17 @@
 import React, { useCallback } from "react";
-import { FiatTransaction } from "../../types/payload-types";
 import { BsArrowClockwise, BsArrowLeft, BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { useQuery } from "@tanstack/react-query";
+import { getFiatInfoForStableCoin } from "@/tokenPayLib/utilities/stableCoinsMaps";
 import PartnerPanel from "./partner/PartnerPanel";
 import { api } from "../../../context/UserContext";
+import { FiatTransaction } from "../../types/payload-types";
 
 export default function TransactionDetails({ transaction: initialTransaction }: { transaction: FiatTransaction }) {
   const { t: tTransaction } = useTranslation("transaction");
+
+console.log(initialTransaction)
 
   // Use TanStack Query with the initial data from SSR
   const {
@@ -48,7 +51,7 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
     <div>
       <div className="flex items-center mb-4">
         <Link href="/crossborder?tab=2">
-          <button className="flex items-center text-gray-600 hover:text-gray-800">
+          <button className="flex items-center text-gray-600 hover:text-gray-800" type="button">
             <BsArrowLeft className="w-5 h-5 mr-2" />
             {tTransaction("transactionDetails.backButton")}
           </button>
@@ -62,6 +65,7 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
               onClick={handleRefresh}
               className="ml-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
               title={tTransaction("transactionDetails.refreshButton")}
+              type="button"
             >
               <BsArrowClockwise className={`w-5 h-5 text-gray-600 ${isFetching ? "animate-spin" : ""}`} />
             </button>
@@ -79,7 +83,7 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
               <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.amount")}</span>
               <span className="font-medium">
                 {transaction.amount}{" "}
-                {transaction.fromNetwork === "fiat" ? transaction.fiatOriginCurrency : transaction.currencyName}
+                {transaction.fromNetwork === "fiat" ? (transaction.fiatOriginCurrency || getFiatInfoForStableCoin(transaction.currencyName)?.id)  : (getFiatInfoForStableCoin(transaction.currencyName)?.id || transaction.currencyName)}
               </span>
             </div>
           </div>
@@ -90,7 +94,9 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
             <span className="font-medium capitalize">{tTransaction(`transactionDetails.${transaction.type}`)}</span>
             <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.statusLabel")}</span>
             <span className="font-medium capitalize">
-              {tTransaction(`transactionDetails.status.${transaction.status}`)}
+              {transaction.partner === "crypto" || 
+              transaction.partner === "stasis_crypto_only" ||
+              transaction.partner === "koywe_crypto_only" ? tTransaction(`transactionDetails.status.success`): tTransaction(`transactionDetails.status.${transaction.status}`)}
             </span>
           </div>
 
@@ -100,9 +106,11 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
               <span className="font-medium capitalize">{transaction.toNetwork}</span>
               <span className="text-sm text-gray-500 mt-2">{tTransaction("transactionDetails.finalAmount")}</span>
               <span className="font-medium">
-                {transaction.finalamount} {transaction.finalCurrency}
+
+                {transaction.finalamount} {getFiatInfoForStableCoin(transaction.finalCurrency)?.id || transaction.finalCurrency}
               </span>
             </div>
+            
           </div>
         </div>
 
@@ -132,13 +140,13 @@ export default function TransactionDetails({ transaction: initialTransaction }: 
           <div className="flex justify-between text-sm text-gray-500">
             <span>
               {tTransaction("transactionDetails.createdAt")}:{" "}
-              {typeof transaction.createdAt === "string" && !isNaN(Date.parse(transaction.createdAt))
+              {typeof transaction.createdAt === "string" && !Number.isNaN(Date.parse(transaction.createdAt))
                 ? new Date(transaction.createdAt).toLocaleString("de-DE")
                 : transaction.createdAt}
             </span>
             <span>
               {tTransaction("transactionDetails.updatedAt")}:{" "}
-              {typeof transaction.updatedAt === "string" && !isNaN(Date.parse(transaction.updatedAt))
+              {typeof transaction.updatedAt === "string" && !Number.isNaN(Date.parse(transaction.updatedAt))
                 ? new Date(transaction.updatedAt).toLocaleString("de-DE")
                 : transaction.updatedAt}
             </span>

@@ -7,7 +7,6 @@ import tether from "@/tokenPayLib/assets/payment-icons/polygon/tether.png";
 import usdc from "@/tokenPayLib/assets/payment-icons/polygon/usdc.png";
 import eurs from "@/tokenPayLib/assets/payment-icons/polygon/eurs.webp";
 import wbtc from "@/tokenPayLib/assets/payment-icons/polygon/wbtc.svg";
-import numberWithZeros from "../math/numberWithZeros";
 
 import POLYGON_LOGO from "@/tokenPayLib/assets/chain-icons/polygon-matic-logo.svg";
 import ETHEREUM_LOGO from "@/tokenPayLib/assets/chain-icons/eth-logo.svg";
@@ -17,13 +16,14 @@ import BASE_LOGO from "@/tokenPayLib/assets/chain-icons/base-logo.svg";
 import AVALANCHE_LOGO from "@/tokenPayLib/assets/chain-icons/avax-logo.svg";
 import BSC_LOGO from "@/tokenPayLib/assets/chain-icons/bsc-logo.svg";
 
+import { StaticImageData } from "next/image";
 import polygonCurrencies from "./currencies/polygon";
 import baseCurrencies from "./currencies/base";
 import arbitrumCurrencies from "./currencies/arbitrum";
 import ethereumCurrencies from "./currencies/ethereum";
 import optimismCurrencies from "./currencies/optimism";
 import { SimpleToken } from "../../types/token.types";
-import { StaticImageData } from "next/image";
+import numberWithZeros from "../math/numberWithZeros";
 
 export const LogoByShortName: Record<string, string | StaticImageData> = {
   USDC: usdc,
@@ -49,17 +49,17 @@ export function formatNumberWithCurrency(number: number, currency?: string, incl
   if (includeSymbol) {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
-      currency: currency,
+      currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(number);
-  } else {
+  } 
     return new Intl.NumberFormat("de-DE", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(number);
-  }
+  
 }
 
 export const numberFormatter = new Intl.NumberFormat("de-DE", {
@@ -67,8 +67,8 @@ export const numberFormatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 
   // These options are needed to round to whole numbers if that's what you want.
-  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-  //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+  // minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+  // maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 });
 
 export function formatCrypto(amount: number, decimals: number, fractionDigits = 2): string {

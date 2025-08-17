@@ -79,15 +79,15 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
 
             <div className="absolute right-10 top-0 h-14 flex items-center justify-center font-bold text-xl">
               {selectedMethod?.type === "crypto"
-                ? getFiatInfoForStableCoin(preferredStableCoin)?.symbol +
-                  " (" +
-                  getFiatInfoForStableCoin(preferredStableCoin)?.id +
-                  ")"
+                ? `${getFiatInfoForStableCoin(preferredStableCoin)?.symbol 
+                  } (${ 
+                  getFiatInfoForStableCoin(preferredStableCoin)?.id 
+                  })`
                 : getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())
-                  ? getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.symbol +
-                    " (" +
-                    getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.id +
-                    ")"
+                  ? `${getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.symbol 
+                    } (${ 
+                    getFiatInfoForStableCoin(selectedCurrency?.id.toUpperCase())?.id 
+                    })`
                   : selectedCurrency?.name}
             </div>
           </div>
@@ -126,13 +126,13 @@ const TransactionDetailsSlide: React.FC<TransactionDetailsSlideProps> = ({
               <div className="absolute top-0 z-[1] left-0 w-full h-72">
                 <Image
                   src={(selectedCountry?.countryInfo.background as CdnMedia).url || ""}
-                  fill={true}
+                  fill
                   objectFit="cover"
                   alt="Country background"
                 />
               </div>
             )}
-            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black"></div>
+            <div className="h-24 absolute bottom-0 left-0 z-[2] w-full bg-gradient-to-t from-black" />
 
             <h2 className="left-8 bottom-0 absolute z-[3] text-white text-3xl font-bold mb-4">
               {selectedCountry?.countryInfo.name}

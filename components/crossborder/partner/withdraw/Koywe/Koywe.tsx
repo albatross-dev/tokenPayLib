@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import { Account } from "thirdweb/wallets";
 import { Consumer, PaymentTypesArray, Country, Vendor } from "../../../../../types/payload-types";
 import Loader from "../../../../UI/Loader";
-import React from "react";
 import { getKoyweAccountState, KoyweBankAccount } from "../../universal/koyweUtils";
 import SelectBankAccountSlide from "./Slides/SelectBankAccountSlide";
 import UnverifiedSlide from "./Slides/UnverifiedSlide";
 import CreateTransactionSlide from "./Slides/CreateTransactionSlide";
+
 interface KoyweProps {
   amount: number;
   account: Account;

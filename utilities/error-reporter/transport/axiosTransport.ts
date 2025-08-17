@@ -1,7 +1,7 @@
+import axios from "axios";
 import { Transport, TransportConfig } from ".";
 import { LogEntry, LogLevel } from "../reporter";
 import { defaultFormatter, Formatter } from "../formatter";
-import axios from "axios";
 
 export type AxiosTransportConfig = {
   endpoint: string;
@@ -9,7 +9,9 @@ export type AxiosTransportConfig = {
 
 export class AxiosTransport implements Transport {
   private readonly endpoint: string;
+
   private formatter: Formatter = defaultFormatter;
+
   private level: LogLevel = LogLevel.INFO;
 
   constructor({ endpoint, formatter }: AxiosTransportConfig) {

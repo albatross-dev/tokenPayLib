@@ -4,6 +4,7 @@ import {
   PaymentTypesArray,
   Vendor,
 } from "../../../../../types/payload-types";
+
 export interface FormData {
   phone: string;
 }

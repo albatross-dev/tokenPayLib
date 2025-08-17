@@ -1,6 +1,6 @@
 import { Country } from "../components/Forms/types";
 import { SimpleToken } from "../types/token.types";
-import currencies from "../utilities/crypto/currencies";
+import currencies from "./crypto/currencies";
 
 export const TYPE_CRYPTO = "crypto";
 export const TYPE_FIAT = "fiat";
@@ -194,7 +194,7 @@ export type AllCountryCode =
   | "ZW"
   | "PS";
 
-export const CRYPTOS = [currencies["EUROE"]];
+export const CRYPTOS = [currencies.EUROE];
 
 export interface CountryWithAvailability extends Country {
   available: Availability;

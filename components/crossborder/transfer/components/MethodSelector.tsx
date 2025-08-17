@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { IoWarning } from "react-icons/io5";

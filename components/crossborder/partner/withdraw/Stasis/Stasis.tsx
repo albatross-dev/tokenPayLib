@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { useTranslation } from "next-i18next";
 import { polygon } from "thirdweb/chains";
+import client from "@/utilities/thirdweb-client";
 import currencies from "../../../../../../utilities/currencies";
 import { StasisProps } from "./slides/types";
 
@@ -12,7 +13,6 @@ import SelectBankAccount from "./slides/SelectBankAccount";
 import WithdrawView from "./slides/WithdrawView";
 import SuccessView from "./slides/SuccessView";
 import Loader from "../../../../UI/Loader";
-import { client } from "../../../../../../pages/_app";
 import fetchBalance from "../../../../../utilities/crypto/fetchBalance";
 import fetchBankAccounts from "../../../../../utilities/partner/stasis/fetchBankAccounts";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../../utilities/crypto/TokenPayAbstraction";
@@ -65,7 +65,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
   };
 
   const validate = () => {
-    let newErrors: StasisErrors = {
+    const newErrors: StasisErrors = {
       bankAccount: null,
       cryptoAccount: null,
       amount: null,
@@ -75,7 +75,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
       newErrors.amount = tCrossborder("withdraw.stasis.errorLargerAmount");
     }
     if (Number(amount) > Number(selectedTokenBalance)) {
-      //newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
+      // newErrors.amount = tCrossborder("withdraw.stasis.errorSufficianFunds");
     }
     if (!selectedBankAccount) {
       newErrors.bankAccount = tCrossborder("withdraw.stasis.errorChooseBankAccount");
@@ -136,7 +136,7 @@ export default function Stasis({ amount, account, user, preferredStableCoin }: S
         );
 
         await api.patch(`/api/fiatTransaction/${transaction.id}`, {
-          transactionHash: transactionHash,
+          transactionHash,
         });
 
         setIsLoading("success");

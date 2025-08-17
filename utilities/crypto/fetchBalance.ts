@@ -1,6 +1,6 @@
 import { Chain, ContractOptions, getContract, readContract, ThirdwebClient } from "thirdweb";
-import { sendErrorReport } from "../../../context/UserContext";
 import { queryClient } from "@/pages/_app";
+import { sendErrorReport } from "../../../context/UserContext";
 
 /**
  * Fetches the balance of a given account address from a specified contract on a specified blockchain.
@@ -22,7 +22,7 @@ export async function fetchBalanceRaw(
 ): Promise<bigint> {
   try {
     const contract: Readonly<ContractOptions<any[], `0x${string}`>> = getContract({
-      client: client,
+      client,
       chain,
       address: contractAddress,
       abi,
@@ -71,7 +71,7 @@ export default async function fetchBalance(
     ...options,
   };
 
-  let lastResult = queryClient.getQueryData<bigint>(queryKey);
+  const lastResult = queryClient.getQueryData<bigint>(queryKey);
 
   if (lastResult === BigInt(0)) {
     defaultOptions.staleTime = 5 * 60 * 1000; // 5 minutes
@@ -81,9 +81,7 @@ export default async function fetchBalance(
 
   const result = await queryClient.fetchQuery<bigint>({
     queryKey,
-    queryFn: () => {
-      return fetchBalanceRaw(client, chain, contractAddress, abi, accountAddress);
-    },
+    queryFn: () => fetchBalanceRaw(client, chain, contractAddress, abi, accountAddress),
     staleTime: defaultOptions.staleTime,
   });
 
@@ -98,7 +96,7 @@ export async function fetchTotalSupply(
 ): Promise<bigint> {
   try {
     const contract: Readonly<ContractOptions<any[], `0x${string}`>> = getContract({
-      client: client,
+      client,
       chain,
       address: contractAddress,
       abi,

@@ -71,7 +71,7 @@ export default function Table({ tableQuery, setTableQuery, columns, collection, 
   });
 
   useEffect(() => {
-    //invalidate query when loader changes
+    // invalidate query when loader changes
     queryClient.invalidateQueries({ queryKey: [collection, tableQuery] });
   }, [loader, collection, queryClient, tableQuery]);
 
@@ -108,7 +108,7 @@ export default function Table({ tableQuery, setTableQuery, columns, collection, 
                         key={`column-${index}`}
                         className="py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                       >
-                        <div className="flex items-center justify-center h-8 w-full bg-gray-200 rounded-md animate-pulse"></div>
+                        <div className="flex items-center justify-center h-8 w-full bg-gray-200 rounded-md animate-pulse" />
                       </td>
                     ))}
                   </tr>

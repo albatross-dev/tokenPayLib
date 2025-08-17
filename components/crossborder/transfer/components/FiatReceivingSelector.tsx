@@ -1,9 +1,9 @@
-import CryptoIcon from "../../../../assets/CryptoIcon";
-import { getFiatInfo } from "../../../../utilities/stableCoinsMaps";
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { Currency, PaymentTypesArray } from "../../../../types/payload-types";
 import { SwiperClass } from "swiper/react";
+import CryptoIcon from "../../../../assets/CryptoIcon";
+import { getFiatInfo } from "../../../../utilities/stableCoinsMaps";
+import { Currency, PaymentTypesArray } from "../../../../types/payload-types";
 import { FiatCodes } from "../../../../types/derivedPayload.types";
 
 interface FiatReceivingSelectorProps {
@@ -51,8 +51,7 @@ export default function FiatReceivingSelector({
   return (
     <>
       <h2 className="text-2xl">{tCrossborder("receivingSelector.targetCurrency")}</h2>
-      {Array.from(allCurrencies).map((currency: FiatCodes | "crypto") => {
-        return currency === "crypto" ? (
+      {Array.from(allCurrencies).map((currency: FiatCodes | "crypto") => currency === "crypto" ? (
           <div
             key={currency}
             onClick={() => {
@@ -83,8 +82,7 @@ export default function FiatReceivingSelector({
             </div>
             <h2 className="text-xl font-bold">{getFiatInfo(currency)?.id}</h2>
           </div>
-        );
-      })}
+        ))}
     </>
   );
 }

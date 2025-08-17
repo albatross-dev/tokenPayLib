@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getSwyptQuote } from "../../universal/swyptUtils";
 import { Account } from "thirdweb/wallets";
+import { getSwyptQuote } from "../../universal/swyptUtils";
 import {
   Consumer,
   FiatTransaction,
@@ -68,7 +68,7 @@ export default function Swypt({
           const res = await api.post(
             "/api/fiatTransaction/swypt/onrampStatus",
             {
-              transactionId: transactionId,
+              transactionId,
             }
           );
           console.log("res", res);
@@ -134,7 +134,7 @@ export default function Swypt({
         const checkStatus = async () => {
           if (typeof user.currentSwyptOnRampTransaction === "object") {
             try {
-              let status = await pollTransactionStatusFrontend(
+              const status = await pollTransactionStatusFrontend(
                 user.currentSwyptOnRampTransaction.UUID
               );
               if (status === "awaitTransaction") {
@@ -217,9 +217,9 @@ export default function Swypt({
     }
 
     try {
-      let result = await api.get("/api/fiatTransaction/swypt/deposit");
+      const result = await api.get("/api/fiatTransaction/swypt/deposit");
 
-      let processedState = result.data.status;
+      const processedState = result.data.status;
 
       refreshAuthentication();
       setState(processedState === "completed" ? "success" : "error");

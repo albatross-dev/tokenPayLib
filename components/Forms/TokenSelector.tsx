@@ -43,11 +43,8 @@ export default function TokenSelector({
           disabled ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed" : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
         }`}
       >
-        {displayContent ? (
-          displayContent
-        ) : (
-          <>
-            <div className="flex items-center">
+        {displayContent || (
+          <div className="flex items-center">
               {selectedToken ? (
                 <>
                   {selectedToken.icon ? (
@@ -59,7 +56,7 @@ export default function TokenSelector({
                       className="h-6 w-6 mr-2"
                     />
                   ) : (
-                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full"></div>
+                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full" />
                   )}
 
                   <span>{selectedToken.name}</span>
@@ -67,11 +64,10 @@ export default function TokenSelector({
               ) : (
                 <>
                   <div className="h-6 w-6 mr-2 bg-gray-200 rounded-full" />
-                  <span>{selectText ? selectText : t("select")}</span>
+                  <span>{selectText || t("select")}</span>
                 </>
               )}
             </div>
-          </>
         )}
         <BiChevronDown className="h-6 w-6 text-gray-700" />
       </MenuButton>
@@ -108,7 +104,7 @@ export default function TokenSelector({
                       className="h-6 w-6 mr-2"
                     />
                   ) : (
-                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full"></div>
+                    <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full" />
                   )}
                   <span>{tokens[tokenId]?.name || tokenId}</span>
                 </button>

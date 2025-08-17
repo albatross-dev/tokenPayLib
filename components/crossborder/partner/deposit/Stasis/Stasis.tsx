@@ -2,13 +2,13 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { Account } from "thirdweb/wallets";
+import { useRouter } from "next/router";
 import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import { Consumer, Vendor } from "../../../../../types/payload-types";
 import Loader from "../../../../UI/Loader";
 import { LoadingButtonStates } from "../../../../UI/LoadingButton";
 import { BankAccount, CryptoAccount, PaymentInfo, StasisErrors } from "../../universal/stasis.types";
 import { AddBank, AddCrypto, Deposit, SelectBank, SelectCrypto, StasisKYC, Success } from "./Slides";
-import { useRouter } from "next/router";
 
 interface StasisHeaderProps {
   view: string;
@@ -143,7 +143,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
       }. Signature time: ${new Date().toISOString()}.`;
 
       // Convert this message to a hex string (this is what your example shows)
-      const wallet_message = "0x" + Buffer.from(readableMessage).toString("hex");
+      const wallet_message = `0x${  Buffer.from(readableMessage).toString("hex")}`;
 
       const wallet_signature = await account.signMessage({
         message: wallet_message,
@@ -188,7 +188,7 @@ export default function Stasis({ amount, account, user }: StasisProps) {
     setLoadingState("processing");
     try {
       const createDepositRes = await api.post("/api/fiatTransaction/stasis/createDeposit", {
-        amount: amount,
+        amount,
         bankAccountId: selectedBankAccount.uuid,
         cryptoAccountId: selectedCryptoAccount.uuid,
       });

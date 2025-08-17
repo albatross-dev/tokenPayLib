@@ -1,4 +1,3 @@
-import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import React, { useEffect, useState } from "react";
 import {
   getContract,
@@ -6,12 +5,12 @@ import {
   sendAndConfirmTransaction,
 } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { getSwyptQuote, SwyptQuoteResponse } from "../../universal/swyptUtils";
-import {
+import client from "@/utilities/thirdweb-client";
+import { getSwyptQuote, SwyptQuoteResponse ,
   swyptContract,
   swyptContractAddress,
 } from "../../universal/swyptUtils";
-import { client } from "../../../../../../pages/_app";
+import { api, sendErrorReport } from "../../../../../../context/UserContext";
 import { FormData, SwyptProps, SwyptState } from "./types";
 import { InputSlide } from "./slides/InputSlide";
 import { LoadingSlide } from "./slides/LoadingSlide";
@@ -67,14 +66,14 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
       setState("loading");
 
       const contract = getContract({
-        client: client,
+        client,
         chain: polygon,
         address: selectedToken.contractAddress,
         abi: selectedToken.abi,
       });
 
       const approve = prepareContractCall({
-        contract: contract,
+        contract,
         method: "approve",
         params: [
           swyptContractAddress,
@@ -99,7 +98,7 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
       });
 
       const { transactionHash } = await sendAndConfirmTransaction({
-        account: account,
+        account,
         transaction: withdrawToEscrow,
       });
 
@@ -110,11 +109,11 @@ const Swypt: React.FC<SwyptProps> = ({ amount, account, user, method }) => {
         chain: "polygon",
         tokenAddress: selectedToken.contractAddress,
         tokenDecimals: selectedToken.decimals,
-        transactionHash: transactionHash,
+        transactionHash,
         sendingWallet: account?.address,
         amount: Number(amount),
         tokenId: selectedToken.id.toUpperCase(),
-        swyptContractAddress: swyptContractAddress,
+        swyptContractAddress,
         outputAmount: Number(amount),
       });
 

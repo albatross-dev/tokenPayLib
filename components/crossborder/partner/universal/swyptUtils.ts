@@ -1,6 +1,6 @@
 import { getContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
-import { client } from "../../../../../pages/_app";
+import client from "@/utilities/thirdweb-client";
 import { api, sendErrorReport } from "../../../../../context/UserContext";
 
 const swyptAbi = [

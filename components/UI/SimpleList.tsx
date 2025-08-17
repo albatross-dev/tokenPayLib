@@ -53,9 +53,7 @@ export default function SimpleList({
       // Filter query object to remove date filters
       const newQuery = { ...tableQuery };
       if (newQuery.where.and) {
-        newQuery.where.and = newQuery.where.and.filter((item) => {
-          return item.createdAt === undefined;
-        });
+        newQuery.where.and = newQuery.where.and.filter((item) => item.createdAt === undefined);
       }
 
       return setTableQuery(newQuery);

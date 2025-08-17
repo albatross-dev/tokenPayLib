@@ -1,29 +1,30 @@
-import Loader from "../UI/Loader";
-import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
-import ErrorPopup from "../Modals/ErrorPopup";
-import { useActiveAccount, useIsAutoConnecting } from "thirdweb/react";
-import { api, AuthContext, sendErrorReport } from "../../../context/UserContext";
-import BalanceOverview from "../crossborder/BalanceOverview";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import { sortMethodByCurrencyDeposit } from "../../utilities/crossborder/sortMethodByCurrency";
-import { Country, PaymentTypesArray } from "../../types/payload-types";
+import React, { useContext, useEffect, useState } from "react";
 import { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useActiveAccount } from "thirdweb/react";
+import { api, AuthContext, sendErrorReport } from "../../../context/UserContext";
+import { Country, PaymentTypesArray } from "../../types/payload-types";
+import { sortMethodByCurrencyDeposit } from "../../utilities/crossborder/sortMethodByCurrency";
+import BalanceOverview from "../crossborder/BalanceOverview";
+import ErrorPopup from "../Modals/ErrorPopup";
 import Banner from "../UI/Banner";
+import Loader from "../UI/Loader";
 import Maintenance from "../UI/Maintenance";
 
 // Import slide components
-import CryptoSelectionSlide from "./slides/CryptoSelectionSlide";
-import FiatSelectionSlide from "./slides/FiatSelectionSlide";
-import DepositDetailsSlide from "./slides/DepositDetailsSlide";
-import DepositSlide from "./slides/DepositSlide";
 import { FiatCodes } from "../../types/derivedPayload.types";
+import CryptoSelectionSlide from "./slides/CryptoSelectionSlide";
+import DepositDetailsSlide from "./slides/DepositDetailsSlide";
 import { QuotePaymentType } from "./slides/DepositMethodSelector";
+import DepositSlide from "./slides/DepositSlide";
+import FiatSelectionSlide from "./slides/FiatSelectionSlide";
 
 interface MaintenanceProps {
   deposit?: {
     page?: boolean;
+    message?: string;
   };
 }
 
@@ -40,7 +41,6 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   const { t } = useTranslation("common");
   const { user } = useContext(AuthContext);
   // TW hooks
-  const isAutoConnecting = useIsAutoConnecting();
   const account = useActiveAccount();
 
   // The country of the user
@@ -94,9 +94,9 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
 
   // Handle amount input
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    let inputAmount = parseFloat(e.target.value);
+    const inputAmount = parseFloat(e.target.value);
 
-    if (isNaN(inputAmount) || inputAmount < 0) {
+    if (Number.isNaN(inputAmount) || inputAmount < 0) {
       setAmount("");
       setError("");
     } else {
@@ -108,7 +108,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
   useEffect(() => {
     async function getCountryData() {
       try {
-        let countryRes = await api.get(
+        const countryRes = await api.get(
           `/api/countries?where[countryCode][equals]=${user?.vendorCountry || user?.billingAddress?.country}`
         );
 
@@ -116,7 +116,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
           setErrorMessage({
             message: tCrossborder("depositPage.errors.countryNotFound"),
             component: (
-              <Banner href={"/settings"} color={"bg-red-400"} rounded={"rounded"}>
+              <Banner href="/settings" color="bg-red-400" rounded="rounded">
                 <div suppressHydrationWarning>{t("no_country")}</div>
               </Banner>
             ),
@@ -132,7 +132,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
         setErrorMessage({
           message: tCrossborder("depositPage.errors.fetchCountryData"),
           component: (
-            <Banner href={"/settings"} color={"bg-red-400"} rounded={"rounded"}>
+            <Banner href="/settings" color="bg-red-400" rounded="rounded">
               <div suppressHydrationWarning>{t("no_country")}</div>
             </Banner>
           ),
@@ -170,7 +170,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.deposit?.page && <Maintenance />}
+          {maintenance?.deposit?.page && <Maintenance text={maintenance?.deposit?.message} />}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader />
@@ -213,7 +213,7 @@ export default function DepositPage({ maintenance }: DepositPageProps) {
                     <DepositDetailsSlide
                       selectedCountry={selectedCountry}
                       amount={amount}
-                      onAmountChange={handleAmountChange}
+                      onAmountChange={(e) => handleAmountChange(e)}
                       error={error}
                       availableDepositMethods={availableDepositMethods}
                       selectedMethod={selectedMethod}

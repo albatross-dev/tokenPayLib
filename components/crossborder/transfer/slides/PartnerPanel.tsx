@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
+import { useActiveAccount } from "thirdweb/react";
 import BackButton from "../components/BackButton";
 import TransferPanel from "../components/TransferPanel";
-import { useActiveAccount } from "thirdweb/react";
 import { AuthContext } from "../../../../../context/UserContext";
-import { PaymentTypesArray } from "../../../../types/payload-types";
-import { Country } from "../../../../types/payload-types";
+import { PaymentTypesArray , Country } from "../../../../types/payload-types";
 
 interface PartnerPanelProps {
   selectedMethod: PaymentTypesArray[number] | null;

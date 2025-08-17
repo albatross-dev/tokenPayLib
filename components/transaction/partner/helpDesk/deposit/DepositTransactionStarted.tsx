@@ -8,7 +8,7 @@ export default function DepositTransactionStarted() {
   return (
     <div className="flex flex-col items-center justify-center my-8 gap-16">
       <div className="">{tCrossborder("withdraw.otcStates.waitForAddress")}</div>
-      <Loader></Loader>
+      <Loader />
     </div>
   );
 }

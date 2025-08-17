@@ -25,7 +25,9 @@ export default class ErrorBoundary extends React.Component<
   ErrorBoundaryState
 > {
   private clientReporter: ErrorReporter;
+
   private serverReporter: ErrorReporter;
+
   private backLink: string;
 
   constructor(props: ErrorBoundaryProps) {

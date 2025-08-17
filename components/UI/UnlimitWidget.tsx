@@ -3,7 +3,7 @@ import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
 import { useTranslation } from "next-i18next";
 import { useActiveAccount } from "thirdweb/react";
 
-const UnlimitWidget = () => {
+function UnlimitWidget() {
   const account = useActiveAccount();
 
   if (!account) {
@@ -45,8 +45,8 @@ const UnlimitWidget = () => {
         marginTop: "2rem",
         justifyContent: "center",
       }}
-    ></div>
+     />
   );
-};
+}
 
 export default UnlimitWidget;
