@@ -1,6 +1,20 @@
 import React from "react";
 
-export default function FieldWrapper({ errors, children, field, fieldName, style, parsedRequired }): JSX.Element {
+export default function FieldWrapper({
+  errors,
+  children,
+  field,
+  fieldName,
+  style,
+  parsedRequired,
+}: {
+  errors: any;
+  children: React.ReactNode;
+  field: any;
+  fieldName: string;
+  style: string;
+  parsedRequired: boolean;
+}): React.ReactNode {
   return (
     <div
       className={`${
@@ -33,7 +47,9 @@ export default function FieldWrapper({ errors, children, field, fieldName, style
         }`}
       >
         {children}
-        {errors[fieldName] && <p className="text-red-500 text-sm">{errors[fieldName].message}</p>}
+        {errors[fieldName] && (
+          <p className="text-red-500 text-sm">{errors[fieldName].message}</p>
+        )}
       </div>
     </div>
   );

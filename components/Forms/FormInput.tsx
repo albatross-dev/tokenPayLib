@@ -126,7 +126,7 @@ const FormInput = forwardRef<
             render={({ field: { onChange, value } }) => (
                 <CustomDropdown
                   name={props.name}
-                  options={props.options}
+                  options={props.options || []}
                   value={value}
                   onChange={onChange}
                   placeholder={t("select")}
@@ -157,9 +157,6 @@ const FormInput = forwardRef<
                   }}
                   disabled={props.disabled}
                 />
-                {error && (
-                  <p className="text-red-500 text-xs mt-1">{error.message}</p>
-                )}
               </>
             )}
           />
@@ -284,12 +281,6 @@ const FormInput = forwardRef<
   return (
     <div className="">
       <div className="flex justify-start items-center space-x-2">
-        <label
-          htmlFor={props.name}
-          className="block text-sm font-medium text-gray-700"
-        >
-          {props.error || props.label}
-        </label>
         <div className={`group relative ${props.explanation ? "" : "hidden"}`}>
           <BsFillQuestionCircleFill className="text-gray-500 h-4 w-4" />
           <div className="hidden group-hover:block absolute z-50 text-xs text-gray-700 bg-white shadow p-2 w-64">

@@ -16,6 +16,13 @@ function FieldRenderer({
   parentName = "", // Parent name for correct nested structure
   arrayItemIndex = null,
   step = "any",
+}: {
+  fields: any[];
+  style?: "vertical" | "horizontal";
+  alwaysEditable?: boolean;
+  parentName?: string;
+  arrayItemIndex?: number | null;
+  step?: string | number;
 }) {
   const methods = useFormContext();
   const { t } = useTranslation();
@@ -50,7 +57,6 @@ function FieldRenderer({
           }
         }
 
-      
         switch (field.type) {
           case "checkbox": {
             return (
@@ -58,7 +64,6 @@ function FieldRenderer({
                 <div className="flex items-center">
                   <input
                     id={fieldName}
-                    name={fieldName}
                     type="checkbox"
                     {...methods.register(fieldName, {
                       required: parsedRequired ? t("selection_required") : false, // Add validation rule

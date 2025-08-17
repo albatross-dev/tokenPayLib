@@ -32,7 +32,7 @@ function DefaultInput<T extends Record<string, any>>({
   parsedRequired,
   step,
   validate,
-}: DefaultInputProps<T>): JSX.Element {
+}: DefaultInputProps<T>): React.ReactNode {
   const { getFieldState } = methods;
   const fieldState = getFieldState(fieldName);
 
@@ -42,7 +42,6 @@ function DefaultInput<T extends Record<string, any>>({
     <>
       <input
         id={String(fieldName)}
-        name={String(fieldName)}
         type={type}
         disabled={disabled}
         step={step}
@@ -53,11 +52,6 @@ function DefaultInput<T extends Record<string, any>>({
         })}
         className={`mt-1 p-2 w-full border rounded-md ${disabled ? "text-gray-500" : ""}`}
       />
-      {fieldState.error && (
-        <p className="text-red-500 text-sm">
-          {fieldState.error?.message?.toString()} {t(`form.errors.${fieldState.error?.type?.toString()}`)}
-        </p>
-      )}
     </>
   );
 }
