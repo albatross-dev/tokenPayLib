@@ -1,0 +1,64 @@
+{
+  "partners": [
+    {
+      "id": "apple",
+      "slug": "apple",
+      "nameKey": "partners.apple.name",
+      "descriptionKey": "partners.apple.description",
+      "logo": "/tokenpay-partner/icons/apple.svg",
+      "isActive": true,
+      "order": 1,
+      "detailsKeys": {
+        "about": "partners.apple.about",
+        "services": "partners.apple.services",
+        "contact": "partners.apple.contact",
+        "stats": "partners.apple.stats"
+      }
+    },
+    {
+      "id": "stark",
+      "slug": "stark",
+      "nameKey": "partners.stark.name",
+      "descriptionKey": "partners.stark.description",
+      "logo": "/tokenpay-partner/icons/stark.svg",
+      "isActive": true,
+      "order": 2,
+      "detailsKeys": {
+        "about": "partners.stark.about",
+        "services": "partners.stark.services",
+        "contact": "partners.stark.contact",
+        "stats": "partners.stark.stats"
+      }
+    },
+    {
+      "id": "partner2",
+      "slug": "partner2",
+      "nameKey": "partners.partner2.name",
+      "descriptionKey": "partners.partner2.description",
+      "logo": "/tokenpay-partner/icons/placeholder.svg",
+      "isActive": true,
+      "order": 2,
+      "detailsKeys": {
+        "about": "partners.partner2.about",
+        "services": "partners.partner2.services",
+        "contact": "partners.partner2.contact",
+        "stats": "partners.partner2.stats"
+      }
+    },
+    {
+      "id": "partner3",
+      "slug": "partner3",
+      "nameKey": "partners.partner3.name",
+      "descriptionKey": "partners.partner3.description",
+      "logo": "/tokenpay-partner/icons/placeholder.svg",
+      "isActive": false,
+      "order": 3,
+      "detailsKeys": {
+        "about": "partners.partner3.about",
+        "services": "partners.partner3.services",
+        "contact": "partners.partner3.contact",
+        "stats": "partners.partner3.stats"
+      }
+    }
+  ]
+}

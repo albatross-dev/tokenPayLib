@@ -1,0 +1,32 @@
+{
+  "categories": [
+    {
+      "id": "charity",
+      "slug": "charity",
+      "nameKey": "categories.charity.name",
+      "descriptionKey": "categories.charity.description",
+      "image": "/tokenpay-partner/icons/charity.svg",
+      "isActive": true,
+      "order": 1,
+      "detailsKeys": {
+        "features": "categories.charity.features",
+        "benefits": "categories.charity.benefits",
+        "content": "categories.charity.content"
+      }
+    },
+    {
+      "id": "gro",
+      "slug": "gro",
+      "nameKey": "categories.gro.name",
+      "descriptionKey": "categories.gro.description",
+      "image": "/tokenpay-partner/icons/gro.svg",
+      "isActive": true,
+      "order": 2,
+      "detailsKeys": {
+        "features": "categories.gro.features",
+        "benefits": "categories.gro.benefits",
+        "content": "categories.gro.content"
+      }
+    }
+  ]
+}
