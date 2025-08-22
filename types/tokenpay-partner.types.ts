@@ -22,6 +22,7 @@ export interface Partner {
   logo: string;
   isActive: boolean;
   order: number;
+  category?: string[]; // Add category field as optional array of strings
   detailsKeys: {
     about: string;
     services: string;

@@ -8,6 +8,7 @@
       "logo": "/tokenpay-partner/icons/apple.svg",
       "isActive": true,
       "order": 1,
+      "category": ["charity"],
       "detailsKeys": {
         "about": "partners.apple.about",
         "services": "partners.apple.services",
@@ -23,6 +24,7 @@
       "logo": "/tokenpay-partner/icons/stark.svg",
       "isActive": true,
       "order": 2,
+      "category": [ "gro"],
       "detailsKeys": {
         "about": "partners.stark.about",
         "services": "partners.stark.services",
@@ -38,6 +40,7 @@
       "logo": "/tokenpay-partner/icons/placeholder.svg",
       "isActive": true,
       "order": 2,
+      "category": ["charity", "gro"],
       "detailsKeys": {
         "about": "partners.partner2.about",
         "services": "partners.partner2.services",
