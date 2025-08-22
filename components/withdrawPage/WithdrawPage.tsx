@@ -110,15 +110,15 @@ function WithdrawPage({ maintenance }: WithdrawPageProps) {
     if (selectedFiatSymbol && payoutCurrency && payoutCurrency !== "crypto" && selectedFiatSymbol !== payoutCurrency) {
       fetchExchangeRate(selectedFiatSymbol);
     } else if (payoutCurrency === "crypto") {
-        setExchangeRate(1);
-        setLoadedExchangeRate(true);
-      } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
-        setExchangeRate(1);
-        setLoadedExchangeRate(true);
-      } else {
-        setExchangeRate(0);
-        setLoadedExchangeRate(false);
-      }
+      setExchangeRate(1);
+      setLoadedExchangeRate(true);
+    } else if (selectedFiatSymbol && payoutCurrency && selectedFiatSymbol === payoutCurrency) {
+      setExchangeRate(1);
+      setLoadedExchangeRate(true);
+    } else {
+      setExchangeRate(0);
+      setLoadedExchangeRate(false);
+    }
   }, [preferredStableCoin, payoutCurrency]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +179,9 @@ function WithdrawPage({ maintenance }: WithdrawPageProps) {
         </div>
 
         <div className="border bg-white rounded w-full p-4 relative">
-          {maintenance?.dashboard?.withdraw?.page && <Maintenance text={maintenance?.dashboard?.withdraw?.message} />}
+          {maintenance?.dashboard?.withdraw?.page && (
+            <Maintenance text={maintenance?.dashboard?.withdraw?.message} fullPage />
+          )}
           {state === "loading" && (
             <div className="flex h-full items-center justify-center my-16 w-full">
               <Loader />
@@ -273,6 +275,6 @@ function WithdrawPage({ maintenance }: WithdrawPageProps) {
       </div>
     </>
   );
-};
+}
 
 export default WithdrawPage;
