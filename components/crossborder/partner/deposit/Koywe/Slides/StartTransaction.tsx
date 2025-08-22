@@ -22,11 +22,11 @@ export default function StartTransaction({
   selectedQuote: {
     quote: KoyweQuoteResponse;
     paymentMethod: KoywePaymentMethod;
-  };
+  } | null;
   method: QuotePaymentType;
   setView: (view: "SelectQuote" | "StartTransaction") => void;
   loadingState: LoadingButtonStates;
-  error: LoadingButtonError;
+  error: LoadingButtonError | null;
   startTransaction: () => void;
 }) {
   const { t: tCrossborder } = useTranslation("crossborder");
@@ -41,7 +41,7 @@ export default function StartTransaction({
           <div className="flex flex-row gap-2 items-center text-sm">
             <p>
               <strong>{tCrossborder("deposit.koywe.rate")}:</strong>{" "}
-              {selectedQuote?.quote.exchangeRate.toFixed(3)}
+              {selectedQuote?.quote?.exchangeRate?.toFixed(3)}
             </p>
             <p className="text-red-500">
               <strong>{tCrossborder("deposit.koywe.validFor")}:</strong>{" "}
@@ -51,7 +51,7 @@ export default function StartTransaction({
           <div className="flex flex-row items-start justify-between">
             <div className="flex flex-col items-start gap-1">
               <p className="text-6xl">
-                {selectedQuote?.quote.amountIn} {method.currencies[0].currency}
+                {selectedQuote?.quote?.amountIn} {method.currencies?.[0]?.currency}
               </p>
               <strong className="text-gray-500">
                 {tCrossborder("deposit.koywe.depositAmount")}
@@ -62,8 +62,8 @@ export default function StartTransaction({
             </div>
             <div className="flex flex-col items-end justify-end gap-1">
               <p className="text-6xl">
-                {selectedQuote?.quote.amountOut.toFixed(3)}{" "}
-                {getFiatInfoForStableCoin(method.acceptedCrypto).id}
+                {selectedQuote?.quote?.amountOut?.toFixed(3)}{" "}
+                {getFiatInfoForStableCoin(method.acceptedCrypto || "USDC")?.id}
               </p>
               <strong className="text-gray-500">
                 {tCrossborder("deposit.koywe.credit")}

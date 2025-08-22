@@ -1,6 +1,6 @@
-import { api, AuthContext, sendErrorReport } from "@/context/UserContext";
+import { api, AuthContext, sendErrorReport, useAuth } from "@/context/UserContext";
 import { QuotePaymentType } from "@/tokenPayLib/components/depositPage/slides/DepositMethodSelector";
-import { Country } from "@/tokenPayLib/types/payload-types";
+import { Consumer, Country, Vendor } from "@/tokenPayLib/types/payload-types";
 import currencies from "@/tokenPayLib/utilities/crypto/currencies";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -29,7 +29,7 @@ interface HelpDeskProps {
 
 export default function HelpDesk({ country, amount, method, startCurrency, endCurrency }: HelpDeskProps) {
 
-  const { user, refreshAuthentication } = useContext(AuthContext);
+  const { user, refreshAuthentication } = useAuth() as { user: Consumer | Vendor, refreshAuthentication: () => void } ;
 
   const router = useRouter();
 
@@ -76,13 +76,19 @@ export default function HelpDesk({ country, amount, method, startCurrency, endCu
       let transactionDetails = "";
       transactionDetails = `Receiving Wallet: ${data.receivingWallet}${data.textareaContent ? `\nComments: ${data.textareaContent}` : ""}`;
 
+      const fromCountry = user
+        ? ("vendorCountry" in user
+            ? (user as Vendor).vendorCountry
+            : ("country" in user ? (user as Consumer).country : undefined))
+        : undefined;
+
       console.log("all params", {
         data,
         startCurrency,
         endCurrency,
         amount,
         country: country.countryCode,
-        fromCountry: user?.vendorCountry || user?.country,
+        fromCountry,
         transactionDetails,
         type: "Deposit",
       });
@@ -97,7 +103,7 @@ export default function HelpDesk({ country, amount, method, startCurrency, endCu
         finalCurrency: endCurrency,
         amount,
         country: country.countryCode,
-        fromCountry: user?.vendorCountry || user?.billingAddress?.country,
+        fromCountry,
         transactionDetails,
         finalamount: method.predictedOnrampAmount,
         type: "Deposit",

@@ -65,9 +65,11 @@ export default function QuoteForm({
             <div className="gap-1 flex-1 flex flex-col">
               <div className="font-bold text-6xl text-gray-600 whitespace-nowrap">
                 {amount}{" "}
-                {getFiatInfoForStableCoin(
-                  quote.depositMethod.toUpperCase()
-                )?.id.toUpperCase()}
+                {(
+                  getFiatInfoForStableCoin(
+                    (quote?.depositMethod || "USDC").toUpperCase()
+                  )?.id || ""
+                ).toUpperCase()}
               </div>
               <div>{tCrossborder("withdraw.bitcoinvn.depositAmount")}</div>
             </div>

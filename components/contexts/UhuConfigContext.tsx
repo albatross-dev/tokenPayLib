@@ -17,7 +17,7 @@ moment.locale("de");
 const timeZone = "Europe/Berlin";
 const zonedDate = moment().tz(timeZone);
 
-interface UhuConfigContextType {
+export interface UhuConfigContextType {
   uhuConfig: UhuConfig | "loading" | null;
   currentRouter: Router | "loading" | null;
   setUhuConfig: (config: UhuConfig | null) => void;

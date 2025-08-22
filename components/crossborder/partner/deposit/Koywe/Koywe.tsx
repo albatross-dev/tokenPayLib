@@ -39,11 +39,7 @@ export default function Koywe({ method, account, country }: KoyweProps) {
   const [state, setState] = useState<LoadingButtonStates>("normal");
   const [loadingState, setLoadingState] =
     useState<LoadingButtonStates>("normal");
-  const [error, setError] = useState<LoadingButtonError>({
-    message: "",
-    title: "",
-    error: null,
-  });
+  const [error, setError] = useState<LoadingButtonError | null>(null);
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -66,7 +62,7 @@ export default function Koywe({ method, account, country }: KoyweProps) {
   }, []);
 
   async function startTransaction() {
-    const token = currencies[method.acceptedCrypto.toUpperCase()];
+    const token = currencies[(method.acceptedCrypto || "USDC").toUpperCase() as keyof typeof currencies];
     const currencyName = token.name;
     const currency = token.contractAddress;
     const currencyDecimals = token.decimals;
@@ -75,8 +71,11 @@ export default function Koywe({ method, account, country }: KoyweProps) {
 
     try {
       setLoadingState("processing");
+      if (!selectedQuote) {
+        return;
+      }
       const transactionId = await createKoyweDepositTransaction({
-        quote: selectedQuote?.quote,
+        quote: selectedQuote.quote,
         destinationAddress: account.address,
         currency,
         currencyName,
@@ -95,7 +94,7 @@ export default function Koywe({ method, account, country }: KoyweProps) {
       setError({
         message: tCrossborder("deposit.koywe.errors.startTransaction"),
         title: tCrossborder("deposit.koywe.errors.startTransactionTitle"),
-        error,
+        error: { message: (error as any)?.message },
       });
     }
   }

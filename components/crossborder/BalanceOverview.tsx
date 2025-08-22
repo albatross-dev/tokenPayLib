@@ -16,7 +16,7 @@ import { HiInformationCircle } from "react-icons/hi2";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import UniversalModal from "../Modals/UniversalModal";
-import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import { UhuConfigContext, UhuConfigContextType } from "../contexts/UhuConfigContext";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import currencies, {
   formatNumberWithCurrency,
@@ -24,6 +24,7 @@ import currencies, {
 import ConvertPopup from "./ConverterPopup";
 import { SimpleToken } from "../../types/token.types";
 import fetchBalance from "../../utilities/crypto/fetchBalance";
+import { UhuConfig } from "@/tokenPayLib/types/payload-types";
 
 interface Balance {
   symbol: string;
@@ -40,7 +41,7 @@ const client = createThirdwebClient({
 export default function BalanceOverview() {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState<boolean>(false);
-  const { uhuConfig } = useContext(UhuConfigContext);
+  const { uhuConfig } = useContext(UhuConfigContext) as UhuConfigContextType;
   const { t } = useTranslation("common");
   const { t: tCrossborder } = useTranslation("crossborder");
   const [totalEuroBalance, setTotalEuroBalance] = useState<number>(0);

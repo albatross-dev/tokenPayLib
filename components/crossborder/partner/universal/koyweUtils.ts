@@ -112,7 +112,7 @@ export async function getBankAccounts({
   if (!FIAT_SYMBOLS.includes(currencySymbol as FiatSymbol)) {
     throw new Error("Invalid currency symbol");
   }
-  countryCode = countriesISO.alpha2ToAlpha3(countryCode);
+  countryCode = countriesISO.alpha2ToAlpha3(countryCode) || countryCode;
 
   try {
     const response = await api.post(
@@ -165,7 +165,7 @@ export async function getSupportedBanks({
   countryCode: string;
 }): Promise<KoyweBankInfo[]> {
   try {
-    countryCode = countriesISO.alpha2ToAlpha3(countryCode);
+    countryCode = countriesISO.alpha2ToAlpha3(countryCode) || countryCode;
     if (!["ARG", "CHL", "COL", "MEX", "PER"].includes(countryCode)) {
       throw new Error(`Invalid country code ${countryCode}`);
     }
@@ -200,7 +200,7 @@ export async function createKoyweBankAccount({
   if (!FIAT_SYMBOLS.includes(currencySymbol as FiatSymbol)) {
     throw new Error(`Invalid currency symbol ${currencySymbol}`);
   }
-  countryCode = countriesISO.alpha2ToAlpha3(countryCode);
+  countryCode = countriesISO.alpha2ToAlpha3(countryCode) || countryCode;
 
   try {
     const response = await api.post(

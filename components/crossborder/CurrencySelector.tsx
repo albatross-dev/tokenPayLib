@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import Image, { StaticImageData } from "next/image";
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
+import { getContract, readContract } from "thirdweb";
 import { polygon } from "thirdweb/chains";
 import { useActiveAccount } from "thirdweb/react";
 import { useTranslation } from "next-i18next";
@@ -10,8 +10,9 @@ import { HiInformationCircle } from "react-icons/hi2";
 import ConvertPopup from "./ConverterPopup";
 import { STANDARD_STABLE_MAP } from "../../utilities/stableCoinsMaps";
 import UniversalModal from "../Modals/UniversalModal";
-import { UhuConfigContext } from "../contexts/UhuConfigContext";
+import { useUhuConfig } from "../contexts/UhuConfigContext";
 import currencies from "../../utilities/crypto/currencies";
+import { client } from "@/pages/_app";
 import MiniLoader from "../UI/MiniLoader";
 import { SimpleToken } from "../../types/token.types";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
@@ -32,9 +33,7 @@ interface CurrencyDisplayProps {
   selectedCurrency: Balance | null;
 }
 
-const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
-});
+// use shared thirdweb client from _app
 
 async function getBalance(
   account: any,
@@ -79,7 +78,7 @@ export default function CurrencyDisplay({
 }: CurrencyDisplayProps) {
   const account = useActiveAccount();
   const [isClient, setIsClient] = useState<boolean>(false);
-  const { uhuConfig } = useContext(UhuConfigContext);
+  const { uhuConfig } = useUhuConfig();
   const [balances, setBalances] = useState<Balance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
