@@ -14,7 +14,7 @@ import VerificationRequestError from "./StateViews/HelpDesk/VerificationRequestE
 import TransactionManual from "./StateViews/Transaction/TransactionManuel";
 import TransactionPaymentPending from "./StateViews/Transaction/TransactionPaymentPending";
 import { DeskState, HelpDeskProps, TransactionState } from "./types";
-import { api, AuthContext, sendErrorReport } from "../../../../../../context/UserContext";
+import { api, AuthContext, sendErrorReport, useAuth } from "../../../../../../context/UserContext";
 import preprocessDataForServer from "../../../../../utilities/forms/preprocessData";
 import currencies from "../../../../../utilities/crypto/currencies";
 import getFormData from "../../../../../utilities/forms/getFormData";
@@ -90,7 +90,7 @@ export async function handleVerificationRequest({
 }
 
 function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
-  const { user, refreshAuthentication } = useContext(AuthContext);
+  const { user, refreshAuthentication } = useAuth() as { user: any; refreshAuthentication: () => void };
 
   const { t: tCrossborder } = useTranslation("crossborder");
 
@@ -213,7 +213,7 @@ function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
   async function handleSend() {
     try {
       setIsLoading("processing");
-      const acceptedCrypto = currencies[method.acceptedCrypto];
+      const acceptedCrypto = currencies[(method.acceptedCrypto || "USDC").toUpperCase() as keyof typeof currencies];
       const amountWithDecimals = amount * 10**acceptedCrypto.decimals;
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
@@ -221,11 +221,11 @@ function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
         polygon,
         BigInt(amountWithDecimals),
         acceptedCrypto,
-        transaction!.burnAddress
+        (transaction as any)?.burnAddress || ""
       );
 
       await api.post("/api/fiatTransaction/paymentUpdate", {
-        transaction,
+        transaction: transaction!,
         transactionHash,
       });
     } catch (e) {
@@ -259,7 +259,7 @@ function HelpDesk({ country, amount, account, method }: HelpDeskProps) {
               handleSend={() => handleSend()}
               isLoading={isLoading}
               transaction={transaction}
-              errorMessage={errorMessage}
+              errorMessage={errorMessage as any}
             />
           )}
           {transaction.status === TRANSACTION_STATE_DONE && (
