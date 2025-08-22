@@ -16,9 +16,9 @@ export default function CategoryCard({ category }: CategoryCardProps) {
       {/* Category Card with Background Image */}
       <div className="relative h-full w-full p-4 flex items-center justify-center">
         {/* Background Image with blur and opacity */}
-        {category.image && (
+        {category.imageIcon && (
           <img
-            src={category.image}
+            src={category.imageIcon}
             alt={category.name}
             className="absolute inset-0 w-full h-full object-cover opacity-60 blur-sm"
             style={{ zIndex: 0 }}

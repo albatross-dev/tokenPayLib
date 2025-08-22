@@ -3,7 +3,8 @@ export interface Category {
   slug: string;
   nameKey: string;
   descriptionKey: string;
-  image: string;
+  imageIcon: string;
+  imageBanner: string;
   isActive: boolean;
   order: number;
   detailsKeys: {

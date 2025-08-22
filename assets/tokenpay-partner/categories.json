@@ -5,7 +5,8 @@
       "slug": "charity",
       "nameKey": "categories.charity.name",
       "descriptionKey": "categories.charity.description",
-      "image": "/tokenpay-partner/icons/charity.svg",
+      "imageIcon": "/tokenpay-partner/icons/charity.svg",
+      "imageBanner": "/tokenpay-partner/banners/charity.png",
       "isActive": true,
       "order": 1,
       "detailsKeys": {
@@ -19,7 +20,8 @@
       "slug": "gro",
       "nameKey": "categories.gro.name",
       "descriptionKey": "categories.gro.description",
-      "image": "/tokenpay-partner/icons/gro.svg",
+      "imageIcon": "/tokenpay-partner/icons/gro.svg",
+      "imageBanner": "/tokenpay-partner/banners/gro.png",
       "isActive": true,
       "order": 2,
       "detailsKeys": {
