@@ -1,35 +1,36 @@
-import React, { useEffect, useState, useContext } from "react";
-import { createThirdwebClient, getContract, readContract } from "thirdweb";
-import { polygon } from "thirdweb/chains";
-import { IoClose } from "react-icons/io5";
-import { useActiveAccount } from "thirdweb/react";
-import { parseUnits } from "ethers/lib/utils";
-import Image from "next/image";
-import { encodePacked } from "thirdweb/utils";
-import { useTranslation } from "next-i18next";
-import { Account } from "thirdweb/wallets";
 import { fetchPaths } from "@/tokenPayLib/components/Modules/TokenSwapSection";
 import LoadingButton, {
   LoadingButtonStates,
 } from "@/tokenPayLib/components/UI/LoadingButton";
+import { Consumer, Vendor } from "@/tokenPayLib/types/payload-types";
+import { parseUnits } from "ethers/lib/utils";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { createThirdwebClient, getContract, readContract } from "thirdweb";
+import { polygon } from "thirdweb/chains";
+import { useActiveAccount } from "thirdweb/react";
+import { encodePacked } from "thirdweb/utils";
+import { Account } from "thirdweb/wallets";
 import {
   api,
-  AuthContext,
   sendErrorReport,
+  useAuth
 } from "../../../../../context/UserContext";
-import TokenSelector from "../../../Forms/TokenSelector";
-import { TokensByChainId } from "../../../../utilities/crypto/currencies";
-import { PATHS } from "../../../../utilities/crypto/getPath";
 import QuoteV2Abi from "../../../../assets/quoteV2Abi.json";
+import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
+import { SimpleToken } from "../../../../types/token.types";
 import {
   convertAnyToAnyDirect,
   uniswapAddresses,
 } from "../../../../utilities/crypto/convertAnyToAny";
-import numberWithZeros from "../../../../utilities/math/numberWithZeros";
-import MiniLoader from "../../../UI/MiniLoader";
-import { SimpleToken } from "../../../../types/token.types";
-import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
+import { TokensByChainId } from "../../../../utilities/crypto/currencies";
+import { PATHS } from "../../../../utilities/crypto/getPath";
 import { tokenPayAbstractionSimpleTransfer } from "../../../../utilities/crypto/TokenPayAbstraction";
+import numberWithZeros from "../../../../utilities/math/numberWithZeros";
+import TokenSelector from "../../../Forms/TokenSelector";
+import MiniLoader from "../../../UI/MiniLoader";
 
 // ----- Local helpers for robust error handling -----
 const TX_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
@@ -73,7 +74,7 @@ interface FormErrors {
 }
 
 const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
 });
 
 export default function RawCrypto({
@@ -81,7 +82,7 @@ export default function RawCrypto({
   preferredStableCoin,
 }: RawCryptoProps) {
   const [defaultToken, setDefaultToken] = useState<SimpleToken>(
-    TokensByChainId[polygon.id][preferredStableCoin]
+    TokensByChainId[polygon.id as keyof typeof TokensByChainId][preferredStableCoin]
   );
   const [differentToken, setDifferentToken] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
@@ -92,7 +93,7 @@ export default function RawCrypto({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth() as { user: Vendor | Consumer };
   const account = useActiveAccount();
   const [loadingQuote, setLoadingQuote] = useState<boolean>(false);
   const [quote, setQuote] = useState<[bigint, bigint[], bigint[], bigint] | null>(
@@ -103,7 +104,7 @@ export default function RawCrypto({
   const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
-    setDefaultToken(TokensByChainId[polygon.id][preferredStableCoin]);
+    setDefaultToken(TokensByChainId[polygon.id as keyof typeof TokensByChainId][preferredStableCoin]);
   }, [preferredStableCoin]);
 
   useEffect(() => {
@@ -192,7 +193,7 @@ export default function RawCrypto({
 
     const outputTokens = Object.fromEntries(
       paths.map((path) => {
-        const obj: SimpleToken | null = TokensByChainId[polygon.id][path.outputToken];
+        const obj: SimpleToken | null = TokensByChainId[polygon.id as keyof typeof TokensByChainId][path.outputToken];
         if (obj && path.outputToken) {
           return [path.outputToken, obj];
         } 
@@ -202,7 +203,7 @@ export default function RawCrypto({
 
     delete outputTokens.none;
 
-    setTargetTokens(outputTokens);
+    setTargetTokens(outputTokens as Record<string, SimpleToken>);
   }
 
 
@@ -233,7 +234,7 @@ export default function RawCrypto({
     if (!validateForm()) return;
 
     setIsLoading("processing");
-    if (differentToken && selectedToken && quote) {
+    if (differentToken && selectedToken && quote && user) {
       try {
         await withTimeout(
           convertAnyToAnyDirect(
@@ -399,7 +400,11 @@ export default function RawCrypto({
                     type="token"
                     tokens={targetTokens}
                     selectedToken={selectedToken}
-                    onSelect={(token: SimpleToken) => {
+                    onSelect={(token: SimpleToken | null) => {
+                      if (!token) {
+                        setSelectedToken(null);
+                        return;
+                      }
                       setSelectedToken(token);
                     }}
                   />

@@ -8,7 +8,7 @@ const preprocessDataForServer = (data: Record<string, any>) => {
       console.log("preprocessing",key, obj[key] )
 
       if (typeof value === "object" && value !== null) {
-        if (value.filename && value.id) {
+        if (value.createdAt && value.id) {
           // Replace the object with just the ID if it contains a filename
           obj[key] = value.id;
         } else if (Array.isArray(value)) {
@@ -23,6 +23,9 @@ const preprocessDataForServer = (data: Record<string, any>) => {
           recursiveProcess(value);
         }
       }
+
+      console.log("post",key, obj[key] )
+
 
       if(value === null){
         delete obj[key];

@@ -21,13 +21,13 @@ export default function TokenSelector({
   selectText,
   displayContent,
   disabled,
-}: TokenSelectorProps): JSX.Element {
+}: TokenSelectorProps): React.ReactNode {
   const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Filter tokens by name or id based on the search term
-  const filteredTokens = Object.keys(tokens).filter((tokenId) => {
-    const token = tokens[tokenId];
+  const filteredTokens = Object.keys(tokens || {}).filter((tokenId) => {
+    const token = tokens?.[tokenId];
     return (
       tokenId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (token?.name &&
@@ -93,12 +93,12 @@ export default function TokenSelector({
               <MenuItem key={tokenId} as={Fragment}>
                 <button
                   className="hover:bg-gray-100 group flex rounded-md items-center w-full px-2 py-2 text-sm"
-                  onClick={() => onSelect(tokens[tokenId])}
+                  onClick={() => onSelect(tokens?.[tokenId] || null)}
                 >
-                  {tokens[tokenId]?.icon ? (
+                  {tokens?.[tokenId]?.icon ? (
                     <Image
-                      src={tokens[tokenId].icon}
-                      alt={tokens[tokenId].name}
+                      src={tokens?.[tokenId]?.icon}
+                      alt={tokens?.[tokenId]?.name}
                       width={24}
                       height={24}
                       className="h-6 w-6 mr-2"
@@ -106,7 +106,7 @@ export default function TokenSelector({
                   ) : (
                     <div className="h-6 w-6 mr-2 bg-gray-500 rounded-full" />
                   )}
-                  <span>{tokens[tokenId]?.name || tokenId}</span>
+                  <span>{tokens?.[tokenId]?.name || tokenId}</span>
                 </button>
               </MenuItem>
             ))

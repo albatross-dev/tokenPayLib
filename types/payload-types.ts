@@ -23,35 +23,35 @@ export type EarlyBirdTransactionsArray =
  * via the `definition` "PaymentTypesArray".
  */
 export type PaymentTypesArray = {
-  acceptedCrypto?: ("USDC" | "EURS") | null;
+  acceptedCrypto?: ('USDC' | 'EURS') | null;
   name: string;
   useWhiteListPaymentMethod?: boolean | null;
   whiteList?: (string | Country)[] | null;
   blackList?: (string | Country)[] | null;
   type:
-    | "unlimit"
-    | "onramp_money"
-    | "bitcoin_vn"
-    | "bitcoin_vn_helpdesk"
-    | "koywe_helpdesk"
-    | "kotanipay_helpdesk"
-    | "coinhako_helpdesk"
-    | "swypt"
-    | "crypto"
-    | "ovex"
-    | "roma"
-    | "stasis"
-    | "stasis_crypto_only"
-    | "koywe_crypto_only"
-    | "koywe";
+    | 'unlimit'
+    | 'onramp_money'
+    | 'bitcoin_vn'
+    | 'bitcoin_vn_helpdesk'
+    | 'koywe_helpdesk'
+    | 'kotanipay_helpdesk'
+    | 'coinhako_helpdesk'
+    | 'swypt'
+    | 'crypto'
+    | 'ovex'
+    | 'roma'
+    | 'stasis'
+    | 'stasis_crypto_only'
+    | 'koywe_crypto_only'
+    | 'koywe';
   supportDeposit?: boolean | null;
-  onrampModality?: ("mobile_money" | "credit_card" | "bank_account") | null;
+  onrampModality?: ('mobile_money' | 'credit_card' | 'bank_account') | null;
   onrampFee?: number | null;
   onrampCommission?: number | null;
   onrampMinAmount?: number | null;
   onrampMaxAmount?: number | null;
   noWithdraw?: boolean | null;
-  withdrawModality: "mobile_money" | "bank_account" | "credit_card" | "crypto";
+  withdrawModality: 'mobile_money' | 'bank_account' | 'credit_card' | 'crypto';
   businessOnly?: boolean | null;
   privateOnly?: boolean | null;
   withdrawOnly?: boolean | null;
@@ -59,57 +59,78 @@ export type PaymentTypesArray = {
     | {
         currency?:
           | (
-              | "USD"
-              | "EUR"
-              | "VND"
-              | "AED"
-              | "ARS"
-              | "AUD"
-              | "BGN"
-              | "BOL"
-              | "BRL"
-              | "BWP"
-              | "CAD"
-              | "CHF"
-              | "CLP"
-              | "COP"
-              | "CRC"
-              | "CZK"
-              | "DKK"
-              | "ETB"
-              | "GBP"
-              | "GHS"
-              | "GTQ"
-              | "HKD"
-              | "IDR"
-              | "INR"
-              | "KES"
-              | "MKW"
-              | "MXN"
-              | "MYR"
-              | "NGN"
-              | "OMR"
-              | "PEN"
-              | "PHP"
-              | "PLN"
-              | "RON"
-              | "SGD"
-              | "TRY"
-              | "TZS"
-              | "UGX"
-              | "XOF"
-              | "XAF"
-              | "ZAR"
-              | "ZMW"
+              | 'USD'
+              | 'EUR'
+              | 'VND'
+              | 'AED'
+              | 'ARS'
+              | 'AUD'
+              | 'BGN'
+              | 'BOL'
+              | 'BRL'
+              | 'BWP'
+              | 'CAD'
+              | 'CHF'
+              | 'CLP'
+              | 'COP'
+              | 'CRC'
+              | 'CZK'
+              | 'DKK'
+              | 'ETB'
+              | 'GBP'
+              | 'GHS'
+              | 'GTQ'
+              | 'HKD'
+              | 'IDR'
+              | 'INR'
+              | 'KES'
+              | 'MKW'
+              | 'MXN'
+              | 'MYR'
+              | 'NGN'
+              | 'OMR'
+              | 'PEN'
+              | 'PHP'
+              | 'PLN'
+              | 'RON'
+              | 'SGD'
+              | 'TRY'
+              | 'TZS'
+              | 'UGX'
+              | 'XOF'
+              | 'XAF'
+              | 'ZAR'
+              | 'ZMW'
             )
           | null;
         id?: string | null;
       }[]
     | null;
   fiatTypeOnramp?:
-    | ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "10" | "12" | "14" | "16" | "17" | "21" | "27" | "29")
+    | (
+        | '1'
+        | '2'
+        | '3'
+        | '4'
+        | '5'
+        | '6'
+        | '7'
+        | '8'
+        | '9'
+        | '10'
+        | '12'
+        | '14'
+        | '16'
+        | '17'
+        | '19'
+        | '21'
+        | '27'
+        | '29'
+      )
     | null;
-  fiatTypeOfframp?: ("1" | "2" | "4" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "14" | "29") | null;
+  fiatTypeOfframp?:
+    | ('1' | '2' | '4' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '14' | '19' | '29' | '47' | '51')
+    | null;
   minAmount: number;
   maxAmount: number;
   fee: number;
@@ -141,8 +162,9 @@ export interface Config {
     countries: Country;
     transferMethod: TransferMethod;
     pool: Pool;
-    "payload-preferences": PayloadPreference;
-    "payload-migrations": PayloadMigration;
+    affiliate: Affiliate;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   globals: {
     mockEmailCredentials: MockEmailCredential;
@@ -252,7 +274,7 @@ export interface CheckoutSession {
   errorMessage?: string | null;
   errorMessageWebhook?: string | null;
   refundTxHash?: string | null;
-  paymentStatus?: ("pending" | "completed" | "failed" | "refundPending" | "refunded") | null;
+  paymentStatus?: ('pending' | 'completed' | 'failed' | 'refundPending' | 'refunded') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -299,7 +321,7 @@ export interface CheckoutConfig {
   webhooks?:
     | {
         webhook?: string | null;
-        event?: ("payment_success" | "payment_failed") | null;
+        event?: ('payment_success' | 'payment_failed') | null;
         id?: string | null;
       }[]
     | null;
@@ -328,7 +350,7 @@ export interface Currency {
   id: string;
   symbol?: string | null;
   cCode?: string | null;
-  type?: ("fiat" | "crypto") | null;
+  type?: ('fiat' | 'crypto') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -338,7 +360,7 @@ export interface Currency {
  */
 export interface Router {
   id: string;
-  routerType?: ("a" | "b") | null;
+  routerType?: ('a' | 'b') | null;
   name: string;
   symbol: string;
   cCode: string;
@@ -411,7 +433,9 @@ export interface CdnMedia {
  */
 export interface Vendor {
   id: string;
-  profileLanguage?: ("en" | "de" | "fr") | null;
+  affiliate?: (string | null) | Affiliate;
+  code?: string | null;
+  profileLanguage?: ('en' | 'de' | 'fr') | null;
   type: string;
   vendorPhone?: string | null;
   acceptThirdWeb?: boolean | null;
@@ -421,17 +445,17 @@ export interface Vendor {
   website?: string | null;
   informationStep?:
     | (
-        | "customerType"
-        | "businessInformation"
-        | "companyAddress"
-        | "bankInfo"
-        | "representativeInformation"
-        | "documents"
-        | "askForWallet"
-        | "askForKYC"
-        | "reviewKYC"
-        | "kycOngoing"
-        | "complete"
+        | 'customerType'
+        | 'businessInformation'
+        | 'companyAddress'
+        | 'bankInfo'
+        | 'representativeInformation'
+        | 'documents'
+        | 'askForWallet'
+        | 'askForKYC'
+        | 'reviewKYC'
+        | 'kycOngoing'
+        | 'complete'
       )
     | null;
   tkpOnline?: boolean | null;
@@ -443,28 +467,28 @@ export interface Vendor {
   vendorPrivacyPolicy?: string | null;
   vendorLegalType?:
     | (
-        | "e_k"
-        | "gbr"
-        | "ohg"
-        | "kg"
-        | "kgaa"
-        | "gmbh_ug_haftungsbeschraenkt"
-        | "ag"
-        | "se"
-        | "gmbh_ug_haftungsbeschraenkt_co_kg"
-        | "gmbh_ug_haftungsbeschraenkt_co_ohg"
-        | "gmbh_ug_haftungsbeschraenkt_co_kgaa"
-        | "ag_co_kg"
-        | "ag_co_ohg"
-        | "ag_co_kgaa"
-        | "se_co_kg"
-        | "se_co_ohg"
-        | "se_co_kgaa"
-        | "stiftung"
-        | "eingetragener_verein"
-        | "ggmbh_gug_haftungsbeschraenkt"
-        | "gag"
-        | "other"
+        | 'e_k'
+        | 'gbr'
+        | 'ohg'
+        | 'kg'
+        | 'kgaa'
+        | 'gmbh_ug_haftungsbeschraenkt'
+        | 'ag'
+        | 'se'
+        | 'gmbh_ug_haftungsbeschraenkt_co_kg'
+        | 'gmbh_ug_haftungsbeschraenkt_co_ohg'
+        | 'gmbh_ug_haftungsbeschraenkt_co_kgaa'
+        | 'ag_co_kg'
+        | 'ag_co_ohg'
+        | 'ag_co_kgaa'
+        | 'se_co_kg'
+        | 'se_co_ohg'
+        | 'se_co_kgaa'
+        | 'stiftung'
+        | 'eingetragener_verein'
+        | 'ggmbh_gug_haftungsbeschraenkt'
+        | 'gag'
+        | 'other'
       )
     | null;
   vendorIndustry?: string | null;
@@ -485,193 +509,193 @@ export interface Vendor {
   bankAddress?: string | null;
   bankCountry?:
     | (
-        | "DE"
-        | "US"
-        | "PS"
-        | "AF"
-        | "AL"
-        | "DZ"
-        | "AD"
-        | "AO"
-        | "AG"
-        | "AR"
-        | "AM"
-        | "AU"
-        | "AT"
-        | "AZ"
-        | "BS"
-        | "BH"
-        | "BD"
-        | "BB"
-        | "BE"
-        | "BZ"
-        | "BJ"
-        | "BT"
-        | "BO"
-        | "BA"
-        | "BW"
-        | "BR"
-        | "BN"
-        | "BG"
-        | "BF"
-        | "BI"
-        | "CV"
-        | "KH"
-        | "CM"
-        | "CA"
-        | "CF"
-        | "TD"
-        | "CL"
-        | "CN"
-        | "CO"
-        | "KM"
-        | "CD"
-        | "CG"
-        | "CR"
-        | "CI"
-        | "HR"
-        | "CU"
-        | "CY"
-        | "CZ"
-        | "DK"
-        | "DJ"
-        | "DM"
-        | "DO"
-        | "EC"
-        | "EG"
-        | "SV"
-        | "GQ"
-        | "ER"
-        | "EE"
-        | "SZ"
-        | "ET"
-        | "FJ"
-        | "FI"
-        | "FR"
-        | "GA"
-        | "GM"
-        | "GE"
-        | "GH"
-        | "GR"
-        | "GD"
-        | "GT"
-        | "GN"
-        | "GW"
-        | "GY"
-        | "HT"
-        | "HN"
-        | "HU"
-        | "IS"
-        | "IN"
-        | "ID"
-        | "IQ"
-        | "IE"
-        | "IL"
-        | "IT"
-        | "JM"
-        | "JP"
-        | "JO"
-        | "KZ"
-        | "KE"
-        | "KI"
-        | "KR"
-        | "KW"
-        | "KG"
-        | "LA"
-        | "LV"
-        | "LB"
-        | "LS"
-        | "LR"
-        | "LY"
-        | "LI"
-        | "LT"
-        | "LU"
-        | "MG"
-        | "MW"
-        | "MY"
-        | "MV"
-        | "ML"
-        | "MT"
-        | "MH"
-        | "MR"
-        | "MU"
-        | "MX"
-        | "FM"
-        | "MD"
-        | "MC"
-        | "MN"
-        | "ME"
-        | "MA"
-        | "MZ"
-        | "NA"
-        | "NR"
-        | "NP"
-        | "NL"
-        | "NZ"
-        | "NI"
-        | "NE"
-        | "NG"
-        | "MK"
-        | "NO"
-        | "OM"
-        | "PK"
-        | "PW"
-        | "PA"
-        | "PG"
-        | "PY"
-        | "PE"
-        | "PH"
-        | "PL"
-        | "PT"
-        | "QA"
-        | "RO"
-        | "RW"
-        | "KN"
-        | "LC"
-        | "VC"
-        | "WS"
-        | "SM"
-        | "ST"
-        | "SA"
-        | "SN"
-        | "RS"
-        | "SC"
-        | "SL"
-        | "SG"
-        | "SK"
-        | "SI"
-        | "SB"
-        | "SO"
-        | "ZA"
-        | "SS"
-        | "ES"
-        | "LK"
-        | "SD"
-        | "SR"
-        | "SE"
-        | "CH"
-        | "TJ"
-        | "TZ"
-        | "TH"
-        | "TL"
-        | "TG"
-        | "TO"
-        | "TT"
-        | "TN"
-        | "TR"
-        | "TM"
-        | "TV"
-        | "UG"
-        | "AE"
-        | "GB"
-        | "UY"
-        | "UZ"
-        | "VU"
-        | "VE"
-        | "VN"
-        | "YE"
-        | "ZM"
-        | "ZW"
+        | 'DE'
+        | 'US'
+        | 'PS'
+        | 'AF'
+        | 'AL'
+        | 'DZ'
+        | 'AD'
+        | 'AO'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BR'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CO'
+        | 'KM'
+        | 'CD'
+        | 'CG'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'GH'
+        | 'GR'
+        | 'GD'
+        | 'GT'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IQ'
+        | 'IE'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MR'
+        | 'MU'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MA'
+        | 'MZ'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'MK'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PL'
+        | 'PT'
+        | 'QA'
+        | 'RO'
+        | 'RW'
+        | 'KN'
+        | 'LC'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SE'
+        | 'CH'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TV'
+        | 'UG'
+        | 'AE'
+        | 'GB'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
       )
     | null;
   bankCity?: string | null;
@@ -688,193 +712,193 @@ export interface Vendor {
   vendorCity?: string | null;
   vendorCountry?:
     | (
-        | "DE"
-        | "US"
-        | "PS"
-        | "AF"
-        | "AL"
-        | "DZ"
-        | "AD"
-        | "AO"
-        | "AG"
-        | "AR"
-        | "AM"
-        | "AU"
-        | "AT"
-        | "AZ"
-        | "BS"
-        | "BH"
-        | "BD"
-        | "BB"
-        | "BE"
-        | "BZ"
-        | "BJ"
-        | "BT"
-        | "BO"
-        | "BA"
-        | "BW"
-        | "BR"
-        | "BN"
-        | "BG"
-        | "BF"
-        | "BI"
-        | "CV"
-        | "KH"
-        | "CM"
-        | "CA"
-        | "CF"
-        | "TD"
-        | "CL"
-        | "CN"
-        | "CO"
-        | "KM"
-        | "CD"
-        | "CG"
-        | "CR"
-        | "CI"
-        | "HR"
-        | "CU"
-        | "CY"
-        | "CZ"
-        | "DK"
-        | "DJ"
-        | "DM"
-        | "DO"
-        | "EC"
-        | "EG"
-        | "SV"
-        | "GQ"
-        | "ER"
-        | "EE"
-        | "SZ"
-        | "ET"
-        | "FJ"
-        | "FI"
-        | "FR"
-        | "GA"
-        | "GM"
-        | "GE"
-        | "GH"
-        | "GR"
-        | "GD"
-        | "GT"
-        | "GN"
-        | "GW"
-        | "GY"
-        | "HT"
-        | "HN"
-        | "HU"
-        | "IS"
-        | "IN"
-        | "ID"
-        | "IQ"
-        | "IE"
-        | "IL"
-        | "IT"
-        | "JM"
-        | "JP"
-        | "JO"
-        | "KZ"
-        | "KE"
-        | "KI"
-        | "KR"
-        | "KW"
-        | "KG"
-        | "LA"
-        | "LV"
-        | "LB"
-        | "LS"
-        | "LR"
-        | "LY"
-        | "LI"
-        | "LT"
-        | "LU"
-        | "MG"
-        | "MW"
-        | "MY"
-        | "MV"
-        | "ML"
-        | "MT"
-        | "MH"
-        | "MR"
-        | "MU"
-        | "MX"
-        | "FM"
-        | "MD"
-        | "MC"
-        | "MN"
-        | "ME"
-        | "MA"
-        | "MZ"
-        | "NA"
-        | "NR"
-        | "NP"
-        | "NL"
-        | "NZ"
-        | "NI"
-        | "NE"
-        | "NG"
-        | "MK"
-        | "NO"
-        | "OM"
-        | "PK"
-        | "PW"
-        | "PA"
-        | "PG"
-        | "PY"
-        | "PE"
-        | "PH"
-        | "PL"
-        | "PT"
-        | "QA"
-        | "RO"
-        | "RW"
-        | "KN"
-        | "LC"
-        | "VC"
-        | "WS"
-        | "SM"
-        | "ST"
-        | "SA"
-        | "SN"
-        | "RS"
-        | "SC"
-        | "SL"
-        | "SG"
-        | "SK"
-        | "SI"
-        | "SB"
-        | "SO"
-        | "ZA"
-        | "SS"
-        | "ES"
-        | "LK"
-        | "SD"
-        | "SR"
-        | "SE"
-        | "CH"
-        | "TJ"
-        | "TZ"
-        | "TH"
-        | "TL"
-        | "TG"
-        | "TO"
-        | "TT"
-        | "TN"
-        | "TR"
-        | "TM"
-        | "TV"
-        | "UG"
-        | "AE"
-        | "GB"
-        | "UY"
-        | "UZ"
-        | "VU"
-        | "VE"
-        | "VN"
-        | "YE"
-        | "ZM"
-        | "ZW"
+        | 'DE'
+        | 'US'
+        | 'PS'
+        | 'AF'
+        | 'AL'
+        | 'DZ'
+        | 'AD'
+        | 'AO'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BR'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CO'
+        | 'KM'
+        | 'CD'
+        | 'CG'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'GH'
+        | 'GR'
+        | 'GD'
+        | 'GT'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IQ'
+        | 'IE'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MR'
+        | 'MU'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MA'
+        | 'MZ'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'MK'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PL'
+        | 'PT'
+        | 'QA'
+        | 'RO'
+        | 'RW'
+        | 'KN'
+        | 'LC'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SE'
+        | 'CH'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TV'
+        | 'UG'
+        | 'AE'
+        | 'GB'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
       )
     | null;
   vendorProofOfResidence?:
@@ -959,193 +983,193 @@ export interface Vendor {
         shareholderZip?: string | null;
         shareholderCountry?:
           | (
-              | "DE"
-              | "US"
-              | "PS"
-              | "AF"
-              | "AL"
-              | "DZ"
-              | "AD"
-              | "AO"
-              | "AG"
-              | "AR"
-              | "AM"
-              | "AU"
-              | "AT"
-              | "AZ"
-              | "BS"
-              | "BH"
-              | "BD"
-              | "BB"
-              | "BE"
-              | "BZ"
-              | "BJ"
-              | "BT"
-              | "BO"
-              | "BA"
-              | "BW"
-              | "BR"
-              | "BN"
-              | "BG"
-              | "BF"
-              | "BI"
-              | "CV"
-              | "KH"
-              | "CM"
-              | "CA"
-              | "CF"
-              | "TD"
-              | "CL"
-              | "CN"
-              | "CO"
-              | "KM"
-              | "CD"
-              | "CG"
-              | "CR"
-              | "CI"
-              | "HR"
-              | "CU"
-              | "CY"
-              | "CZ"
-              | "DK"
-              | "DJ"
-              | "DM"
-              | "DO"
-              | "EC"
-              | "EG"
-              | "SV"
-              | "GQ"
-              | "ER"
-              | "EE"
-              | "SZ"
-              | "ET"
-              | "FJ"
-              | "FI"
-              | "FR"
-              | "GA"
-              | "GM"
-              | "GE"
-              | "GH"
-              | "GR"
-              | "GD"
-              | "GT"
-              | "GN"
-              | "GW"
-              | "GY"
-              | "HT"
-              | "HN"
-              | "HU"
-              | "IS"
-              | "IN"
-              | "ID"
-              | "IQ"
-              | "IE"
-              | "IL"
-              | "IT"
-              | "JM"
-              | "JP"
-              | "JO"
-              | "KZ"
-              | "KE"
-              | "KI"
-              | "KR"
-              | "KW"
-              | "KG"
-              | "LA"
-              | "LV"
-              | "LB"
-              | "LS"
-              | "LR"
-              | "LY"
-              | "LI"
-              | "LT"
-              | "LU"
-              | "MG"
-              | "MW"
-              | "MY"
-              | "MV"
-              | "ML"
-              | "MT"
-              | "MH"
-              | "MR"
-              | "MU"
-              | "MX"
-              | "FM"
-              | "MD"
-              | "MC"
-              | "MN"
-              | "ME"
-              | "MA"
-              | "MZ"
-              | "NA"
-              | "NR"
-              | "NP"
-              | "NL"
-              | "NZ"
-              | "NI"
-              | "NE"
-              | "NG"
-              | "MK"
-              | "NO"
-              | "OM"
-              | "PK"
-              | "PW"
-              | "PA"
-              | "PG"
-              | "PY"
-              | "PE"
-              | "PH"
-              | "PL"
-              | "PT"
-              | "QA"
-              | "RO"
-              | "RW"
-              | "KN"
-              | "LC"
-              | "VC"
-              | "WS"
-              | "SM"
-              | "ST"
-              | "SA"
-              | "SN"
-              | "RS"
-              | "SC"
-              | "SL"
-              | "SG"
-              | "SK"
-              | "SI"
-              | "SB"
-              | "SO"
-              | "ZA"
-              | "SS"
-              | "ES"
-              | "LK"
-              | "SD"
-              | "SR"
-              | "SE"
-              | "CH"
-              | "TJ"
-              | "TZ"
-              | "TH"
-              | "TL"
-              | "TG"
-              | "TO"
-              | "TT"
-              | "TN"
-              | "TR"
-              | "TM"
-              | "TV"
-              | "UG"
-              | "AE"
-              | "GB"
-              | "UY"
-              | "UZ"
-              | "VU"
-              | "VE"
-              | "VN"
-              | "YE"
-              | "ZM"
-              | "ZW"
+              | 'DE'
+              | 'US'
+              | 'PS'
+              | 'AF'
+              | 'AL'
+              | 'DZ'
+              | 'AD'
+              | 'AO'
+              | 'AG'
+              | 'AR'
+              | 'AM'
+              | 'AU'
+              | 'AT'
+              | 'AZ'
+              | 'BS'
+              | 'BH'
+              | 'BD'
+              | 'BB'
+              | 'BE'
+              | 'BZ'
+              | 'BJ'
+              | 'BT'
+              | 'BO'
+              | 'BA'
+              | 'BW'
+              | 'BR'
+              | 'BN'
+              | 'BG'
+              | 'BF'
+              | 'BI'
+              | 'CV'
+              | 'KH'
+              | 'CM'
+              | 'CA'
+              | 'CF'
+              | 'TD'
+              | 'CL'
+              | 'CN'
+              | 'CO'
+              | 'KM'
+              | 'CD'
+              | 'CG'
+              | 'CR'
+              | 'CI'
+              | 'HR'
+              | 'CU'
+              | 'CY'
+              | 'CZ'
+              | 'DK'
+              | 'DJ'
+              | 'DM'
+              | 'DO'
+              | 'EC'
+              | 'EG'
+              | 'SV'
+              | 'GQ'
+              | 'ER'
+              | 'EE'
+              | 'SZ'
+              | 'ET'
+              | 'FJ'
+              | 'FI'
+              | 'FR'
+              | 'GA'
+              | 'GM'
+              | 'GE'
+              | 'GH'
+              | 'GR'
+              | 'GD'
+              | 'GT'
+              | 'GN'
+              | 'GW'
+              | 'GY'
+              | 'HT'
+              | 'HN'
+              | 'HU'
+              | 'IS'
+              | 'IN'
+              | 'ID'
+              | 'IQ'
+              | 'IE'
+              | 'IL'
+              | 'IT'
+              | 'JM'
+              | 'JP'
+              | 'JO'
+              | 'KZ'
+              | 'KE'
+              | 'KI'
+              | 'KR'
+              | 'KW'
+              | 'KG'
+              | 'LA'
+              | 'LV'
+              | 'LB'
+              | 'LS'
+              | 'LR'
+              | 'LY'
+              | 'LI'
+              | 'LT'
+              | 'LU'
+              | 'MG'
+              | 'MW'
+              | 'MY'
+              | 'MV'
+              | 'ML'
+              | 'MT'
+              | 'MH'
+              | 'MR'
+              | 'MU'
+              | 'MX'
+              | 'FM'
+              | 'MD'
+              | 'MC'
+              | 'MN'
+              | 'ME'
+              | 'MA'
+              | 'MZ'
+              | 'NA'
+              | 'NR'
+              | 'NP'
+              | 'NL'
+              | 'NZ'
+              | 'NI'
+              | 'NE'
+              | 'NG'
+              | 'MK'
+              | 'NO'
+              | 'OM'
+              | 'PK'
+              | 'PW'
+              | 'PA'
+              | 'PG'
+              | 'PY'
+              | 'PE'
+              | 'PH'
+              | 'PL'
+              | 'PT'
+              | 'QA'
+              | 'RO'
+              | 'RW'
+              | 'KN'
+              | 'LC'
+              | 'VC'
+              | 'WS'
+              | 'SM'
+              | 'ST'
+              | 'SA'
+              | 'SN'
+              | 'RS'
+              | 'SC'
+              | 'SL'
+              | 'SG'
+              | 'SK'
+              | 'SI'
+              | 'SB'
+              | 'SO'
+              | 'ZA'
+              | 'SS'
+              | 'ES'
+              | 'LK'
+              | 'SD'
+              | 'SR'
+              | 'SE'
+              | 'CH'
+              | 'TJ'
+              | 'TZ'
+              | 'TH'
+              | 'TL'
+              | 'TG'
+              | 'TO'
+              | 'TT'
+              | 'TN'
+              | 'TR'
+              | 'TM'
+              | 'TV'
+              | 'UG'
+              | 'AE'
+              | 'GB'
+              | 'UY'
+              | 'UZ'
+              | 'VU'
+              | 'VE'
+              | 'VN'
+              | 'YE'
+              | 'ZM'
+              | 'ZW'
             )
           | null;
         id?: string | null;
@@ -1160,7 +1184,7 @@ export interface Vendor {
     | null;
   walletAddress?: string | null;
   arePaymentsRequired?: boolean | null;
-  bitcoinVNStatus?: ("unverified" | "verifyIdentity" | "verifyResidence" | "in_progress" | "verified") | null;
+  bitcoinVNStatus?: ('unverified' | 'verifyIdentity' | 'verifyResidence' | 'in_progress' | 'verified') | null;
   bitcoinVNAPIkey?: string | null;
   bitcoinVNpass?: string | null;
   bitcoinVNIdentityDocs?:
@@ -1182,71 +1206,71 @@ export interface Vendor {
       }[]
     | null;
   currentSwyptOnRampTransaction?: (string | null) | FiatTransaction;
-  koyweState?: ("unverified" | "in_progress" | "verified") | null;
-  koyweDocumentType?: ("DNI" | "CUIT" | "RUT" | "CED_CIU" | "CED_EXT" | "RFC" | "CURP" | "DNI" | "RUC") | null;
+  koyweState?: ('unverified' | 'in_progress' | 'verified') | null;
+  koyweDocumentType?: ('DNI' | 'CUIT' | 'RUT' | 'CED_CIU' | 'CED_EXT' | 'RFC' | 'CURP' | 'DNI' | 'RUC') | null;
   koyweDocumentNumber?: string | null;
-  koyweDocumentCountry?: ("ARG" | "CHL" | "COL" | "PER" | "MEX") | null;
+  koyweDocumentCountry?: ('ARG' | 'CHL' | 'COL' | 'PER' | 'MEX') | null;
   koyweSupportedNationality?:
     | (
-        | "ATG"
-        | "ARG"
-        | "BHS"
-        | "BRB"
-        | "BLZ"
-        | "BOL"
-        | "BRA"
-        | "CAN"
-        | "CHL"
-        | "COL"
-        | "CRI"
-        | "CUB"
-        | "DMA"
-        | "DOM"
-        | "ECU"
-        | "SLV"
-        | "GRD"
-        | "GTM"
-        | "GUY"
-        | "HTI"
-        | "HND"
-        | "JAM"
-        | "MEX"
-        | "NIC"
-        | "PAN"
-        | "PRY"
-        | "PER"
-        | "PRI"
-        | "KNA"
-        | "LCA"
-        | "VCT"
-        | "SUR"
-        | "TTO"
-        | "USA"
-        | "URY"
-        | "VEN"
-        | "AIA"
-        | "ABW"
-        | "BMU"
-        | "BES"
-        | "CYM"
-        | "SGS"
-        | "GRL"
-        | "GLP"
-        | "FLK"
-        | "MTQ"
-        | "MSR"
-        | "ANT"
-        | "TCA"
-        | "VGB"
-        | "VIR"
+        | 'ATG'
+        | 'ARG'
+        | 'BHS'
+        | 'BRB'
+        | 'BLZ'
+        | 'BOL'
+        | 'BRA'
+        | 'CAN'
+        | 'CHL'
+        | 'COL'
+        | 'CRI'
+        | 'CUB'
+        | 'DMA'
+        | 'DOM'
+        | 'ECU'
+        | 'SLV'
+        | 'GRD'
+        | 'GTM'
+        | 'GUY'
+        | 'HTI'
+        | 'HND'
+        | 'JAM'
+        | 'MEX'
+        | 'NIC'
+        | 'PAN'
+        | 'PRY'
+        | 'PER'
+        | 'PRI'
+        | 'KNA'
+        | 'LCA'
+        | 'VCT'
+        | 'SUR'
+        | 'TTO'
+        | 'USA'
+        | 'URY'
+        | 'VEN'
+        | 'AIA'
+        | 'ABW'
+        | 'BMU'
+        | 'BES'
+        | 'CYM'
+        | 'SGS'
+        | 'GRL'
+        | 'GLP'
+        | 'FLK'
+        | 'MTQ'
+        | 'MSR'
+        | 'ANT'
+        | 'TCA'
+        | 'VGB'
+        | 'VIR'
       )
     | null;
-  ovexState?: ("unverified" | "in_progress" | "verified") | null;
+  ovexState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentOvexTransaction?: (string | null) | FiatTransaction;
   ovexPurpose?: string | null;
-  romaState?: ("unverified" | "in_progress" | "verified") | null;
+  romaState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentRomaTransaction?: (string | null) | FiatTransaction;
-  bitcoinVNHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  bitcoinVNHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentBitcoinVNHelpdeskTransaction?: (string | null) | FiatTransaction;
   bitcoinVNDocs?:
     | {
@@ -1254,17 +1278,17 @@ export interface Vendor {
         id?: string | null;
       }[]
     | null;
-  koyweHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  koyweHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentKoyweHelpdeskTransaction?: (string | null) | FiatTransaction;
   koyweVolume?: string | null;
   koyweComment?: string | null;
-  kotaniPayHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  kotaniPayHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentKotaniPayHelpdeskTransaction?: (string | null) | FiatTransaction;
-  coinhakoHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  coinhakoHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentCoinhakoHelpdeskTransaction?: (string | null) | FiatTransaction;
   stasisRepresentative?: string | null;
   stasisVolume?: string | null;
-  stasisRepresentativeIdentityType?: ("Passport" | "National ID" | "Driver license" | "Residence permit") | null;
+  stasisRepresentativeIdentityType?: ('Passport' | 'National ID' | 'Driver license' | 'Residence permit') | null;
   stasisRepresentativeProofOfIdentity?:
     | {
         representativeProofOfIdentityPage?: string | Document | null;
@@ -1281,7 +1305,7 @@ export interface Vendor {
   stasisKYCUUID?: string | null;
   stasisKYCLevelUUID?: string | null;
   stasisKYBStep?:
-    | ("createStasisAccount" | "startKYB" | "livenessCheck" | "companyInfo" | "kybOngoing" | "approved")
+    | ('createStasisAccount' | 'startKYB' | 'livenessCheck' | 'companyInfo' | 'kybOngoing' | 'approved')
     | null;
   stasisKYBStatus?: string | null;
   euroEAccount?: string | null;
@@ -1298,6 +1322,18 @@ export interface Vendor {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "affiliate".
+ */
+export interface Affiliate {
+  id: string;
+  name?: string | null;
+  logo?: string | CdnMedia | null;
+  code?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1329,21 +1365,21 @@ export interface FiatTransaction {
   requestChatId?: string | null;
   partner?:
     | (
-        | "unlimit"
-        | "onramp_money"
-        | "bitcoin_vn"
-        | "bitcoin_vn_helpdesk"
-        | "swypt"
-        | "koywe"
-        | "crypto"
-        | "ovex"
-        | "roma"
-        | "stasis"
-        | "stasis_crypto_only"
-        | "koywe_crypto_only"
-        | "koywe_helpdesk"
-        | "kotanipay_helpdesk"
-        | "coinhako_helpdesk"
+        | 'unlimit'
+        | 'onramp_money'
+        | 'bitcoin_vn'
+        | 'bitcoin_vn_helpdesk'
+        | 'swypt'
+        | 'koywe'
+        | 'crypto'
+        | 'ovex'
+        | 'roma'
+        | 'stasis'
+        | 'stasis_crypto_only'
+        | 'koywe_crypto_only'
+        | 'koywe_helpdesk'
+        | 'kotanipay_helpdesk'
+        | 'coinhako_helpdesk'
       )
     | null;
   sendingWallet?: string | null;
@@ -1372,7 +1408,7 @@ export interface FiatTransaction {
   transactionHash?: string | null;
   toNetwork?: string | null;
   endUserUUID?: string | null;
-  type?: ("Withdraw" | "Deposit") | null;
+  type?: ('Withdraw' | 'Deposit') | null;
   status?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1383,13 +1419,15 @@ export interface FiatTransaction {
  */
 export interface Consumer {
   id: string;
+  affiliate?: (string | null) | Affiliate;
+  code?: string | null;
   earlyBirdTransactions?: EarlyBirdTransactionsArray;
   requestingWallet?: boolean | null;
   referenceWallet?: string | null;
   requestingWalletStaking?: boolean | null;
   referenceWalletStaking?: string | null;
   stakingStartDate?: string | null;
-  stakingDuration?: ("6" | "12" | "24" | "36" | "48" | "60") | null;
+  stakingDuration?: ('6' | '12' | '24' | '36' | '48' | '60') | null;
   stakedAmount?: number | null;
   automaticReinvest?: boolean | null;
   emailVerified?: boolean | null;
@@ -1405,29 +1443,29 @@ export interface Consumer {
   };
   lastAddLiquidity?: string | null;
   lastRemoveLiquidity?: string | null;
-  kycStatus?: ("notStarted" | "pending" | "approved" | "rejected") | null;
+  kycStatus?: ('notStarted' | 'pending' | 'approved' | 'rejected') | null;
   livenessStatus?:
     | (
-        | "notStarted"
-        | "pending"
-        | "approved"
-        | "resubmission_requested"
-        | "review"
-        | "declined"
-        | "expired"
-        | "abandoned"
+        | 'notStarted'
+        | 'pending'
+        | 'approved'
+        | 'resubmission_requested'
+        | 'review'
+        | 'declined'
+        | 'expired'
+        | 'abandoned'
       )
     | null;
   informationStep?:
     | (
-        | "welcome"
-        | "askForWallet"
-        | "personalInformation"
-        | "addressInformation"
-        | "bankInformation"
-        | "livenessCheck"
-        | "kycOngoing"
-        | "complete"
+        | 'welcome'
+        | 'askForWallet'
+        | 'personalInformation'
+        | 'addressInformation'
+        | 'bankInformation'
+        | 'livenessCheck'
+        | 'kycOngoing'
+        | 'complete'
       )
     | null;
   useTWWallet?: boolean | null;
@@ -1437,384 +1475,384 @@ export interface Consumer {
   birthday?: string | null;
   nationality?:
     | (
-        | "DE"
-        | "US"
-        | "PS"
-        | "AF"
-        | "AL"
-        | "DZ"
-        | "AD"
-        | "AO"
-        | "AG"
-        | "AR"
-        | "AM"
-        | "AU"
-        | "AT"
-        | "AZ"
-        | "BS"
-        | "BH"
-        | "BD"
-        | "BB"
-        | "BE"
-        | "BZ"
-        | "BJ"
-        | "BT"
-        | "BO"
-        | "BA"
-        | "BW"
-        | "BR"
-        | "BN"
-        | "BG"
-        | "BF"
-        | "BI"
-        | "CV"
-        | "KH"
-        | "CM"
-        | "CA"
-        | "CF"
-        | "TD"
-        | "CL"
-        | "CN"
-        | "CO"
-        | "KM"
-        | "CD"
-        | "CG"
-        | "CR"
-        | "CI"
-        | "HR"
-        | "CU"
-        | "CY"
-        | "CZ"
-        | "DK"
-        | "DJ"
-        | "DM"
-        | "DO"
-        | "EC"
-        | "EG"
-        | "SV"
-        | "GQ"
-        | "ER"
-        | "EE"
-        | "SZ"
-        | "ET"
-        | "FJ"
-        | "FI"
-        | "FR"
-        | "GA"
-        | "GM"
-        | "GE"
-        | "GH"
-        | "GR"
-        | "GD"
-        | "GT"
-        | "GN"
-        | "GW"
-        | "GY"
-        | "HT"
-        | "HN"
-        | "HU"
-        | "IS"
-        | "IN"
-        | "ID"
-        | "IQ"
-        | "IE"
-        | "IL"
-        | "IT"
-        | "JM"
-        | "JP"
-        | "JO"
-        | "KZ"
-        | "KE"
-        | "KI"
-        | "KR"
-        | "KW"
-        | "KG"
-        | "LA"
-        | "LV"
-        | "LB"
-        | "LS"
-        | "LR"
-        | "LY"
-        | "LI"
-        | "LT"
-        | "LU"
-        | "MG"
-        | "MW"
-        | "MY"
-        | "MV"
-        | "ML"
-        | "MT"
-        | "MH"
-        | "MR"
-        | "MU"
-        | "MX"
-        | "FM"
-        | "MD"
-        | "MC"
-        | "MN"
-        | "ME"
-        | "MA"
-        | "MZ"
-        | "NA"
-        | "NR"
-        | "NP"
-        | "NL"
-        | "NZ"
-        | "NI"
-        | "NE"
-        | "NG"
-        | "MK"
-        | "NO"
-        | "OM"
-        | "PK"
-        | "PW"
-        | "PA"
-        | "PG"
-        | "PY"
-        | "PE"
-        | "PH"
-        | "PL"
-        | "PT"
-        | "QA"
-        | "RO"
-        | "RW"
-        | "KN"
-        | "LC"
-        | "VC"
-        | "WS"
-        | "SM"
-        | "ST"
-        | "SA"
-        | "SN"
-        | "RS"
-        | "SC"
-        | "SL"
-        | "SG"
-        | "SK"
-        | "SI"
-        | "SB"
-        | "SO"
-        | "ZA"
-        | "SS"
-        | "ES"
-        | "LK"
-        | "SD"
-        | "SR"
-        | "SE"
-        | "CH"
-        | "TJ"
-        | "TZ"
-        | "TH"
-        | "TL"
-        | "TG"
-        | "TO"
-        | "TT"
-        | "TN"
-        | "TR"
-        | "TM"
-        | "TV"
-        | "UG"
-        | "AE"
-        | "GB"
-        | "UY"
-        | "UZ"
-        | "VU"
-        | "VE"
-        | "VN"
-        | "YE"
-        | "ZM"
-        | "ZW"
+        | 'DE'
+        | 'US'
+        | 'PS'
+        | 'AF'
+        | 'AL'
+        | 'DZ'
+        | 'AD'
+        | 'AO'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BR'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CO'
+        | 'KM'
+        | 'CD'
+        | 'CG'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'GH'
+        | 'GR'
+        | 'GD'
+        | 'GT'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IQ'
+        | 'IE'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MR'
+        | 'MU'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MA'
+        | 'MZ'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'MK'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PL'
+        | 'PT'
+        | 'QA'
+        | 'RO'
+        | 'RW'
+        | 'KN'
+        | 'LC'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SE'
+        | 'CH'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TV'
+        | 'UG'
+        | 'AE'
+        | 'GB'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
       )
     | null;
   country?:
     | (
-        | "DE"
-        | "US"
-        | "PS"
-        | "AF"
-        | "AL"
-        | "DZ"
-        | "AD"
-        | "AO"
-        | "AG"
-        | "AR"
-        | "AM"
-        | "AU"
-        | "AT"
-        | "AZ"
-        | "BS"
-        | "BH"
-        | "BD"
-        | "BB"
-        | "BE"
-        | "BZ"
-        | "BJ"
-        | "BT"
-        | "BO"
-        | "BA"
-        | "BW"
-        | "BR"
-        | "BN"
-        | "BG"
-        | "BF"
-        | "BI"
-        | "CV"
-        | "KH"
-        | "CM"
-        | "CA"
-        | "CF"
-        | "TD"
-        | "CL"
-        | "CN"
-        | "CO"
-        | "KM"
-        | "CD"
-        | "CG"
-        | "CR"
-        | "CI"
-        | "HR"
-        | "CU"
-        | "CY"
-        | "CZ"
-        | "DK"
-        | "DJ"
-        | "DM"
-        | "DO"
-        | "EC"
-        | "EG"
-        | "SV"
-        | "GQ"
-        | "ER"
-        | "EE"
-        | "SZ"
-        | "ET"
-        | "FJ"
-        | "FI"
-        | "FR"
-        | "GA"
-        | "GM"
-        | "GE"
-        | "GH"
-        | "GR"
-        | "GD"
-        | "GT"
-        | "GN"
-        | "GW"
-        | "GY"
-        | "HT"
-        | "HN"
-        | "HU"
-        | "IS"
-        | "IN"
-        | "ID"
-        | "IQ"
-        | "IE"
-        | "IL"
-        | "IT"
-        | "JM"
-        | "JP"
-        | "JO"
-        | "KZ"
-        | "KE"
-        | "KI"
-        | "KR"
-        | "KW"
-        | "KG"
-        | "LA"
-        | "LV"
-        | "LB"
-        | "LS"
-        | "LR"
-        | "LY"
-        | "LI"
-        | "LT"
-        | "LU"
-        | "MG"
-        | "MW"
-        | "MY"
-        | "MV"
-        | "ML"
-        | "MT"
-        | "MH"
-        | "MR"
-        | "MU"
-        | "MX"
-        | "FM"
-        | "MD"
-        | "MC"
-        | "MN"
-        | "ME"
-        | "MA"
-        | "MZ"
-        | "NA"
-        | "NR"
-        | "NP"
-        | "NL"
-        | "NZ"
-        | "NI"
-        | "NE"
-        | "NG"
-        | "MK"
-        | "NO"
-        | "OM"
-        | "PK"
-        | "PW"
-        | "PA"
-        | "PG"
-        | "PY"
-        | "PE"
-        | "PH"
-        | "PL"
-        | "PT"
-        | "QA"
-        | "RO"
-        | "RW"
-        | "KN"
-        | "LC"
-        | "VC"
-        | "WS"
-        | "SM"
-        | "ST"
-        | "SA"
-        | "SN"
-        | "RS"
-        | "SC"
-        | "SL"
-        | "SG"
-        | "SK"
-        | "SI"
-        | "SB"
-        | "SO"
-        | "ZA"
-        | "SS"
-        | "ES"
-        | "LK"
-        | "SD"
-        | "SR"
-        | "SE"
-        | "CH"
-        | "TJ"
-        | "TZ"
-        | "TH"
-        | "TL"
-        | "TG"
-        | "TO"
-        | "TT"
-        | "TN"
-        | "TR"
-        | "TM"
-        | "TV"
-        | "UG"
-        | "AE"
-        | "GB"
-        | "UY"
-        | "UZ"
-        | "VU"
-        | "VE"
-        | "VN"
-        | "YE"
-        | "ZM"
-        | "ZW"
+        | 'DE'
+        | 'US'
+        | 'PS'
+        | 'AF'
+        | 'AL'
+        | 'DZ'
+        | 'AD'
+        | 'AO'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BR'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CO'
+        | 'KM'
+        | 'CD'
+        | 'CG'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'GH'
+        | 'GR'
+        | 'GD'
+        | 'GT'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IQ'
+        | 'IE'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MR'
+        | 'MU'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MA'
+        | 'MZ'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'MK'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PL'
+        | 'PT'
+        | 'QA'
+        | 'RO'
+        | 'RW'
+        | 'KN'
+        | 'LC'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SE'
+        | 'CH'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TV'
+        | 'UG'
+        | 'AE'
+        | 'GB'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
       )
     | null;
   taxId?: string | null;
@@ -1830,200 +1868,200 @@ export interface Consumer {
     postalCode?: string | null;
     country?:
       | (
-          | "DE"
-          | "US"
-          | "PS"
-          | "AF"
-          | "AL"
-          | "DZ"
-          | "AD"
-          | "AO"
-          | "AG"
-          | "AR"
-          | "AM"
-          | "AU"
-          | "AT"
-          | "AZ"
-          | "BS"
-          | "BH"
-          | "BD"
-          | "BB"
-          | "BE"
-          | "BZ"
-          | "BJ"
-          | "BT"
-          | "BO"
-          | "BA"
-          | "BW"
-          | "BR"
-          | "BN"
-          | "BG"
-          | "BF"
-          | "BI"
-          | "CV"
-          | "KH"
-          | "CM"
-          | "CA"
-          | "CF"
-          | "TD"
-          | "CL"
-          | "CN"
-          | "CO"
-          | "KM"
-          | "CD"
-          | "CG"
-          | "CR"
-          | "CI"
-          | "HR"
-          | "CU"
-          | "CY"
-          | "CZ"
-          | "DK"
-          | "DJ"
-          | "DM"
-          | "DO"
-          | "EC"
-          | "EG"
-          | "SV"
-          | "GQ"
-          | "ER"
-          | "EE"
-          | "SZ"
-          | "ET"
-          | "FJ"
-          | "FI"
-          | "FR"
-          | "GA"
-          | "GM"
-          | "GE"
-          | "GH"
-          | "GR"
-          | "GD"
-          | "GT"
-          | "GN"
-          | "GW"
-          | "GY"
-          | "HT"
-          | "HN"
-          | "HU"
-          | "IS"
-          | "IN"
-          | "ID"
-          | "IQ"
-          | "IE"
-          | "IL"
-          | "IT"
-          | "JM"
-          | "JP"
-          | "JO"
-          | "KZ"
-          | "KE"
-          | "KI"
-          | "KR"
-          | "KW"
-          | "KG"
-          | "LA"
-          | "LV"
-          | "LB"
-          | "LS"
-          | "LR"
-          | "LY"
-          | "LI"
-          | "LT"
-          | "LU"
-          | "MG"
-          | "MW"
-          | "MY"
-          | "MV"
-          | "ML"
-          | "MT"
-          | "MH"
-          | "MR"
-          | "MU"
-          | "MX"
-          | "FM"
-          | "MD"
-          | "MC"
-          | "MN"
-          | "ME"
-          | "MA"
-          | "MZ"
-          | "NA"
-          | "NR"
-          | "NP"
-          | "NL"
-          | "NZ"
-          | "NI"
-          | "NE"
-          | "NG"
-          | "MK"
-          | "NO"
-          | "OM"
-          | "PK"
-          | "PW"
-          | "PA"
-          | "PG"
-          | "PY"
-          | "PE"
-          | "PH"
-          | "PL"
-          | "PT"
-          | "QA"
-          | "RO"
-          | "RW"
-          | "KN"
-          | "LC"
-          | "VC"
-          | "WS"
-          | "SM"
-          | "ST"
-          | "SA"
-          | "SN"
-          | "RS"
-          | "SC"
-          | "SL"
-          | "SG"
-          | "SK"
-          | "SI"
-          | "SB"
-          | "SO"
-          | "ZA"
-          | "SS"
-          | "ES"
-          | "LK"
-          | "SD"
-          | "SR"
-          | "SE"
-          | "CH"
-          | "TJ"
-          | "TZ"
-          | "TH"
-          | "TL"
-          | "TG"
-          | "TO"
-          | "TT"
-          | "TN"
-          | "TR"
-          | "TM"
-          | "TV"
-          | "UG"
-          | "AE"
-          | "GB"
-          | "UY"
-          | "UZ"
-          | "VU"
-          | "VE"
-          | "VN"
-          | "YE"
-          | "ZM"
-          | "ZW"
+          | 'DE'
+          | 'US'
+          | 'PS'
+          | 'AF'
+          | 'AL'
+          | 'DZ'
+          | 'AD'
+          | 'AO'
+          | 'AG'
+          | 'AR'
+          | 'AM'
+          | 'AU'
+          | 'AT'
+          | 'AZ'
+          | 'BS'
+          | 'BH'
+          | 'BD'
+          | 'BB'
+          | 'BE'
+          | 'BZ'
+          | 'BJ'
+          | 'BT'
+          | 'BO'
+          | 'BA'
+          | 'BW'
+          | 'BR'
+          | 'BN'
+          | 'BG'
+          | 'BF'
+          | 'BI'
+          | 'CV'
+          | 'KH'
+          | 'CM'
+          | 'CA'
+          | 'CF'
+          | 'TD'
+          | 'CL'
+          | 'CN'
+          | 'CO'
+          | 'KM'
+          | 'CD'
+          | 'CG'
+          | 'CR'
+          | 'CI'
+          | 'HR'
+          | 'CU'
+          | 'CY'
+          | 'CZ'
+          | 'DK'
+          | 'DJ'
+          | 'DM'
+          | 'DO'
+          | 'EC'
+          | 'EG'
+          | 'SV'
+          | 'GQ'
+          | 'ER'
+          | 'EE'
+          | 'SZ'
+          | 'ET'
+          | 'FJ'
+          | 'FI'
+          | 'FR'
+          | 'GA'
+          | 'GM'
+          | 'GE'
+          | 'GH'
+          | 'GR'
+          | 'GD'
+          | 'GT'
+          | 'GN'
+          | 'GW'
+          | 'GY'
+          | 'HT'
+          | 'HN'
+          | 'HU'
+          | 'IS'
+          | 'IN'
+          | 'ID'
+          | 'IQ'
+          | 'IE'
+          | 'IL'
+          | 'IT'
+          | 'JM'
+          | 'JP'
+          | 'JO'
+          | 'KZ'
+          | 'KE'
+          | 'KI'
+          | 'KR'
+          | 'KW'
+          | 'KG'
+          | 'LA'
+          | 'LV'
+          | 'LB'
+          | 'LS'
+          | 'LR'
+          | 'LY'
+          | 'LI'
+          | 'LT'
+          | 'LU'
+          | 'MG'
+          | 'MW'
+          | 'MY'
+          | 'MV'
+          | 'ML'
+          | 'MT'
+          | 'MH'
+          | 'MR'
+          | 'MU'
+          | 'MX'
+          | 'FM'
+          | 'MD'
+          | 'MC'
+          | 'MN'
+          | 'ME'
+          | 'MA'
+          | 'MZ'
+          | 'NA'
+          | 'NR'
+          | 'NP'
+          | 'NL'
+          | 'NZ'
+          | 'NI'
+          | 'NE'
+          | 'NG'
+          | 'MK'
+          | 'NO'
+          | 'OM'
+          | 'PK'
+          | 'PW'
+          | 'PA'
+          | 'PG'
+          | 'PY'
+          | 'PE'
+          | 'PH'
+          | 'PL'
+          | 'PT'
+          | 'QA'
+          | 'RO'
+          | 'RW'
+          | 'KN'
+          | 'LC'
+          | 'VC'
+          | 'WS'
+          | 'SM'
+          | 'ST'
+          | 'SA'
+          | 'SN'
+          | 'RS'
+          | 'SC'
+          | 'SL'
+          | 'SG'
+          | 'SK'
+          | 'SI'
+          | 'SB'
+          | 'SO'
+          | 'ZA'
+          | 'SS'
+          | 'ES'
+          | 'LK'
+          | 'SD'
+          | 'SR'
+          | 'SE'
+          | 'CH'
+          | 'TJ'
+          | 'TZ'
+          | 'TH'
+          | 'TL'
+          | 'TG'
+          | 'TO'
+          | 'TT'
+          | 'TN'
+          | 'TR'
+          | 'TM'
+          | 'TV'
+          | 'UG'
+          | 'AE'
+          | 'GB'
+          | 'UY'
+          | 'UZ'
+          | 'VU'
+          | 'VE'
+          | 'VN'
+          | 'YE'
+          | 'ZM'
+          | 'ZW'
         )
       | null;
     region?: string | null;
   };
   iban?: string | null;
   bic?: string | null;
-  bitcoinVNStatus?: ("unverified" | "verifyIdentity" | "verifyResidence" | "in_progress" | "verified") | null;
+  bitcoinVNStatus?: ('unverified' | 'verifyIdentity' | 'verifyResidence' | 'in_progress' | 'verified') | null;
   bitcoinVNAPIkey?: string | null;
   bitcoinVNpass?: string | null;
   bitcoinVNIdentityID?: string | null;
@@ -2046,72 +2084,72 @@ export interface Consumer {
       }[]
     | null;
   currentSwyptOnRampTransaction?: (string | null) | FiatTransaction;
-  koyweState?: ("unverified" | "in_progress" | "verified") | null;
-  koyweDocumentType?: ("DNI" | "CUIT" | "RUT" | "CED_CIU" | "CED_EXT" | "RFC" | "CURP" | "RUC") | null;
+  koyweState?: ('unverified' | 'in_progress' | 'verified') | null;
+  koyweDocumentType?: ('DNI' | 'CUIT' | 'RUT' | 'CED_CIU' | 'CED_EXT' | 'RFC' | 'CURP' | 'RUC') | null;
   koyweDocumentNumber?: string | null;
-  koyweDocumentCountry?: ("ARG" | "CHL" | "COL" | "PER" | "MEX") | null;
+  koyweDocumentCountry?: ('ARG' | 'CHL' | 'COL' | 'PER' | 'MEX') | null;
   koyweSupportedNationality?:
     | (
-        | "ATG"
-        | "ARG"
-        | "BHS"
-        | "BRB"
-        | "BLZ"
-        | "BOL"
-        | "BRA"
-        | "CAN"
-        | "CHL"
-        | "COL"
-        | "CRI"
-        | "CUB"
-        | "DMA"
-        | "DOM"
-        | "ECU"
-        | "SLV"
-        | "GRD"
-        | "GTM"
-        | "GUY"
-        | "HTI"
-        | "HND"
-        | "JAM"
-        | "MEX"
-        | "NIC"
-        | "PAN"
-        | "PRY"
-        | "PER"
-        | "PRI"
-        | "KNA"
-        | "LCA"
-        | "VCT"
-        | "SUR"
-        | "TTO"
-        | "USA"
-        | "URY"
-        | "VEN"
-        | "AIA"
-        | "ABW"
-        | "BMU"
-        | "BES"
-        | "CYM"
-        | "SGS"
-        | "GRL"
-        | "GLP"
-        | "FLK"
-        | "MTQ"
-        | "MSR"
-        | "ANT"
-        | "TCA"
-        | "VGB"
-        | "VIR"
+        | 'ATG'
+        | 'ARG'
+        | 'BHS'
+        | 'BRB'
+        | 'BLZ'
+        | 'BOL'
+        | 'BRA'
+        | 'CAN'
+        | 'CHL'
+        | 'COL'
+        | 'CRI'
+        | 'CUB'
+        | 'DMA'
+        | 'DOM'
+        | 'ECU'
+        | 'SLV'
+        | 'GRD'
+        | 'GTM'
+        | 'GUY'
+        | 'HTI'
+        | 'HND'
+        | 'JAM'
+        | 'MEX'
+        | 'NIC'
+        | 'PAN'
+        | 'PRY'
+        | 'PER'
+        | 'PRI'
+        | 'KNA'
+        | 'LCA'
+        | 'VCT'
+        | 'SUR'
+        | 'TTO'
+        | 'USA'
+        | 'URY'
+        | 'VEN'
+        | 'AIA'
+        | 'ABW'
+        | 'BMU'
+        | 'BES'
+        | 'CYM'
+        | 'SGS'
+        | 'GRL'
+        | 'GLP'
+        | 'FLK'
+        | 'MTQ'
+        | 'MSR'
+        | 'ANT'
+        | 'TCA'
+        | 'VGB'
+        | 'VIR'
       )
     | null;
-  ovexState?: ("unverified" | "in_progress" | "verified") | null;
+  ovexState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentOvexTransaction?: (string | null) | FiatTransaction;
   ovexTransactionCount?: string | null;
   ovexVolume?: string | null;
-  romaState?: ("unverified" | "in_progress" | "verified") | null;
+  romaState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentRomaTransaction?: (string | null) | FiatTransaction;
-  bitcoinVNHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  bitcoinVNHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentBitcoinVNHelpdeskTransaction?: (string | null) | FiatTransaction;
   bitcoinVNDocs?:
     | {
@@ -2119,19 +2157,19 @@ export interface Consumer {
         id?: string | null;
       }[]
     | null;
-  koyweHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  koyweHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentKoyweHelpdeskTransaction?: (string | null) | FiatTransaction;
   koyweVolume?: string | null;
   koyweComment?: string | null;
-  kotaniPayHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  kotaniPayHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentKotaniPayHelpdeskTransaction?: (string | null) | FiatTransaction;
   kotaniTransactionCount?: string | null;
   kotaniVolume?: string | null;
-  coinhakoHelpdeskState?: ("unverified" | "in_progress" | "verified") | null;
+  coinhakoHelpdeskState?: ('unverified' | 'in_progress' | 'verified') | null;
   currentCoinhakoHelpdeskTransaction?: (string | null) | FiatTransaction;
   stasisRepresentative?: string | null;
   stasisVolume?: string | null;
-  stasisRepresentativeIdentityType?: ("Passport" | "National ID" | "Driver license" | "Residence permit") | null;
+  stasisRepresentativeIdentityType?: ('Passport' | 'National ID' | 'Driver license' | 'Residence permit') | null;
   stasisRepresentativeProofOfIdentity?:
     | {
         representativeProofOfIdentityPage?: string | Document | null;
@@ -2148,7 +2186,7 @@ export interface Consumer {
   stasisKYCUUID?: string | null;
   stasisKYCLevelUUID?: string | null;
   stasisKYBStep?:
-    | ("createStasisAccount" | "address" | "startKYB" | "livenessCheck" | "financialInfo" | "kybOngoing" | "approved")
+    | ('createStasisAccount' | 'address' | 'startKYB' | 'livenessCheck' | 'financialInfo' | 'kybOngoing' | 'approved')
     | null;
   stasisKYBStatus?: string | null;
   euroEAccount?: string | null;
@@ -2228,7 +2266,7 @@ export interface InternationalTransaction {
   id: string;
   vendor?: (string | null) | Vendor;
   link?: (string | null) | AccountMovement;
-  type?: ("fiat" | "crypto") | null;
+  type?: ('fiat' | 'crypto') | null;
   router?: (string | null) | Router;
   shredSize?: number | null;
   shredCount?: number | null;
@@ -2246,7 +2284,7 @@ export interface InternationalTransaction {
   transactionHash?: string | null;
   receivingWallet?: string | null;
   sendingWallet?: string | null;
-  status?: ("pending" | "completed" | "failed") | null;
+  status?: ('pending' | 'completed' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2261,19 +2299,19 @@ export interface AccountMovement {
   positive: boolean;
   link:
     | {
-        relationTo: "internationalTransactions";
+        relationTo: 'internationalTransactions';
         value: string | InternationalTransaction;
       }
     | {
-        relationTo: "cryptoTransfer";
+        relationTo: 'cryptoTransfer';
         value: string | CryptoTransfer;
       }
     | {
-        relationTo: "fiatTransaction";
+        relationTo: 'fiatTransaction';
         value: string | FiatTransaction;
       }
     | {
-        relationTo: "checkoutSession";
+        relationTo: 'checkoutSession';
         value: string | CheckoutSession;
       };
   amount: number;
@@ -2292,193 +2330,193 @@ export interface Country {
   id: string;
   countryCode?:
     | (
-        | "DE"
-        | "US"
-        | "PS"
-        | "AF"
-        | "AL"
-        | "DZ"
-        | "AD"
-        | "AO"
-        | "AG"
-        | "AR"
-        | "AM"
-        | "AU"
-        | "AT"
-        | "AZ"
-        | "BS"
-        | "BH"
-        | "BD"
-        | "BB"
-        | "BE"
-        | "BZ"
-        | "BJ"
-        | "BT"
-        | "BO"
-        | "BA"
-        | "BW"
-        | "BR"
-        | "BN"
-        | "BG"
-        | "BF"
-        | "BI"
-        | "CV"
-        | "KH"
-        | "CM"
-        | "CA"
-        | "CF"
-        | "TD"
-        | "CL"
-        | "CN"
-        | "CO"
-        | "KM"
-        | "CD"
-        | "CG"
-        | "CR"
-        | "CI"
-        | "HR"
-        | "CU"
-        | "CY"
-        | "CZ"
-        | "DK"
-        | "DJ"
-        | "DM"
-        | "DO"
-        | "EC"
-        | "EG"
-        | "SV"
-        | "GQ"
-        | "ER"
-        | "EE"
-        | "SZ"
-        | "ET"
-        | "FJ"
-        | "FI"
-        | "FR"
-        | "GA"
-        | "GM"
-        | "GE"
-        | "GH"
-        | "GR"
-        | "GD"
-        | "GT"
-        | "GN"
-        | "GW"
-        | "GY"
-        | "HT"
-        | "HN"
-        | "HU"
-        | "IS"
-        | "IN"
-        | "ID"
-        | "IQ"
-        | "IE"
-        | "IL"
-        | "IT"
-        | "JM"
-        | "JP"
-        | "JO"
-        | "KZ"
-        | "KE"
-        | "KI"
-        | "KR"
-        | "KW"
-        | "KG"
-        | "LA"
-        | "LV"
-        | "LB"
-        | "LS"
-        | "LR"
-        | "LY"
-        | "LI"
-        | "LT"
-        | "LU"
-        | "MG"
-        | "MW"
-        | "MY"
-        | "MV"
-        | "ML"
-        | "MT"
-        | "MH"
-        | "MR"
-        | "MU"
-        | "MX"
-        | "FM"
-        | "MD"
-        | "MC"
-        | "MN"
-        | "ME"
-        | "MA"
-        | "MZ"
-        | "NA"
-        | "NR"
-        | "NP"
-        | "NL"
-        | "NZ"
-        | "NI"
-        | "NE"
-        | "NG"
-        | "MK"
-        | "NO"
-        | "OM"
-        | "PK"
-        | "PW"
-        | "PA"
-        | "PG"
-        | "PY"
-        | "PE"
-        | "PH"
-        | "PL"
-        | "PT"
-        | "QA"
-        | "RO"
-        | "RW"
-        | "KN"
-        | "LC"
-        | "VC"
-        | "WS"
-        | "SM"
-        | "ST"
-        | "SA"
-        | "SN"
-        | "RS"
-        | "SC"
-        | "SL"
-        | "SG"
-        | "SK"
-        | "SI"
-        | "SB"
-        | "SO"
-        | "ZA"
-        | "SS"
-        | "ES"
-        | "LK"
-        | "SD"
-        | "SR"
-        | "SE"
-        | "CH"
-        | "TJ"
-        | "TZ"
-        | "TH"
-        | "TL"
-        | "TG"
-        | "TO"
-        | "TT"
-        | "TN"
-        | "TR"
-        | "TM"
-        | "TV"
-        | "UG"
-        | "AE"
-        | "GB"
-        | "UY"
-        | "UZ"
-        | "VU"
-        | "VE"
-        | "VN"
-        | "YE"
-        | "ZM"
-        | "ZW"
+        | 'DE'
+        | 'US'
+        | 'PS'
+        | 'AF'
+        | 'AL'
+        | 'DZ'
+        | 'AD'
+        | 'AO'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BR'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'CV'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CO'
+        | 'KM'
+        | 'CD'
+        | 'CG'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'GH'
+        | 'GR'
+        | 'GD'
+        | 'GT'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HN'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IQ'
+        | 'IE'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KR'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MR'
+        | 'MU'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MA'
+        | 'MZ'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'MK'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PL'
+        | 'PT'
+        | 'QA'
+        | 'RO'
+        | 'RW'
+        | 'KN'
+        | 'LC'
+        | 'VC'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'SD'
+        | 'SR'
+        | 'SE'
+        | 'CH'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TV'
+        | 'UG'
+        | 'AE'
+        | 'GB'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VE'
+        | 'VN'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
       )
     | null;
   useWhiteList?: boolean | null;
@@ -2489,55 +2527,55 @@ export interface Country {
     flag?: (string | null) | CdnMedia;
     background?: (string | null) | CdnMedia;
     currency:
-      | "USD"
-      | "EUR"
-      | "VND"
-      | "AED"
-      | "ARS"
-      | "AUD"
-      | "BGN"
-      | "BOL"
-      | "BRL"
-      | "BWP"
-      | "CAD"
-      | "CHF"
-      | "CLP"
-      | "COP"
-      | "CRC"
-      | "CZK"
-      | "DKK"
-      | "ETB"
-      | "GBP"
-      | "GHS"
-      | "GTQ"
-      | "HKD"
-      | "IDR"
-      | "INR"
-      | "KES"
-      | "MKW"
-      | "MXN"
-      | "MYR"
-      | "NGN"
-      | "OMR"
-      | "PEN"
-      | "PHP"
-      | "PLN"
-      | "RON"
-      | "SGD"
-      | "TRY"
-      | "TZS"
-      | "UGX"
-      | "XOF"
-      | "XAF"
-      | "ZAR"
-      | "ZMW";
+      | 'USD'
+      | 'EUR'
+      | 'VND'
+      | 'AED'
+      | 'ARS'
+      | 'AUD'
+      | 'BGN'
+      | 'BOL'
+      | 'BRL'
+      | 'BWP'
+      | 'CAD'
+      | 'CHF'
+      | 'CLP'
+      | 'COP'
+      | 'CRC'
+      | 'CZK'
+      | 'DKK'
+      | 'ETB'
+      | 'GBP'
+      | 'GHS'
+      | 'GTQ'
+      | 'HKD'
+      | 'IDR'
+      | 'INR'
+      | 'KES'
+      | 'MKW'
+      | 'MXN'
+      | 'MYR'
+      | 'NGN'
+      | 'OMR'
+      | 'PEN'
+      | 'PHP'
+      | 'PLN'
+      | 'RON'
+      | 'SGD'
+      | 'TRY'
+      | 'TZS'
+      | 'UGX'
+      | 'XOF'
+      | 'XAF'
+      | 'ZAR'
+      | 'ZMW';
     population?: number | null;
     capital?: string | null;
     gdp?: string | null;
     fact?: string | null;
-    region: "europe" | "asia" | "north_america" | "south_america" | "africa" | "australia_oceania";
+    region: 'europe' | 'asia' | 'north_america' | 'south_america' | 'africa' | 'australia_oceania';
   };
-  preferredStableCoin: "USDC" | "USDT" | "EURS";
+  preferredStableCoin: 'USDC' | 'USDT' | 'EURS';
   paymentTypes: PaymentTypesArray;
   updatedAt: string;
   createdAt: string;
@@ -2565,7 +2603,7 @@ export interface TransferMethod {
  */
 export interface Pool {
   id: string;
-  chain: "1" | "137" | "10" | "42161" | "8453" | "43114";
+  chain: '1' | '137' | '10' | '42161' | '8453' | '43114';
   inputToken: string;
   outputToken: string;
   path: string;
@@ -2583,15 +2621,15 @@ export interface PayloadPreference {
   id: string;
   user:
     | {
-        relationTo: "users";
+        relationTo: 'users';
         value: string | User;
       }
     | {
-        relationTo: "vendor";
+        relationTo: 'vendor';
         value: string | Vendor;
       }
     | {
-        relationTo: "consumer";
+        relationTo: 'consumer';
         value: string | Consumer;
       };
   key?: string | null;
@@ -2741,7 +2779,6 @@ export interface Maintenance {
     };
     crossborder?: {
       page?: boolean | null;
-      message?: string | null;
     };
     payments?: {
       statistics?: boolean | null;
@@ -2756,22 +2793,17 @@ export interface Maintenance {
       currentPeriodUsers?: (string | Consumer)[] | null;
       lastPeriod?: boolean | null;
       lastPeriodUsers?: (string | Consumer)[] | null;
-      page?: boolean | null;
-      message?: string | null;
     };
   };
   dashboard: {
     withdraw?: {
       page?: boolean | null;
-      message?: string | null;
     };
     deposit?: {
       page?: boolean | null;
-      message?: string | null;
     };
     crossborder?: {
       page?: boolean | null;
-      message?: string | null;
     };
     paymentLinks?: {
       page?: boolean | null;

@@ -133,9 +133,9 @@ export interface CustomDropdownProps extends BaseFieldProps {
 
 // Token selector specific types
 export interface TokenSelectorProps extends BaseFieldProps {
-  tokens: Record<string, SimpleToken>;
+  tokens: Record<string, SimpleToken> | null;
   selectedToken: SimpleToken | null;
-  onSelect: (token: SimpleToken) => void;
+  onSelect: (token: SimpleToken | null) => void;
   selectText?: string;
   displayContent?: React.ReactNode;
   disabled?: boolean;
