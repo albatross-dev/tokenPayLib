@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+=======
+import React, { useEffect, useState, useContext } from "react";
+import { getContract, readContract } from "thirdweb";
+import { polygon } from "thirdweb/chains";
+import { IoClose } from "react-icons/io5";
+import { useActiveAccount } from "thirdweb/react";
+import { parseUnits } from "ethers/lib/utils";
+import Image from "next/image";
+import { encodePacked } from "thirdweb/utils";
+import { useTranslation } from "next-i18next";
+import { Account } from "thirdweb/wallets";
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
 import { fetchPaths } from "@/tokenPayLib/components/Modules/TokenSwapSection";
 import LoadingButton, {
   LoadingButtonStates,
@@ -18,6 +31,12 @@ import {
   sendErrorReport,
   useAuth
 } from "../../../../../context/UserContext";
+<<<<<<< HEAD
+=======
+import TokenSelector from "../../../Forms/TokenSelector";
+import { TokensByChainId, chainTypesIds } from "../../../../utilities/crypto/currencies";
+import { PATHS } from "../../../../utilities/crypto/getPath";
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
 import QuoteV2Abi from "../../../../assets/quoteV2Abi.json";
 import { FiatTransactionRequest } from "../../../../types/derivedPayload.types";
 import { SimpleToken } from "../../../../types/token.types";
@@ -73,16 +92,24 @@ interface FormErrors {
   conversionError?: string;
 }
 
+<<<<<<< HEAD
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "",
 });
+=======
+import { client } from "@/pages/_app";
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
 
 export default function RawCrypto({
   amount,
   preferredStableCoin,
 }: RawCryptoProps) {
   const [defaultToken, setDefaultToken] = useState<SimpleToken>(
+<<<<<<< HEAD
     TokensByChainId[polygon.id as keyof typeof TokensByChainId][preferredStableCoin]
+=======
+    TokensByChainId[polygon.id as chainTypesIds][preferredStableCoin]
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
   );
   const [differentToken, setDifferentToken] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<SimpleToken | null>(null);
@@ -93,7 +120,11 @@ export default function RawCrypto({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState<LoadingButtonStates>("normal");
+<<<<<<< HEAD
   const { user } = useAuth() as { user: Vendor | Consumer };
+=======
+  const { user } = (useContext(AuthContext) || { user: null }) as { user: { id?: string; type?: string } | null };
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
   const account = useActiveAccount();
   const [loadingQuote, setLoadingQuote] = useState<boolean>(false);
   const [quote, setQuote] = useState<[bigint, bigint[], bigint[], bigint] | null>(
@@ -104,7 +135,11 @@ export default function RawCrypto({
   const { t: tCrossborder } = useTranslation("crossborder");
 
   useEffect(() => {
+<<<<<<< HEAD
     setDefaultToken(TokensByChainId[polygon.id as keyof typeof TokensByChainId][preferredStableCoin]);
+=======
+    setDefaultToken(TokensByChainId[polygon.id as chainTypesIds][preferredStableCoin]);
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
   }, [preferredStableCoin]);
 
   useEffect(() => {
@@ -117,10 +152,9 @@ export default function RawCrypto({
         abi: QuoteV2Abi as Array<any>,
       });
 
-      const path =
-        PATHS[polygon.id][defaultToken.id.toUpperCase()][
-          (selectedToken?.id || "").toUpperCase()
-        ];
+      const path = (PATHS as any)[polygon.id][defaultToken.id.toUpperCase()][
+        (selectedToken?.id || "").toUpperCase()
+      ];
 
       const encodedPath = encodePacked(path[0], path[1]);
 
@@ -193,7 +227,11 @@ export default function RawCrypto({
 
     const outputTokens = Object.fromEntries(
       paths.map((path) => {
+<<<<<<< HEAD
         const obj: SimpleToken | null = TokensByChainId[polygon.id as keyof typeof TokensByChainId][path.outputToken];
+=======
+        const obj: SimpleToken | null = TokensByChainId[polygon.id as chainTypesIds][path.outputToken];
+>>>>>>> 29097fd6acc04e91cf4192ca1e49c50536c9c03a
         if (obj && path.outputToken) {
           return [path.outputToken, obj];
         } 
@@ -260,7 +298,7 @@ export default function RawCrypto({
         );
 
         const transactionData: FiatTransactionRequest = {
-          vendor: user.id,
+          vendor: user?.id as string,
           partner: "crypto",
           amount: Number(amount),
           currency: defaultToken.contractAddress,
@@ -280,10 +318,10 @@ export default function RawCrypto({
           finalamount: Number(sendAmount),
         };
 
-        if (user.type === "vendor") {
-          transactionData.vendor = user.id;
-        } else {
-          transactionData.consumer = user.id;
+        if (user && user.type === "vendor") {
+          (transactionData as any).vendor = user.id;
+        } else if (user) {
+          (transactionData as any).consumer = user.id;
         }
 
         await api.post("/api/fiatTransaction", transactionData);
@@ -327,10 +365,10 @@ export default function RawCrypto({
           finalamount: amount,
         };
   
-        if (user.type === "vendor") {
-          transactionData.vendor = user.id;
-        } else {
-          transactionData.consumer = user.id;
+        if (user && user.type === "vendor") {
+          (transactionData as any).vendor = user.id;
+        } else if (user) {
+          (transactionData as any).consumer = user.id;
         }
   
         await api.post("/api/fiatTransaction", transactionData);
@@ -398,7 +436,7 @@ export default function RawCrypto({
                   </div>
                   <TokenSelector
                     type="token"
-                    tokens={targetTokens}
+                    tokens={targetTokens || {}}
                     selectedToken={selectedToken}
                     onSelect={(token: SimpleToken | null) => {
                       if (!token) {

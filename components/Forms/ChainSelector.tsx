@@ -88,13 +88,13 @@ const exchangeType: ExchangeType = process.env.NEXT_PUBLIC_EXCHANGE_TYPE as Exch
  */
 const ChainSelector: React.FC<ChainSelectorProps> = ({
   checkoutSession,
-  chain,
+  chain = null,
   chainList = exchangeType === "external" ? chainsPublic : chains,
   returnOnly = false,
   onChain = null,
   disabled = false,
 }) => {
-  const [activeChainDetails, setActiveChainDetails] = useState<ChainDetails | null>(chain);
+  const [activeChainDetails, setActiveChainDetails] = useState<ChainDetails | null>(chain || null);
   const switchChain = useSwitchActiveWalletChain();
   const isAutoConnecting = useIsAutoConnecting();
   const walletChain = useActiveWalletChain();
@@ -117,14 +117,14 @@ const ChainSelector: React.FC<ChainSelectorProps> = ({
         }
       } catch (error) {
         console.log("error", error);
-        if (error?.code === -32603) {
+        if (error instanceof Error && error.message.includes("User rejected the request")) {
           return;
         }
         showErrorPopup({
           titleKey: t("wallet.switchChainError"),
           messageKeyOrText: t("wallet.switchChainErrorDescription"),
           details: {
-            error,
+            error: error instanceof Error ? error : new Error(String(error)),
           },
           action: {
             buttonText: t("wallet.switchChainErrorButton"),

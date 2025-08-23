@@ -229,7 +229,7 @@ function ConvertPopup({
             leaveTo="opacity-0 scale-95"
           >
             <DialogPanel className="relative max-w-xl w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-              {maintenance !== "loading" && maintenance && maintenance.common.crossborder.conversionDialog && <Maintenance />}
+              {maintenance !== "loading" && maintenance?.common?.crossborder?.conversionDialog && <Maintenance />}
               <DialogTitle
                 as="h3"
                 className="text-lg flex items-center justify-between font-medium leading-6 text-gray-900"

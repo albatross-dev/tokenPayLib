@@ -39,7 +39,7 @@ export default function SelectPaymentMethodSlide({
                 <div className="text-sm text-gray-500">{quote.paymentMethod.description}</div>
                 <div className="flex items-center gap-2">
                   <span className=" font-bold text-uhuBlue">
-                    {quote.quote.amountOut.toFixed(3)} {getFiatInfoForStableCoin(method.acceptedCrypto).id}
+                    {(quote.quote?.amountOut ?? 0).toFixed(3)} {getFiatInfoForStableCoin((method.acceptedCrypto || "USDC") as string)!.id}
                   </span>
                 </div>
               </div>

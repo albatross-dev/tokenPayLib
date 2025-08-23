@@ -3,6 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, Transition } from "@
 import { useTranslation } from "next-i18next";
 import numberWithZeros from "../../utilities/math/numberWithZeros";
 import { SimpleToken } from "../../types/token.types";
+import { CheckoutSession } from "@/tokenPayLib/types/payload-types";
 
 interface Token {
   symbol: string;
@@ -15,14 +16,10 @@ interface Router {
   stableCoinShortName: string;
 }
 
-interface CheckoutSession {
-  router?: Router;
-}
-
 interface ExchangeModalProps {
   show: boolean;
   closeModal: () => void;
-  token: SimpleToken;
+  token: SimpleToken | null;
   handleExchange: (amount: number) => void;
   maxAmount: number | string;
   checkoutSession?: CheckoutSession | null;
@@ -85,7 +82,7 @@ const ExchangeModal: React.FC<ExchangeModalProps> = ({
 
               <p className="text-gray-700">
                 {t("enter_amount_exchange", {
-                  currency: checkoutSession?.router?.stableCoinShortName || "usdc",
+                  currency: (checkoutSession?.router as Router)?.stableCoinShortName || "usdc",
                 })}
               </p>
 

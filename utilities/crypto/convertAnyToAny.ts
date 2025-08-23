@@ -250,6 +250,146 @@ export async function convertAnyToAnyDirect(
   }
 }
 
+export async function convertAnyToAnySimple(
+  token: SimpleToken,
+  amount: number,
+  account: any,
+  success: () => void,
+  error: (e: Error) => void,
+  chain: any,
+  target: string,
+  internal = false
+) {
+  const finalAmount = Number(amount.toFixed(0));
+
+  console.log("convertAnyToAny", token, finalAmount, account, success, error, chain, target);
+
+  if (!token.contractAddress) {
+    throw new Error("Token contract not found");
+  }
+
+  try {
+    const swapRouterContract = getContract({
+      client,
+      chain,
+      address: (exchangeType === "internal" || internal ? uniswapAddresses : uniswapAddressesPublic)[chain.id].router,
+      abi: exchangeType === "internal" || internal ? (SwapRouterAbi as Array<any>) : (CustomRouterAbi as Array<any>),
+    });
+
+    const quoteContract = getQuoteContract(chain);
+
+    const tokenContract = getContract({
+      client,
+      chain,
+      address: token.contractAddress,
+      abi: ERC20ABI as Array<any>,
+    });
+
+    console.log("swapRouterContract", swapRouterContract);
+
+    // Approve token
+    const approveToken = prepareContractCall({
+      contract: tokenContract,
+      method: "approve",
+      params: [
+        (exchangeType === "internal" || internal ? uniswapAddresses : uniswapAddressesPublic)[chain.id].router, // Router Address
+        BigInt(finalAmount),
+      ],
+    });
+
+    await sendAndConfirmTransaction({
+      account,
+      transaction: approveToken,
+    });
+
+    const path = getPath(token.id, chain, target);
+    const encodedPath = getEncodedPath(token.id, chain, target);
+
+    console.log("path", path, encodedPath, token.id, chain, target);
+
+    console.log("path", path, encodedPath);
+
+    // Quote the exchange
+    const quote = await readContract({
+      contract: quoteContract,
+      method: "quoteExactInput" as any,
+      params: [encodedPath as any, BigInt(finalAmount)],
+    });
+
+    console.log("quote", quote);
+
+    // Prepare and send the exactInput transaction
+
+    let exactInputCall: PreparedTransaction<any>;
+
+    if (exchangeType === "internal" || internal) {
+      const exactInputParams = {
+        path: encodedPath,
+        recipient: account.address,
+        amountIn: BigInt(finalAmount),
+        amountOutMinimum: 0,
+      };
+
+      console.log("exactInputParams", exactInputParams);
+
+      exactInputCall = prepareContractCall({
+        contract: swapRouterContract,
+        method: "exactInput",
+        params: [exactInputParams],
+      });
+    } else if (path[1].length === 3) {
+      const exactInputParams = {
+        amountIn: BigInt(finalAmount),
+        tokenIn: path[1][0],
+        tokenOut: path[1][2],
+        poolFee: path[1][1],
+        amountOutMinimum: BigInt(0),
+      };
+
+      console.log("swapExactInputSingle", exactInputParams, swapRouterContract);
+
+      exactInputCall = prepareContractCall({
+        contract: swapRouterContract,
+        method: "swapExactInputSingle",
+        params: [BigInt(finalAmount), path[1][0], path[1][2], path[1][1], BigInt(0)],
+      });
+    } else {
+      const exactInputParams = {
+        amountIn: BigInt(finalAmount),
+        tokenIn: path[1][0],
+        tokenInBetween: path[1][2],
+        tokenOut: path[1][4],
+        poolFee0: path[1][1],
+        poolFee1: path[1][3],
+        amountOutMinimum: BigInt(0),
+      };
+
+      console.log("swapExactInputMulti", exactInputParams);
+
+      exactInputCall = prepareContractCall({
+        contract: swapRouterContract,
+        method: "swapExactInputMulti",
+        params: [BigInt(finalAmount), path[1][0], path[1][2], path[1][4], path[1][1], path[1][3], BigInt(0)],
+      });
+    }
+
+    console.log("exactInputCall", exactInputCall);
+
+    const res: TransactionReceipt = await sendAndConfirmTransaction({
+      account,
+      transaction: exactInputCall,
+    });
+
+    console.log("res", res);
+
+    success();
+  } catch (e: any) {
+    sendErrorReport("convertAnyToAny", e);
+    console.error(`Error converting ${finalAmount} ${token.id} to ${target}`, e);
+    error(e);
+  }
+}
+
 async function convertAnyToAny(
   token: Token,
   amount: number,

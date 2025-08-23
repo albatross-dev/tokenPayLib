@@ -130,18 +130,20 @@ export default function BitcoinVN({ amount, user }: BitcoinVNProps) {
   const handleSend = async () => {
     try {
       setIsLoading("processing");
+      if (!account) throw (globalThis as any).Error("No active account");
       const { transactionHash } = await tokenPayAbstractionSimpleTransfer(
         client,
         account,
         polygon,
         BigInt(Number(amount) * 10 ** selectedToken.decimals),
         selectedToken,
-        transaction?.depositData.address || ""
+        (transaction as BitcoinVNTransaction)?.depositData.address || ""
       );
 
       // get transaction from database
+      const shortId = (transaction as BitcoinVNTransaction)?.shortId;
       const fiatTransactionRes = await api.get(
-        `/api/fiatTransaction/?where[transactionDetails][equals]=${transaction.shortId}`
+        `/api/fiatTransaction/?where[transactionDetails][equals]=${shortId}`
       );
 
       const fiatTransaction = fiatTransactionRes.data.docs[0];

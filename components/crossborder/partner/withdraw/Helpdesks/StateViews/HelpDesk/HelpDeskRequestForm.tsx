@@ -52,7 +52,7 @@ function getRequestFormFields(tCrossborder: TFunction) {
 export default function HelpDeskRequestForm({ error, handleStartTransaction }: HelpDeskRequestFormProps) {
   const { t: tCrossborder } = useTranslation("crossborder");
 
-  const methods = useForm();
+  const methods = useForm<HelpDeskWithdrawRequestFormData>();
   const { handleSubmit } = methods;
 
   const onSubmit = (data: HelpDeskWithdrawRequestFormData) => {

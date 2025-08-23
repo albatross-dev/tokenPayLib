@@ -17,7 +17,7 @@ interface LoadingButtonProps {
   children: React.ReactNode;
   openError?: () => void;
   active?: boolean;
-  error?: LoadingButtonError;
+  error?: LoadingButtonError | null;
   fullWidth?: boolean;
   showSuccessColor?: boolean;
 }

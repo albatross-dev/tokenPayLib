@@ -13,16 +13,12 @@ import {
   Loading,
   Pooling,
   TransactionCreated,
-  Error,
+  Error as ErrorSlide,
   Success,
   SwyptState,
   FormData,
 } from "./Slides";
-import {
-  api,
-  AuthContext,
-  sendErrorReport,
-} from "../../../../../../context/UserContext";
+import { api, AuthContext, sendErrorReport, useAuth } from "../../../../../../context/UserContext";
 import currencies from "../../../../../utilities/crypto/currencies";
 
 interface SwyptProps {
@@ -46,9 +42,9 @@ export default function Swypt({
   const [formError, setFormError] = useState<string>("");
   const [quote, setQuote] = useState<any>(null);
   const [quoteLoaded, setQuoteLoaded] = useState<boolean>(false);
-  const { refreshAuthentication } = useContext(AuthContext);
+  const { refreshAuthentication } = useAuth() as { refreshAuthentication: () => void };
 
-  const selectedToken = currencies[method?.acceptedCrypto];
+  const selectedToken = currencies[(method?.acceptedCrypto || "USDC").toUpperCase() as keyof typeof currencies];
 
   const [formData, setFormData] = useState<FormData>({
     phone: "",
@@ -134,9 +130,9 @@ export default function Swypt({
         const checkStatus = async () => {
           if (typeof user.currentSwyptOnRampTransaction === "object") {
             try {
-              const status = await pollTransactionStatusFrontend(
-                user.currentSwyptOnRampTransaction.UUID
-              );
+              const uuid = (user.currentSwyptOnRampTransaction as any)?.UUID as string | undefined;
+              if (!uuid) throw new (globalThis as any).Error("Missing transaction UUID");
+              const status = await pollTransactionStatusFrontend(uuid);
               if (status === "awaitTransaction") {
                 setState("awaitTransaction");
               } else if (status === "failed") {
@@ -180,7 +176,7 @@ export default function Swypt({
     handleSend();
   };
 
-  const handleSend = async () => {
+  const handleSend = async (): Promise<void> => {
     try {
       setState("loading");
 
@@ -257,11 +253,11 @@ export default function Swypt({
         />
       )}
 
-      {(state === "loading" || !quoteLoaded) && <Loading />}
-      {state === "pooling" && <Pooling />}
-      {state === "transaction-created" && <TransactionCreated />}
-      {state === "error" && <Error />}
-      {state === "success" && <Success />}
+      {(state === "loading" || !quoteLoaded) && (<Loading />)}
+      {state === "pooling" && (<Pooling />)}
+      {state === "transaction-created" && (<TransactionCreated />)}
+      {state === "error" && (<ErrorSlide />)}
+      {state === "success" && (<Success />)}
     </div>
   );
 }
